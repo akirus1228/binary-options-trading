@@ -9,7 +9,10 @@ import AssetList from "../../components/asset-list/asset-list";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
 import { RootState } from "../../store";
 import { OpenseaAssetQueryParam } from "../../store/reducers/interfaces";
-import { selectMyAssets } from "../../store/selectors/asset-selectors";
+import {
+  selectAssetsByQuery,
+  selectMyAssets,
+} from "../../store/selectors/asset-selectors";
 import { Asset, BackendAssetQueryParams } from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
 
@@ -23,7 +26,7 @@ export const BorrowPage = (): JSX.Element => {
     skip: 0,
     take: 50,
   });
-  const myAssets = useSelector((state: RootState) => selectMyAssets(state, address));
+  const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, beQuery));
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
@@ -47,7 +50,7 @@ export const BorrowPage = (): JSX.Element => {
   useEffect(() => {
     const updatedQuery = {
       ...osQuery,
-      owner: address,
+      wallet: address,
     };
     setOsQuery(updatedQuery);
   }, [address]);
