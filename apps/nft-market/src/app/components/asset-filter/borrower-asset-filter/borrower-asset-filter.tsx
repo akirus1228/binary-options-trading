@@ -14,6 +14,7 @@ import {
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { AssetStatus, BackendAssetQueryParams } from "../../../types/backend-types";
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import CollectionsFilter from "../../collections-filter/collections-filter";
 // import style from "./borrower-asset-filter.module.scss";
 
 export interface BorrowerAssetFilterProps {
@@ -68,20 +69,7 @@ export const BorrowerAssetFilter = ({
         <MenuItem value="In Escrow">In Escrow</MenuItem>
       </Select>
       <hr />
-      <List component="nav" subheader={<ListSubheader>Collections</ListSubheader>}>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="Doodles" />
-        </ListItemButton>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="Cool Cats NFT" />
-        </ListItemButton>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="CrypToadz by GREMPLIN" />
-        </ListItemButton>
-      </List>
+      <CollectionsFilter query={query} setQuery={setQuery} />
       <hr />
       <Icon>
         <CancelOutlinedIcon />

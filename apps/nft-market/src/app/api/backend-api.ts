@@ -27,6 +27,8 @@ import {
   BackendStandardQuery,
   PlatformWalletInfo,
   BackendNotificationQueryParams,
+  Collection,
+  BackendCollectionQuery,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -146,6 +148,7 @@ export const backendApi = createApi({
   reducerPath: "backendApi",
   tagTypes: [
     "Asset",
+    "Collection",
     "Listing",
     "Loan",
     "Notification",
@@ -201,6 +204,25 @@ export const backendApi = createApi({
         };
       },
       invalidatesTags: (result, error, arg) => [{ type: "Asset", id: arg.id }],
+    }),
+    // Collections
+    getCollections: builder.query<Collection[], Partial<BackendCollectionQuery>>({
+      query: (queryParams) => ({
+        url: `collection/all`,
+        params: {
+          ...standardQueryParams,
+          ...queryParams,
+        },
+      }),
+      transformResponse: (response: { count: number; data: Collection[] }, meta, arg) =>
+        response.data,
+      providesTags: (result, error, queryParams) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Collection" as const, id })),
+              "Collection",
+            ]
+          : ["Collection"],
     }),
     // Listings
     getListings: builder.query<Listing[], Partial<ListingQueryParam>>({
@@ -455,6 +477,7 @@ export const backendApi = createApi({
 export const {
   useGetAssetQuery,
   useGetAssetsQuery,
+  useGetCollectionsQuery,
   useDeleteAssetMutation,
   useGetListingsQuery,
   useGetListingQuery,

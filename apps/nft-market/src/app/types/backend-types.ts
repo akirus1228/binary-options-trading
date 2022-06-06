@@ -28,8 +28,8 @@ export type CreateListingResponse = {
 
 // data models
 export enum AssetStatus {
-  New = "NEW",
-  Ready = "READY",
+  New = "NEW", // Not on backend yet
+  Ready = "READY", // on backend, unlisted, unlocked
   Listed = "LISTED",
   Locked = "LOCKED",
 }
@@ -124,10 +124,10 @@ export type BackendAsset = {
 } & StandardBackendObject;
 
 export type Asset = BackendAsset & {
-  collection: Collection;
+  collection: OpenseaCollection;
 };
 
-export type Collection = {
+export type OpenseaCollection = {
   banner_image_url?: string;
   chat_url?: string;
   created_date: string;
@@ -271,6 +271,24 @@ export type Offer = {
   status: OfferStatus;
 } & StandardBackendObject &
   IncludesTerms;
+
+export type Collection = {
+  id: string;
+  name: string;
+  slug: string;
+  imageUrl: string;
+  contractAddress: string;
+  openListingCount: number;
+  closeListingCount: number;
+  openLoanCount: number;
+  closeLoanCount: number;
+} & StandardBackendObject;
+
+export type BackendCollectionQuery = {
+  contractAddress?: string;
+  slug: string;
+  sortQuery: string;
+} & BackendStandardQuery;
 
 export type BackendStandardQuery = {
   skip: number;
