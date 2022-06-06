@@ -40,15 +40,18 @@ export const BorrowerAssetFilter = ({
     }
   };
 
-  const handleStatusChange = useCallback((event: SelectChangeEvent<string>) => {
-    if (!["Unlisted", "Listed", "In Escrow"].includes(event.target.value)) return;
-    setStatus(event.target.value);
-    const updatedQuery: BackendAssetQueryParams = {
-      ...query,
-      status: getStatusType(event.target.value),
-    };
-    setQuery(updatedQuery);
-  }, []);
+  const handleStatusChange = useCallback(
+    (event: SelectChangeEvent<string>) => {
+      if (!["Unlisted", "Listed", "In Escrow"].includes(event.target.value)) return;
+      setStatus(event.target.value);
+      const updatedQuery: BackendAssetQueryParams = {
+        ...query,
+        status: getStatusType(event.target.value),
+      };
+      setQuery(updatedQuery);
+    },
+    [query]
+  );
   return (
     <Box sx={{ maxWidth: "250px", ml: "auto" }}>
       <Select

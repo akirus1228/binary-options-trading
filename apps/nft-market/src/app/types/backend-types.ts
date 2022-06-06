@@ -278,10 +278,10 @@ export type BackendStandardQuery = {
 };
 
 export type BackendAssetQueryParams = {
-  status?: string;
+  status?: AssetStatus;
   openseaIds?: string[];
   contractAddress?: string;
-  mediaType?: string;
+  mediaType?: CollectibleMediaType;
 } & BackendStandardQuery;
 
 export type BackendLoanQueryParams = {
