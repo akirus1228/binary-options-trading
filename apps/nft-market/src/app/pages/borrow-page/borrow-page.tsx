@@ -15,7 +15,6 @@ import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
-  const [displayAssets, setDisplayAssets] = useState<Asset[]>();
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
     limit: 50,
   });
