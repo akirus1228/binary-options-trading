@@ -63,8 +63,6 @@ export const selectAssetsByQuery = createSelector(
           openseaIds = [];
         }
         const entries = Object.entries(query).map(([key, matchValue]) => {
-          console.log(`key ${key}`);
-          console.log(`asset[key as keyof Asset] ${asset[key as keyof Asset]}`);
           // does the value of this query parameter match the value of the asset for this field?
           if (["skip", "take"].includes(key)) return true; // skip and take should be ignored
           if (key === "openseaIds")
@@ -75,7 +73,6 @@ export const selectAssetsByQuery = createSelector(
           if (asset[key as keyof Asset] !== matchValue) return false;
           return true;
         });
-        console.log(entries);
         //. if  there are any false entries in the array, fail this asset for the filter
         return !entries.includes(false);
       }
