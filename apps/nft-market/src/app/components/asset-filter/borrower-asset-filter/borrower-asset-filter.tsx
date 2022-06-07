@@ -62,6 +62,11 @@ export const BorrowerAssetFilter = ({
     setQuery(updatedQuery);
   }, [collection]);
 
+  const handleResetFilters = () => {
+    handleStatusChange({ target: { value: "Unlisted" } } as SelectChangeEvent<string>);
+    setCollection({} as Collection);
+  };
+
   return (
     <Box sx={{ maxWidth: "250px", ml: "auto" }}>
       <Select
@@ -80,10 +85,16 @@ export const BorrowerAssetFilter = ({
       <hr />
       <CollectionsFilter collection={collection} setCollection={setCollection} />
       <hr />
-      <Icon>
-        <CancelOutlinedIcon />
-      </Icon>
-      <Typography>Reset filter</Typography>
+      <Box
+        className="flex fr ai-c"
+        sx={{ cursor: "pointer" }}
+        onClick={handleResetFilters}
+      >
+        <Icon>
+          <CancelOutlinedIcon />
+        </Icon>
+        <Typography>Reset filter</Typography>
+      </Box>
     </Box>
   );
 };

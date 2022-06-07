@@ -26,13 +26,17 @@ export interface LenderAssetFilterProps {
   setQuery: Dispatch<SetStateAction<ListingQueryParam>>;
 }
 
+const initialPriceRange = [0, 10000000];
+const initialAprRange = [0, 400];
+const initialDurationRange = [0, 365];
+
 export const LenderAssetFilter = ({
   query,
   setQuery,
 }: LenderAssetFilterProps): JSX.Element => {
-  const [priceRange, setPriceRange] = useState<number[]>([0, 10000000]);
-  const [aprRange, setAprRange] = useState<number[]>([0, 400]);
-  const [durationRange, setDurationRange] = useState<number[]>([0, 365]);
+  const [priceRange, setPriceRange] = useState<number[]>(initialPriceRange);
+  const [aprRange, setAprRange] = useState<number[]>(initialAprRange);
+  const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);
   const [collection, setCollection] = useState<Collection>({} as Collection);
 
   const valuetext = (value: number) => {
@@ -52,73 +56,71 @@ export const LenderAssetFilter = ({
     console.log(event);
   }, []);
 
-  const handlePriceRangeChange = useCallback(
-    (event: Event, newValue: number | number[]) => {
-      if (!event || typeof newValue === "number") return;
-      setPriceRange([newValue[0], newValue[1]]);
-    },
-    []
-  );
+  const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
+    if (!event || typeof newValue === "number") return;
+    setPriceRange([newValue[0], newValue[1]]);
+  };
 
-  const handlePriceRangeChangeCommitted = useCallback(
-    (event: Event | SyntheticEvent, newValue: number | number[]) => {
-      console.log(event);
-      if (!event || typeof newValue === "number") return;
-      setPriceRange([newValue[0], newValue[1]]);
+  const handlePriceRangeChangeCommitted = (
+    event: Event | SyntheticEvent,
+    newValue: number | number[]
+  ) => {
+    if (!event || typeof newValue === "number") return;
+    setPriceRange([newValue[0], newValue[1]]);
 
-      //trigger query update
-      setQuery({ ...query, minPrice: newValue[0], maxPrice: newValue[1] });
-    },
-    []
-  );
+    //trigger query update
+    setQuery({ ...query, minPrice: newValue[0], maxPrice: newValue[1] });
+  };
 
-  const handleAprRangeChange = useCallback(
-    (event: Event, newValue: number | number[]) => {
-      if (!event || typeof newValue === "number") return;
-      setAprRange([newValue[0], newValue[1]]);
-    },
-    []
-  );
+  const handleAprRangeChange = (event: Event, newValue: number | number[]) => {
+    if (!event || typeof newValue === "number") return;
+    setAprRange([newValue[0], newValue[1]]);
+  };
 
-  const handleAprRangeChangeCommitted = useCallback(
-    (event: Event | SyntheticEvent, newValue: number | number[]) => {
-      console.log(event);
-      if (!event || typeof newValue === "number") return;
-      setAprRange([newValue[0], newValue[1]]);
+  const handleAprRangeChangeCommitted = (
+    event: Event | SyntheticEvent,
+    newValue: number | number[]
+  ) => {
+    if (!event || typeof newValue === "number") return;
+    setAprRange([newValue[0], newValue[1]]);
 
-      //trigger query update
-      setQuery({ ...query, minApr: newValue[0], maxApr: newValue[1] });
-    },
-    []
-  );
+    //trigger query update
+    const newQuery = { ...query, minApr: newValue[0], maxApr: newValue[1] };
+    setQuery(newQuery);
+  };
 
-  const handleDurationRangeChange = useCallback(
-    (event: Event, newValue: number | number[]) => {
-      if (!event || typeof newValue === "number") return;
-      setDurationRange([newValue[0], newValue[1]]);
-    },
-    []
-  );
+  const handleDurationRangeChange = (event: Event, newValue: number | number[]) => {
+    if (!event || typeof newValue === "number") return;
+    setDurationRange([newValue[0], newValue[1]]);
+  };
 
-  const handleDurationRangeChangeCommitted = useCallback(
-    (event: Event | SyntheticEvent, newValue: number | number[]) => {
-      console.log(event);
-      if (!event || typeof newValue === "number") return;
-      setDurationRange([newValue[0], newValue[1]]);
+  const handleDurationRangeChangeCommitted = (
+    event: Event | SyntheticEvent,
+    newValue: number | number[]
+  ) => {
+    if (!event || typeof newValue === "number") return;
+    setDurationRange([newValue[0], newValue[1]]);
 
-      //trigger query update
-      setQuery({ ...query, minDuration: newValue[0], maxDuration: newValue[1] });
-    },
-    []
-  );
+    //trigger query update
+    setQuery({ ...query, minDuration: newValue[0], maxDuration: newValue[1] });
+  };
 
   useMemo(() => {
     const updatedQuery: ListingQueryParam = {
       ...query,
       contractAddress: collection.contractAddress,
     };
+    if (updatedQuery.contractAddress === query.contractAddress) return;
     setQuery(updatedQuery);
-  }, [collection]);
+  }, [collection, query, setQuery]);
+
+  const handleResetFilters = () => {
+    handlePriceRangeChangeCommitted({ target: {} } as Event, initialPriceRange);
+    handleAprRangeChangeCommitted({ target: {} } as Event, initialAprRange);
+    handleDurationRangeChangeCommitted({ target: {} } as Event, initialDurationRange);
+    handleSortChange({ target: { value: "Recent" } } as SelectChangeEvent<string>);
+    setCollection({} as Collection);
+  };
 
   return (
     <Box sx={{ maxWidth: "250px", ml: "auto" }}>
@@ -188,10 +190,16 @@ export const LenderAssetFilter = ({
       </Box>
       <CollectionsFilter collection={collection} setCollection={setCollection} />
       <hr />
-      <Icon>
-        <CancelOutlinedIcon />
-      </Icon>
-      <Typography>Reset filter</Typography>
+      <Box
+        className="flex fr ai-c"
+        sx={{ cursor: "pointer" }}
+        onClick={handleResetFilters}
+      >
+        <Icon>
+          <CancelOutlinedIcon />
+        </Icon>
+        <Typography>Reset filter</Typography>
+      </Box>
     </Box>
   );
 };

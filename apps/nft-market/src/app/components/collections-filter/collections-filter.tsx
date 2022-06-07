@@ -16,8 +16,12 @@ export const CollectionsFilter = ({
 }: CollectionsFilterProps): JSX.Element => {
   const { data: collections, isLoading } = useGetCollectionsQuery({});
   const handleCollectionClick = useCallback(
-    (collection: Collection) => {
-      setCollection(collection);
+    (newCollection: Collection) => {
+      if (collection.slug === newCollection.slug) {
+        setCollection({} as Collection);
+      } else {
+        setCollection(newCollection);
+      }
     },
     [collection, setCollection]
   );
