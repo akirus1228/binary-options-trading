@@ -1,19 +1,18 @@
 import {
-  Avatar,
   Box,
   Icon,
-  List,
-  ListItemButton,
-  ListItemText,
-  ListSubheader,
   MenuItem,
   Select,
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { AssetStatus, BackendAssetQueryParams } from "../../../types/backend-types";
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import {
+  AssetStatus,
+  BackendAssetQueryParams,
+  Collection,
+} from "../../../types/backend-types";
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import CollectionsFilter from "../../collections-filter/collections-filter";
 // import style from "./borrower-asset-filter.module.scss";
 
@@ -27,6 +26,7 @@ export const BorrowerAssetFilter = ({
   setQuery,
 }: BorrowerAssetFilterProps): JSX.Element => {
   const [status, setStatus] = useState<string>("Unlisted");
+  const [collection, setCollection] = useState<Collection>({} as Collection);
 
   const getStatusType = (status: string): AssetStatus => {
     switch (status) {
@@ -53,6 +53,15 @@ export const BorrowerAssetFilter = ({
     },
     [query]
   );
+
+  useMemo(() => {
+    const updatedQuery: BackendAssetQueryParams = {
+      ...query,
+      contractAddress: collection.contractAddress,
+    };
+    setQuery(updatedQuery);
+  }, [collection]);
+
   return (
     <Box sx={{ maxWidth: "250px", ml: "auto" }}>
       <Select
@@ -69,7 +78,7 @@ export const BorrowerAssetFilter = ({
         <MenuItem value="In Escrow">In Escrow</MenuItem>
       </Select>
       <hr />
-      <CollectionsFilter query={query} setQuery={setQuery} />
+      <CollectionsFilter collection={collection} setCollection={setCollection} />
       <hr />
       <Icon>
         <CancelOutlinedIcon />

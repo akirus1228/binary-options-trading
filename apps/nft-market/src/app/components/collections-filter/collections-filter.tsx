@@ -1,22 +1,37 @@
 import { Avatar, List, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { useGetCollectionsQuery } from "../../api/backend-api";
+import { ListingQueryParam } from "../../store/reducers/interfaces";
 import { BackendAssetQueryParams, Collection } from "../../types/backend-types";
 import style from "./collections-filter.module.scss";
 
 export interface CollectionsFilterProps {
-  query: BackendAssetQueryParams;
-  setQuery: Dispatch<SetStateAction<BackendAssetQueryParams>>;
+  collection: Collection;
+  setCollection: Dispatch<SetStateAction<Collection>>;
 }
 
-export const CollectionsFilter = (props: CollectionsFilterProps): JSX.Element => {
+export const CollectionsFilter = ({
+  collection,
+  setCollection,
+}: CollectionsFilterProps): JSX.Element => {
   const { data: collections, isLoading } = useGetCollectionsQuery({});
+  const handleCollectionClick = useCallback(
+    (collection: Collection) => {
+      setCollection(collection);
+    },
+    [collection, setCollection]
+  );
   return (
     <List component="nav" subheader={<ListSubheader>Collections</ListSubheader>}>
-      {collections?.map((collection: Collection) => (
-        <ListItemButton>
-          <Avatar src={collection.imageUrl} />
-          <ListItemText primary={collection.name} />
+      {collections?.map((collectionMap: Collection) => (
+        <ListItemButton
+          onClick={() => {
+            handleCollectionClick(collectionMap);
+          }}
+          selected={collection.slug === collectionMap.slug}
+        >
+          <Avatar src={collectionMap.imageUrl} />
+          <ListItemText primary={collectionMap.name} />
         </ListItemButton>
       ))}
     </List>

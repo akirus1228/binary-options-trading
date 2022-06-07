@@ -1,12 +1,7 @@
-import style from "./lender-asset-filter.module.scss";
+//import style from "./lender-asset-filter.module.scss";
 import {
-  Avatar,
   Box,
   Icon,
-  List,
-  ListItemButton,
-  ListItemText,
-  ListSubheader,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -14,9 +9,17 @@ import {
   Typography,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { Dispatch, SetStateAction, SyntheticEvent, useCallback, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { ListingQueryParam } from "../../../store/reducers/interfaces";
-import { ListingStatus } from "../../../types/backend-types";
+import { Collection } from "../../../types/backend-types";
+import CollectionsFilter from "../../collections-filter/collections-filter";
 
 export interface LenderAssetFilterProps {
   query: ListingQueryParam;
@@ -30,6 +33,7 @@ export const LenderAssetFilter = ({
   const [priceRange, setPriceRange] = useState<number[]>([0, 10000000]);
   const [aprRange, setAprRange] = useState<number[]>([0, 400]);
   const [durationRange, setDurationRange] = useState<number[]>([0, 365]);
+  const [collection, setCollection] = useState<Collection>({} as Collection);
 
   const valuetext = (value: number) => {
     return `$${value}`;
@@ -108,6 +112,14 @@ export const LenderAssetFilter = ({
     []
   );
 
+  useMemo(() => {
+    const updatedQuery: ListingQueryParam = {
+      ...query,
+      contractAddress: collection.contractAddress,
+    };
+    setQuery(updatedQuery);
+  }, [collection]);
+
   return (
     <Box sx={{ maxWidth: "250px", ml: "auto" }}>
       <Select
@@ -174,20 +186,7 @@ export const LenderAssetFilter = ({
         <span style={{ fontSize: "10px" }}>{durationRange[0]} days</span>
         <span style={{ fontSize: "10px" }}>{durationRange[1]} days</span>
       </Box>
-      <List component="nav" subheader={<ListSubheader>Collections</ListSubheader>}>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="Doodles" />
-        </ListItemButton>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="Cool Cats NFT" />
-        </ListItemButton>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="CrypToadz by GREMPLIN" />
-        </ListItemButton>
-      </List>
+      <CollectionsFilter collection={collection} setCollection={setCollection} />
       <hr />
       <Icon>
         <CancelOutlinedIcon />
