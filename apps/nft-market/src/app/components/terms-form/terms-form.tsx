@@ -35,7 +35,7 @@ import { createListing, updateListing } from "../../store/reducers/listing-slice
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { signTerms } from "../../helpers/signatures";
 import { useCreateOfferMutation, useUpdateTermsMutation } from "../../api/backend-api";
-import { USDBToken } from "@fantohm/shared/images";
+import { DaiToken, EthToken, USDBToken } from "@fantohm/shared/images";
 import { ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
 
@@ -69,7 +69,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [apr, setApr] = useState(props?.listing?.term.apr || 25);
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
-  //const [repaymentTotal, setRepaymentTotal] = useState(12500);
+  const [currency, setCurrency] = useState("USDB");
   // create offer api call
   const [createOffer, { isLoading: isCreateOfferLoading, data: createOfferResponse }] =
     useCreateOfferMutation();
@@ -329,6 +329,11 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     }
   }, [chainId, address, amount, provider]);
 
+  const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
+    //do something
+    setCurrency(event.target.value);
+  };
+
   return (
     <Box className="flex fc" sx={{ padding: "1em" }}>
       <Box className="flex fc">
@@ -337,12 +342,44 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         </Typography>
         <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>
-            <img
-              style={{ height: "28px", width: "28px" }}
-              src={USDBToken}
-              alt="USDB Token Icon"
-            />
-            USDB
+            <Select
+              value={currency}
+              onChange={handleCurrencyChange}
+              variant="standard"
+              sx={{ background: "transparent" }}
+              className="borderless"
+            >
+              <MenuItem value="USDB">
+                <Box className="flex fr ai-c">
+                  <img
+                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                    src={USDBToken}
+                    alt="USDB Token Icon"
+                  />
+                  USDB
+                </Box>
+              </MenuItem>
+              <MenuItem value="DAI">
+                <Box className="flex fr ai-c">
+                  <img
+                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                    src={DaiToken}
+                    alt="DAI Token Icon"
+                  />
+                  DAI
+                </Box>
+              </MenuItem>
+              <MenuItem value="WETH">
+                <Box className="flex fr ai-c">
+                  <img
+                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                    src={EthToken}
+                    alt="WETH Token Icon"
+                  />
+                  WETH
+                </Box>
+              </MenuItem>
+            </Select>
           </Box>
           <Box className={`flex fr ${style["rightSide"]}`}>
             <TextField
