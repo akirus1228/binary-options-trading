@@ -26,6 +26,7 @@ import {
   Asset,
   AssetStatus,
   BackendLoadingStatus,
+  LendingCurrency,
   Listing,
   Offer,
   OfferStatus,
@@ -69,7 +70,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [apr, setApr] = useState(props?.listing?.term.apr || 25);
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
-  const [currency, setCurrency] = useState("USDB");
+  const [currency, setCurrency] = useState<LendingCurrency>(LendingCurrency.USDB);
+  const [currencyString, setCurrencyString] = useState<string>("USDB");
   // create offer api call
   const [createOffer, { isLoading: isCreateOfferLoading, data: createOfferResponse }] =
     useCreateOfferMutation();
@@ -178,7 +180,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       chainId,
       asset.assetContractAddress,
       asset.tokenId,
-      term
+      term,
+      currency
     );
     term.signature = termSignature;
     dispatch(createListing({ term, asset }));
@@ -212,7 +215,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       chainId,
       asset.assetContractAddress,
       asset.tokenId,
-      term
+      term,
+      currency
     );
     term.signature = termSignature;
     updateTerms(term);
@@ -289,7 +293,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       chainId || isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
       props.asset.assetContractAddress,
       props.asset.tokenId,
-      preSigTerm
+      preSigTerm,
+      currency
     );
 
     const term = {
@@ -331,7 +336,19 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     //do something
-    setCurrency(event.target.value);
+    setCurrencyString(event.target.value);
+    switch (event.target.value) {
+      case "DAI":
+        setCurrency(LendingCurrency.DAI);
+        break;
+      case "WETH":
+        setCurrency(LendingCurrency.WETH);
+        break;
+      case "USDB":
+      default:
+        setCurrency(LendingCurrency.USDB);
+        break;
+    }
   };
 
   return (
@@ -343,7 +360,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>
             <Select
-              value={currency}
+              value={currencyString}
               onChange={handleCurrencyChange}
               variant="standard"
               sx={{ background: "transparent" }}

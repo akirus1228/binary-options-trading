@@ -332,3 +332,10 @@ export type PlatformWalletInfo = {
   loansBorrowed: number;
   loansGiven: number;
 };
+
+export enum LendingCurrency {
+  USDB = "USDB",
+  DAI = "DAI",
+  WETH = "WETH",
+  USDC = "USDC",
+}

@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { addresses } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
-import { Terms } from "../types/backend-types";
+import { LendingCurrency, Terms } from "../types/backend-types";
 import { nftTokenType } from "../types/contract-types";
 
 export const signTerms = async (
@@ -10,7 +10,8 @@ export const signTerms = async (
   chainId: number,
   nftContractAddress: string,
   tokenId: string,
-  term: Terms
+  term: Terms,
+  lendingCurrency: LendingCurrency
 ): Promise<string> => {
   const payload = ethers.utils.defaultAbiCoder.encode(
     [
@@ -26,7 +27,7 @@ export const signTerms = async (
     [
       borrowerAddress,
       nftContractAddress,
-      addresses[chainId]["USDB_ADDRESS"],
+      addresses[chainId][`${lendingCurrency}_ADDRESS`],
       tokenId,
       term.duration,
       ethers.utils.parseEther(term.amount.toString()),
