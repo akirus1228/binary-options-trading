@@ -1,19 +1,19 @@
 import {
-  Avatar,
   Box,
   Icon,
-  List,
-  ListItemButton,
-  ListItemText,
-  ListSubheader,
   MenuItem,
   Select,
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { AssetStatus, BackendAssetQueryParams } from "../../../types/backend-types";
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import {
+  AssetStatus,
+  BackendAssetQueryParams,
+  Collection,
+} from "../../../types/backend-types";
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
+import CollectionsFilter from "../../collections-filter/collections-filter";
 // import style from "./borrower-asset-filter.module.scss";
 
 export interface BorrowerAssetFilterProps {
@@ -26,6 +26,7 @@ export const BorrowerAssetFilter = ({
   setQuery,
 }: BorrowerAssetFilterProps): JSX.Element => {
   const [status, setStatus] = useState<string>("Unlisted");
+  const [collection, setCollection] = useState<Collection>({} as Collection);
 
   const getStatusType = (status: string): AssetStatus => {
     switch (status) {
@@ -52,6 +53,20 @@ export const BorrowerAssetFilter = ({
     },
     [query]
   );
+
+  useMemo(() => {
+    const updatedQuery: BackendAssetQueryParams = {
+      ...query,
+      contractAddress: collection.contractAddress,
+    };
+    setQuery(updatedQuery);
+  }, [collection]);
+
+  const handleResetFilters = () => {
+    handleStatusChange({ target: { value: "Unlisted" } } as SelectChangeEvent<string>);
+    setCollection({} as Collection);
+  };
+
   return (
     <Box sx={{ maxWidth: "250px", ml: "auto" }}>
       <Select
@@ -68,25 +83,18 @@ export const BorrowerAssetFilter = ({
         <MenuItem value="In Escrow">In Escrow</MenuItem>
       </Select>
       <hr />
-      <List component="nav" subheader={<ListSubheader>Collections</ListSubheader>}>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="Doodles" />
-        </ListItemButton>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="Cool Cats NFT" />
-        </ListItemButton>
-        <ListItemButton>
-          <Avatar />
-          <ListItemText primary="CrypToadz by GREMPLIN" />
-        </ListItemButton>
-      </List>
+      <CollectionsFilter collection={collection} setCollection={setCollection} />
       <hr />
-      <Icon>
-        <CancelOutlinedIcon />
-      </Icon>
-      <Typography>Reset filter</Typography>
+      <Box
+        className="flex fr ai-c"
+        sx={{ cursor: "pointer" }}
+        onClick={handleResetFilters}
+      >
+        <Icon>
+          <CancelOutlinedIcon />
+        </Icon>
+        <Typography>Reset filter</Typography>
+      </Box>
     </Box>
   );
 };
