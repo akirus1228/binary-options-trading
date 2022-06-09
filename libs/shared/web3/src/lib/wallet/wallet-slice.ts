@@ -230,20 +230,13 @@ export const requestErc20Allowance = createAsyncThunk(
       return rejectWithValue("Addresses and id required");
     }
     try {
-      console.log(`walletAddress ${walletAddress}`);
-      console.log(`assetAddress ${assetAddress}`);
-      console.log(`amount ${amount}`);
       const signer = provider.getSigner();
-      console.log("signer aquired");
       const erc20Contract = new ethers.Contract(assetAddress, ierc20Abi, signer);
-      console.log("contract initialized");
       const approveTx = await erc20Contract["approve"](
         addresses[networkId]["USDB_LENDING_ADDRESS"] as string,
         amount
       );
-      console.log("contract call started");
       await approveTx.wait();
-      console.log("wait finished");
       const payload: Erc20Allowance = {};
       payload[`${walletAddress}:::${assetAddress}`] = amount;
       return payload;
