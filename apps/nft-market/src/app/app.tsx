@@ -193,7 +193,19 @@ export const App = (): JSX.Element => {
               element={<AssetDetailsPage />}
             />
             <Route path="/my-account" element={<MyAccountPage />} />
-            <Route path="/th" element={<TestHelper />} />
+            <Route
+              path="/th"
+              element={
+                isDev() ? (
+                  <TestHelper />
+                ) : (
+                  <main style={{ padding: "1rem" }}>
+                    <h1>404</h1>
+                    <p>There's nothing here!</p>
+                  </main>
+                )
+              }
+            />
             <Route
               path="*"
               element={
