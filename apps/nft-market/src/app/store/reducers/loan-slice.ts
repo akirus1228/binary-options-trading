@@ -110,6 +110,29 @@ export const currencyAddressFromType = (
   ];
 };
 
+export const typeFromCurrencyAddress = (currencyAddress: string): LendingCurrency => {
+  console.log(`currencyAddress ${currencyAddress}`);
+  const result = Object.entries(
+    addresses[isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum]
+  ).find(([key, address]) => address === currencyAddress);
+  if (typeof result === "undefined") return LendingCurrency.USDB; //not found
+  switch (result[0]) {
+    case "WETH_ADDRESS":
+      return LendingCurrency.WETH;
+    case "WBTC_ADDRESS":
+      return LendingCurrency.WBTC;
+    case "DAI_ADDRESS":
+      return LendingCurrency.DAI;
+    case "USDC_ADDRESS":
+      return LendingCurrency.USDC;
+    case "USDT_ADDRESS":
+      return LendingCurrency.USDT;
+    case "USDB_ADDRESS":
+    default:
+      return LendingCurrency.USDB;
+  }
+};
+
 /*
 createLoan: add loan to contract
 params:

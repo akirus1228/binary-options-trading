@@ -46,6 +46,7 @@ import { addAlert } from "../../store/reducers/app-slice";
 import {
   currencyAddressFromType,
   LendingCurrency,
+  typeFromCurrencyAddress,
 } from "../../store/reducers/loan-slice";
 
 export interface TermsFormProps {
@@ -94,7 +95,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     {
       isLoading: isCreateOfferLoading,
       data: createOfferResponse,
-      isSuccess: isCreateOfferSuccess,
       reset: createOfferReset,
     },
   ] = useCreateOfferMutation();
@@ -121,6 +121,15 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       erc20TokenAddress: currencyAddressFromType(currency) || "",
     })
   );
+
+  // if there is a listing, use the currency associated with it
+  useEffect(() => {
+    if (!props.listing || typeof props.listing === "undefined") return;
+    const listingCurrency = typeFromCurrencyAddress(props.listing.term.currencyAddress);
+    console.log(`listingCurrency ${listingCurrency}`);
+    setCurrency(listingCurrency);
+    setCurrencyString(listingCurrency);
+  }, []);
 
   // request permission to access the NFT from the contract
   const handlePermissionRequest = useCallback(() => {
