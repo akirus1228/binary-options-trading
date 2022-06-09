@@ -57,12 +57,11 @@ export const BorrowerLoanDetails = ({
     (state: RootState) => state.wallet
   );
 
-  // select the USDB allowance provided to lending contract for this address
-  const usdbAllowance = useSelector((state: RootState) =>
+  // select the currency allowance provided to lending contract for this address
+  const erc20Allowance = useSelector((state: RootState) =>
     selectErc20AllowanceByAddress(state, {
       walletAddress: user.address,
-      erc20TokenAddress:
-        addresses[isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum]["USDB_ADDRESS"],
+      erc20TokenAddress: loanDetails.currency || "",
     })
   );
 
@@ -70,17 +69,17 @@ export const BorrowerLoanDetails = ({
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (chainId && user.address && provider) {
+    if (chainId && user.address && provider && loanDetails.currency && !erc20Allowance) {
       dispatch(
         checkErc20Allowance({
           networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
           provider,
           walletAddress: user.address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+          assetAddress: loanDetails.currency,
         })
       );
     }
-  }, [chainId, user.address, provider]);
+  }, [chainId, user.address, provider, loanDetails.currency, erc20Allowance]);
 
   useEffect(() => {
     if (!loan || !loan.contractLoanId || !provider) return;
@@ -97,7 +96,7 @@ export const BorrowerLoanDetails = ({
 
   const handleRepayLoan = useCallback(async () => {
     if (!loan.contractLoanId || !provider) return;
-    if (usdbAllowance && usdbAllowance.gte(loanDetails.amountDueGwei)) {
+    if (erc20Allowance && erc20Allowance.gte(loanDetails.amountDueGwei)) {
       const repayLoanParams = {
         loanId: loan.contractLoanId,
         amountDue: loanDetails.amountDueGwei,
@@ -116,12 +115,12 @@ export const BorrowerLoanDetails = ({
       };
       updateLoan(updateLoanRequest);
     } else {
-      console.warn(`insufficiant allowance: ${usdbAllowance}`);
+      console.warn(`insufficiant allowance: ${erc20Allowance}`);
     }
   }, [
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    usdbAllowance,
+    erc20Allowance,
     loanDetails.amountDueGwei,
   ]);
 
@@ -132,14 +131,14 @@ export const BorrowerLoanDetails = ({
         networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
         provider,
         walletAddress: user.address,
-        assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+        assetAddress: loanDetails.currency,
         amount: loanDetails.amountDueGwei,
       })
     );
   }, [
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    usdbAllowance,
+    erc20Allowance,
     loanDetails.amountDueGwei,
   ]);
 
@@ -216,17 +215,17 @@ export const BorrowerLoanDetails = ({
             </Box>
           </Box>
           <Box className="flex fc">
-            {!!usdbAllowance &&
-              usdbAllowance.gte(loanDetails.amountDueGwei) &&
+            {!!erc20Allowance &&
+              erc20Allowance.gte(loanDetails.amountDueGwei) &&
               !isPending && (
                 <Button variant="contained" onClick={handleRepayLoan}>
                   Repay loan
                 </Button>
               )}
-            {(!usdbAllowance || usdbAllowance.lt(loanDetails.amountDueGwei)) &&
+            {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
               !isPending && (
                 <Button variant="contained" onClick={handleRequestAllowance}>
-                  Repay loan.
+                  Approve repay loan funds
                 </Button>
               )}
             {isPending && <Button variant="contained">Pending...</Button>}

@@ -27,8 +27,9 @@ export const CollectionsFilter = ({
   );
   return (
     <List component="nav" subheader={<ListSubheader>Collections</ListSubheader>}>
-      {collections?.map((collectionMap: Collection) => (
+      {collections?.map((collectionMap: Collection, index: number) => (
         <ListItemButton
+          key={`collection-filter-item-${index}`}
           onClick={() => {
             handleCollectionClick(collectionMap);
           }}
