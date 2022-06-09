@@ -1,5 +1,4 @@
 import {
-  addresses,
   checkNftPermission,
   formatCurrency,
   isDev,
@@ -26,7 +25,6 @@ import {
   Asset,
   AssetStatus,
   BackendLoadingStatus,
-  LendingCurrency,
   Listing,
   Offer,
   OfferStatus,
@@ -46,6 +44,10 @@ import {
 } from "@fantohm/shared/images";
 import { ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
+import {
+  currencyAddressFromType,
+  LendingCurrency,
+} from "../../store/reducers/loan-slice";
 
 export interface TermsFormProps {
   asset: Asset;
@@ -99,10 +101,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // status of createListing
   const { createListingStatus } = useSelector((state: RootState) => state.listings);
   // select the USDB allowance provided to lending contract for this address
-  const usdbAllowance = useSelector((state: RootState) =>
+  const erc20Allowance = useSelector((state: RootState) =>
     selectErc20AllowanceByAddress(state, {
       walletAddress: address,
-      erc20TokenAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+      erc20TokenAddress: currencyAddressFromType(currency) || "",
     })
   );
 
@@ -180,6 +182,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
+      currencyAddress: currencyAddressFromType(currency) || "",
     };
     const termSignature = await signTerms(
       provider,
@@ -215,6 +218,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       duration: termTypes[durationType] * duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
+      currencyAddress: currencyAddressFromType(currency) || "",
     };
     const termSignature = await signTerms(
       provider,
@@ -292,6 +296,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       apr: apr,
       expirationAt: expirationAt.toJSON(),
       signature: "",
+      currencyAddress: currencyAddressFromType(currency) || "",
     };
 
     const signature = await signTerms(
@@ -304,7 +309,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currency
     );
 
-    const term = {
+    const term: Terms = {
       ...preSigTerm,
       signature,
     };
@@ -317,7 +322,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     };
     createOffer(offer);
     dispatch(addAlert({ message: "Offer sent" }));
-  }, [props.listing, provider, props.asset, amount, duration, apr]);
+  }, [props.listing, provider, props.asset, amount, duration, apr, currency]);
 
   useEffect(() => {
     if (!isCreateOfferLoading && !!createOfferResponse) {
@@ -334,12 +339,12 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
           provider,
           walletAddress: address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+          assetAddress: currencyAddressFromType(currency) || "",
           amount: ethers.utils.parseEther((amount * (1 + platformFee)).toString()),
         })
       );
     }
-  }, [chainId, address, amount, provider]);
+  }, [chainId, address, amount, provider, currency]);
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     //do something
@@ -514,7 +519,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       </Box>
       {isOwner && !hasPermission && !pending && (
         <Button variant="contained" onClick={handlePermissionRequest}>
-          Allow [name] to Access your NFT
+          Allow Liqd to Access your NFT
         </Button>
       )}
       {isOwner && hasPermission && !pending && !props.listing && (
@@ -530,7 +535,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
-        usdbAllowance.gte(
+        erc20Allowance.gte(
           ethers.utils.parseEther((amount * (1 + platformFee)).toString())
         ) && (
           <Button variant="contained" onClick={handleMakeOffer}>
@@ -540,7 +545,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
-        usdbAllowance.lt(
+        erc20Allowance.lt(
           ethers.utils.parseEther((amount * (1 + platformFee)).toString())
         ) && (
           <Button variant="contained" onClick={handleRequestAllowance}>

@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
-import { addresses, isDev, loadState, usdbLending } from "@fantohm/shared-web3";
+import {
+  addresses,
+  isDev,
+  loadState,
+  NetworkIds,
+  usdbLending,
+} from "@fantohm/shared-web3";
 import { BackendLoadingStatus, Loan } from "../../types/backend-types";
 import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
 import { RootState } from "..";
@@ -87,6 +93,21 @@ export enum TokenType {
   Other,
 }
 
+export enum LendingCurrency {
+  USDB = "USDB",
+  DAI = "DAI",
+  WETH = "WETH",
+  USDC = "USDC",
+  USDT = "USDT",
+  WBTC = "WBTC",
+}
+
+export const currencyAddressFromType = (
+  currencyType: LendingCurrency
+): string | undefined => {
+  return addresses[NetworkIds.Ethereum][`${currencyType}_ADDRESS`];
+};
+
 /*
 createLoan: add loan to contract
 params:
@@ -158,6 +179,7 @@ export const repayLoan = createAsyncThunk(
   "loan/repayLoan",
   async ({ loanId, amountDue, provider, networkId }: RepayLoanAsyncThunk) => {
     const signer = provider.getSigner();
+
     const lendingContract = new ethers.Contract(
       addresses[networkId]["USDB_LENDING_ADDRESS"],
       usdbLending,

@@ -77,7 +77,7 @@ export const loadPlatformFee = createAsyncThunk(
 );
 
 /* 
-loadWalletBalance: loads balances
+loadWalletCurrencies: loads balances
 params: 
 - networkId: number
 - address: string
@@ -100,6 +100,35 @@ export const loadWalletCurrencies = createAsyncThunk(
         symbol: AcceptedCurrencies.USDB,
         name: "USDBalance",
         balance: ethers.utils.formatUnits(usdbBalance, "gwei"),
+      } as Currency,
+    ];
+  }
+);
+
+/* 
+loadWalletCurrencies: loads balances
+params: 
+- networkId: number
+- address: string
+returns: void
+*/
+export const loadErc20Balance = createAsyncThunk(
+  "wallet/loadErc20Balance",
+  async ({
+    networkId,
+    address,
+    currencyAddress,
+  }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
+    const provider = await chains[networkId].provider;
+
+    const erc20Contract = new ethers.Contract(currencyAddress, ierc20Abi, provider);
+
+    const erc20Balance = await erc20Contract["balanceOf"](address);
+    return [
+      {
+        symbol: AcceptedCurrencies.USDB,
+        name: "USDBalance",
+        balance: ethers.utils.formatUnits(erc20Balance, "gwei"),
       } as Currency,
     ];
   }

@@ -1,7 +1,8 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { addresses } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
-import { LendingCurrency, Terms } from "../types/backend-types";
+import { currencyAddressFromType, LendingCurrency } from "../store/reducers/loan-slice";
+import { Terms } from "../types/backend-types";
 import { nftTokenType } from "../types/contract-types";
 
 export const signTerms = async (
@@ -27,7 +28,7 @@ export const signTerms = async (
     [
       borrowerAddress,
       nftContractAddress,
-      addresses[chainId][`${lendingCurrency}_ADDRESS`],
+      currencyAddressFromType(lendingCurrency),
       tokenId,
       term.duration,
       ethers.utils.parseEther(term.amount.toString()),

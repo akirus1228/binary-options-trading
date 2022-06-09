@@ -1,5 +1,4 @@
 import {
-  addresses,
   checkErc20Allowance,
   isDev,
   NetworkIds,

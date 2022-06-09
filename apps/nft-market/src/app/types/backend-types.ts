@@ -73,6 +73,7 @@ export type Terms = {
   duration: number;
   expirationAt: string;
   signature: string;
+  currencyAddress: string;
 } & StandardBackendObject;
 
 export enum ListingStatus {
@@ -332,12 +333,3 @@ export type PlatformWalletInfo = {
   loansBorrowed: number;
   loansGiven: number;
 };
-
-export enum LendingCurrency {
-  USDB = "USDB",
-  DAI = "DAI",
-  WETH = "WETH",
-  USDC = "USDC",
-  USDT = "USDT",
-  WBTC = "WBTC",
-}
