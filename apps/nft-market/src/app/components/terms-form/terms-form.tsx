@@ -17,14 +17,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { RootState } from "../../store";
+import store, { RootState } from "../../store";
 import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import style from "./terms-form.module.scss";
 import {
   Asset,
   AssetStatus,
-  BackendLoadingStatus,
   Listing,
   Offer,
   OfferStatus,
@@ -65,12 +64,20 @@ export const termTypes: TermTypes = {
   months: 30,
 };
 
+type AppDispatch = typeof store.dispatch;
+
 export const TermsForm = (props: TermsFormProps): JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { address, chainId, provider } = useWeb3Context();
   // update term backend api call
-  const [updateTerms, { isLoading: isTermsUpdateLoading, data: updateTermsResponse }] =
-    useUpdateTermsMutation();
+  const [
+    updateTerms,
+    {
+      isLoading: isTermsUpdateLoading,
+      data: updateTermsResponse,
+      reset: updateTermsReset,
+    },
+  ] = useUpdateTermsMutation();
   // primary form pending state
   const [pending, setPending] = useState(false);
   // primary term variables
@@ -82,8 +89,15 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [currency, setCurrency] = useState<LendingCurrency>(LendingCurrency.USDB);
   const [currencyString, setCurrencyString] = useState<string>("USDB");
   // create offer api call
-  const [createOffer, { isLoading: isCreateOfferLoading, data: createOfferResponse }] =
-    useCreateOfferMutation();
+  const [
+    createOffer,
+    {
+      isLoading: isCreateOfferLoading,
+      data: createOfferResponse,
+      isSuccess: isCreateOfferSuccess,
+      reset: createOfferReset,
+    },
+  ] = useCreateOfferMutation();
   // select logged in user
   const { user } = useSelector((state: RootState) => state.backend);
   // nft permission status updates from state
@@ -194,8 +208,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currency
     );
     term.signature = termSignature;
-    dispatch(createListing({ term, asset }));
-    dispatch(addAlert({ message: "Listing created" }));
+    dispatch(createListing({ term, asset })).then(() => {
+      dispatch(addAlert({ message: "Listing created" }));
+      props.onClose(true);
+    });
     return;
   };
 
@@ -244,6 +260,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       dispatch(updateListing({ ...props.listing, term: updateTermsResponse }));
     }
     if (!isTermsUpdateLoading && updateTermsResponse) {
+      updateTermsReset();
       props.onClose(true);
     }
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
@@ -276,12 +293,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     setRepaymentAmount(_repaymentAmount);
     //setRepaymentTotal(_repaymentAmount + amount);
   }, [durationType, duration, amount, apr]);
-
-  useEffect(() => {
-    if (createListingStatus === BackendLoadingStatus.succeeded) {
-      props.onClose(true);
-    }
-  }, [createListingStatus]);
 
   // make offer logic
   const handleMakeOffer = useCallback(async () => {
@@ -326,6 +337,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   useEffect(() => {
     if (!isCreateOfferLoading && !!createOfferResponse) {
+      createOfferReset();
       props.onClose(true);
     }
   }, [isCreateOfferLoading, createOfferResponse]);
@@ -549,7 +561,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           ethers.utils.parseEther((amount * (1 + platformFee)).toString())
         ) && (
           <Button variant="contained" onClick={handleRequestAllowance}>
-            Allow [name] to Access your USDB
+            Allow Liqd to Access your USDB
           </Button>
         )}
       {pending && (

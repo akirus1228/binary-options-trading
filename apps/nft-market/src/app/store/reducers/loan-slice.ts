@@ -105,7 +105,9 @@ export enum LendingCurrency {
 export const currencyAddressFromType = (
   currencyType: LendingCurrency
 ): string | undefined => {
-  return addresses[NetworkIds.Ethereum][`${currencyType}_ADDRESS`];
+  return addresses[isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum][
+    `${currencyType}_ADDRESS`
+  ];
 };
 
 /*
