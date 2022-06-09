@@ -338,4 +338,6 @@ export enum LendingCurrency {
   DAI = "DAI",
   WETH = "WETH",
   USDC = "USDC",
+  USDT = "USDT",
+  WBTC = "WBTC",
 }

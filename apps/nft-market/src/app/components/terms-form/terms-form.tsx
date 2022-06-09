@@ -36,7 +36,14 @@ import { createListing, updateListing } from "../../store/reducers/listing-slice
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { signTerms } from "../../helpers/signatures";
 import { useCreateOfferMutation, useUpdateTermsMutation } from "../../api/backend-api";
-import { DaiToken, EthToken, USDBToken } from "@fantohm/shared/images";
+import {
+  DaiToken,
+  EthToken,
+  USDBToken,
+  UsdcToken,
+  UsdtToken,
+  WbtcToken,
+} from "@fantohm/shared/images";
 import { ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
 
@@ -341,6 +348,15 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       case "DAI":
         setCurrency(LendingCurrency.DAI);
         break;
+      case "USTC":
+        setCurrency(LendingCurrency.USDC);
+        break;
+      case "USDT":
+        setCurrency(LendingCurrency.USDT);
+        break;
+      case "WBTC":
+        setCurrency(LendingCurrency.WBTC);
+        break;
       case "WETH":
         setCurrency(LendingCurrency.WETH);
         break;
@@ -386,6 +402,36 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
                   DAI
                 </Box>
               </MenuItem>
+              <MenuItem value="USDC">
+                <Box className="flex fr ai-c">
+                  <img
+                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                    src={UsdcToken}
+                    alt="USDC Token Icon"
+                  />
+                  USDC
+                </Box>
+              </MenuItem>
+              <MenuItem value="USDT">
+                <Box className="flex fr ai-c">
+                  <img
+                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                    src={UsdtToken}
+                    alt="USDT Token Icon"
+                  />
+                  USDT
+                </Box>
+              </MenuItem>
+              <MenuItem value="WBTC">
+                <Box className="flex fr ai-c">
+                  <img
+                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                    src={WbtcToken}
+                    alt="WBTC Token Icon"
+                  />
+                  wBTC
+                </Box>
+              </MenuItem>
               <MenuItem value="WETH">
                 <Box className="flex fr ai-c">
                   <img
@@ -393,7 +439,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
                     src={EthToken}
                     alt="WETH Token Icon"
                   />
-                  WETH
+                  wETH
                 </Box>
               </MenuItem>
             </Select>
