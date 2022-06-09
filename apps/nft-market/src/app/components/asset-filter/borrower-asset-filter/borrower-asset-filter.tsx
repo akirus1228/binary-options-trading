@@ -12,7 +12,14 @@ import {
   BackendAssetQueryParams,
   Collection,
 } from "../../../types/backend-types";
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import CollectionsFilter from "../../collections-filter/collections-filter";
 // import style from "./borrower-asset-filter.module.scss";
 
@@ -54,7 +61,8 @@ export const BorrowerAssetFilter = ({
     [query]
   );
 
-  useMemo(() => {
+  useEffect(() => {
+    if (collection.contractAddress === query.contractAddress) return;
     const updatedQuery: BackendAssetQueryParams = {
       ...query,
       contractAddress: collection.contractAddress,
