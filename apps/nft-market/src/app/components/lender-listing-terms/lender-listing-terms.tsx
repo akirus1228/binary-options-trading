@@ -6,6 +6,7 @@ import {
   selectErc20AllowanceByAddress,
   useWeb3Context,
   loadPlatformFee,
+  useGetTokenPriceQuery,
 } from "@fantohm/shared-web3";
 import { Box, Button, Container, Paper, SxProps, Theme, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -52,6 +53,14 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
       walletAddress: address,
       erc20TokenAddress: props.listing.term.currencyAddress,
     })
+  );
+
+  const { data: currencyTokenPrice, isLoading: isPriceLoading } = useGetTokenPriceQuery(
+    {
+      contractAddress: props.listing.term.currencyAddress,
+      chainName: "ethereum",
+    },
+    { skip: !props.listing }
   );
 
   // helper to calculate term details like repayment amount
@@ -233,20 +242,39 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
           <Box className="flex fc">
             <Typography className={style["label"]}>Principal</Typography>
             <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {props.listing.term.amount.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+              {props.listing.term.amount.toFixed(4)}{" "}
+              {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
             </Typography>
+            <span className={`${style["data"]} ${style["secondary"]}`}>
+              (
+              {!isPriceLoading &&
+                !!currencyTokenPrice &&
+                "~" &&
+                (props.listing.term.amount * currencyTokenPrice).toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              {!isPriceLoading &&
+                currencyTokenPrice === 0 &&
+                "Unable to load estimated USD value"}
+              )
+            </span>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Repayment</Typography>
             <Typography className={`${style["data"]}`}>
-              {repaymentAmount.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+              {repaymentAmount.toFixed(4)}{" "}
+              {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
             </Typography>
+            <span>
+              {!isPriceLoading &&
+                !!currencyTokenPrice &&
+                "~" &&
+                (repaymentAmount * currencyTokenPrice).toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+            </span>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Duration</Typography>

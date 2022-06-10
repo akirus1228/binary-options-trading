@@ -3,7 +3,7 @@ import { appReducer } from "./reducers/app-slice";
 import { themeReducer } from "@fantohm/shared-ui-themes";
 import { assetsReducer } from "./reducers/asset-slice";
 import { backendReducer } from "./reducers/backend-slice";
-import { saveState, walletReducer } from "@fantohm/shared-web3";
+import { coingeckoApi, saveState, walletReducer } from "@fantohm/shared-web3";
 import { listingsReducer } from "./reducers/listing-slice";
 import { openseaApi } from "../api/opensea";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
@@ -24,11 +24,13 @@ const store = configureStore({
     loans: loansReducer,
     [openseaApi.reducerPath]: openseaApi.reducer,
     [backendApi.reducerPath]: backendApi.reducer,
+    [coingeckoApi.reducerPath]: coingeckoApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false })
       .concat(openseaApi.middleware)
-      .concat(backendApi.middleware),
+      .concat(backendApi.middleware)
+      .concat(coingeckoApi.middleware),
 });
 
 store.subscribe(() => {

@@ -6,6 +6,7 @@ import {
   requestErc20Allowance,
   requestNftPermission,
   selectErc20AllowanceByAddress,
+  useGetTokenPriceQuery,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
@@ -120,6 +121,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       walletAddress: address,
       erc20TokenAddress: currencyAddressFromType(currency) || "",
     })
+  );
+
+  const { data: currencyTokenPrice, isLoading: isPriceLoading } = useGetTokenPriceQuery(
+    {
+      contractAddress: currencyAddressFromType(currency) || "",
+      chainName: "ethereum",
+    },
+    { skip: !currency }
   );
 
   // if there is a listing, use the currency associated with it
