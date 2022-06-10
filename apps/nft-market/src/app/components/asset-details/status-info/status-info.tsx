@@ -10,6 +10,7 @@ import {
 } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-helpers";
+import { typeFromCurrencyAddress } from "../../../store/reducers/loan-slice";
 
 export interface StatusInfoProps {
   asset: Asset;
@@ -33,7 +34,8 @@ const ListedInfo = ({
         <span className={style["strong"]}>{listing.asset.name} </span>
         <span>is currently listed seeking a loan amount of &nbsp;</span>
         <span className={style["strong"]}>
-          of {formatCurrency(listing.term.amount)} in USDB.{" "}
+          of {formatCurrency(listing.term.amount)} in{" "}
+          {typeFromCurrencyAddress(listing.term.currencyAddress)}.{" "}
         </span>
         <span>Listing expires </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
