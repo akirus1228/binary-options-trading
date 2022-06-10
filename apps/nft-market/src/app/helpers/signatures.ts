@@ -14,6 +14,10 @@ export const signTerms = async (
   term: Terms,
   lendingCurrency: LendingCurrency
 ): Promise<string> => {
+  console.log(`borrowerAddress ${borrowerAddress}`);
+  console.log(`nftContractAddress ${nftContractAddress}`);
+  console.log(`tokenId ${tokenId}`);
+  console.log(`lendingCurrency ${lendingCurrency}`);
   const payload = ethers.utils.defaultAbiCoder.encode(
     [
       "address",

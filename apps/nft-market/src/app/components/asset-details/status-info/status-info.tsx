@@ -63,7 +63,8 @@ const LockedInfo = ({
           to its borrower if a repayment amount&nbsp;
         </span>
         <span className={style["strong"]}>
-          of {formatCurrency(repaymentTotal)} in USDB{" "}
+          of {formatCurrency(repaymentTotal)} in{" "}
+          {typeFromCurrencyAddress(loan.assetListing.term.currencyAddress)}{" "}
         </span>
         <span>is made before </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>

@@ -16,7 +16,6 @@ export const Linear = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("Starting linear effect");
     const newTimer = setInterval(() => {
       const secondsSinceStart = Date.now() - growlNotification.startSeconds;
       const percentComplete = (secondsSinceStart / growlNotification.duration) * 100;
@@ -27,6 +26,8 @@ export const Linear = ({
         dispatch(clearAlert(growlNotification.startSeconds));
       }
     }, 333);
+    // cleanup function
+    return () => clearInterval(newTimer);
   }, []);
 
   return <LinearProgress variant="determinate" value={progress} />;
