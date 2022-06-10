@@ -111,7 +111,6 @@ export const currencyAddressFromType = (
 };
 
 export const typeFromCurrencyAddress = (currencyAddress: string): LendingCurrency => {
-  console.log(`currencyAddress ${currencyAddress}`);
   const result = Object.entries(
     addresses[isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum]
   ).find(([key, address]) => address === currencyAddress);
