@@ -147,6 +147,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       loan: createLoanRequest,
       provider,
       networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+      currencyAddress: offer.term.currencyAddress,
     };
 
     const createLoanResult = await dispatch(

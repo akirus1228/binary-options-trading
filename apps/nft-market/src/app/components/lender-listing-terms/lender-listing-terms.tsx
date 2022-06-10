@@ -11,7 +11,10 @@ import { Box, Button, Container, Paper, SxProps, Theme, Typography } from "@mui/
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateLoanMutation, useGetAssetQuery } from "../../api/backend-api";
-import { contractCreateLoan } from "../../store/reducers/loan-slice";
+import {
+  contractCreateLoan,
+  typeFromCurrencyAddress,
+} from "../../store/reducers/loan-slice";
 import {
   AssetStatus,
   BackendLoadingStatus,
@@ -50,7 +53,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
   const allowance = useSelector((state: RootState) =>
     selectErc20AllowanceByAddress(state, {
       walletAddress: address,
-      erc20TokenAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+      erc20TokenAddress: props.listing.term.currencyAddress,
     })
   );
 
@@ -101,6 +104,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
       loan: createLoanRequest,
       provider,
       networkId: chainId,
+      currencyAddress: createLoanRequest.term.currencyAddress,
     };
     const createLoanResult = await dispatch(
       contractCreateLoan(createLoanParams)
@@ -220,11 +224,14 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
             </Button>
           </Box>
           <Box className="flex fc">
-            {!hasAllowance && (
-              <Button variant="outlined" onClick={handleRequestAllowance}>
-                Provide Allowance to Your USDB
-              </Button>
-            )}
+            {!hasAllowance &&
+              checkErc20AllowanceStatus !== "loading" &&
+              requestErc20AllowanceStatus !== "loading" && (
+                <Button variant="outlined" onClick={handleRequestAllowance}>
+                  Provide Allowance to Your{" "}
+                  {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
+                </Button>
+              )}
             {hasAllowance && !isCreating && loanCreationStatus !== "loading" && (
               <Button
                 variant="outlined"

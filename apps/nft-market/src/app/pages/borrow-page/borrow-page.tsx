@@ -37,19 +37,9 @@ export const BorrowPage = (): JSX.Element => {
   });
 
   // using the opensea assets, crosscheck with backend api for correlated data
-  const { data: beAssets, isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
+  const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
     skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
   });
-
-  useEffect(() => {
-    console.log(`Opensea Assets Loading: ${assetsLoading}`);
-    console.log(assets);
-  }, [assetsLoading]);
-
-  useEffect(() => {
-    console.log(`Backend Assets Loading: ${isAssetLoading}`);
-    console.log(beAssets);
-  }, [isAssetLoading]);
 
   useEffect(() => {
     const newQuery = {
