@@ -1,11 +1,11 @@
 import {
-  addresses,
   checkErc20Allowance,
   isDev,
   NetworkIds,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   useWeb3Context,
+  loadPlatformFee,
 } from "@fantohm/shared-web3";
 import { Box, Button, Container, Paper, SxProps, Theme, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -22,13 +22,12 @@ import {
   ListingStatus,
   Loan,
   LoanStatus,
-  Terms,
 } from "../../types/backend-types";
 import style from "./lender-listing-terms.module.scss";
 import store, { RootState } from "../../store";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { MakeOffer } from "../make-offer/make-offer";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 
 export interface LenderListingTermsProps {
   listing: Listing;
@@ -40,12 +39,10 @@ type AppDispatch = typeof store.dispatch;
 export function LenderListingTerms(props: LenderListingTermsProps) {
   const dispatch: AppDispatch = useDispatch();
   const { provider, chainId, address } = useWeb3Context();
-  // local store of term to pass between methods
-  const [cachedTerms, setCachedTerms] = useState<Terms>({} as Terms);
   // logged in user
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   // status of contract calls for allowance and platform fee
-  const { checkErc20AllowanceStatus, requestErc20AllowanceStatus, platformFee } =
+  const { checkErc20AllowanceStatus, requestErc20AllowanceStatus, platformFees } =
     useSelector((state: RootState) => state.wallet);
   // status that tracks the status of a createLoan contract call
   const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
@@ -71,13 +68,45 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     { skip: !props.listing.asset || !authSignature }
   );
 
+  // when a user connects their wallet login to the backend api
+  useEffect(() => {
+    if (provider && address) {
+      dispatch(
+        loadPlatformFee({
+          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          address,
+          currencyAddress: props.listing.term.currencyAddress,
+        })
+      );
+    }
+  }, [provider, address, props.listing.term.currencyAddress]);
+
+  const isPending: boolean = useMemo(() => {
+    if (
+      !isAssetLoading &&
+      !isCreating &&
+      checkErc20AllowanceStatus !== BackendLoadingStatus.loading &&
+      requestErc20AllowanceStatus !== BackendLoadingStatus.loading
+    )
+      return false;
+    return true;
+  }, [
+    isAssetLoading,
+    isCreating,
+    checkErc20AllowanceStatus,
+    requestErc20AllowanceStatus,
+  ]);
+
   // click accept term button
   const handleAcceptTerms = useCallback(async () => {
     if (
       !allowance ||
       allowance.lt(
         ethers.utils.parseEther(
-          (props.listing.term.amount * (1 + platformFee)).toString()
+          (
+            props.listing.term.amount *
+            (1 + platformFees[props.listing.term.currencyAddress])
+          ).toString()
         )
       )
     ) {
@@ -104,7 +133,6 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
       loan: createLoanRequest,
       provider,
       networkId: chainId,
-      currencyAddress: createLoanRequest.term.currencyAddress,
     };
     const createLoanResult = await dispatch(
       contractCreateLoan(createLoanParams)
@@ -115,62 +143,76 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     }
   }, [props.listing, provider, chainId, asset, allowance, user.address]);
 
-  // contract call creation status update
-  useEffect(() => {
-    // contract call successfully completed
-    if (loanCreationStatus === BackendLoadingStatus.succeeded) {
-      // todo: display success notification growl
-    } else if (loanCreationStatus === BackendLoadingStatus.failed) {
-      // todo: display error notification growl
-    }
-  }, [loanCreationStatus]);
-
   // request allowance necessary to complete txn
   const handleRequestAllowance = useCallback(() => {
-    if (provider && address)
+    if (
+      provider &&
+      address &&
+      typeof platformFees[props.listing.term.currencyAddress] !== "undefined"
+    )
       dispatch(
         requestErc20Allowance({
           networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
           provider,
           walletAddress: address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+          assetAddress: props.listing.term.currencyAddress,
           amount: ethers.utils.parseEther(
-            (props.listing.term.amount * (1 + platformFee)).toString()
+            (
+              props.listing.term.amount *
+              (1 + platformFees[props.listing.term.currencyAddress])
+            ).toString()
           ),
         })
       );
-  }, [chainId, address, props.listing.term.amount, provider]);
+  }, [
+    chainId,
+    address,
+    props.listing.term.amount,
+    provider,
+    platformFees[props.listing.term.currencyAddress],
+  ]);
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (chainId && address && provider) {
+    if (
+      chainId &&
+      address &&
+      provider &&
+      platformFees[props.listing.term.currencyAddress]
+    ) {
       dispatch(
         checkErc20Allowance({
           networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
           provider,
           walletAddress: address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+          assetAddress: props.listing.term.currencyAddress,
         })
       );
     }
-  }, [chainId, address, provider]);
+  }, [chainId, address, provider, platformFees[props.listing.term.currencyAddress]]);
 
-  const hasAllowance = useMemo(() => {
-    return (
+  const hasAllowance: boolean = useMemo(() => {
+    if (
+      typeof platformFees[props.listing.term.currencyAddress] !== "undefined" &&
       checkErc20AllowanceStatus === "idle" &&
       requestErc20AllowanceStatus === "idle" &&
       allowance.gte(
         ethers.utils.parseEther(
-          (props.listing.term.amount * (1 + platformFee)).toString()
+          (
+            props.listing.term.amount *
+            (1 + platformFees[props.listing.term.currencyAddress])
+          ).toString()
         )
       )
-    );
+    )
+      return true;
+    return false;
   }, [
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
     allowance,
     props.listing.term.amount,
-    platformFee,
+    platformFees[props.listing.term.currencyAddress],
   ]);
 
   // make offer code
@@ -224,14 +266,12 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
             </Button>
           </Box>
           <Box className="flex fc">
-            {!hasAllowance &&
-              checkErc20AllowanceStatus !== "loading" &&
-              requestErc20AllowanceStatus !== "loading" && (
-                <Button variant="outlined" onClick={handleRequestAllowance}>
-                  Provide Allowance to Your{" "}
-                  {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
-                </Button>
-              )}
+            {!hasAllowance && !isPending && (
+              <Button variant="outlined" onClick={handleRequestAllowance}>
+                Provide Allowance to Your{" "}
+                {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
+              </Button>
+            )}
             {hasAllowance && !isCreating && loanCreationStatus !== "loading" && (
               <Button
                 variant="outlined"
@@ -241,10 +281,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                 Accept Terms
               </Button>
             )}
-            {(checkErc20AllowanceStatus === "loading" ||
-              requestErc20AllowanceStatus === "loading" ||
-              isCreating ||
-              loanCreationStatus === "loading") && (
+            {isPending === true && (
               <Button variant="outlined" disabled={true}>
                 Pending...
               </Button>

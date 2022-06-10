@@ -106,7 +106,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     requestPermStatus,
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    platformFee,
+    platformFees,
   } = useSelector((state: RootState) => state.wallet);
   // select perm status for this asset from state
   const hasPermission = useSelector((state: RootState) =>
@@ -361,7 +361,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           provider,
           walletAddress: address,
           assetAddress: currencyAddressFromType(currency) || "",
-          amount: ethers.utils.parseEther((amount * (1 + platformFee)).toString()),
+          amount: ethers.utils.parseEther(
+            (amount * (1 + platformFees[currency])).toString()
+          ),
         })
       );
     }
@@ -557,7 +559,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !pending &&
         props.listing &&
         erc20Allowance.gte(
-          ethers.utils.parseEther((amount * (1 + platformFee)).toString())
+          ethers.utils.parseEther((amount * (1 + platformFees[currency])).toString())
         ) && (
           <Button variant="contained" onClick={handleMakeOffer}>
             Make Offer
@@ -567,10 +569,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !pending &&
         props.listing &&
         erc20Allowance.lt(
-          ethers.utils.parseEther((amount * (1 + platformFee)).toString())
+          ethers.utils.parseEther((amount * (1 + platformFees[currency])).toString())
         ) && (
           <Button variant="contained" onClick={handleRequestAllowance}>
-            Allow Liqd to Access your USDB
+            Allow Liqd to Access your {typeFromCurrencyAddress(currency)}
           </Button>
         )}
       {pending && (

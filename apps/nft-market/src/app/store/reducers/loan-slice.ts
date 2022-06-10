@@ -142,16 +142,20 @@ returns: void
 */
 export const contractCreateLoan = createAsyncThunk(
   "loan/contractCreateLoan",
-  async ({ loan, provider, networkId, currencyAddress }: LoanAsyncThunk) => {
+  async ({ loan, provider, networkId }: LoanAsyncThunk) => {
     const signer = provider.getSigner();
-    const lendingContract = new ethers.Contract(currencyAddress, usdbLending, signer);
+    const lendingContract = new ethers.Contract(
+      addresses[networkId]["USDB_LENDING_ADDRESS"],
+      usdbLending,
+      signer
+    );
 
     // put the params in an object to make it very clear in contract call
     const params = {
       borrower: loan.borrower.address,
       lender: loan.lender.address,
       nftAddress: loan.assetListing.asset.assetContractAddress,
-      currencyAddress,
+      currencyAddress: loan.assetListing.term.currencyAddress,
       nftTokenId: loan.assetListing.asset.tokenId,
       duration: loan.term.duration,
       loanAmount: ethers.utils.parseEther(loan.term.amount.toString()),

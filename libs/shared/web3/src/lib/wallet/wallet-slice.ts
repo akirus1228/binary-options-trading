@@ -40,6 +40,9 @@ export type NftPermissionPayload = {
   hasPermission: boolean;
 };
 
+export type PlatformFees = {
+  [currencyAddress: string]: number;
+};
 export interface WalletState {
   readonly currencyStatus: "idle" | "loading" | "succeeded" | "failed";
   readonly checkPermStatus: "idle" | "loading" | "failed";
@@ -50,7 +53,7 @@ export interface WalletState {
   readonly erc20Allowance: Erc20Allowance;
   readonly currencies: Currency[];
   readonly isDev: boolean;
-  readonly platformFee: number;
+  readonly platformFees: PlatformFees;
 }
 
 /* 
@@ -62,7 +65,11 @@ returns: void
 */
 export const loadPlatformFee = createAsyncThunk(
   "wallet/loadPlatformFee",
-  async ({ networkId, address }: IBaseAddressAsyncThunk) => {
+  async ({
+    networkId,
+    address,
+    currencyAddress,
+  }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
     const provider = await chains[networkId].provider;
 
     const usdbLendingContract = new ethers.Contract(
@@ -71,8 +78,8 @@ export const loadPlatformFee = createAsyncThunk(
       provider
     );
 
-    const platformFee = await usdbLendingContract["platformFee"]();
-    return +platformFee / 10000;
+    const platformFee = await usdbLendingContract["platformFees"](currencyAddress);
+    return { amount: +platformFee / 10000, currencyAddress };
   }
 );
 
@@ -302,7 +309,7 @@ const previousState = loadState("wallet");
 const initialState: WalletState = {
   currencies: [],
   nftPermStatus: [],
-  platformFee: null,
+  platformFees: [],
   ...previousState, // overwrite assets and currencies from cache if recent
   currencyStatus: "idle", // always reset states on reload
   checkPermStatus: "idle",
@@ -318,9 +325,15 @@ const walletSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(loadPlatformFee.fulfilled, (state, action: PayloadAction<number>) => {
-      state.platformFee = action.payload;
-    });
+    builder.addCase(
+      loadPlatformFee.fulfilled,
+      (state, action: PayloadAction<{ amount: number; currencyAddress: string }>) => {
+        state.platformFees = {
+          ...state.platformFees,
+          ...{ [action.payload.currencyAddress]: action.payload.amount },
+        };
+      }
+    );
     builder.addCase(loadWalletCurrencies.pending, (state, action) => {
       state.currencyStatus = "loading";
     });

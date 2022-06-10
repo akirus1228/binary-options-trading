@@ -9,7 +9,6 @@ import {
   defaultNetworkId,
   isDev,
   NetworkIds,
-  loadPlatformFee,
 } from "@fantohm/shared-web3";
 import { Header, Footer } from "./components/template";
 // import { Messages } from "./components/messages/messages";
@@ -109,13 +108,6 @@ export const App = (): JSX.Element => {
       }
     }
   }, [provider, address, connected]);
-
-  // when a user connects their wallet login to the backend api
-  useEffect(() => {
-    if (provider && connected) {
-      dispatch(loadPlatformFee({ networkId: chainId || defaultNetworkId, address }));
-    }
-  }, [address, connected, authorizedAccount]);
 
   const handleAgree = () => {
     setPromptTerms(false);
