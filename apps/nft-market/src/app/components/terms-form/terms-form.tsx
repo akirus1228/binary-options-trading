@@ -125,7 +125,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       const currentCurrency = getErc20CurrencyFromAddress(
         props.listing.term.currencyAddress
       );
-      console.log(currentCurrency);
       setCurrency(currentCurrency);
     } catch (err) {
       console.warn("Invalid currency address, using USDB as backup");

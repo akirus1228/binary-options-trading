@@ -101,15 +101,12 @@ export const currencyInfo: CurrencyInfo = {
 };
 
 export const getErc20CurrencyFromAddress = (currencyAddress: string): erc20Currency => {
-  console.log("Loading erc20 from address");
-  console.log(`currencyAddress ${currencyAddress}`);
   const currencyDetails = Object.entries(currencyInfo).find(
     ([tokenId, currencyDetails]) =>
       currencyDetails.addresses[desiredNetworkId].toLowerCase() ===
       currencyAddress.toLowerCase()
   );
   if (!currencyDetails) throw new ReferenceError("Unidentified address");
-  console.log(currencyDetails);
   return new erc20Currency(currencyDetails[0]);
 };
 
