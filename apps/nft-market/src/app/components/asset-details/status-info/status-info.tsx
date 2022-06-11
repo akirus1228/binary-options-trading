@@ -20,6 +20,9 @@ const ListedInfo = ({
   listing: Listing;
   repaymentTotal: number;
 }): JSX.Element => {
+  const currency = useMemo(() => {
+    return getErc20CurrencyFromAddress(listing.term.currencyAddress);
+  }, [listing.term.currencyAddress]);
   return (
     <Box className={style["mainContainer"]}>
       <Icon>
@@ -29,7 +32,7 @@ const ListedInfo = ({
         <span className={style["strong"]}>{listing.asset.name} </span>
         <span>is currently listed seeking a loan amount of &nbsp;</span>
         <span className={style["strong"]}>
-          of {formatCurrency(listing.term.amount)} in {listing.term.currencyAddress}.{" "}
+          of {formatCurrency(listing.term.amount)} in {currency.symbol}.{" "}
         </span>
         <span>Listing expires </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
