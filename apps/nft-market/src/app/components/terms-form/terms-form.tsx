@@ -390,7 +390,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       ([tokenId, currencyDetails]) => currencyDetails.symbol === event.target.value
     );
     if (!currentCurrency) return;
-    setCurrency(new erc20Currency(currentCurrency[1].addresses[desiredNetworkId]));
+    setCurrency(new erc20Currency(currentCurrency[0]));
     currency.getCurrentPrice();
   };
 

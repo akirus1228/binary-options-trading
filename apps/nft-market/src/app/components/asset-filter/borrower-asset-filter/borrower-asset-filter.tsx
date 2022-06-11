@@ -56,6 +56,7 @@ export const BorrowerAssetFilter = ({
         ...query,
         status: getStatusType(event.target.value),
       };
+      console.log(updatedQuery);
       setQuery(updatedQuery);
     },
     [query]
