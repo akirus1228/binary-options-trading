@@ -1,16 +1,11 @@
 import { Box, Icon } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import style from "./status-info.module.scss";
-import {
-  Asset,
-  Listing,
-  ListingStatus,
-  Loan,
-  LoanStatus,
-} from "../../../types/backend-types";
+import { Asset, Listing, Loan, LoanStatus } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-helpers";
-import { typeFromCurrencyAddress } from "../../../store/reducers/loan-slice";
+import { useMemo } from "react";
+import { getErc20CurrencyFromAddress } from "../../../helpers/erc20Currency";
 
 export interface StatusInfoProps {
   asset: Asset;
@@ -34,8 +29,7 @@ const ListedInfo = ({
         <span className={style["strong"]}>{listing.asset.name} </span>
         <span>is currently listed seeking a loan amount of &nbsp;</span>
         <span className={style["strong"]}>
-          of {formatCurrency(listing.term.amount)} in{" "}
-          {typeFromCurrencyAddress(listing.term.currencyAddress)}.{" "}
+          of {formatCurrency(listing.term.amount)} in {listing.term.currencyAddress}.{" "}
         </span>
         <span>Listing expires </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
@@ -51,6 +45,9 @@ const LockedInfo = ({
   loan: Loan;
   repaymentTotal: number;
 }): JSX.Element => {
+  const currency = useMemo(() => {
+    return getErc20CurrencyFromAddress(loan.assetListing.term.currencyAddress);
+  }, [loan.assetListing.term.currencyAddress]);
   return (
     <Box className={style["mainContainer"]}>
       <Icon>
@@ -63,8 +60,7 @@ const LockedInfo = ({
           to its borrower if a repayment amount&nbsp;
         </span>
         <span className={style["strong"]}>
-          of {formatCurrency(repaymentTotal)} in{" "}
-          {typeFromCurrencyAddress(loan.assetListing.term.currencyAddress)}{" "}
+          of {formatCurrency(repaymentTotal)} in {currency.symbol}{" "}
         </span>
         <span>is made before </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>

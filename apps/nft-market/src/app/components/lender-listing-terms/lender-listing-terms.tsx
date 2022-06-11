@@ -6,16 +6,12 @@ import {
   selectErc20AllowanceByAddress,
   useWeb3Context,
   loadPlatformFee,
-  useGetTokenPriceQuery,
 } from "@fantohm/shared-web3";
 import { Box, Button, Container, Paper, SxProps, Theme, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateLoanMutation, useGetAssetQuery } from "../../api/backend-api";
-import {
-  contractCreateLoan,
-  typeFromCurrencyAddress,
-} from "../../store/reducers/loan-slice";
+import { contractCreateLoan } from "../../store/reducers/loan-slice";
 import {
   AssetStatus,
   BackendLoadingStatus,
@@ -29,6 +25,8 @@ import store, { RootState } from "../../store";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { MakeOffer } from "../make-offer/make-offer";
 import { ethers } from "ethers";
+import { erc20Currency, getErc20CurrencyFromAddress } from "../../helpers/erc20Currency";
+import { desiredNetworkId } from "../../constants/network";
 
 export interface LenderListingTermsProps {
   listing: Listing;
@@ -55,14 +53,6 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     })
   );
 
-  const { data: currencyTokenPrice, isLoading: isPriceLoading } = useGetTokenPriceQuery(
-    {
-      contractAddress: props.listing.term.currencyAddress,
-      chainName: "ethereum",
-    },
-    { skip: !props.listing }
-  );
-
   // helper to calculate term details like repayment amount
   const { repaymentAmount } = useTermDetails(props.listing.term);
   // createloan backend api call
@@ -77,12 +67,25 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     { skip: !props.listing.asset || !authSignature }
   );
 
+  const currency = useMemo(() => {
+    try {
+      const currentCurrency = getErc20CurrencyFromAddress(
+        props.listing.term.currencyAddress
+      );
+      console.log(currentCurrency);
+      return currentCurrency;
+    } catch (err) {
+      console.warn("Invalid currency address, using USDB as backup");
+      return new erc20Currency("USDB_ADDRESS");
+    }
+  }, [props.listing.term.currencyAddress]);
+
   // when a user connects their wallet login to the backend api
   useEffect(() => {
     if (provider && address) {
       dispatch(
         loadPlatformFee({
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           address,
           currencyAddress: props.listing.term.currencyAddress,
         })
@@ -242,35 +245,30 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
           <Box className="flex fc">
             <Typography className={style["label"]}>Principal</Typography>
             <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {props.listing.term.amount.toFixed(4)}{" "}
-              {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
+              {props.listing.term.amount.toFixed(4)} {currency.symbol}
             </Typography>
             <span className={`${style["data"]} ${style["secondary"]}`}>
               (
-              {!isPriceLoading &&
-                !!currencyTokenPrice &&
+              {!!currency &&
+                currency.lastPrice &&
                 "~" &&
-                (props.listing.term.amount * currencyTokenPrice).toLocaleString("en-US", {
+                (props.listing.term.amount * currency.lastPrice).toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
-              {!isPriceLoading &&
-                currencyTokenPrice === 0 &&
-                "Unable to load estimated USD value"}
-              )
+              {currency.lastPrice === 0 && "Unable to load estimated USD value"})
             </span>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Repayment</Typography>
             <Typography className={`${style["data"]}`}>
-              {repaymentAmount.toFixed(4)}{" "}
-              {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
+              {repaymentAmount.toFixed(4)} {currency.symbol}
             </Typography>
             <span>
-              {!isPriceLoading &&
-                !!currencyTokenPrice &&
+              {!!currency &&
+                currency.lastPrice &&
                 "~" &&
-                (repaymentAmount * currencyTokenPrice).toLocaleString("en-US", {
+                (repaymentAmount * currency.lastPrice).toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
@@ -296,8 +294,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
           <Box className="flex fc">
             {!hasAllowance && !isPending && (
               <Button variant="outlined" onClick={handleRequestAllowance}>
-                Provide Allowance to Your{" "}
-                {typeFromCurrencyAddress(props.listing.term.currencyAddress)}
+                Provide Allowance to Your {currency.symbol}
               </Button>
             )}
             {hasAllowance && !isCreating && loanCreationStatus !== "loading" && (

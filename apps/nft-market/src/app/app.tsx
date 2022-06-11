@@ -4,12 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Backdrop, Box, Button, CssBaseline, Fade, Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { NftLight, NftDark } from "@fantohm/shared-ui-themes";
-import {
-  useWeb3Context,
-  defaultNetworkId,
-  isDev,
-  NetworkIds,
-} from "@fantohm/shared-web3";
+import { useWeb3Context, defaultNetworkId, isDev } from "@fantohm/shared-web3";
 import { Header, Footer } from "./components/template";
 // import { Messages } from "./components/messages/messages";
 import { HomePage } from "./pages/home/home-page";
@@ -23,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import { AssetDetailsPage } from "./pages/asset-details-page/asset-details-page";
 import { TestHelper } from "./pages/test-helper/test-helper";
 import Growl from "./components/growl/growl";
+import { desiredNetworkId } from "./constants/network";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -31,7 +27,7 @@ export const App = (): JSX.Element => {
   const { user, authorizedAccount, accountStatus } = useSelector(
     (state: RootState) => state.backend
   );
-  const backend = useSelector((state: RootState) => state.backend);
+
   const [promptTerms, setPromptTerms] = useState<boolean>(
     true
     //TODO localStorage.getItem("termsAgreedUsdb") !== "true"
@@ -102,9 +98,8 @@ export const App = (): JSX.Element => {
   // when a user connects their wallet login to the backend api
   useEffect(() => {
     if (provider && connected && address) {
-      const expectedChain = isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
-      if (switchEthereumChain && chainId !== expectedChain) {
-        switchEthereumChain(expectedChain);
+      if (switchEthereumChain && chainId !== desiredNetworkId) {
+        switchEthereumChain(desiredNetworkId);
       }
     }
   }, [provider, address, connected]);

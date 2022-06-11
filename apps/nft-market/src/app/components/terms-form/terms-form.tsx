@@ -2,11 +2,11 @@ import {
   checkNftPermission,
   formatCurrency,
   isDev,
+  loadPlatformFee,
   NetworkIds,
   requestErc20Allowance,
   requestNftPermission,
   selectErc20AllowanceByAddress,
-  useGetTokenPriceQuery,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
@@ -34,21 +34,15 @@ import { createListing, updateListing } from "../../store/reducers/listing-slice
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { signTerms } from "../../helpers/signatures";
 import { useCreateOfferMutation, useUpdateTermsMutation } from "../../api/backend-api";
-import {
-  DaiToken,
-  EthToken,
-  USDBToken,
-  UsdcToken,
-  UsdtToken,
-  WbtcToken,
-} from "@fantohm/shared/images";
 import { ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
 import {
-  currencyAddressFromType,
-  LendingCurrency,
-  typeFromCurrencyAddress,
-} from "../../store/reducers/loan-slice";
+  currencyInfo,
+  erc20Currency,
+  Erc20Currency,
+  getErc20CurrencyFromAddress,
+} from "../../helpers/erc20Currency";
+import { desiredNetworkId } from "../../constants/network";
 
 export interface TermsFormProps {
   asset: Asset;
@@ -88,8 +82,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [apr, setApr] = useState(props?.listing?.term.apr || 25);
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
-  const [currency, setCurrency] = useState<LendingCurrency>(LendingCurrency.USDB);
-  const [currencyString, setCurrencyString] = useState<string>("USDB");
+  const [currency, setCurrency] = useState<Erc20Currency>(
+    new erc20Currency("USDB_ADDRESS")
+  );
+
   // create offer api call
   const [
     createOffer,
@@ -113,32 +109,42 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const hasPermission = useSelector((state: RootState) =>
     selectNftPermFromAsset(state, props.asset)
   );
-  // status of createListing
-  const { createListingStatus } = useSelector((state: RootState) => state.listings);
+
   // select the USDB allowance provided to lending contract for this address
   const erc20Allowance = useSelector((state: RootState) =>
     selectErc20AllowanceByAddress(state, {
       walletAddress: address,
-      erc20TokenAddress: currencyAddressFromType(currency) || "",
+      erc20TokenAddress: currency?.currentAddress || "",
     })
-  );
-
-  const { data: currencyTokenPrice, isLoading: isPriceLoading } = useGetTokenPriceQuery(
-    {
-      contractAddress: currencyAddressFromType(currency) || "",
-      chainName: "ethereum",
-    },
-    { skip: !currency }
   );
 
   // if there is a listing, use the currency associated with it
   useEffect(() => {
     if (!props.listing || typeof props.listing === "undefined") return;
-    const listingCurrency = typeFromCurrencyAddress(props.listing.term.currencyAddress);
-    console.log(`listingCurrency ${listingCurrency}`);
-    setCurrency(listingCurrency);
-    setCurrencyString(listingCurrency);
+    try {
+      const currentCurrency = getErc20CurrencyFromAddress(
+        props.listing.term.currencyAddress
+      );
+      console.log(currentCurrency);
+      setCurrency(currentCurrency);
+    } catch (err) {
+      console.warn("Invalid currency address, using USDB as backup");
+      setCurrency(new erc20Currency("USDB_ADDRESS"));
+    }
   }, []);
+
+  // when a user connects their wallet login to the backend api
+  useEffect(() => {
+    if (provider && address) {
+      dispatch(
+        loadPlatformFee({
+          networkId: desiredNetworkId,
+          address,
+          currencyAddress: currency.currentAddress,
+        })
+      );
+    }
+  }, [provider, address, currency.currentAddress]);
 
   // request permission to access the NFT from the contract
   const handlePermissionRequest = useCallback(() => {
@@ -214,7 +220,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
-      currencyAddress: currencyAddressFromType(currency) || "",
+      currencyAddress: currency.currentAddress,
     };
     const termSignature = await signTerms(
       provider,
@@ -223,7 +229,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency
+      currency.currentAddress
     );
     term.signature = termSignature;
     dispatch(createListing({ term, asset })).then(() => {
@@ -252,7 +258,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       duration: termTypes[durationType] * duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
-      currencyAddress: currencyAddressFromType(currency) || "",
+      currencyAddress: currency.currentAddress,
     };
     const termSignature = await signTerms(
       provider,
@@ -261,7 +267,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency
+      currency.currentAddress
     );
     term.signature = termSignature;
     updateTerms(term);
@@ -325,7 +331,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       apr: apr,
       expirationAt: expirationAt.toJSON(),
       signature: "",
-      currencyAddress: currencyAddressFromType(currency) || "",
+      currencyAddress: currency.currentAddress,
     };
 
     const signature = await signTerms(
@@ -335,7 +341,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       props.asset.assetContractAddress,
       props.asset.tokenId,
       preSigTerm,
-      currency
+      currency.currentAddress
     );
 
     const term: Terms = {
@@ -369,9 +375,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
           provider,
           walletAddress: address,
-          assetAddress: currencyAddressFromType(currency) || "",
+          assetAddress: currency.currentAddress,
           amount: ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency])).toString()
+            (amount * (1 + platformFees[currency.currentAddress])).toString()
           ),
         })
       );
@@ -380,28 +386,12 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     //do something
-    setCurrencyString(event.target.value);
-    switch (event.target.value) {
-      case "DAI":
-        setCurrency(LendingCurrency.DAI);
-        break;
-      case "USTC":
-        setCurrency(LendingCurrency.USDC);
-        break;
-      case "USDT":
-        setCurrency(LendingCurrency.USDT);
-        break;
-      case "WBTC":
-        setCurrency(LendingCurrency.WBTC);
-        break;
-      case "WETH":
-        setCurrency(LendingCurrency.WETH);
-        break;
-      case "USDB":
-      default:
-        setCurrency(LendingCurrency.USDB);
-        break;
-    }
+    const currentCurrency = Object.entries(currencyInfo).find(
+      ([tokenId, currencyDetails]) => currencyDetails.symbol === event.target.value
+    );
+    if (!currentCurrency) return;
+    setCurrency(new erc20Currency(currentCurrency[1].addresses[desiredNetworkId]));
+    currency.getCurrentPrice();
   };
 
   return (
@@ -413,72 +403,27 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>
             <Select
-              value={currencyString}
+              value={currency.symbol}
               onChange={handleCurrencyChange}
               variant="standard"
               sx={{ background: "transparent" }}
               className="borderless"
             >
-              <MenuItem value="USDB">
-                <Box className="flex fr ai-c">
-                  <img
-                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                    src={USDBToken}
-                    alt="USDB Token Icon"
-                  />
-                  USDB
-                </Box>
-              </MenuItem>
-              <MenuItem value="DAI">
-                <Box className="flex fr ai-c">
-                  <img
-                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                    src={DaiToken}
-                    alt="DAI Token Icon"
-                  />
-                  DAI
-                </Box>
-              </MenuItem>
-              <MenuItem value="USDC">
-                <Box className="flex fr ai-c">
-                  <img
-                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                    src={UsdcToken}
-                    alt="USDC Token Icon"
-                  />
-                  USDC
-                </Box>
-              </MenuItem>
-              <MenuItem value="USDT">
-                <Box className="flex fr ai-c">
-                  <img
-                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                    src={UsdtToken}
-                    alt="USDT Token Icon"
-                  />
-                  USDT
-                </Box>
-              </MenuItem>
-              <MenuItem value="WBTC">
-                <Box className="flex fr ai-c">
-                  <img
-                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                    src={WbtcToken}
-                    alt="WBTC Token Icon"
-                  />
-                  wBTC
-                </Box>
-              </MenuItem>
-              <MenuItem value="WETH">
-                <Box className="flex fr ai-c">
-                  <img
-                    style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                    src={EthToken}
-                    alt="WETH Token Icon"
-                  />
-                  wETH
-                </Box>
-              </MenuItem>
+              {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
+                <MenuItem
+                  value={currencyDetails.symbol}
+                  key={`currency-option-item-${tokenId}`}
+                >
+                  <Box className="flex fr ai-c">
+                    <img
+                      style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                      src={currencyDetails.icon}
+                      alt={`${currencyDetails.symbol} Token Icon`}
+                    />
+                    {currencyDetails.symbol}
+                  </Box>
+                </MenuItem>
+              ))}
             </Select>
           </Box>
           <Box className={`flex fr ${style["rightSide"]}`}>
@@ -491,7 +436,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
                 disableUnderline: true,
               }}
             />
-            <Typography sx={{ color: "#aaaaaa" }}>{formatCurrency(amount, 2)}</Typography>
+            <Typography sx={{ color: "#aaaaaa" }}>
+              {!!currency.getCurrentPrice() &&
+                formatCurrency(amount * currency.lastPrice, 2)}
+            </Typography>
           </Box>
         </Box>
       </Box>
@@ -567,8 +515,11 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
+        typeof platformFees[currency.currentAddress] !== "undefined" &&
         erc20Allowance.gte(
-          ethers.utils.parseEther((amount * (1 + platformFees[currency])).toString())
+          ethers.utils.parseEther(
+            (amount * (1 + platformFees[currency.currentAddress])).toString()
+          )
         ) && (
           <Button variant="contained" onClick={handleMakeOffer}>
             Make Offer
@@ -577,11 +528,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
+        typeof platformFees[currency.currentAddress] !== "undefined" &&
         erc20Allowance.lt(
-          ethers.utils.parseEther((amount * (1 + platformFees[currency])).toString())
+          ethers.utils.parseEther(
+            (amount * (1 + platformFees[currency?.currentAddress])).toString()
+          )
         ) && (
           <Button variant="contained" onClick={handleRequestAllowance}>
-            Allow Liqd to Access your {typeFromCurrencyAddress(currency)}
+            Allow Liqd to Access your {currency.symbol}
           </Button>
         )}
       {pending && (
