@@ -4,11 +4,15 @@ import style from "./status-info.module.scss";
 import { Asset, Listing, Loan, LoanStatus } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-helpers";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   erc20Currency,
   getErc20CurrencyFromAddress,
 } from "../../../helpers/erc20Currency";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
+import { AppDispatch, RootState } from "../../../store";
+import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 
 export interface StatusInfoProps {
   asset: Asset;
@@ -23,15 +27,13 @@ const ListedInfo = ({
   listing: Listing;
   repaymentTotal: number;
 }): JSX.Element => {
-  const currency = useMemo(() => {
-    try {
-      const currentCurrency = getErc20CurrencyFromAddress(listing.term.currencyAddress);
-      return currentCurrency;
-    } catch (err) {
-      console.warn("Invalid currency address, using USDB as backup");
-      return new erc20Currency("USDB_ADDRESS");
-    }
-  }, [listing.term.currencyAddress]);
+  const dispatch: AppDispatch = useDispatch();
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, listing.term.currencyAddress)
+  );
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(listing.term.currencyAddress));
+  }, []);
   return (
     <Box className={style["mainContainer"]}>
       <Icon>
@@ -58,17 +60,13 @@ const LockedInfo = ({
   loan: Loan;
   repaymentTotal: number;
 }): JSX.Element => {
-  const currency = useMemo(() => {
-    try {
-      const currentCurrency = getErc20CurrencyFromAddress(
-        loan.assetListing.term.currencyAddress
-      );
-      return currentCurrency;
-    } catch (err) {
-      console.warn("Invalid currency address, using USDB as backup");
-      return new erc20Currency("USDB_ADDRESS");
-    }
-  }, [loan.assetListing.term.currencyAddress]);
+  const dispatch: AppDispatch = useDispatch();
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, loan.assetListing.term.currencyAddress)
+  );
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(loan.assetListing.term.currencyAddress));
+  }, []);
   return (
     <Box className={style["mainContainer"]}>
       <Icon>
