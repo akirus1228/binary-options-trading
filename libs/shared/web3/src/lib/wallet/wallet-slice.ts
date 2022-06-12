@@ -278,7 +278,7 @@ export const checkErc20Allowance = createAsyncThunk(
     if (!walletAddress || !assetAddress) {
       return rejectWithValue("Addresses and id required");
     }
-    if (networkId != NetworkIds.Ethereum && networkId != NetworkIds.Rinkeby) {
+    if (![NetworkIds.Ethereum, NetworkIds.Rinkeby].includes(networkId)) {
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
