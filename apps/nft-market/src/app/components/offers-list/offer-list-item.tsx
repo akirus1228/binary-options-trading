@@ -46,10 +46,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   const { repaymentTotal, repaymentAmount } = useTermDetails(offer.term);
 
   // createloan backend api call
-  const [
-    createLoan,
-    { isLoading: isCreating, error: createLoanError, data: createLoanData },
-  ] = useCreateLoanMutation();
+  const [createLoan, { isLoading: isCreating }] = useCreateLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
 
@@ -103,7 +100,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     if (!hasPermission && provider) {
       setIsRequestingPerms(true);
       setIsPending(true);
-      const response = await dispatch(
+      await dispatch(
         requestNftPermission({
           networkId: desiredNetworkId,
           provider,
