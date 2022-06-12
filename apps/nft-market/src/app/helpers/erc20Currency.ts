@@ -23,6 +23,7 @@ export interface Erc20Currency {
   coingeckoStub: string;
   currentPromise: Promise<number>;
   lastPriceLoadedAt: number;
+  icon: string;
   getNetworkAddresses: () => Erc20CurrencyAddress;
   getCurrentPrice: () => Promise<number>;
   wait: () => Promise<number>;
