@@ -25,7 +25,7 @@ export function LenderAsset(props: LenderAssetProps) {
   const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
-    selectCurrencyByAddress(state, listing.term.currencyAddress)
+    selectCurrencyByAddress(state, listing.term.currencyAddress || "")
   );
   const { repaymentAmount } = useTermDetails(listing.term);
   const chipColor = useMemo(() => {
