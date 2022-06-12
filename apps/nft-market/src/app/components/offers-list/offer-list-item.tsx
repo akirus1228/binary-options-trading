@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -28,6 +28,8 @@ import SimpleProfile from "../simple-profile/simple-profile";
 import { OffersListFields } from "./offers-list";
 import ArrowUpRight from "../../../assets/icons/arrow-right-up.svg";
 import { desiredNetworkId } from "../../constants/network";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -44,6 +46,13 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
   const { address: walletAddress, provider } = useWeb3Context();
   const { repaymentTotal, repaymentAmount } = useTermDetails(offer.term);
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, offer.term.currencyAddress)
+  );
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(offer.term.currencyAddress));
+  }, [offer]);
 
   // createloan backend api call
   const [createLoan, { isLoading: isCreating }] = useCreateLoanMutation();
@@ -218,9 +227,21 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       case OffersListFields.OWNER_PROFILE:
         return <SimpleProfile user={offer.lender} />;
       case OffersListFields.REPAYMENT_TOTAL:
-        return formatCurrency(repaymentTotal, 2);
+        return (
+          <Tooltip title={`~ ${formatCurrency(repaymentTotal * currency.lastPrice)}`}>
+            <span>
+              {repaymentTotal.toFixed(4)} {currency.symbol}
+            </span>
+          </Tooltip>
+        );
       case OffersListFields.REPAYMENT_AMOUNT:
-        return formatCurrency(repaymentAmount, 2);
+        return (
+          <Tooltip title={`~ ${formatCurrency(repaymentAmount * currency.lastPrice)}`}>
+            <span>
+              {repaymentAmount.toFixed(4)} {currency.symbol}
+            </span>
+          </Tooltip>
+        );
       case OffersListFields.APR:
         return `${offer.term.apr}%`;
       case OffersListFields.DURATION:
