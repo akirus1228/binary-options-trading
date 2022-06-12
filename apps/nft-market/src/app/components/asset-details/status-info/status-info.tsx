@@ -5,7 +5,10 @@ import { Asset, Listing, Loan, LoanStatus } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { useMemo } from "react";
-import { getErc20CurrencyFromAddress } from "../../../helpers/erc20Currency";
+import {
+  erc20Currency,
+  getErc20CurrencyFromAddress,
+} from "../../../helpers/erc20Currency";
 
 export interface StatusInfoProps {
   asset: Asset;
@@ -21,7 +24,13 @@ const ListedInfo = ({
   repaymentTotal: number;
 }): JSX.Element => {
   const currency = useMemo(() => {
-    return getErc20CurrencyFromAddress(listing.term.currencyAddress);
+    try {
+      const currentCurrency = getErc20CurrencyFromAddress(listing.term.currencyAddress);
+      return currentCurrency;
+    } catch (err) {
+      console.warn("Invalid currency address, using USDB as backup");
+      return new erc20Currency("USDB_ADDRESS");
+    }
   }, [listing.term.currencyAddress]);
   return (
     <Box className={style["mainContainer"]}>
@@ -32,7 +41,8 @@ const ListedInfo = ({
         <span className={style["strong"]}>{listing.asset.name} </span>
         <span>is currently listed seeking a loan amount of &nbsp;</span>
         <span className={style["strong"]}>
-          of {formatCurrency(listing.term.amount)} in {currency.symbol}.{" "}
+          of {formatCurrency(listing.term.amount * currency.lastPrice)} in{" "}
+          {currency.symbol}.{" "}
         </span>
         <span>Listing expires </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
@@ -49,7 +59,15 @@ const LockedInfo = ({
   repaymentTotal: number;
 }): JSX.Element => {
   const currency = useMemo(() => {
-    return getErc20CurrencyFromAddress(loan.assetListing.term.currencyAddress);
+    try {
+      const currentCurrency = getErc20CurrencyFromAddress(
+        loan.assetListing.term.currencyAddress
+      );
+      return currentCurrency;
+    } catch (err) {
+      console.warn("Invalid currency address, using USDB as backup");
+      return new erc20Currency("USDB_ADDRESS");
+    }
   }, [loan.assetListing.term.currencyAddress]);
   return (
     <Box className={style["mainContainer"]}>

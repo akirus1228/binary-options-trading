@@ -18,7 +18,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import store, { RootState } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import style from "./terms-form.module.scss";
@@ -36,13 +36,10 @@ import { signTerms } from "../../helpers/signatures";
 import { useCreateOfferMutation, useUpdateTermsMutation } from "../../api/backend-api";
 import { ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
-import {
-  currencyInfo,
-  erc20Currency,
-  Erc20Currency,
-  getErc20CurrencyFromAddress,
-} from "../../helpers/erc20Currency";
+import { currencyInfo, getTokenIdFromAddress } from "../../helpers/erc20Currency";
 import { desiredNetworkId } from "../../constants/network";
+import { selectCurrencyById } from "../../store/selectors/currency-selectors";
+import { loadCurrencyFromId } from "../../store/reducers/currency-slice";
 
 export interface TermsFormProps {
   asset: Asset;
@@ -59,8 +56,6 @@ export const termTypes: TermTypes = {
   weeks: 7,
   months: 30,
 };
-
-type AppDispatch = typeof store.dispatch;
 
 export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -82,9 +77,18 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [apr, setApr] = useState(props?.listing?.term.apr || 25);
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
-  const [currency, setCurrency] = useState<Erc20Currency>(
-    new erc20Currency("USDB_ADDRESS")
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    props.listing ? getTokenIdFromAddress(props.listing.term.currencyAddress) : "USDB"
   );
+
+  // currency info
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyById(state, `${selectedCurrency.toUpperCase()}_ADDRESS`)
+  );
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromId(selectedCurrency));
+  }, [selectedCurrency]);
 
   // create offer api call
   const [
@@ -118,23 +122,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     })
   );
 
-  // if there is a listing, use the currency associated with it
-  useEffect(() => {
-    if (!props.listing || typeof props.listing === "undefined") return;
-    try {
-      const currentCurrency = getErc20CurrencyFromAddress(
-        props.listing.term.currencyAddress
-      );
-      setCurrency(currentCurrency);
-    } catch (err) {
-      console.warn("Invalid currency address, using USDB as backup");
-      setCurrency(new erc20Currency("USDB_ADDRESS"));
-    }
-  }, []);
-
   // when a user connects their wallet login to the backend api
   useEffect(() => {
-    if (provider && address) {
+    if (provider && address && currency && currency.currentAddress) {
       dispatch(
         loadPlatformFee({
           networkId: desiredNetworkId,
@@ -143,7 +133,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         })
       );
     }
-  }, [provider, address, currency.currentAddress]);
+  }, [provider, address, currency?.currentAddress]);
 
   // request permission to access the NFT from the contract
   const handlePermissionRequest = useCallback(() => {
@@ -385,12 +375,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     //do something
-    const currentCurrency = Object.entries(currencyInfo).find(
-      ([tokenId, currencyDetails]) => currencyDetails.symbol === event.target.value
-    );
-    if (!currentCurrency) return;
-    setCurrency(new erc20Currency(currentCurrency[0]));
-    currency.getCurrentPrice();
+    console.log(event.target.value);
+    setSelectedCurrency(event.target.value);
   };
 
   return (
@@ -402,7 +388,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>
             <Select
-              value={currency.symbol}
+              value={currency?.symbol}
               onChange={handleCurrencyChange}
               variant="standard"
               sx={{ background: "transparent" }}
@@ -436,8 +422,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               }}
             />
             <Typography sx={{ color: "#aaaaaa" }}>
-              {!!currency.getCurrentPrice() &&
-                formatCurrency(amount * currency.lastPrice, 2)}
+              {!!currency && formatCurrency(amount * currency.lastPrice, 2)}
             </Typography>
           </Box>
         </Box>
@@ -491,7 +476,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               }}
             />
             <Typography sx={{ color: "#aaaaaa" }}>
-              {formatCurrency(repaymentAmount, 2)}
+              {formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
             </Typography>
           </Box>
         </Box>

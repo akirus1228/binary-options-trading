@@ -9,6 +9,7 @@ import { openseaApi } from "../api/opensea";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { backendApi } from "../api/backend-api";
 import { loansReducer } from "./reducers/loan-slice";
+import { currencyReducer } from "./reducers/currency-slice";
 
 // reducers are named automatically based on the name field in the slice
 // exported in slice files by default as nameOfSlice.reducer
@@ -22,6 +23,7 @@ const store = configureStore({
     backend: backendReducer,
     wallet: walletReducer,
     loans: loansReducer,
+    currency: currencyReducer,
     [openseaApi.reducerPath]: openseaApi.reducer,
     [backendApi.reducerPath]: backendApi.reducer,
     [coingeckoApi.reducerPath]: coingeckoApi.reducer,
@@ -39,6 +41,7 @@ store.subscribe(() => {
   saveState("assets", store.getState().assets);
   saveState("wallet", store.getState().wallet);
   saveState("loans", store.getState().loans);
+  saveState("currency", store.getState().currency);
 });
 
 setupListeners(store.dispatch);

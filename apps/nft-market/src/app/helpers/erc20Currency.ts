@@ -21,8 +21,11 @@ export interface Erc20Currency {
   addresses: Erc20CurrencyAddress;
   currentAddress: string;
   coingeckoStub: string;
+  currentPromise: Promise<number>;
+  lastPriceLoadedAt: number;
   getNetworkAddresses: () => Erc20CurrencyAddress;
   getCurrentPrice: () => Promise<number>;
+  wait: () => Promise<number>;
 }
 
 export type CurrencyDetails = {
@@ -110,6 +113,16 @@ export const getErc20CurrencyFromAddress = (currencyAddress: string): erc20Curre
   return new erc20Currency(currencyDetails[0]);
 };
 
+export const getTokenIdFromAddress = (currencyAddress: string): string => {
+  const currencyDetails = Object.entries(currencyInfo).find(
+    ([tokenId, currencyDetails]) =>
+      currencyDetails.addresses[desiredNetworkId].toLowerCase() ===
+      currencyAddress.toLowerCase()
+  );
+  if (!currencyDetails) throw new ReferenceError("Unidentified address");
+  return currencyDetails[0];
+};
+
 export const activeNetworks = [NetworkIds.Ethereum, NetworkIds.Rinkeby];
 
 export class erc20Currency implements Erc20Currency {
@@ -120,7 +133,9 @@ export class erc20Currency implements Erc20Currency {
   readonly icon: string;
   readonly currentAddress: string; // address on current network
   readonly coingeckoStub: string;
+  currentPromise: Promise<number>;
   public lastPrice = 0;
+  public lastPriceLoadedAt = 0;
 
   constructor(_tokenId: string) {
     this.symbol = currencyInfo[_tokenId].symbol;
@@ -130,7 +145,7 @@ export class erc20Currency implements Erc20Currency {
     this.coingeckoStub = currencyInfo[_tokenId].coingeckoStub;
     this.addresses = this.getNetworkAddresses();
     this.currentAddress = this.addresses[desiredNetworkId];
-    this.getCurrentPrice();
+    this.currentPromise = this.getCurrentPrice();
   }
 
   getNetworkAddresses(): Erc20CurrencyAddress {
@@ -144,6 +159,11 @@ export class erc20Currency implements Erc20Currency {
 
   async getCurrentPrice(): Promise<number> {
     this.lastPrice = await getTokenPrice(this.coingeckoStub);
+    this.lastPriceLoadedAt = Date.now();
     return this.lastPrice;
+  }
+
+  wait(): Promise<number> {
+    return this.currentPromise;
   }
 }
