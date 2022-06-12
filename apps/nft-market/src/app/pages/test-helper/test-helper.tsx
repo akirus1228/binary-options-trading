@@ -1,4 +1,4 @@
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { saveState, useWeb3Context } from "@fantohm/shared-web3";
 import { Button, Box, CircularProgress } from "@mui/material";
 import { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -160,6 +160,10 @@ export const TestHelper = (): JSX.Element => {
     setIsPending(false);
   };
 
+  const handleNukeLocal = () => {
+    localStorage.clear();
+  };
+
   return (
     <div>
       <Box>
@@ -181,6 +185,7 @@ export const TestHelper = (): JSX.Element => {
       {contractLoans?.map((loanDetails: LoanDetails, index: number) => (
         <SimpleLoanDetail key={`ld-${index}`} loanDetails={loanDetails} />
       ))}
+      <Button onClick={handleNukeLocal}>Nuke Localstorage</Button>
     </div>
   );
 };

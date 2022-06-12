@@ -25,7 +25,7 @@ export function LenderAsset(props: LenderAssetProps) {
   const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
-    selectCurrencyByAddress(state, listing.term.currencyAddress || "")
+    selectCurrencyByAddress(state, listing?.term.currencyAddress || "")
   );
   const { repaymentAmount } = useTermDetails(listing.term);
   const chipColor = useMemo(() => {
@@ -47,7 +47,7 @@ export function LenderAsset(props: LenderAssetProps) {
     dispatch(loadCurrencyFromAddress(listing.term.currencyAddress));
   }, [listing]);
 
-  if (asset === null || !asset) {
+  if (asset === null || !asset || !listing) {
     return <h3>Loading...</h3>;
   }
 
@@ -123,7 +123,7 @@ export function LenderAsset(props: LenderAssetProps) {
         <Box className="flex fc fj-c ai-c w100" sx={{ p: "2em" }}>
           <Box className="flex fr fj-sb ai-c w100">
             <span style={{ fontWeight: "700", fontSize: "24px" }}>
-              {listing.term.amount} {currency.symbol}
+              {listing.term.amount} {currency?.symbol}
             </span>
             <span
               style={{
@@ -135,12 +135,12 @@ export function LenderAsset(props: LenderAssetProps) {
                 fontWeight: "600",
               }}
             >
-              {repaymentAmount.toFixed(4)} {currency.symbol}
+              {repaymentAmount.toFixed(4)} {currency?.symbol}
             </span>
           </Box>
           <Box className="flex fr fj-sb ai-c w100">
             <span style={{ fontWeight: "400", fontSize: "12px", color: "#8991A2" }}>
-              ~{formatCurrency(listing.term.amount * currency.lastPrice, 2)}
+              ~{formatCurrency(listing.term.amount * currency?.lastPrice, 2)}
             </span>
             <span
               style={{
@@ -152,7 +152,7 @@ export function LenderAsset(props: LenderAssetProps) {
                 fontWeight: "600",
               }}
             >
-              ~{formatCurrency(repaymentAmount * currency.lastPrice, 2)}
+              ~{formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
             </span>
           </Box>
           <Box className="flex fr fj-sb ai-c w100">
