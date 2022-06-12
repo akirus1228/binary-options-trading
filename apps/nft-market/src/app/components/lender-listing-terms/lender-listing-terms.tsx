@@ -199,6 +199,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
       typeof platformFees[props.listing.term.currencyAddress] !== "undefined" &&
       checkErc20AllowanceStatus === "idle" &&
       requestErc20AllowanceStatus === "idle" &&
+      !!allowance &&
       allowance.gte(
         ethers.utils.parseEther(
           (
