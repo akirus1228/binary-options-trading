@@ -1,7 +1,5 @@
 import {
   checkErc20Allowance,
-  isDev,
-  NetworkIds,
   prettifySeconds,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
@@ -29,6 +27,7 @@ import {
 } from "../../store/reducers/loan-slice";
 import { Asset, AssetStatus, Loan, LoanStatus } from "../../types/backend-types";
 import style from "./borrower-loan-details.module.scss";
+import { desiredNetworkId } from "../../constants/network";
 
 export interface BorrowerLoanDetailsProps {
   asset: Asset;
@@ -71,7 +70,7 @@ export const BorrowerLoanDetails = ({
     if (chainId && user.address && provider && loanDetails.currency && !erc20Allowance) {
       dispatch(
         checkErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+          networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
           assetAddress: loanDetails.currency,
@@ -85,7 +84,7 @@ export const BorrowerLoanDetails = ({
     dispatch(
       getLoanDetailsFromContract({
         loanId: loan.contractLoanId,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
         provider,
       })
     )
@@ -100,7 +99,7 @@ export const BorrowerLoanDetails = ({
         loanId: loan.contractLoanId,
         amountDue: loanDetails.amountDueGwei,
         provider,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
       };
       const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
       if (repayLoanResult === false) return; //todo: throw nice error
@@ -127,7 +126,7 @@ export const BorrowerLoanDetails = ({
     if (!provider) return;
     dispatch(
       requestErc20Allowance({
-        networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+        networkId: desiredNetworkId,
         provider,
         walletAddress: user.address,
         assetAddress: loanDetails.currency,

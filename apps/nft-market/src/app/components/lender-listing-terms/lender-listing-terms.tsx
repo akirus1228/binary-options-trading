@@ -1,7 +1,5 @@
 import {
   checkErc20Allowance,
-  isDev,
-  NetworkIds,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   useWeb3Context,
@@ -157,7 +155,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     )
       dispatch(
         requestErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+          networkId: desiredNetworkId,
           provider,
           walletAddress: address,
           assetAddress: props.listing.term.currencyAddress,
@@ -187,7 +185,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     ) {
       dispatch(
         checkErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+          networkId: desiredNetworkId,
           provider,
           walletAddress: address,
           assetAddress: props.listing.term.currencyAddress,

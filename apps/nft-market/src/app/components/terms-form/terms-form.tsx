@@ -1,9 +1,7 @@
 import {
   checkNftPermission,
   formatCurrency,
-  isDev,
   loadPlatformFee,
-  NetworkIds,
   requestErc20Allowance,
   requestNftPermission,
   selectErc20AllowanceByAddress,
@@ -326,7 +324,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const signature = await signTerms(
       provider,
       props.listing.asset.wallet || "",
-      chainId || isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+      desiredNetworkId,
       props.asset.assetContractAddress,
       props.asset.tokenId,
       preSigTerm,
@@ -361,7 +359,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       setPending(true);
       dispatch(
         requestErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+          networkId: desiredNetworkId,
           provider,
           walletAddress: address,
           assetAddress: currency.currentAddress,

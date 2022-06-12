@@ -18,8 +18,6 @@ import store, { RootState } from "../../store";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { contractCreateLoan } from "../../store/reducers/loan-slice";
 import {
-  isDev,
-  NetworkIds,
   requestNftPermission,
   useWeb3Context,
   checkNftPermission,
@@ -29,6 +27,7 @@ import style from "./offers-list.module.scss";
 import SimpleProfile from "../simple-profile/simple-profile";
 import { OffersListFields } from "./offers-list";
 import ArrowUpRight from "../../../assets/icons/arrow-right-up.svg";
+import { desiredNetworkId } from "../../constants/network";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -89,7 +88,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     if (offer.assetListing.asset.assetContractAddress && provider) {
       dispatch(
         checkNftPermission({
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
           assetAddress: offer.assetListing.asset.assetContractAddress,
@@ -106,7 +105,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       setIsPending(true);
       const response = await dispatch(
         requestNftPermission({
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           provider,
           assetAddress: offer.assetListing.asset.assetContractAddress,
           walletAddress,
@@ -146,7 +145,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     const createLoanParams = {
       loan: createLoanRequest,
       provider,
-      networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+      networkId: desiredNetworkId,
       currencyAddress: offer.term.currencyAddress,
     };
 

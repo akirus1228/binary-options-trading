@@ -1,6 +1,5 @@
-import { isDev, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
+import { useWeb3Context } from "@fantohm/shared-web3";
 import { Button, Box, CircularProgress } from "@mui/material";
-import { ethers } from "ethers";
 import { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -15,6 +14,7 @@ import {
   useGetTermsQuery,
   useDeleteTermsMutation,
 } from "../../api/backend-api";
+import { desiredNetworkId } from "../../constants/network";
 import store from "../../store";
 import {
   getLoanDetailsFromContract,
@@ -38,7 +38,7 @@ const SimpleLoanDetail = ({ loanDetails }: { loanDetails: LoanDetails }): JSX.El
       loanId: loanDetails.loanId,
       amountDue: loanDetails.amountDueGwei,
       provider,
-      networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+      networkId: desiredNetworkId,
     };
     console.log(repayLoanParams);
     const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
@@ -147,7 +147,7 @@ export const TestHelper = (): JSX.Element => {
       tempLoan = await dispatch(
         getLoanDetailsFromContract({
           loanId: i,
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           provider,
         })
       )

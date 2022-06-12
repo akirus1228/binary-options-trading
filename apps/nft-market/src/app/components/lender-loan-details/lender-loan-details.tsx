@@ -1,4 +1,4 @@
-import { isDev, NetworkIds, prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateLoanMutation } from "../../api/backend-api";
+import { desiredNetworkId } from "../../constants/network";
 import store, { RootState } from "../../store";
 import {
   forecloseLoan,
@@ -48,7 +49,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
     dispatch(
       getLoanDetailsFromContract({
         loanId: loan.contractLoanId,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
         provider,
       })
     )
@@ -57,19 +58,16 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   }, [loan]);
 
   const handleForecloseLoan = useCallback(async () => {
-    console.log("Handle foreclose loan");
     if (!loan.contractLoanId || !provider) {
       console.warn("Missing prereqs");
       return;
     }
-    console.log(`+loan.contractLoanId ${loan.contractLoanId}`);
-    console.log(`provider ${provider}`);
     setIsPending(true);
     const result = await dispatch(
       forecloseLoan({
         loanId: +loan.contractLoanId,
         provider,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
       })
     ).unwrap();
 
