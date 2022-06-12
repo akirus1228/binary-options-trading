@@ -12,19 +12,9 @@ import {
   InteractiveWalletErc20AsyncThunk,
 } from "../slices/interfaces";
 
-export enum AcceptedCurrencies {
-  USDB,
-  WETH,
-  DAI,
-  FTM,
-  USDC,
-}
-
-export interface Currency {
-  symbol: AcceptedCurrencies;
-  name: string;
-  balance: string;
-}
+export type Erc20Balance = {
+  [address: string]: BigNumber;
+};
 
 export type NftPermStatus = {
   [tokenIdentifier: string]: boolean;
@@ -51,7 +41,7 @@ export interface WalletState {
   readonly checkErc20AllowanceStatus: "idle" | "loading" | "failed";
   readonly nftPermStatus: NftPermStatus;
   readonly erc20Allowance: Erc20Allowance;
-  readonly currencies: Currency[];
+  readonly erc20Balance: Erc20Balance;
   readonly isDev: boolean;
   readonly platformFees: PlatformFees;
 }
@@ -90,35 +80,6 @@ params:
 - address: string
 returns: void
 */
-export const loadWalletCurrencies = createAsyncThunk(
-  "wallet/loadWalletCurrencies",
-  async ({ networkId, address }: IBaseAddressAsyncThunk) => {
-    const provider = await chains[networkId].provider;
-
-    const usdbContract = new ethers.Contract(
-      addresses[networkId]["USDB_ADDRESS"] as string,
-      ierc20Abi,
-      provider
-    );
-
-    const usdbBalance = await usdbContract["balanceOf"](address);
-    return [
-      {
-        symbol: AcceptedCurrencies.USDB,
-        name: "USDBalance",
-        balance: ethers.utils.formatUnits(usdbBalance, "gwei"),
-      } as Currency,
-    ];
-  }
-);
-
-/* 
-loadWalletCurrencies: loads balances
-params: 
-- networkId: number
-- address: string
-returns: void
-*/
 export const loadErc20Balance = createAsyncThunk(
   "wallet/loadErc20Balance",
   async ({
@@ -126,18 +87,14 @@ export const loadErc20Balance = createAsyncThunk(
     address,
     currencyAddress,
   }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
+    console.log(`address ${address}`);
+    console.log(`currencyAddress ${currencyAddress}`);
     const provider = await chains[networkId].provider;
 
     const erc20Contract = new ethers.Contract(currencyAddress, ierc20Abi, provider);
 
     const erc20Balance = await erc20Contract["balanceOf"](address);
-    return [
-      {
-        symbol: AcceptedCurrencies.USDB,
-        name: "USDBalance",
-        balance: ethers.utils.formatUnits(erc20Balance, "gwei"),
-      } as Currency,
-    ];
+    return { [currencyAddress]: erc20Balance } as Erc20Balance;
   }
 );
 
@@ -334,14 +291,19 @@ const walletSlice = createSlice({
         };
       }
     );
-    builder.addCase(loadWalletCurrencies.pending, (state, action) => {
+    builder.addCase(loadErc20Balance.pending, (state, action) => {
       state.currencyStatus = "loading";
     });
-    builder.addCase(loadWalletCurrencies.fulfilled, (state, action) => {
-      state.currencyStatus = "succeeded";
-      state.currencies = action.payload;
-    });
-    builder.addCase(loadWalletCurrencies.rejected, (state, action) => {
+    builder.addCase(
+      loadErc20Balance.fulfilled,
+      (state, action: PayloadAction<Erc20Balance>) => {
+        state.currencyStatus = "succeeded";
+        console.log("action.payload");
+        console.log(action.payload);
+        state.erc20Balance = { ...state.erc20Balance, ...action.payload };
+      }
+    );
+    builder.addCase(loadErc20Balance.rejected, (state, action) => {
       state.currencyStatus = "failed";
     });
     builder.addCase(checkNftPermission.pending, (state, action) => {
