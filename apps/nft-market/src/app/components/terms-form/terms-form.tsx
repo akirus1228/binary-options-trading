@@ -36,7 +36,7 @@ import { signTerms } from "../../helpers/signatures";
 import { useCreateOfferMutation, useUpdateTermsMutation } from "../../api/backend-api";
 import { ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
-import { currencyInfo, getTokenIdFromAddress } from "../../helpers/erc20Currency";
+import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
 import { desiredNetworkId } from "../../constants/network";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromId } from "../../store/reducers/currency-slice";
@@ -78,7 +78,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
   const [selectedCurrency, setSelectedCurrency] = useState(
-    props.listing ? getTokenIdFromAddress(props.listing.term.currencyAddress) : "USDB"
+    props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "USDB"
   );
 
   // currency info

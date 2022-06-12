@@ -12,6 +12,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useCreateLoanMutation, useGetAssetQuery } from "../../api/backend-api";
 import { contractCreateLoan } from "../../store/reducers/loan-slice";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import {
   AssetStatus,
   BackendLoadingStatus,
@@ -21,19 +23,16 @@ import {
   LoanStatus,
 } from "../../types/backend-types";
 import style from "./lender-listing-terms.module.scss";
-import store, { RootState } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { MakeOffer } from "../make-offer/make-offer";
 import { ethers } from "ethers";
-import { erc20Currency, getErc20CurrencyFromAddress } from "../../helpers/erc20Currency";
 import { desiredNetworkId } from "../../constants/network";
 
 export interface LenderListingTermsProps {
   listing: Listing;
   sx?: SxProps<Theme>;
 }
-
-type AppDispatch = typeof store.dispatch;
 
 export function LenderListingTerms(props: LenderListingTermsProps) {
   const dispatch: AppDispatch = useDispatch();
@@ -52,6 +51,9 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
       erc20TokenAddress: props.listing.term.currencyAddress,
     })
   );
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, props.listing.term.currencyAddress)
+  );
 
   // helper to calculate term details like repayment amount
   const { repaymentAmount } = useTermDetails(props.listing.term);
@@ -67,18 +69,9 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     { skip: !props.listing.asset || !authSignature }
   );
 
-  const currency = useMemo(() => {
-    try {
-      const currentCurrency = getErc20CurrencyFromAddress(
-        props.listing.term.currencyAddress
-      );
-      console.log(currentCurrency);
-      return currentCurrency;
-    } catch (err) {
-      console.warn("Invalid currency address, using USDB as backup");
-      return new erc20Currency("USDB_ADDRESS");
-    }
-  }, [props.listing.term.currencyAddress]);
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(props.listing.term.currencyAddress));
+  }, []);
 
   // when a user connects their wallet login to the backend api
   useEffect(() => {

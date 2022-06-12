@@ -123,6 +123,16 @@ export const getTokenIdFromAddress = (currencyAddress: string): string => {
   return currencyDetails[0];
 };
 
+export const getSymbolFromAddress = (currencyAddress: string): string => {
+  const currencyDetails = Object.entries(currencyInfo).find(
+    ([tokenId, currencyDetails]) =>
+      currencyDetails.addresses[desiredNetworkId].toLowerCase() ===
+      currencyAddress.toLowerCase()
+  );
+  if (!currencyDetails) throw new ReferenceError("Unidentified address");
+  return currencyDetails[1].symbol;
+};
+
 export const activeNetworks = [NetworkIds.Ethereum, NetworkIds.Rinkeby];
 
 export class erc20Currency implements Erc20Currency {
