@@ -85,7 +85,9 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
       </PaperTableCell>
       <PaperTableCell>
         <Box className="flex fr ai-c">
-          <span>{repaymentTotal.toFixed(4)}</span>
+          <Tooltip title={`~${formatCurrency(repaymentTotal * currency.lastPrice)}`}>
+            <span>{repaymentTotal.toFixed(4)}</span>
+          </Tooltip>
           <Tooltip title={currency.name}>
             <img
               src={currency.icon}
@@ -97,7 +99,9 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
       </PaperTableCell>
       <PaperTableCell>
         <Box className="flex fr ai-c">
-          <span>{repaymentAmount.toFixed(4)}</span>
+          <Tooltip title={`~${formatCurrency(repaymentAmount * currency.lastPrice)}`}>
+            <span>{repaymentAmount.toFixed(4)}</span>
+          </Tooltip>
           <img
             src={currency.icon}
             alt={currency.symbol}
