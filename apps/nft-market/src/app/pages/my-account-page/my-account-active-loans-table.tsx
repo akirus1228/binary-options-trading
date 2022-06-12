@@ -92,7 +92,12 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
             <img
               src={currency.icon}
               alt={currency.symbol}
-              style={{ height: "20px", width: "20px", marginLeft: "5px" }}
+              style={{
+                height: "20px",
+                width: "20px",
+                marginLeft: "5px",
+                marginBottom: "4px",
+              }}
             />
           </Tooltip>
         </Box>
@@ -105,7 +110,12 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
           <img
             src={currency.icon}
             alt={currency.symbol}
-            style={{ height: "20px", width: "20px", marginLeft: "5px" }}
+            style={{
+              height: "20px",
+              width: "20px",
+              marginLeft: "5px",
+              marginBottom: "4px",
+            }}
           />
         </Box>
       </PaperTableCell>
