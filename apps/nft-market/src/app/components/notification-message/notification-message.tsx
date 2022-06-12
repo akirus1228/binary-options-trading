@@ -1,14 +1,11 @@
 import { Avatar, Box } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 import {
-  useGetAssetQuery,
   useGetListingQuery,
   useGetLoanQuery,
   useGetOfferQuery,
   useUpdateUserNotificationMutation,
 } from "../../api/backend-api";
-import { selectAssetByAddress } from "../../store/selectors/asset-selectors";
 import {
   Asset,
   Notification,
@@ -144,7 +141,7 @@ const RepaymentBorrower = ({
   short,
   terms,
 }: MessageProp): JSX.Element => {
-  const { repaymentTotal } = useTermDetails(terms);
+  //  const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = <span>You have repaid your loan on {asset.name}</span>;
   const longMsg = (
     <span>
@@ -269,23 +266,17 @@ export const NotificationMessage = ({
   const [lender, setLender] = useState<User>();
   const [borrower, setBorrower] = useState<User>();
   const navigate = useNavigate();
-  const [updateNotification, { isLoading: isUpdateLoading }] =
-    useUpdateUserNotificationMutation();
+  const [updateNotification] = useUpdateUserNotificationMutation();
 
-  const { data: listing, isLoading: isListingLoading } = useGetListingQuery(
-    assetListingId,
-    {
-      skip: !assetListingId,
-    }
-  );
-  const { data: loan, isLoading: isLoanLoading } = useGetLoanQuery(loanId, {
+  const { data: listing } = useGetListingQuery(assetListingId, {
+    skip: !assetListingId,
+  });
+  const { data: loan } = useGetLoanQuery(loanId, {
     skip: !loanId,
   });
-  const { data: offer, isLoading: isOfferLoading } = useGetOfferQuery(offerId, {
+  const { data: offer } = useGetOfferQuery(offerId, {
     skip: !offerId,
   });
-
-  const context = "";
 
   // set the ID for the correct object to trigger get query
   useEffect(() => {
