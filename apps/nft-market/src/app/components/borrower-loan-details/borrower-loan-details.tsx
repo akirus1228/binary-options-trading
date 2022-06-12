@@ -28,6 +28,8 @@ import {
 import { Asset, AssetStatus, Loan, LoanStatus } from "../../types/backend-types";
 import style from "./borrower-loan-details.module.scss";
 import { desiredNetworkId } from "../../constants/network";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 
 export interface BorrowerLoanDetailsProps {
   asset: Asset;
@@ -50,6 +52,14 @@ export const BorrowerLoanDetails = ({
   const { user } = useSelector((state: RootState) => state.backend);
   const { repayLoanStatus } = useSelector((state: RootState) => state.loans);
 
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, loan.term.currencyAddress)
+  );
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(loan.term.currencyAddress));
+  }, []);
+
   // status of allowance check or approval
   const { checkErc20AllowanceStatus, requestErc20AllowanceStatus } = useSelector(
     (state: RootState) => state.wallet
@@ -67,7 +77,7 @@ export const BorrowerLoanDetails = ({
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (chainId && user.address && provider && loanDetails.currency && !erc20Allowance) {
+    if (user.address && provider && loanDetails.currency && !erc20Allowance) {
       dispatch(
         checkErc20Allowance({
           networkId: desiredNetworkId,
@@ -77,7 +87,7 @@ export const BorrowerLoanDetails = ({
         })
       );
     }
-  }, [chainId, user.address, provider, loanDetails.currency, erc20Allowance]);
+  }, [user.address, provider, loanDetails.currency, erc20Allowance]);
 
   useEffect(() => {
     if (!loan || !loan.contractLoanId || !provider) return;
@@ -223,7 +233,7 @@ export const BorrowerLoanDetails = ({
             {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
               !isPending && (
                 <Button variant="contained" onClick={handleRequestAllowance}>
-                  Approve repay loan funds
+                  Approve {currency.symbol} for repayment
                 </Button>
               )}
             {isPending && <Button variant="contained">Pending...</Button>}

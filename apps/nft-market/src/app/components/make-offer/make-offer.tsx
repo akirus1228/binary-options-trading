@@ -18,7 +18,7 @@ export const MakeOffer = (props: MakeOfferProps): JSX.Element => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }}>
+    <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
       <Box className="flex fr fj-c">
         <h1 style={{ margin: "0 0 0.5em 0" }}>Make Offer</h1>
       </Box>
