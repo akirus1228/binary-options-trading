@@ -1,5 +1,12 @@
 import { CustomInnerSwitch, setTheme } from "@fantohm/shared-ui-themes";
-import { isDev, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
+import {
+  addresses,
+  formatCurrency,
+  isDev,
+  loadErc20Balance,
+  NetworkIds,
+  useWeb3Context,
+} from "@fantohm/shared-web3";
 import {
   Avatar,
   Box,
@@ -11,7 +18,7 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -25,10 +32,12 @@ import NorthEastOutlinedIcon from "@mui/icons-material/NorthEastOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { addressEllipsis } from "@fantohm/shared-helpers";
-import { RootState } from "../../../store";
+import { AppDispatch, RootState } from "../../../store";
 import { logout } from "../../../store/reducers/backend-slice";
 import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
 import { USDBToken } from "@fantohm/shared/images";
+import { desiredNetworkId } from "../../../constants/network";
+import { ethers } from "ethers";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -43,11 +52,20 @@ type AccountSubMenu = {
 };
 
 export const UserMenu = (): JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   // menu controls
   const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(
     null
   );
+
+  const usdbBalance = useSelector((state: RootState) => {
+    if (
+      typeof state.wallet.erc20Balance[addresses[desiredNetworkId]["USDB_ADDRESS"]] ===
+      "undefined"
+    )
+      return 0;
+    return state.wallet.erc20Balance[addresses[desiredNetworkId]["USDB_ADDRESS"]];
+  });
 
   const accountSubMenu: AccountSubMenu[] = [
     { title: "My profile", href: "/my-account", icon: "user" },
@@ -58,6 +76,17 @@ export const UserMenu = (): JSX.Element => {
 
   // web3 wallet
   const { connect, disconnect, connected, address } = useWeb3Context();
+
+  useEffect(() => {
+    if (!address) return;
+    dispatch(
+      loadErc20Balance({
+        networkId: desiredNetworkId,
+        address,
+        currencyAddress: addresses[desiredNetworkId]["USDB_ADDRESS"],
+      })
+    );
+  }, [address]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
@@ -165,6 +194,7 @@ export const UserMenu = (): JSX.Element => {
               width: 40,
               height: 40,
             }}
+            href={`https://etherscan.io/address/${address}`}
           >
             <LaunchIcon fontSize="small" />
           </IconButton>
@@ -191,7 +221,9 @@ export const UserMenu = (): JSX.Element => {
               >
                 Wallet Balance
               </p>
-              <p style={{ marginTop: "3px", marginBottom: "3px" }}>229.00k USDB</p>
+              <p style={{ marginTop: "3px", marginBottom: "3px" }}>
+                {formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))} USDB
+              </p>
             </div>
           </div>
           <div className="show_balance">
