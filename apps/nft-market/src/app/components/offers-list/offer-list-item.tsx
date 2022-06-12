@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Button, Tooltip } from "@mui/material";
+import { Avatar, Box, Button, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -228,19 +228,43 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         return <SimpleProfile user={offer.lender} />;
       case OffersListFields.REPAYMENT_TOTAL:
         return (
-          <Tooltip title={`~ ${formatCurrency(repaymentTotal * currency.lastPrice)}`}>
-            <span>
-              {repaymentTotal.toFixed(4)} {currency.symbol}
-            </span>
-          </Tooltip>
+          <>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentTotal * currency.lastPrice, 2)}`}
+            >
+              <span>{repaymentTotal.toFixed(4)} </span>
+            </Tooltip>
+            <img
+              src={currency.icon}
+              alt={currency.symbol}
+              style={{
+                height: "20px",
+                width: "20px",
+                marginLeft: "5px",
+                marginBottom: "4px",
+              }}
+            />
+          </>
         );
       case OffersListFields.REPAYMENT_AMOUNT:
         return (
-          <Tooltip title={`~ ${formatCurrency(repaymentAmount * currency.lastPrice)}`}>
-            <span>
-              {repaymentAmount.toFixed(4)} {currency.symbol}
-            </span>
-          </Tooltip>
+          <>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentAmount * currency.lastPrice, 2)}`}
+            >
+              <span>{repaymentAmount.toFixed(4)} </span>
+            </Tooltip>
+            <img
+              src={currency.icon}
+              alt={currency.symbol}
+              style={{
+                height: "20px",
+                width: "20px",
+                marginLeft: "5px",
+                marginBottom: "4px",
+              }}
+            />
+          </>
         );
       case OffersListFields.APR:
         return `${offer.term.apr}%`;
@@ -267,7 +291,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     <PaperTableRow className={style["row"]}>
       {fields?.map((field: OffersListFields, index: number) => (
         <PaperTableCell key={`offer-list-row-${index}`}>
-          {getFieldData(field)}
+          <Box className="flex fr ai-c">{getFieldData(field)}</Box>
         </PaperTableCell>
       ))}
       <PaperTableCell>
