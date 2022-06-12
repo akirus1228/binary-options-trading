@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Box, Button, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -18,8 +18,6 @@ import store, { RootState } from "../../store";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { contractCreateLoan } from "../../store/reducers/loan-slice";
 import {
-  isDev,
-  NetworkIds,
   requestNftPermission,
   useWeb3Context,
   checkNftPermission,
@@ -29,6 +27,9 @@ import style from "./offers-list.module.scss";
 import SimpleProfile from "../simple-profile/simple-profile";
 import { OffersListFields } from "./offers-list";
 import ArrowUpRight from "../../../assets/icons/arrow-right-up.svg";
+import { desiredNetworkId } from "../../constants/network";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -45,12 +46,16 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
   const { address: walletAddress, provider } = useWeb3Context();
   const { repaymentTotal, repaymentAmount } = useTermDetails(offer.term);
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, offer.term.currencyAddress)
+  );
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(offer.term.currencyAddress));
+  }, [offer]);
 
   // createloan backend api call
-  const [
-    createLoan,
-    { isLoading: isCreating, error: createLoanError, data: createLoanData },
-  ] = useCreateLoanMutation();
+  const [createLoan, { isLoading: isCreating }] = useCreateLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
 
@@ -89,7 +94,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     if (offer.assetListing.asset.assetContractAddress && provider) {
       dispatch(
         checkNftPermission({
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
           assetAddress: offer.assetListing.asset.assetContractAddress,
@@ -104,9 +109,9 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     if (!hasPermission && provider) {
       setIsRequestingPerms(true);
       setIsPending(true);
-      const response = await dispatch(
+      await dispatch(
         requestNftPermission({
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           provider,
           assetAddress: offer.assetListing.asset.assetContractAddress,
           walletAddress,
@@ -146,7 +151,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     const createLoanParams = {
       loan: createLoanRequest,
       provider,
-      networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+      networkId: desiredNetworkId,
+      currencyAddress: offer.term.currencyAddress,
     };
 
     const createLoanResult = await dispatch(
@@ -221,9 +227,45 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       case OffersListFields.OWNER_PROFILE:
         return <SimpleProfile user={offer.lender} />;
       case OffersListFields.REPAYMENT_TOTAL:
-        return formatCurrency(repaymentTotal, 2);
+        return (
+          <>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentTotal * currency.lastPrice, 2)}`}
+            >
+              <span>{repaymentTotal.toFixed(4)} </span>
+            </Tooltip>
+            <img
+              src={currency.icon}
+              alt={currency.symbol}
+              style={{
+                height: "20px",
+                width: "20px",
+                marginLeft: "5px",
+                marginBottom: "4px",
+              }}
+            />
+          </>
+        );
       case OffersListFields.REPAYMENT_AMOUNT:
-        return formatCurrency(repaymentAmount, 2);
+        return (
+          <>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentAmount * currency.lastPrice, 2)}`}
+            >
+              <span>{repaymentAmount.toFixed(4)} </span>
+            </Tooltip>
+            <img
+              src={currency.icon}
+              alt={currency.symbol}
+              style={{
+                height: "20px",
+                width: "20px",
+                marginLeft: "5px",
+                marginBottom: "4px",
+              }}
+            />
+          </>
+        );
       case OffersListFields.APR:
         return `${offer.term.apr}%`;
       case OffersListFields.DURATION:
@@ -249,7 +291,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     <PaperTableRow className={style["row"]}>
       {fields?.map((field: OffersListFields, index: number) => (
         <PaperTableCell key={`offer-list-row-${index}`}>
-          {getFieldData(field)}
+          <Box className="flex fr ai-c">{getFieldData(field)}</Box>
         </PaperTableCell>
       ))}
       <PaperTableCell>

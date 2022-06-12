@@ -17,13 +17,18 @@ export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
     limit: 50,
+    owner: address,
   });
-  const [beQuery, setBeQuery] = useState<BackendAssetQueryParams>({
+  const [feQuery, setFeQuery] = useState<BackendAssetQueryParams>({
     skip: 0,
     take: 50,
     status: AssetStatus.Ready,
   });
-  const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, beQuery));
+  const [beQuery, setBeQuery] = useState<BackendAssetQueryParams>({
+    skip: 0,
+    take: 50,
+  });
+  const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
@@ -33,7 +38,7 @@ export const BorrowPage = (): JSX.Element => {
 
   // using the opensea assets, crosscheck with backend api for correlated data
   const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
-    skip: !assets || !authSignature,
+    skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
   });
 
   useEffect(() => {
@@ -65,7 +70,7 @@ export const BorrowPage = (): JSX.Element => {
       <Box sx={{ mt: "3em" }}>
         <Grid container maxWidth="xl" columnSpacing={5}>
           <Grid item xs={0} md={3}>
-            <BorrowerAssetFilter query={beQuery} setQuery={setBeQuery} />
+            <BorrowerAssetFilter query={feQuery} setQuery={setFeQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
             {(assetsLoading || isAssetLoading) && (

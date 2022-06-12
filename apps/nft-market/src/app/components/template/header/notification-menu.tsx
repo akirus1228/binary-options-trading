@@ -1,6 +1,5 @@
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import {
-  Avatar,
   Badge,
   Box,
   CircularProgress,
@@ -16,7 +15,6 @@ import { useGetUserNotificationsQuery } from "../../../api/backend-api";
 import { RootState } from "../../../store";
 import { NotificationStatus } from "../../../types/backend-types";
 import arrowUpRight from "../../../../assets/icons/arrow-right-up.svg";
-import profilePlaceholder from "../../../../assets/images/profile-placeholder.svg";
 import NotificationMessage from "../../notification-message/notification-message";
 
 export const NotificationMenu = (): JSX.Element => {

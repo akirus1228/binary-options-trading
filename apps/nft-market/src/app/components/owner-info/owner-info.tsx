@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Grid,
   Icon,
   Paper,
   SxProps,
@@ -17,8 +16,6 @@ import ArrowRightUp from "../../../assets/icons/arrow-right-up.svg";
 import { isDev } from "@fantohm/shared-web3";
 import { CircleGraph } from "@fantohm/shared/ui-charts";
 import { useGetWalletQuery } from "../../api/backend-api";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { useMemo } from "react";
 import ColorLabel from "./color-label";

@@ -4,14 +4,16 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
 // import style from "./lender-asset.module.scss";
 import { Link } from "react-router-dom";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { capitalizeFirstLetter } from "@fantohm/shared-helpers";
 import { AssetStatus } from "../../../types/backend-types";
-import { RootState } from "../../../store";
+import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-web3";
+import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
+import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 
 export interface LenderAssetProps {
   contractAddress: string;
@@ -19,8 +21,12 @@ export interface LenderAssetProps {
 }
 
 export function LenderAsset(props: LenderAssetProps) {
+  const dispatch: AppDispatch = useDispatch();
   const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, listing?.term.currencyAddress || "")
+  );
   const { repaymentAmount } = useTermDetails(listing.term);
   const chipColor = useMemo(() => {
     if (!asset) return;
@@ -37,7 +43,11 @@ export function LenderAsset(props: LenderAssetProps) {
     }
   }, [asset]);
 
-  if (asset === null || !asset) {
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(listing.term.currencyAddress));
+  }, [listing]);
+
+  if (asset === null || !asset || !listing) {
     return <h3>Loading...</h3>;
   }
 
@@ -113,7 +123,7 @@ export function LenderAsset(props: LenderAssetProps) {
         <Box className="flex fc fj-c ai-c w100" sx={{ p: "2em" }}>
           <Box className="flex fr fj-sb ai-c w100">
             <span style={{ fontWeight: "700", fontSize: "24px" }}>
-              {formatCurrency(listing.term.amount, 2)}
+              {listing.term.amount} {currency?.symbol}
             </span>
             <span
               style={{
@@ -125,7 +135,24 @@ export function LenderAsset(props: LenderAssetProps) {
                 fontWeight: "600",
               }}
             >
-              {formatCurrency(repaymentAmount, 2)}
+              {repaymentAmount.toFixed(4)} {currency?.symbol}
+            </span>
+          </Box>
+          <Box className="flex fr fj-sb ai-c w100">
+            <span style={{ fontWeight: "400", fontSize: "12px", color: "#8991A2" }}>
+              ~{formatCurrency(listing.term.amount * currency?.lastPrice, 2)}
+            </span>
+            <span
+              style={{
+                borderRadius: "1em",
+                color: "#1b9385",
+                backgroundColor: "#1b938517",
+                padding: "0.25em 1em",
+                fontSize: "12px",
+                fontWeight: "600",
+              }}
+            >
+              ~{formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
             </span>
           </Box>
           <Box className="flex fr fj-sb ai-c w100">

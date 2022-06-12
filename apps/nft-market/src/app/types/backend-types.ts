@@ -73,6 +73,7 @@ export type Terms = {
   duration: number;
   expirationAt: string;
   signature: string;
+  currencyAddress: string;
 } & StandardBackendObject;
 
 export enum ListingStatus {
