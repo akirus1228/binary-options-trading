@@ -11,34 +11,17 @@ import {
   Theme,
   Toolbar,
   Typography,
-  Popover,
-  Switch
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import LaunchIcon from '@mui/icons-material/Launch';
-import NorthEastOutlinedIcon from '@mui/icons-material/NorthEastOutlined';
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
-import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 import { enabledNetworkIds, useWeb3Context } from "@fantohm/shared-web3";
-import { NftLight, NftDark } from "@fantohm/shared-ui-themes";
-
-import { CustomInnerSwitch, setTheme } from "@fantohm/shared-ui-themes";
-import { useDispatch, useSelector } from "react-redux";
-
-import { RootState } from "../../../store";
+import { useDispatch } from "react-redux";
 
 import MenuLink from "./menu-link";
 import styles from "./header.module.scss";
 import UserMenu from "./user-menu";
 import NotificationMenu from "./notification-menu";
 import logo from "../../../../assets/images/logo.svg";
-import coin from "../../../../favicon-32x32.png";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -50,27 +33,14 @@ type Page = {
   params?: PageParams;
   href?: string;
 };
-type AccountSubMenu = {
-  title: string;
-  params?: PageParams;
-  href?: string;
-  icon?: string
-}
 
 const pages: Page[] = [
   { title: "Lend", href: "/lend" },
   { title: "Borrow", href: "/borrow" },
   { title: "Learn", href: "/learn" },
-  { title: "Account", href: "#" },
+  { title: "Account", href: "/my-account" },
   { title: "About", href: "/about" },
 ];
-
-const accountSubMenu: AccountSubMenu[] = [
-  { title: "My profile", href: "/my-account", icon: "user" },
-  { title: "My assets", href: "#", icon: "photo" },
-  { title: "My loans", href: "#", icon: "loan" },
-  { title: "Dark theme", href: "#", icon: 'sun' },
-]
 
 export const Header = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -78,9 +48,6 @@ export const Header = (): JSX.Element => {
   const { connected, chainId } = useWeb3Context();
   const allowedChain = chainId && enabledNetworkIds.includes(chainId);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(null);
-  const [checked, setChecked] = useState(false);
-  const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -88,19 +55,6 @@ export const Header = (): JSX.Element => {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const accountDrop = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setFlagAccountDropDown(event.currentTarget);
-  }
-
-  const themeChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(!checked)
-    // themeChange(checked)
-  }
-
-  const toggleTheme = () => {
-    dispatch(setTheme(themeType === "light" ? "dark" : "light"));
   };
 
   return (
@@ -196,134 +150,14 @@ export const Header = (): JSX.Element => {
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
                     <Link to={page.href || "#"}>
-                      <Button style={{ minWidth: "110px", padding: "1em 1em" }}
-                        onClick={(e) => {
-                          if (page.title === "Account") {
-                            accountDrop(e)
-                          }
-                        }}
-                      >
+                      <Button style={{ minWidth: "110px", padding: "1em 1em" }}>
                         {page.title}
                       </Button>
                     </Link>
-                    <Popover
-                      id={"Account"}
-                      open={Boolean(flagAccountDropDown)}
-                      anchorEl={flagAccountDropDown}
-                      onClose={() => setFlagAccountDropDown(null)}
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left'
-                      }}
-                      className="accountDropdown"
-                    >
-                      <h3 style={{ marginBottom: '5px', marginTop: '5px' }}>0x1A2bc...4d5678</h3>
-                      <div style={{ display: "flex", alignItems: "center", marginTop: '3px' }}>
-                        <h6 style={{ color: "grey", marginRight: '10px', marginTop: '5px', marginBottom: '5px' }}>0x1A2bc...4d5678</h6>
-                        <IconButton
-                          size="small"
-                          aria-label="copy address"
-                          sx={{
-                            width: 40,
-                            height: 40
-                          }}
-                        >
-                          <ContentCopyIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          aria-label="copy address"
-                          sx={{
-                            width: 40,
-                            height: 40
-                          }}
-                        >
-                          <LaunchIcon fontSize="small" />
-                        </IconButton>
-                      </div>
-                      <div style={{ background: 'white', padding: '10px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <img src={coin} alt="logo" width={40} height={40} />
-                          <div className="amount" style={{ marginLeft: '10px' }}>
-                            <p style={{ color: 'grey', marginTop: '3px', marginBottom: '3px' }}>Wallet Balance</p>
-                            <p style={{ marginTop: '3px', marginBottom: '3px' }}>229.00k USDB</p>
-                          </div>
-                        </div>
-                        <div className="show_balance">
-                          <IconButton
-                            size="small"
-                            aria-label="copy address"
-                            sx={{
-                              width: 40,
-                              height: 40
-                            }}
-                          >
-                            <VisibilityOffOutlinedIcon />
-                          </IconButton>
-                        </div>
-                      </div>
-                      <Button variant="contained" sx={{ mt: "20px", mb: '20px', width: '300px', fontSize: '14px' }}>
-                        Buy USDB on Exchanges &nbsp;&nbsp;
-                        <NorthEastOutlinedIcon />
-                      </Button>
-
-                      {accountSubMenu.map((dropMenu: AccountSubMenu, index: number) => {
-                        return (
-                          <Typography
-                            key={`btn-${dropMenu.title}-${index}`}
-                            textAlign="left"
-                            style={{ opacity: dropMenu?.params?.comingSoon ? 0.2 : 1, }}
-                          >
-                            {dropMenu.icon === "sun" ?
-                              <Button style={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <LightModeOutlinedIcon />
-                                  &nbsp;&nbsp;
-                                  {dropMenu.title}
-                                </div>
-                                {/* <Switch 
-                                  onChange={themeChange}
-                                  inputProps={{ 'aria-label': 'controlled' }}
-                                /> */}
-                                {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
-                                <CustomInnerSwitch onClick={toggleTheme} />
-
-                              </Button>
-                              :
-                              <Link to={dropMenu.href || "#"}>
-
-                                <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }} onClick={() => setFlagAccountDropDown(null)}>
-                                  {dropMenu.icon == "user" ?
-                                    <PersonOutlineOutlinedIcon /> :
-                                    dropMenu.icon == "photo" ?
-                                      <InsertPhotoOutlinedIcon /> :
-                                      dropMenu.icon == "loan" ?
-                                        <CreditCardOutlinedIcon /> :
-                                        null
-                                  }
-                                  &nbsp;&nbsp;
-                                  {dropMenu.title}
-                                </Button>
-                              </Link>
-                            }
-                          </Typography>
-                        )
-                      })}
-
-                      <Typography textAlign="left" sx={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #CCCCCC' }}>
-                        <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }}>
-                          <LogoutOutlinedIcon />
-                          &nbsp;&nbsp;
-                          Disconnect
-                        </Button>
-                      </Typography>
-                    </Popover>
                   </Typography>
                 );
               })}
-
             </Box>
-
           </Box>
           <NotificationMenu />
           <UserMenu />

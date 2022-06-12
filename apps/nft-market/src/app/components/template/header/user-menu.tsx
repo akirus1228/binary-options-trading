@@ -4,39 +4,57 @@ import {
   Avatar,
   Box,
   Button,
-  Divider,
   Icon,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
+  IconButton,
+  Popover,
+  SxProps,
+  Theme,
+  Typography,
 } from "@mui/material";
 import { MouseEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
-import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
-import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
+import LaunchIcon from "@mui/icons-material/Launch";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import NorthEastOutlinedIcon from "@mui/icons-material/NorthEastOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { addressEllipsis } from "@fantohm/shared-helpers";
 import { RootState } from "../../../store";
-import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
 import { logout } from "../../../store/reducers/backend-slice";
+import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
+import { USDBToken } from "@fantohm/shared/images";
+
+type PageParams = {
+  sx?: SxProps<Theme> | undefined;
+  comingSoon?: boolean;
+};
+
+type AccountSubMenu = {
+  title: string;
+  params?: PageParams;
+  href?: string;
+  icon?: string;
+};
 
 export const UserMenu = (): JSX.Element => {
   const dispatch = useDispatch();
   // menu controls
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(
+    null
+  );
+
+  const accountSubMenu: AccountSubMenu[] = [
+    { title: "My profile", href: "/my-account", icon: "user" },
+    { title: "My assets", href: "#", icon: "photo" },
+    { title: "My loans", href: "#", icon: "loan" },
+    { title: "Dark theme", href: "#", icon: "sun" },
+  ];
 
   // web3 wallet
   const { connect, disconnect, connected, address } = useWeb3Context();
@@ -52,18 +70,40 @@ export const UserMenu = (): JSX.Element => {
 
   // theme control
   const themeType = useSelector((state: RootState) => state.theme.mode);
+  const [checked, setChecked] = useState(false);
+
+  const accountDrop = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setFlagAccountDropDown(event.currentTarget);
+  };
+
+  const themeChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(!checked);
+    // themeChange(checked)
+  };
+
   const toggleTheme = () => {
     dispatch(setTheme(themeType === "light" ? "dark" : "light"));
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(address).then(
+      function () {
+        console.log("Async: Copying to clipboard was successful!");
+      },
+      function (err) {
+        console.error("Async: Could not copy text: ", err);
+      }
+    );
   };
 
   return connected ? (
     <>
       <Button
         id="user-menu-button"
-        aria-controls={open ? "user-menu" : undefined}
+        aria-controls={flagAccountDropDown ? "user-menu" : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
+        aria-expanded={flagAccountDropDown ? "true" : undefined}
+        onClick={accountDrop}
         sx={{ background: "#FFF", py: "0.5em", fontSize: "16px" }}
       >
         <Box sx={{ display: { xs: "none", md: "block" } }}>
@@ -76,64 +116,182 @@ export const UserMenu = (): JSX.Element => {
           <Icon component={ArrowDropDownIcon}></Icon>
         </Box>
       </Button>
-      <Menu
-        id="user-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "user-menu-button",
+      <Popover
+        id={"Account"}
+        open={Boolean(flagAccountDropDown)}
+        anchorEl={flagAccountDropDown}
+        onClose={() => setFlagAccountDropDown(null)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
         }}
-        sx={{ display: "flex", flexDirection: "column" }}
+        className="accountDropdown"
       >
-        <MenuItem>
-          <Box key="address-box">{addressEllipsis(address)}</Box>
-        </MenuItem>
-        <MenuItem>
-          <Button href="#">
-            Buy USDB on Exchanges
-            <Icon component={ArrowForwardOutlinedIcon} />
+        <h3 style={{ marginBottom: "5px", marginTop: "5px" }}>
+          {addressEllipsis(address)}
+        </h3>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginTop: "3px",
+          }}
+        >
+          <h6
+            style={{
+              color: "grey",
+              marginRight: "10px",
+              marginTop: "5px",
+              marginBottom: "5px",
+            }}
+          >
+            {addressEllipsis(address)}
+          </h6>
+          <IconButton
+            size="small"
+            aria-label="copy address"
+            sx={{
+              width: 40,
+              height: 40,
+            }}
+            onClick={copyToClipboard}
+          >
+            <ContentCopyIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            aria-label="copy address"
+            sx={{
+              width: 40,
+              height: 40,
+            }}
+          >
+            <LaunchIcon fontSize="small" />
+          </IconButton>
+        </div>
+        <div
+          style={{
+            background: "white",
+            padding: "10px",
+            borderRadius: "20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img src={USDBToken} alt="logo" width={40} height={40} />
+            <div className="amount" style={{ marginLeft: "10px" }}>
+              <p
+                style={{
+                  color: "grey",
+                  marginTop: "3px",
+                  marginBottom: "3px",
+                }}
+              >
+                Wallet Balance
+              </p>
+              <p style={{ marginTop: "3px", marginBottom: "3px" }}>229.00k USDB</p>
+            </div>
+          </div>
+          <div className="show_balance">
+            <IconButton
+              size="small"
+              aria-label="copy address"
+              sx={{
+                width: 40,
+                height: 40,
+              }}
+            >
+              <VisibilityOffOutlinedIcon />
+            </IconButton>
+          </div>
+        </div>
+        <Button
+          variant="contained"
+          sx={{ mt: "20px", mb: "20px", width: "300px", fontSize: "14px" }}
+        >
+          Buy USDB on Exchanges &nbsp;&nbsp;
+          <NorthEastOutlinedIcon />
+        </Button>
+
+        {accountSubMenu.map((dropMenu: AccountSubMenu, index: number) => {
+          return (
+            <Typography
+              key={`btn-${dropMenu.title}-${index}`}
+              textAlign="left"
+              style={{ opacity: dropMenu?.params?.comingSoon ? 0.2 : 1 }}
+            >
+              {dropMenu.icon === "sun" ? (
+                <Button
+                  style={{
+                    minWidth: "110px",
+                    padding: "0.5em 1em",
+                    width: "100%",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <LightModeOutlinedIcon />
+                    &nbsp;&nbsp;
+                    {dropMenu.title}
+                  </div>
+                  {/* <Switch 
+                                  onChange={themeChange}
+                                  inputProps={{ 'aria-label': 'controlled' }}
+                                /> */}
+                  {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
+                  <CustomInnerSwitch onClick={toggleTheme} />
+                </Button>
+              ) : (
+                <Link to={dropMenu.href || "#"}>
+                  <Button
+                    sx={{
+                      minWidth: "110px",
+                      padding: "0.5em 1em",
+                      width: "100%",
+                      justifyContent: "left",
+                    }}
+                    onClick={() => setFlagAccountDropDown(null)}
+                  >
+                    {dropMenu.icon == "user" ? (
+                      <PersonOutlineOutlinedIcon />
+                    ) : dropMenu.icon == "photo" ? (
+                      <InsertPhotoOutlinedIcon />
+                    ) : dropMenu.icon == "loan" ? (
+                      <CreditCardOutlinedIcon />
+                    ) : null}
+                    &nbsp;&nbsp;
+                    {dropMenu.title}
+                  </Button>
+                </Link>
+              )}
+            </Typography>
+          );
+        })}
+
+        <Typography
+          textAlign="left"
+          sx={{
+            marginTop: "10px",
+            paddingTop: "10px",
+            borderTop: "1px solid #CCCCCC",
+          }}
+        >
+          <Button
+            sx={{
+              minWidth: "110px",
+              padding: "0.5em 1em",
+              width: "100%",
+              justifyContent: "left",
+            }}
+            onClick={onClickDisconnect}
+          >
+            <LogoutOutlinedIcon />
+            &nbsp;&nbsp; Disconnect
           </Button>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <PermIdentityOutlinedIcon />
-          </ListItemIcon>
-          <ListItemText>
-            <Link to="/my-account">My profile</Link>
-          </ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ImageOutlinedIcon />
-          </ListItemIcon>
-          <ListItemText>
-            <Link to="/my-account#assets">My assets</Link>
-          </ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <CreditCardOutlinedIcon />
-          </ListItemIcon>
-          <ListItemText>
-            <Link to="/my-account#loans">My loans</Link>
-          </ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <WbSunnyOutlinedIcon />
-          </ListItemIcon>
-          <ListItemText>
-            {themeType === "dark" ? "Dark theme" : "Light theme"}
-          </ListItemText>
-          <CustomInnerSwitch onClick={toggleTheme} />
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={onClickDisconnect}>
-          <Icon component={LogoutOutlinedIcon} />
-          Disconnect
-        </MenuItem>
-      </Menu>
+        </Typography>
+      </Popover>
     </>
   ) : (
     <Box>

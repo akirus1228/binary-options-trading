@@ -122,9 +122,16 @@ export function LenderAsset(props: LenderAssetProps) {
         )}
         <Box className="flex fc fj-c ai-c w100" sx={{ p: "2em" }}>
           <Box className="flex fr fj-sb ai-c w100">
-            <span style={{ fontWeight: "700", fontSize: "24px" }}>
-              {listing.term.amount} {currency?.symbol}
-            </span>
+            <Box className="flex fr ai-c">
+              <span style={{ fontWeight: "700", fontSize: "24px" }}>
+                {listing.term.amount}
+              </span>
+              <img
+                src={currency.icon}
+                alt={currency.name}
+                style={{ marginLeft: "5px", height: "22px", width: "22px" }}
+              />
+            </Box>
             <span
               style={{
                 borderRadius: "1em",
