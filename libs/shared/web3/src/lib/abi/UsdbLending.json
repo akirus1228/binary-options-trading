@@ -1,7 +1,10 @@
 {
   "abi": [
     {
-      "inputs": [{ "internalType": "address", "name": "usdb", "type": "address" }],
+      "inputs": [
+        { "internalType": "address", "name": "_USDB", "type": "address" },
+        { "internalType": "address", "name": "_DAO", "type": "address" }
+      ],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
@@ -144,16 +147,34 @@
     },
     {
       "inputs": [
-        { "internalType": "address", "name": "lender", "type": "address" },
-        { "internalType": "address", "name": "borrower", "type": "address" },
-        { "internalType": "address", "name": "nftAddress", "type": "address" },
-        { "internalType": "address", "name": "currency", "type": "address" },
-        { "internalType": "uint256", "name": "nftTokenId", "type": "uint256" },
-        { "internalType": "uint256", "name": "duration", "type": "uint256" },
         { "internalType": "uint256", "name": "loanAmount", "type": "uint256" },
         { "internalType": "uint256", "name": "apr", "type": "uint256" },
-        { "internalType": "uint8", "name": "nftTokenType", "type": "uint8" },
-        { "internalType": "bytes", "name": "sig", "type": "bytes" }
+        { "internalType": "uint256", "name": "duration", "type": "uint256" }
+      ],
+      "name": "calculateDueAmount",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "uint256", "name": "loanId", "type": "uint256" }],
+      "name": "calculatePlatformFee",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_lender", "type": "address" },
+        { "internalType": "address", "name": "_borrower", "type": "address" },
+        { "internalType": "address", "name": "_nftAddress", "type": "address" },
+        { "internalType": "address", "name": "_currency", "type": "address" },
+        { "internalType": "uint256", "name": "_nftTokenId", "type": "uint256" },
+        { "internalType": "uint256", "name": "_duration", "type": "uint256" },
+        { "internalType": "uint256", "name": "_loanAmount", "type": "uint256" },
+        { "internalType": "uint256", "name": "_apr", "type": "uint256" },
+        { "internalType": "uint8", "name": "_nftTokenType", "type": "uint8" },
+        { "internalType": "bytes", "name": "_sig", "type": "bytes" }
       ],
       "name": "createLoan",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -175,7 +196,7 @@
       "type": "function"
     },
     {
-      "inputs": [{ "internalType": "uint256", "name": "loanId", "type": "uint256" }],
+      "inputs": [{ "internalType": "uint256", "name": "_loanId", "type": "uint256" }],
       "name": "liquidateLoan",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -261,8 +282,8 @@
     },
     {
       "inputs": [
-        { "internalType": "uint256", "name": "loanId", "type": "uint256" },
-        { "internalType": "uint256", "name": "amountDue", "type": "uint256" }
+        { "internalType": "uint256", "name": "_loanId", "type": "uint256" },
+        { "internalType": "uint256", "name": "_amountDue", "type": "uint256" }
       ],
       "name": "repayLoan",
       "outputs": [],
@@ -317,7 +338,7 @@
       ],
       "name": "transferToken",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     }
   ]
