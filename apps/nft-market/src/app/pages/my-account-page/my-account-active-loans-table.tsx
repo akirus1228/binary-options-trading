@@ -107,16 +107,18 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
           <Tooltip title={`~${formatCurrency(repaymentAmount * currency?.lastPrice, 2)}`}>
             <span>{repaymentAmount.toFixed(4)}</span>
           </Tooltip>
-          <img
-            src={currency?.icon}
-            alt={currency?.symbol}
-            style={{
-              height: "20px",
-              width: "20px",
-              marginLeft: "5px",
-              marginBottom: "4px",
-            }}
-          />
+          <Tooltip title={currency?.name}>
+            <img
+              src={currency?.icon}
+              alt={currency?.symbol}
+              style={{
+                height: "20px",
+                width: "20px",
+                marginLeft: "5px",
+                marginBottom: "4px",
+              }}
+            />
+          </Tooltip>
         </Box>
       </PaperTableCell>
       <PaperTableCell>{loan.term.apr}%</PaperTableCell>

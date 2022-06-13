@@ -1,4 +1,4 @@
-import { Box, Chip, IconButton, Paper } from "@mui/material";
+import { Box, Chip, IconButton, Paper, Tooltip } from "@mui/material";
 import { useWalletAsset } from "../../../hooks/use-wallet-asset";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
@@ -126,11 +126,13 @@ export function LenderAsset(props: LenderAssetProps) {
               <span style={{ fontWeight: "700", fontSize: "24px" }}>
                 {listing.term.amount}
               </span>
-              <img
-                src={currency?.icon}
-                alt={currency?.name}
-                style={{ marginLeft: "5px", height: "22px", width: "22px" }}
-              />
+              <Tooltip title={currency?.name}>
+                <img
+                  src={currency?.icon}
+                  alt={currency?.name}
+                  style={{ marginLeft: "5px", height: "22px", width: "22px" }}
+                />
+              </Tooltip>
             </Box>
             <span
               style={{

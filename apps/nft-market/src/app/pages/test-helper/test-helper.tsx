@@ -1,4 +1,4 @@
-import { saveState, useWeb3Context } from "@fantohm/shared-web3";
+import { NetworkIds, saveState, useWeb3Context } from "@fantohm/shared-web3";
 import { Button, Box, CircularProgress } from "@mui/material";
 import { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
@@ -15,6 +15,7 @@ import {
   useDeleteTermsMutation,
 } from "../../api/backend-api";
 import { desiredNetworkId } from "../../constants/network";
+import { currencyInfo } from "../../helpers/erc20Currency";
 import store from "../../store";
 import {
   getLoanDetailsFromContract,
@@ -187,6 +188,18 @@ export const TestHelper = (): JSX.Element => {
         <SimpleLoanDetail key={`ld-${index}`} loanDetails={loanDetails} />
       ))}
       <Button onClick={handleNukeLocal}>Nuke Localstorage</Button>
+      <Box>
+        {Object.entries(currencyInfo).map(([key, currencyDetails]) => (
+          <Button
+            href={`https://rinkeby.etherscan.io/address/${
+              currencyDetails.addresses[NetworkIds.Rinkeby]
+            }#writeContract`}
+            target="_blank"
+          >
+            Mint test {currencyDetails.symbol}
+          </Button>
+        ))}
+      </Box>
     </div>
   );
 };

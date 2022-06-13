@@ -4,11 +4,7 @@ import style from "./status-info.module.scss";
 import { Asset, Listing, Loan, LoanStatus } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-helpers";
-import { useEffect, useMemo } from "react";
-import {
-  erc20Currency,
-  getErc20CurrencyFromAddress,
-} from "../../../helpers/erc20Currency";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import { AppDispatch, RootState } from "../../../store";

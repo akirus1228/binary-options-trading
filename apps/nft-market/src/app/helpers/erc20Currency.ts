@@ -130,7 +130,8 @@ export const getSymbolFromAddress = (currencyAddress: string): string => {
       currencyDetails.addresses[desiredNetworkId].toLowerCase() ===
       currencyAddress.toLowerCase()
   );
-  if (!currencyDetails) throw new ReferenceError("Unidentified address");
+  if (!currencyDetails)
+    throw new ReferenceError(`Unidentified address ${currencyAddress}`);
   return currencyDetails[1].symbol;
 };
 

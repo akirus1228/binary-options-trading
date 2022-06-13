@@ -234,16 +234,18 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             >
               <span>{repaymentTotal.toFixed(4)} </span>
             </Tooltip>
-            <img
-              src={currency?.icon}
-              alt={currency?.symbol}
-              style={{
-                height: "20px",
-                width: "20px",
-                marginLeft: "5px",
-                marginBottom: "4px",
-              }}
-            />
+            <Tooltip title={currency?.name}>
+              <img
+                src={currency?.icon}
+                alt={currency?.symbol}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  marginLeft: "5px",
+                  marginBottom: "4px",
+                }}
+              />
+            </Tooltip>
           </>
         );
       case OffersListFields.REPAYMENT_AMOUNT:
@@ -254,16 +256,18 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             >
               <span>{repaymentAmount.toFixed(4)} </span>
             </Tooltip>
-            <img
-              src={currency?.icon}
-              alt={currency?.symbol}
-              style={{
-                height: "20px",
-                width: "20px",
-                marginLeft: "5px",
-                marginBottom: "4px",
-              }}
-            />
+            <Tooltip title={currency?.name}>
+              <img
+                src={currency?.icon}
+                alt={currency?.symbol}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  marginLeft: "5px",
+                  marginBottom: "4px",
+                }}
+              />
+            </Tooltip>
           </>
         );
       case OffersListFields.APR:

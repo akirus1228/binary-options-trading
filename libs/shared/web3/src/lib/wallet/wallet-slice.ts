@@ -60,6 +60,7 @@ export const loadPlatformFee = createAsyncThunk(
     address,
     currencyAddress,
   }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
+    console.log(`loading platform fee: ${currencyAddress}`);
     const provider = await chains[networkId].provider;
 
     const usdbLendingContract = new ethers.Contract(
@@ -69,6 +70,7 @@ export const loadPlatformFee = createAsyncThunk(
     );
 
     const platformFee = await usdbLendingContract["platformFees"](currencyAddress);
+    console.log(`platform fee loaded: ${platformFee}`);
     return { amount: +platformFee / 10000, currencyAddress };
   }
 );
