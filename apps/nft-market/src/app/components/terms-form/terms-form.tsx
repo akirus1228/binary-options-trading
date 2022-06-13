@@ -122,12 +122,12 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   // when a user connects their wallet login to the backend api
   useEffect(() => {
-    if (provider && address && currency && currency.currentAddress) {
+    if (provider && address && currency && currency?.currentAddress) {
       dispatch(
         loadPlatformFee({
           networkId: desiredNetworkId,
           address,
-          currencyAddress: currency.currentAddress,
+          currencyAddress: currency?.currentAddress,
         })
       );
     }
@@ -207,7 +207,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
-      currencyAddress: currency.currentAddress,
+      currencyAddress: currency?.currentAddress,
     };
     const termSignature = await signTerms(
       provider,
@@ -216,7 +216,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency.currentAddress
+      currency?.currentAddress
     );
     term.signature = termSignature;
     dispatch(createListing({ term, asset })).then(() => {
@@ -245,7 +245,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       duration: termTypes[durationType] * duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
-      currencyAddress: currency.currentAddress,
+      currencyAddress: currency?.currentAddress,
     };
     const termSignature = await signTerms(
       provider,
@@ -254,7 +254,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency.currentAddress
+      currency?.currentAddress
     );
     term.signature = termSignature;
     updateTerms(term);
@@ -318,7 +318,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       apr: apr,
       expirationAt: expirationAt.toJSON(),
       signature: "",
-      currencyAddress: currency.currentAddress,
+      currencyAddress: currency?.currentAddress,
     };
 
     const signature = await signTerms(
@@ -328,7 +328,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       props.asset.assetContractAddress,
       props.asset.tokenId,
       preSigTerm,
-      currency.currentAddress
+      currency?.currentAddress
     );
 
     const term: Terms = {
@@ -362,9 +362,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           networkId: desiredNetworkId,
           provider,
           walletAddress: address,
-          assetAddress: currency.currentAddress,
+          assetAddress: currency?.currentAddress,
           amount: ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency.currentAddress])).toString()
+            (amount * (1 + platformFees[currency?.currentAddress])).toString()
           ),
         })
       );
@@ -420,7 +420,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               }}
             />
             <Typography sx={{ color: "#aaaaaa" }}>
-              {!!currency && formatCurrency(amount * currency.lastPrice, 2)}
+              {!!currency && formatCurrency(amount * currency?.lastPrice, 2)}
             </Typography>
           </Box>
         </Box>
@@ -497,10 +497,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
-        typeof platformFees[currency.currentAddress] !== "undefined" &&
+        typeof platformFees[currency?.currentAddress] !== "undefined" &&
         erc20Allowance.gte(
           ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency.currentAddress])).toString()
+            (amount * (1 + platformFees[currency?.currentAddress])).toString()
           )
         ) && (
           <Button variant="contained" onClick={handleMakeOffer}>
@@ -510,14 +510,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
-        typeof platformFees[currency.currentAddress] !== "undefined" &&
+        typeof platformFees[currency?.currentAddress] !== "undefined" &&
         erc20Allowance.lt(
           ethers.utils.parseEther(
             (amount * (1 + platformFees[currency?.currentAddress])).toString()
           )
         ) && (
           <Button variant="contained" onClick={handleRequestAllowance}>
-            Allow Liqd to Access your {currency.symbol}
+            Allow Liqd to Access your {currency?.symbol}
           </Button>
         )}
       {pending && (

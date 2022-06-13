@@ -237,30 +237,33 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
           <Box className="flex fc">
             <Typography className={style["label"]}>Principal</Typography>
             <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {props.listing.term.amount.toFixed(4)} {currency.symbol}
+              {props.listing.term.amount.toFixed(4)} {currency?.symbol}
             </Typography>
             <span className={`${style["data"]} ${style["secondary"]}`}>
               (
               {!!currency &&
-                currency.lastPrice &&
+                currency?.lastPrice &&
                 "~" &&
-                (props.listing.term.amount * currency.lastPrice).toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              {currency.lastPrice === 0 && "Unable to load estimated USD value"})
+                (props.listing.term.amount * currency?.lastPrice).toLocaleString(
+                  "en-US",
+                  {
+                    style: "currency",
+                    currency: "USD",
+                  }
+                )}
+              {currency?.lastPrice === 0 && "Unable to load estimated USD value"})
             </span>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Repayment</Typography>
             <Typography className={`${style["data"]}`}>
-              {repaymentAmount.toFixed(4)} {currency.symbol}
+              {repaymentAmount.toFixed(4)} {currency?.symbol}
             </Typography>
             <span>
               {!!currency &&
-                currency.lastPrice &&
+                currency?.lastPrice &&
                 "~" &&
-                (repaymentAmount * currency.lastPrice).toLocaleString("en-US", {
+                (repaymentAmount * currency?.lastPrice).toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
@@ -286,7 +289,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
           <Box className="flex fc">
             {!hasAllowance && !isPending && (
               <Button variant="outlined" onClick={handleRequestAllowance}>
-                Provide Allowance to Your {currency.symbol}
+                Provide Allowance to Your {currency?.symbol}
               </Button>
             )}
             {hasAllowance && !isCreating && loanCreationStatus !== "loading" && (

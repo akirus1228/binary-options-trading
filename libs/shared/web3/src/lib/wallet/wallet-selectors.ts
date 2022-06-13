@@ -21,7 +21,9 @@ export const selectErc20AllowanceByAddress = createSelector(
   selectErc20Allowances,
   selectErc20Allowance,
   (erc20Allowance, { walletAddress, erc20TokenAddress }): BigNumber =>
-    erc20Allowance[`${walletAddress}:::${erc20TokenAddress}`] || undefined
+    typeof erc20Allowance[`${walletAddress}:::${erc20TokenAddress}`] !== undefined
+      ? erc20Allowance[`${walletAddress}:::${erc20TokenAddress}`]
+      : BigNumber.from(0)
 );
 
 const selectErc20BalanceAddress = (state: RootState, address: string) => address;
@@ -29,8 +31,8 @@ export const selectErc20BalanceByAddress = createSelector(
   selectErc20Balance,
   selectErc20BalanceAddress,
   (balances, address) => {
-    if (balances[address] === undefined) {
-      return 0;
+    if (typeof balances[address] === undefined) {
+      return BigNumber.from(0);
     } else {
       return balances[address];
     }

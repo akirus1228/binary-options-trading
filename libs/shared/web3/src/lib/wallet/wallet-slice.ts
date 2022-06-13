@@ -87,8 +87,6 @@ export const loadErc20Balance = createAsyncThunk(
     address,
     currencyAddress,
   }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
-    console.log(`address ${address}`);
-    console.log(`currencyAddress ${currencyAddress}`);
     const provider = await chains[networkId].provider;
 
     const erc20Contract = new ethers.Contract(currencyAddress, ierc20Abi, provider);

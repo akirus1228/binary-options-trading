@@ -230,13 +230,13 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         return (
           <>
             <Tooltip
-              title={`~ ${formatCurrency(repaymentTotal * currency.lastPrice, 2)}`}
+              title={`~ ${formatCurrency(repaymentTotal * currency?.lastPrice, 2)}`}
             >
               <span>{repaymentTotal.toFixed(4)} </span>
             </Tooltip>
             <img
-              src={currency.icon}
-              alt={currency.symbol}
+              src={currency?.icon}
+              alt={currency?.symbol}
               style={{
                 height: "20px",
                 width: "20px",
@@ -250,13 +250,13 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         return (
           <>
             <Tooltip
-              title={`~ ${formatCurrency(repaymentAmount * currency.lastPrice, 2)}`}
+              title={`~ ${formatCurrency(repaymentAmount * currency?.lastPrice, 2)}`}
             >
               <span>{repaymentAmount.toFixed(4)} </span>
             </Tooltip>
             <img
-              src={currency.icon}
-              alt={currency.symbol}
+              src={currency?.icon}
+              alt={currency?.symbol}
               style={{
                 height: "20px",
                 width: "20px",

@@ -218,7 +218,9 @@ export const UserMenu = (): JSX.Element => {
                 Wallet Balance
               </p>
               <p style={{ marginTop: "3px", marginBottom: "3px" }}>
-                {formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))} USDB
+                {!!usdbBalance &&
+                  formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))}{" "}
+                USDB
               </p>
             </div>
           </div>

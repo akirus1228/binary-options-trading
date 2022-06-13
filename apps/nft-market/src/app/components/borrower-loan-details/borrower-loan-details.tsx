@@ -233,7 +233,7 @@ export const BorrowerLoanDetails = ({
             {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
               !isPending && (
                 <Button variant="contained" onClick={handleRequestAllowance}>
-                  Approve {currency.symbol} for repayment
+                  Approve {currency?.symbol} for repayment
                 </Button>
               )}
             {isPending && <Button variant="contained">Pending...</Button>}

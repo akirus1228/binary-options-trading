@@ -127,8 +127,8 @@ export function LenderAsset(props: LenderAssetProps) {
                 {listing.term.amount}
               </span>
               <img
-                src={currency.icon}
-                alt={currency.name}
+                src={currency?.icon}
+                alt={currency?.name}
                 style={{ marginLeft: "5px", height: "22px", width: "22px" }}
               />
             </Box>

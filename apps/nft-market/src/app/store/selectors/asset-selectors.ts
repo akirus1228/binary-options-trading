@@ -3,7 +3,6 @@ import { RootState } from "..";
 import {
   Asset,
   AssetStatus,
-  BackendAssetQueryParams,
   FrontendAssetFilterQuery,
   StandardAssetLookupParams,
 } from "../../types/backend-types";
@@ -65,9 +64,6 @@ export const selectAssetsByQuery = createSelector(
         }
         const entries = Object.entries(query).map(([key, matchValue]) => {
           // does the value of this query parameter match the value of the asset for this field?
-          console.log(`key ${key}`);
-          console.log(`matchValue ${matchValue}`);
-          console.log(`asset[key as keyof Asset] ${asset[key as keyof Asset]}`);
           if (key === "openseaIds")
             // look in the list of opensea id's for a match
             return openseaIds.includes(asset?.openseaId || "");
@@ -88,11 +84,9 @@ export const selectAssetsByQuery = createSelector(
           return true;
         });
         //. if  there are any false entries in the array, fail this asset for the filter
-        console.log(entries);
         return !entries.includes(false);
       }
     );
-    console.log(matches);
     return matches.map((assetMap: [string, Asset]) => assetMap[1]);
   }
   //(assets, assetId) => assets.filter((asset: Asset) => asset.id === assetId)
