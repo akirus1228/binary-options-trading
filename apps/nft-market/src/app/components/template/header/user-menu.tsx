@@ -5,6 +5,7 @@ import {
   isDev,
   loadErc20Balance,
   NetworkIds,
+  selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
@@ -58,14 +59,9 @@ export const UserMenu = (): JSX.Element => {
     null
   );
 
-  const usdbBalance = useSelector((state: RootState) => {
-    if (
-      typeof state.wallet.erc20Balance[addresses[desiredNetworkId]["USDB_ADDRESS"]] ===
-      "undefined"
-    )
-      return 0;
-    return state.wallet.erc20Balance[addresses[desiredNetworkId]["USDB_ADDRESS"]];
-  });
+  const usdbBalance = useSelector((state: RootState) =>
+    selectErc20BalanceByAddress(state, addresses[desiredNetworkId]["USDB_ADDRESS"])
+  );
 
   const accountSubMenu: AccountSubMenu[] = [
     { title: "My profile", href: "/my-account", icon: "user" },
