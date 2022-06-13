@@ -110,7 +110,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
           <Box className="flex fc">
             <Typography className={style["label"]}>Total repayment</Typography>
             <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {loanDetails.amountDue.toFixed(4)} {currency.symbol}
+              {loanDetails.amountDue.toFixed(4)} {currency?.symbol}
             </Typography>
             <Typography className={`${style["data"]} ${style["secondary"]}`}>
               {loanDetails.amountDue.toLocaleString("en-US", {
@@ -122,7 +122,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
           <Box className="flex fc">
             <Typography className={style["label"]}>Principal</Typography>
             <Typography className={`${style["data"]}`}>
-              {loan.term.amount.toFixed(4)} {currency.symbol}
+              {loan.term.amount.toFixed(4)} {currency?.symbol}
             </Typography>
             <Typography className={`${style["data"]} ${style["secondary"]}`}>
               {loan.term.amount.toLocaleString("en-US", {

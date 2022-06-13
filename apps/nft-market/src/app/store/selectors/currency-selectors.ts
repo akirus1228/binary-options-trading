@@ -8,7 +8,7 @@ const selectCurrencyId = (state: RootState, id: string) => id;
 export const selectCurrencyById = createSelector(
   selectCurrencies,
   selectCurrencyId,
-  (currencies, tokenId) => currencies[tokenId]
+  (currencies, tokenId) => currencies[tokenId] || ({ symbol: "" } as Erc20Currency)
 );
 
 const selectCurrencyAddress = (state: RootState, address: string) => address;
@@ -22,7 +22,11 @@ export const selectCurrencyByAddress = createSelector(
     if (match) {
       return match[1];
     } else {
-      return currencies["USDB_ADDRESS"];
+      if (typeof currencies["USDB_ADDRESS"] !== undefined) {
+        return currencies["USDB_ADDRESS"];
+      } else {
+        return {} as Erc20Currency;
+      }
     }
   }
 );
