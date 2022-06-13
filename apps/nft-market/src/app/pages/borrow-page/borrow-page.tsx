@@ -10,24 +10,34 @@ import HeaderBlurryImage from "../../components/header-blurry-image/header-blurr
 import { RootState } from "../../store";
 import { OpenseaAssetQueryParam } from "../../store/reducers/interfaces";
 import { selectAssetsByQuery } from "../../store/selectors/asset-selectors";
-import { AssetStatus, BackendAssetQueryParams } from "../../types/backend-types";
+import {
+  Asset,
+  AssetStatus,
+  BackendAssetQueryParams,
+  FrontendAssetFilterQuery,
+} from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
+  // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
     limit: 50,
     owner: address,
   });
-  const [feQuery, setFeQuery] = useState<BackendAssetQueryParams>({
-    skip: 0,
-    take: 50,
+
+  // query to use on frontend to filter cached results and ultimately display
+  const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
     status: AssetStatus.Ready,
+    wallet: address,
   });
+
+  // query to use on backend api call, to pull data we have
   const [beQuery, setBeQuery] = useState<BackendAssetQueryParams>({
     skip: 0,
     take: 50,
   });
+
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
@@ -40,6 +50,10 @@ export const BorrowPage = (): JSX.Element => {
   const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
     skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
   });
+
+  useEffect(() => {
+    console.log(feQuery);
+  }, [feQuery]);
 
   useEffect(() => {
     const newQuery = {

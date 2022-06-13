@@ -11,14 +11,15 @@ import {
   AssetStatus,
   BackendAssetQueryParams,
   Collection,
+  FrontendAssetFilterQuery,
 } from "../../../types/backend-types";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import CollectionsFilter from "../../collections-filter/collections-filter";
 // import style from "./borrower-asset-filter.module.scss";
 
 export interface BorrowerAssetFilterProps {
-  query: BackendAssetQueryParams;
-  setQuery: Dispatch<SetStateAction<BackendAssetQueryParams>>;
+  query: FrontendAssetFilterQuery;
+  setQuery: Dispatch<SetStateAction<FrontendAssetFilterQuery>>;
 }
 
 export const BorrowerAssetFilter = ({
@@ -45,7 +46,7 @@ export const BorrowerAssetFilter = ({
     (event: SelectChangeEvent<string>) => {
       if (!["Unlisted", "Listed", "In Escrow"].includes(event.target.value)) return;
       setStatus(event.target.value);
-      const updatedQuery: BackendAssetQueryParams = {
+      const updatedQuery: FrontendAssetFilterQuery = {
         ...query,
         status: getStatusType(event.target.value),
       };
@@ -55,10 +56,10 @@ export const BorrowerAssetFilter = ({
   );
 
   useEffect(() => {
-    if (collection.contractAddress === query.contractAddress) return;
-    const updatedQuery: BackendAssetQueryParams = {
+    if (collection.contractAddress === query.assetContractAddress) return;
+    const updatedQuery: FrontendAssetFilterQuery = {
       ...query,
-      contractAddress: collection.contractAddress,
+      assetContractAddress: collection.contractAddress,
     };
     setQuery(updatedQuery);
   }, [collection]);
