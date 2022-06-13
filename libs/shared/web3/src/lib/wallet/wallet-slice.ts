@@ -267,6 +267,7 @@ const initialState: WalletState = {
   currencies: [],
   nftPermStatus: [],
   platformFees: [],
+  erc20Balance: [],
   ...previousState, // overwrite assets and currencies from cache if recent
   currencyStatus: "idle", // always reset states on reload
   checkPermStatus: "idle",
