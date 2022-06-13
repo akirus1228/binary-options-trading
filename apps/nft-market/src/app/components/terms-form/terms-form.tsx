@@ -85,7 +85,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   );
 
   useEffect(() => {
-    dispatch(loadCurrencyFromId(selectedCurrency));
+    console.log("loading new currency");
+    dispatch(loadCurrencyFromId(`${selectedCurrency.toUpperCase()}_ADDRESS`));
   }, [selectedCurrency]);
 
   // create offer api call
