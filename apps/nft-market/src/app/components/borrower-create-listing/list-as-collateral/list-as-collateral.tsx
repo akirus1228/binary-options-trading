@@ -36,8 +36,8 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
           Here are a few things you must acknowledge before you continue.
         </Typography>
         <Typography>
-          Posting an NFT as collateral means you are granting [name] access to manage your
-          NFT.
+          Posting an NFT as collateral means you are granting LiqdNft access to manage
+          your NFT.
         </Typography>
         <Typography>
           You can repay a loan at any time within the agreed term, but you must still pay
