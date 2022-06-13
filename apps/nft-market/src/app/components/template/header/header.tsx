@@ -30,6 +30,7 @@ import { NftLight, NftDark } from "@fantohm/shared-ui-themes";
 
 import { CustomInnerSwitch, setTheme } from "@fantohm/shared-ui-themes";
 import { useDispatch, useSelector } from "react-redux";
+import { addressEllipsis } from "@fantohm/shared-helpers";
 
 import { RootState } from "../../../store";
 
@@ -75,7 +76,7 @@ const accountSubMenu: AccountSubMenu[] = [
 export const Header = (): JSX.Element => {
   const dispatch = useDispatch();
 
-  const { connected, chainId } = useWeb3Context();
+  const { connected, chainId, address } = useWeb3Context();
   const allowedChain = chainId && enabledNetworkIds.includes(chainId);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(null);
@@ -217,9 +218,10 @@ export const Header = (): JSX.Element => {
                       }}
                       className="accountDropdown"
                     >
-                      <h3 style={{ marginBottom: '5px', marginTop: '5px' }}>0x1A2bc...4d5678</h3>
+                      <h3 style={{ marginBottom: '5px', marginTop: '5px' }}>{addressEllipsis(address)}</h3>
                       <div style={{ display: "flex", alignItems: "center", marginTop: '3px' }}>
-                        <h6 style={{ color: "grey", marginRight: '10px', marginTop: '5px', marginBottom: '5px' }}>0x1A2bc...4d5678</h6>
+                        {/* <h6 style={{ color: "grey", marginRight: '10px', marginTop: '5px', marginBottom: '5px' }}>0x1A2bc...4d5678</h6> */}
+                        <Box key="address-box">{addressEllipsis(address)}</Box>
                         <IconButton
                           size="small"
                           aria-label="copy address"
