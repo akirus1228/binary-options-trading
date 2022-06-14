@@ -24,6 +24,7 @@ export interface Erc20Currency {
   currentPromise: Promise<number>;
   lastPriceLoadedAt: number;
   icon: string;
+  decimals: number;
   getNetworkAddresses: () => Erc20CurrencyAddress;
   getCurrentPrice: () => Promise<number>;
   wait: () => Promise<number>;
@@ -35,6 +36,7 @@ export type CurrencyDetails = {
   icon: string; //svg
   addresses: Erc20CurrencyAddress;
   coingeckoStub: string;
+  decimals?: number;
 };
 
 export type CurrencyInfo = {
@@ -91,6 +93,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["USDC_ADDRESS"],
     },
     coingeckoStub: "usd-coin",
+    decimals: 6,
   },
   USDT_ADDRESS: {
     symbol: "USDT",
@@ -148,6 +151,7 @@ export class erc20Currency implements Erc20Currency {
   currentPromise: Promise<number>;
   public lastPrice = 0;
   public lastPriceLoadedAt = 0;
+  public decimals: number;
 
   constructor(_tokenId: string) {
     this.symbol = currencyInfo[_tokenId].symbol;
@@ -158,6 +162,7 @@ export class erc20Currency implements Erc20Currency {
     this.addresses = this.getNetworkAddresses();
     this.currentAddress = this.addresses[desiredNetworkId];
     this.currentPromise = this.getCurrentPrice();
+    this.decimals = currencyInfo[_tokenId]?.decimals || 18;
   }
 
   getNetworkAddresses(): Erc20CurrencyAddress {

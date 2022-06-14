@@ -7,7 +7,8 @@ import {
   Dialog,
   IconButton,
   Paper,
-  Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import {
   AssetStatus,
@@ -23,9 +24,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
   checkErc20Allowance,
+  loadErc20Balance,
   loadPlatformFee,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
+  selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
@@ -47,6 +50,9 @@ export const LoanConfirmation = ({
   listing,
   onClose,
 }: LoanConfirmationProps): JSX.Element => {
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+
   const dispatch: AppDispatch = useDispatch();
   const { provider } = useWeb3Context();
 
@@ -233,6 +239,20 @@ export const LoanConfirmation = ({
     return false;
   }, [isCreating, checkErc20AllowanceStatus, requestErc20AllowanceStatus]);
 
+  const currencyBalance = useSelector((state: RootState) =>
+    selectErc20BalanceByAddress(state, currency.currentAddress)
+  );
+  useEffect(() => {
+    if (!user.address) return;
+    dispatch(
+      loadErc20Balance({
+        networkId: desiredNetworkId,
+        address: user.address,
+        currencyAddress: currency.currentAddress,
+      })
+    );
+  }, [user.address]);
+
   const handleClickLend = () => {
     setOpen(true);
   };
@@ -242,7 +262,7 @@ export const LoanConfirmation = ({
       <Button variant="outlined" onClick={handleClickLend}>
         Lend {currency?.symbol}
       </Button>
-      <Dialog onClose={handleClose} open={open} fullWidth>
+      <Dialog onClose={handleClose} open={open} fullScreen={isSmall}>
         <Box className="flex fr fj-c">
           <h1 style={{ margin: "0 0 0.5em 0" }}>Loan Details</h1>
         </Box>
@@ -272,7 +292,9 @@ export const LoanConfirmation = ({
                       }}
                     />
                     {listing.term.amount} {currency?.symbol}{" "}
-                    <span className="subtle">(to borrower)</span>
+                    <span className="subtle" style={{ marginLeft: "1em" }}>
+                      (to borrower)
+                    </span>
                   </span>
                   <span className="subtle">
                     ~{formatCurrency(listing.term.amount * currency?.lastPrice, 2)}
@@ -291,7 +313,10 @@ export const LoanConfirmation = ({
                       }}
                     />
                     {platformFees[listing.term.currencyAddress] * listing.term.amount}{" "}
-                    {currency?.symbol} <span className="subtle">(platform fee)</span>
+                    {currency?.symbol}{" "}
+                    <span className="subtle" style={{ marginLeft: "1em" }}>
+                      (platform fee)
+                    </span>
                   </span>
                   <span className="subtle">
                     ~
@@ -305,7 +330,17 @@ export const LoanConfirmation = ({
                   Total
                 </span>
                 <Box className="flex fr fj-sb ai-c">
-                  <span>
+                  <span className="flex fr ai-c">
+                    <img
+                      src={currency?.icon}
+                      alt={currency?.name}
+                      style={{
+                        height: "20px",
+                        width: "20px",
+                        marginRight: "0.25em",
+                        marginBottom: "2px",
+                      }}
+                    />
                     {(
                       (1 + platformFees[listing.term.currencyAddress]) *
                       listing.term.amount
@@ -319,6 +354,26 @@ export const LoanConfirmation = ({
                         listing.term.amount,
                       2
                     )}
+                  </span>
+                </Box>
+                <Box
+                  className="flex fc"
+                  sx={{ borderTop: "1px solid lightgrey", mt: "1em", pt: "1em" }}
+                >
+                  <span className="strong">My current {currency?.symbol}</span>
+                  <span className="flex fr ai-c">
+                    <img
+                      src={currency?.icon}
+                      alt={currency?.name}
+                      style={{
+                        height: "20px",
+                        width: "20px",
+                        marginRight: "0.25em",
+                        marginBottom: "2px",
+                      }}
+                    />
+                    {ethers.utils.formatUnits(currencyBalance, currency.decimals)}{" "}
+                    {currency.symbol}
                   </span>
                 </Box>
               </Box>
