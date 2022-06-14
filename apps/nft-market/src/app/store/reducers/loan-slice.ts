@@ -1,11 +1,5 @@
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
-import {
-  addresses,
-  isDev,
-  loadState,
-  NetworkIds,
-  usdbLending,
-} from "@fantohm/shared-web3";
+import { addresses, isDev, loadState, usdbLending } from "@fantohm/shared-web3";
 import { BackendLoadingStatus, Loan } from "../../types/backend-types";
 import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
 import { RootState } from "..";

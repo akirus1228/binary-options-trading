@@ -18,11 +18,9 @@ export interface LenderListingTermsProps {
 
 export function LenderListingTerms(props: LenderListingTermsProps) {
   const dispatch: AppDispatch = useDispatch();
-  const [confirmationOpen, setConfirmationOpen] = useState(false);
   // logged in user
   const { authSignature } = useSelector((state: RootState) => state.backend);
   // status that tracks the status of a createLoan contract call
-  const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, props.listing.term.currencyAddress)
   );
@@ -31,10 +29,9 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
   const { repaymentAmount } = useTermDetails(props.listing.term);
 
   // query assets from the backend API
-  const { data: asset, isLoading: isAssetLoading } = useGetAssetQuery(
-    props.listing.asset.id,
-    { skip: !props.listing.asset || !authSignature }
-  );
+  useGetAssetQuery(props.listing.asset.id, {
+    skip: !props.listing.asset || !authSignature,
+  });
 
   useEffect(() => {
     dispatch(loadCurrencyFromAddress(props.listing.term.currencyAddress));

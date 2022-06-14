@@ -36,6 +36,7 @@ import { useCreateLoanMutation, useGetCollectionsQuery } from "../../api/backend
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import { addAlert } from "../../store/reducers/app-slice";
 
 export interface LoanConfirmationProps {
   listing: Listing;
@@ -93,7 +94,12 @@ export const LoanConfirmation = ({
   // createloan backend api call
   const [
     createLoan,
-    { isLoading: isCreating, error: createLoanError, data: createLoanData },
+    {
+      isLoading: isCreating,
+      error: createLoanError,
+      data: createLoanData,
+      reset: resetCreateLoan,
+    },
   ] = useCreateLoanMutation();
 
   // click accept term button
@@ -138,15 +144,20 @@ export const LoanConfirmation = ({
     ).unwrap();
     if (createLoanResult) {
       createLoanRequest.contractLoanId = createLoanResult;
-      createLoan(createLoanRequest);
+      createLoan(createLoanRequest).then(() => {
+        resetCreateLoan();
+        dispatch(
+          addAlert({
+            message:
+              "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
+          })
+        );
+      });
     }
   }, [listing, provider, listing.asset, allowance, user.address]);
 
   // request allowance necessary to complete txn
   const handleRequestAllowance = useCallback(() => {
-    console.log(provider);
-    console.log(user.address);
-    console.log(typeof platformFees[listing.term.currencyAddress]);
     if (
       provider &&
       user.address &&
@@ -244,20 +255,90 @@ export const LoanConfirmation = ({
           </IconButton>
         </Box>
         <Box className="flex fc">
-          <Paper sx={{ mb: "2em" }}>
-            <Box className="flex fr fj-sb">
+          <Paper>
+            <Box className="flex fc fj-sb">
               <Box className="flex fc" sx={{ mr: "1em" }}>
                 <span className="strong">You are about to lend</span>
-                <span>
-                  {listing.term.amount} {currency.symbol}
+                <Box className="flex fr fj-sb ai-c">
+                  <span className="flex fr ai-c">
+                    <img
+                      src={currency?.icon}
+                      alt={currency?.name}
+                      style={{
+                        height: "20px",
+                        width: "20px",
+                        marginRight: "0.25em",
+                        marginBottom: "2px",
+                      }}
+                    />
+                    {listing.term.amount} {currency?.symbol}{" "}
+                    <span className="subtle">(to borrower)</span>
+                  </span>
+                  <span className="subtle">
+                    ~{formatCurrency(listing.term.amount * currency?.lastPrice, 2)}
+                  </span>
+                </Box>
+                <Box className="flex fr fj-sb ai-c">
+                  <span className="flex fr ai-c">
+                    <img
+                      src={currency?.icon}
+                      alt={currency?.name}
+                      style={{
+                        height: "20px",
+                        width: "20px",
+                        marginRight: "0.25em",
+                        marginBottom: "2px",
+                      }}
+                    />
+                    {platformFees[listing.term.currencyAddress] * listing.term.amount}{" "}
+                    {currency?.symbol} <span className="subtle">(platform fee)</span>
+                  </span>
+                  <span className="subtle">
+                    ~
+                    {formatCurrency(
+                      platformFees[listing.term.currencyAddress] * listing.term.amount,
+                      2
+                    )}
+                  </span>
+                </Box>
+                <span className="strong" style={{ marginTop: "1em" }}>
+                  Total
                 </span>
-                <span className="subtle">
-                  ~{formatCurrency(listing.term.amount * currency.lastPrice, 2)}
-                </span>
+                <Box className="flex fr fj-sb ai-c">
+                  <span>
+                    {(
+                      (1 + platformFees[listing.term.currencyAddress]) *
+                      listing.term.amount
+                    ).toFixed(5)}{" "}
+                    {currency?.symbol}
+                  </span>
+                  <span className="subtle">
+                    ~
+                    {formatCurrency(
+                      (1 + platformFees[listing.term.currencyAddress]) *
+                        listing.term.amount,
+                      2
+                    )}
+                  </span>
+                </Box>
               </Box>
-              <Box className="flex fc" sx={{ mr: "1em" }}>
-                <span className="strong">You will recieve repayment of</span>
-                <span>
+            </Box>
+          </Paper>
+          <Paper sx={{ my: "1em" }}>
+            <Box className="flex fc" sx={{ mr: "1em" }}>
+              <span className="strong">You will recieve repayment of</span>
+              <Box className="flex fr fj-sb ai-c">
+                <span className="flex fr ai-c">
+                  <img
+                    src={currency?.icon}
+                    alt={currency?.name}
+                    style={{
+                      height: "20px",
+                      width: "20px",
+                      marginRight: "0.25em",
+                      marginBottom: "2px",
+                    }}
+                  />
                   {repaymentTotal.toFixed(5)} {currency.symbol}
                 </span>
                 <span className="subtle">
@@ -266,11 +347,12 @@ export const LoanConfirmation = ({
               </Box>
             </Box>
           </Paper>
-          <span className="strong">
-            If the loan is not repaid by {estRepaymentDate.toLocaleString()} you may
-            redeem:
-          </span>
+
           <Paper>
+            <span className="strong">
+              If the loan is not repaid by {estRepaymentDate.toLocaleString()} you are
+              entitled to:
+            </span>
             <Box className="flex fc" sx={{ mt: "1em" }}>
               <Box className="flex fr ai-c">
                 <Link

@@ -492,7 +492,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       )}
       {isOwner && hasPermission && !pending && props.listing && (
         <Button variant="contained" onClick={handleUpdateTerms}>
-          Update Terms
+          Update Terms (no cost)
         </Button>
       )}
       {!isOwner &&
