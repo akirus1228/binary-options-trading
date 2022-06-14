@@ -234,7 +234,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             >
               <span>{repaymentTotal.toFixed(4)} </span>
             </Tooltip>
-            <Tooltip title={currency?.name}>
+            <Tooltip title={currency?.name || ""}>
               <img
                 src={currency?.icon}
                 alt={currency?.symbol}
@@ -256,7 +256,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             >
               <span>{repaymentAmount.toFixed(4)} </span>
             </Tooltip>
-            <Tooltip title={currency?.name}>
+            <Tooltip title={currency?.name || ""}>
               <img
                 src={currency?.icon}
                 alt={currency?.symbol}

@@ -83,6 +83,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["WBTC_ADDRESS"],
     },
     coingeckoStub: "wrapped-bitcoin",
+    decimals: 8,
   },
   USDC_ADDRESS: {
     symbol: "USDC",
@@ -133,8 +134,7 @@ export const getSymbolFromAddress = (currencyAddress: string): string => {
       currencyDetails.addresses[desiredNetworkId].toLowerCase() ===
       currencyAddress.toLowerCase()
   );
-  if (!currencyDetails)
-    throw new ReferenceError(`Unidentified address ${currencyAddress}`);
+  if (!currencyDetails) return "USDB";
   return currencyDetails[1].symbol;
 };
 

@@ -63,23 +63,24 @@ export type CurrencyState = {
 };
 
 interface CurrencyData {
-  readonly loading: boolean;
   readonly currencies: CurrencyList;
   readonly currencyState: CurrencyState;
 }
 
 const previousState = loadState("currency");
 const initialState: CurrencyData = {
-  currencies: [],
-  ...previousState,
-  currencyState: [],
-  loading: true,
+  currencies: {} as CurrencyList,
+  currencyState: {} as CurrencyState,
 };
 
 const currencySlice = createSlice({
   name: "currencySlice",
   initialState,
-  reducers: {},
+  reducers: {
+    resetCurrency: (state) => {
+      state = initialState;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(loadCurrencyFromId.pending, (state, action) => {
       state.currencyState = {
@@ -135,4 +136,4 @@ const currencySlice = createSlice({
 });
 
 export const currencyReducer = currencySlice.reducer;
-//export const { loadCurrency } = currencySlice.actions;
+export const { resetCurrency } = currencySlice.actions;

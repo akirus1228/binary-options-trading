@@ -88,7 +88,7 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
           <Tooltip title={`~${formatCurrency(repaymentTotal * currency?.lastPrice, 2)}`}>
             <span>{repaymentTotal.toFixed(4)}</span>
           </Tooltip>
-          <Tooltip title={currency?.name}>
+          <Tooltip title={currency?.name || ""}>
             <img
               src={currency?.icon}
               alt={currency?.symbol}
@@ -107,7 +107,7 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
           <Tooltip title={`~${formatCurrency(repaymentAmount * currency?.lastPrice, 2)}`}>
             <span>{repaymentAmount.toFixed(4)}</span>
           </Tooltip>
-          <Tooltip title={currency?.name}>
+          <Tooltip title={currency?.name || ""}>
             <img
               src={currency?.icon}
               alt={currency?.symbol}

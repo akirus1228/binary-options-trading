@@ -126,7 +126,7 @@ export function LenderAsset(props: LenderAssetProps) {
               <span style={{ fontWeight: "700", fontSize: "24px" }}>
                 {listing.term.amount}
               </span>
-              <Tooltip title={currency?.name}>
+              <Tooltip title={currency?.name || ""}>
                 <img
                   src={currency?.icon}
                   alt={currency?.name}

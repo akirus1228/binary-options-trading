@@ -78,7 +78,8 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
             <Typography className={`${style["data"]}`}>
               {repaymentAmount.toFixed(4)} {currency?.symbol}
             </Typography>
-            <span>
+            <span className="subtle">
+              (
               {!!currency &&
                 currency?.lastPrice &&
                 "~" &&
@@ -86,6 +87,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                   style: "currency",
                   currency: "USD",
                 })}
+              )
             </span>
           </Box>
           <Box className="flex fc">

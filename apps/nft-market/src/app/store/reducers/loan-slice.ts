@@ -4,6 +4,10 @@ import { BackendLoadingStatus, Loan } from "../../types/backend-types";
 import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
 import { RootState } from "..";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
+import {
+  getErc20CurrencyFromAddress,
+  getSymbolFromAddress,
+} from "../../helpers/erc20Currency";
 
 export type CreateLoanEvent = {
   event: string;
@@ -97,7 +101,12 @@ returns: void
 */
 export const contractCreateLoan = createAsyncThunk(
   "loan/contractCreateLoan",
-  async ({ loan, provider, networkId }: LoanAsyncThunk) => {
+  async ({ loan, provider, networkId }: LoanAsyncThunk, { getState }) => {
+    const state: RootState = getState() as RootState;
+    const currency =
+      state.currency.currencies[
+        getSymbolFromAddress(loan.assetListing.term.currencyAddress)
+      ] || getErc20CurrencyFromAddress(loan.assetListing.term.currencyAddress);
     const signer = provider.getSigner();
     const lendingContract = new ethers.Contract(
       addresses[networkId]["USDB_LENDING_ADDRESS"],
@@ -113,11 +122,13 @@ export const contractCreateLoan = createAsyncThunk(
       currencyAddress: loan.assetListing.term.currencyAddress,
       nftTokenId: loan.assetListing.asset.tokenId,
       duration: loan.term.duration,
-      loanAmount: ethers.utils.parseEther(loan.term.amount.toString()),
+      loanAmount: ethers.utils.parseUnits(loan.term.amount.toString(), currency.decimals),
       apr: loan.term.apr * 100,
       nftTokenType: 0, // token type
       sig: loan.term.signature,
     };
+
+    console.log(params);
     // call the contract
     const approveTx: ContractTransaction = await lendingContract["createLoan"](
       params.lender,

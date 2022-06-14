@@ -240,10 +240,11 @@ export const LoanConfirmation = ({
   }, [isCreating, checkErc20AllowanceStatus, requestErc20AllowanceStatus]);
 
   const currencyBalance = useSelector((state: RootState) =>
-    selectErc20BalanceByAddress(state, currency.currentAddress)
+    selectErc20BalanceByAddress(state, currency?.currentAddress)
   );
+
   useEffect(() => {
-    if (!user.address) return;
+    if (!user.address || !currency) return;
     dispatch(
       loadErc20Balance({
         networkId: desiredNetworkId,
@@ -251,7 +252,7 @@ export const LoanConfirmation = ({
         currencyAddress: currency.currentAddress,
       })
     );
-  }, [user.address]);
+  }, [user.address, currency]);
 
   const handleClickLend = () => {
     setOpen(true);
@@ -360,7 +361,7 @@ export const LoanConfirmation = ({
                   className="flex fc"
                   sx={{ borderTop: "1px solid lightgrey", mt: "1em", pt: "1em" }}
                 >
-                  <span className="strong">My current {currency?.symbol}</span>
+                  <span className="strong">My wallet balance</span>
                   <span className="flex fr ai-c">
                     <img
                       src={currency?.icon}
@@ -372,8 +373,12 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {ethers.utils.formatUnits(currencyBalance, currency.decimals)}{" "}
-                    {currency.symbol}
+                    {currencyBalance &&
+                      ethers.utils.formatUnits(
+                        currencyBalance,
+                        currency?.decimals || 18
+                      )}{" "}
+                    {currency?.symbol || ""}
                   </span>
                 </Box>
               </Box>
@@ -394,10 +399,10 @@ export const LoanConfirmation = ({
                       marginBottom: "2px",
                     }}
                   />
-                  {repaymentTotal.toFixed(5)} {currency.symbol}
+                  {repaymentTotal.toFixed(5)} {currency?.symbol || ""}
                 </span>
                 <span className="subtle">
-                  ~{formatCurrency(repaymentTotal * currency.lastPrice, 2)}
+                  ~{formatCurrency(repaymentTotal * currency?.lastPrice || 0, 2)}
                 </span>
               </Box>
             </Box>
@@ -432,14 +437,25 @@ export const LoanConfirmation = ({
         <Box className="flex fr fj-c" sx={{ pt: "2em", pb: "1em" }}>
           {!hasAllowance && !isPending && (
             <Button variant="outlined" onClick={handleRequestAllowance}>
-              Allow LiqdNft access to your {currency.symbol}
+              Allow LiqdNft access to your {currency?.symbol || ""}
             </Button>
           )}
-          {hasAllowance && !isPending && (
-            <Button variant="contained" onClick={handleAcceptTerms}>
-              Create Loan
-            </Button>
-          )}
+          {hasAllowance &&
+            !isPending &&
+            currencyBalance &&
+            currencyBalance.gte(listing.term.amount * currency?.decimals || 0) && (
+              <Button variant="contained" onClick={handleAcceptTerms}>
+                Create Loan
+              </Button>
+            )}
+          {hasAllowance &&
+            !isPending &&
+            currencyBalance &&
+            currencyBalance.lt(listing.term.amount * currency?.decimals || 0) && (
+              <Button variant="contained" disabled={true}>
+                Insufficiant funds
+              </Button>
+            )}
           {isPending && (
             <Button>
               <CircularProgress />

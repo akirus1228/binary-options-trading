@@ -17,6 +17,7 @@ import {
 import { desiredNetworkId } from "../../constants/network";
 import { currencyInfo } from "../../helpers/erc20Currency";
 import store from "../../store";
+import { resetCurrency } from "../../store/reducers/currency-slice";
 import {
   getLoanDetailsFromContract,
   LoanDetails,
@@ -164,6 +165,7 @@ export const TestHelper = (): JSX.Element => {
 
   const handleNukeLocal = () => {
     localStorage.clear();
+    dispatch(resetCurrency());
   };
 
   return (
