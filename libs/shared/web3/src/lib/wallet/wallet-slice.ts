@@ -60,7 +60,6 @@ export const loadPlatformFee = createAsyncThunk(
     address,
     currencyAddress,
   }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
-    console.log(`loading platform fee: ${currencyAddress}`);
     const provider = await chains[networkId].provider;
 
     const usdbLendingContract = new ethers.Contract(
@@ -70,7 +69,6 @@ export const loadPlatformFee = createAsyncThunk(
     );
 
     const platformFee = await usdbLendingContract["platformFees"](currencyAddress);
-    console.log(`platform fee loaded: ${platformFee}`);
     return { amount: +platformFee / 10000, currencyAddress };
   }
 );
@@ -235,6 +233,7 @@ export const checkErc20Allowance = createAsyncThunk(
     if (!walletAddress || !assetAddress) {
       return rejectWithValue("Addresses and id required");
     }
+    console.log(`checking erc20 allowance for ${assetAddress}`);
     if (![NetworkIds.Ethereum, NetworkIds.Rinkeby].includes(networkId)) {
       try {
         await window.ethereum.request({
@@ -299,8 +298,6 @@ const walletSlice = createSlice({
       loadErc20Balance.fulfilled,
       (state, action: PayloadAction<Erc20Balance>) => {
         state.currencyStatus = "succeeded";
-        console.log("action.payload");
-        console.log(action.payload);
         state.erc20Balance = { ...state.erc20Balance, ...action.payload };
       }
     );

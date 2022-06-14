@@ -1,4 +1,5 @@
 import {
+  checkErc20Allowance,
   checkNftPermission,
   formatCurrency,
   loadPlatformFee,
@@ -85,7 +86,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   );
 
   useEffect(() => {
-    console.log("loading new currency");
     dispatch(loadCurrencyFromId(`${selectedCurrency.toUpperCase()}_ADDRESS`));
   }, [selectedCurrency]);
 
@@ -166,6 +166,20 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       );
     }
   }, [chainId, address, props.asset.assetContractAddress]);
+
+  // check to see if we have an approval for the amount required for this txn
+  useEffect(() => {
+    if (user.address && provider && currency && !erc20Allowance) {
+      dispatch(
+        checkErc20Allowance({
+          networkId: desiredNetworkId,
+          provider,
+          walletAddress: user.address,
+          assetAddress: currency.currentAddress,
+        })
+      );
+    }
+  }, [user.address, provider, currency, erc20Allowance]);
 
   // watch the status of the wallet for pending txns to clear
   useEffect(() => {
@@ -498,7 +512,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
-        erc20Allowance &&
+        !!erc20Allowance &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
         erc20Allowance.gte(
           ethers.utils.parseEther(
@@ -513,7 +527,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !pending &&
         props.listing &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
-        erc20Allowance &&
+        !!erc20Allowance &&
         erc20Allowance.lt(
           ethers.utils.parseEther(
             (amount * (1 + platformFees[currency?.currentAddress])).toString()
