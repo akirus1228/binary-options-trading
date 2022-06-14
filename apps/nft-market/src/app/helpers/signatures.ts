@@ -2,6 +2,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { Terms } from "../types/backend-types";
 import { nftTokenType } from "../types/contract-types";
+import { Erc20Currency } from "./erc20Currency";
 
 export const signTerms = async (
   provider: JsonRpcProvider,
@@ -10,7 +11,7 @@ export const signTerms = async (
   nftContractAddress: string,
   tokenId: string,
   term: Terms,
-  currencyAddress: string
+  currency: Erc20Currency
 ): Promise<string> => {
   const payload = ethers.utils.defaultAbiCoder.encode(
     [
@@ -26,10 +27,10 @@ export const signTerms = async (
     [
       borrowerAddress,
       nftContractAddress,
-      currencyAddress,
+      currency.currentAddress,
       tokenId,
       term.duration,
-      ethers.utils.parseEther(term.amount.toString()),
+      ethers.utils.parseUnits(term.amount.toString(), currency.decimals),
       term.apr * 100,
       nftTokenType.ERC721,
     ]

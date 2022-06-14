@@ -25,12 +25,13 @@ export const BorrowerListingDetails = (
     selectListingFromAsset(state, props.asset)
   );
   const currency = useSelector((state: RootState) =>
-    selectCurrencyByAddress(state, listing.term.currencyAddress)
+    selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
   );
 
   useEffect(() => {
+    if (!listing?.term?.currencyAddress) return;
     dispatch(loadCurrencyFromAddress(listing.term.currencyAddress));
-  }, [listing.term.currencyAddress]);
+  }, [listing?.term?.currencyAddress]);
 
   useGetListingsQuery(
     {

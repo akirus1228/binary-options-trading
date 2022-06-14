@@ -7,11 +7,13 @@ export type TermDetails = {
   amount: number;
   apr: number;
   duration: number;
+  estRepaymentDate: Date;
 };
 
 export const useTermDetails = (term: Terms | undefined): TermDetails => {
   const [repaymentAmount, setRepaymentAmount] = useState(0);
   const [repaymentTotal, setRepaymentTotal] = useState(0);
+  const [estRepaymentDate, setEstRepaymentDate] = useState<Date>(new Date());
   const [amount, setAmount] = useState(0);
   const [apr, setApr] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -24,6 +26,7 @@ export const useTermDetails = (term: Terms | undefined): TermDetails => {
       const _repaymentAmount = amount * realPercent;
       setRepaymentAmount(_repaymentAmount);
       setRepaymentTotal(_repaymentAmount + amount);
+      setEstRepaymentDate(new Date(Date.now() + duration * 86400 * 1000));
     }
   }, [amount, duration, apr]);
 
@@ -43,5 +46,5 @@ export const useTermDetails = (term: Terms | undefined): TermDetails => {
     }
   }, [JSON.stringify(term)]);
 
-  return { repaymentAmount, repaymentTotal, amount, apr, duration };
+  return { repaymentAmount, repaymentTotal, amount, apr, duration, estRepaymentDate };
 };

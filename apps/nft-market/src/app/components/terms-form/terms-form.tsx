@@ -1,4 +1,5 @@
 import {
+  checkErc20Allowance,
   checkNftPermission,
   formatCurrency,
   loadPlatformFee,
@@ -85,7 +86,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   );
 
   useEffect(() => {
-    console.log("loading new currency");
     dispatch(loadCurrencyFromId(`${selectedCurrency.toUpperCase()}_ADDRESS`));
   }, [selectedCurrency]);
 
@@ -167,6 +167,20 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     }
   }, [chainId, address, props.asset.assetContractAddress]);
 
+  // check to see if we have an approval for the amount required for this txn
+  useEffect(() => {
+    if (user.address && provider && currency && !erc20Allowance) {
+      dispatch(
+        checkErc20Allowance({
+          networkId: desiredNetworkId,
+          provider,
+          walletAddress: user.address,
+          assetAddress: currency.currentAddress,
+        })
+      );
+    }
+  }, [user.address, provider, currency, erc20Allowance]);
+
   // watch the status of the wallet for pending txns to clear
   useEffect(() => {
     if (
@@ -217,7 +231,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency?.currentAddress
+      currency
     );
     term.signature = termSignature;
     dispatch(createListing({ term, asset })).then(() => {
@@ -255,7 +269,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency?.currentAddress
+      currency
     );
     term.signature = termSignature;
     updateTerms(term);
@@ -329,7 +343,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       props.asset.assetContractAddress,
       props.asset.tokenId,
       preSigTerm,
-      currency?.currentAddress
+      currency
     );
 
     const term: Terms = {
@@ -492,12 +506,13 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       )}
       {isOwner && hasPermission && !pending && props.listing && (
         <Button variant="contained" onClick={handleUpdateTerms}>
-          Update Terms
+          Update Terms (no cost)
         </Button>
       )}
       {!isOwner &&
         !pending &&
         props.listing &&
+        !!erc20Allowance &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
         erc20Allowance.gte(
           ethers.utils.parseEther(
@@ -512,6 +527,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !pending &&
         props.listing &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
+        !!erc20Allowance &&
         erc20Allowance.lt(
           ethers.utils.parseEther(
             (amount * (1 + platformFees[currency?.currentAddress])).toString()

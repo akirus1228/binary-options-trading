@@ -93,6 +93,17 @@ html, body {
   input[type=number] {
     -moz-appearance: textfield;
   }
+
+  .strong {
+    font-weight: 500;
+    font-size: 110%;
+  }
+
+  .subtle {
+    font-weight: 300;
+    color: #8991A2;
+    font-size: 80%
+  }
   
   /* experimental animated gradient background
   body {
