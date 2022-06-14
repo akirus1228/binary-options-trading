@@ -1,9 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, createSelector } from "@reduxjs/toolkit";
 import { appReducer } from "./reducers/app-slice";
 import { themeReducer } from "@fantohm/shared-ui-themes";
 import { assetsReducer } from "./reducers/asset-slice";
 import { backendReducer } from "./reducers/backend-slice";
-import { saveState, walletReducer } from "@fantohm/shared-web3";
+import { accountReducer, saveState, walletReducer } from "@fantohm/shared-web3";
 import { listingsReducer } from "./reducers/listing-slice";
 import { openseaApi } from "../api/opensea";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
@@ -22,6 +22,7 @@ const store = configureStore({
     backend: backendReducer,
     wallet: walletReducer,
     loans: loansReducer,
+    account: accountReducer,
     [openseaApi.reducerPath]: openseaApi.reducer,
     [backendApi.reducerPath]: backendApi.reducer,
   },
@@ -37,7 +38,11 @@ store.subscribe(() => {
   saveState("assets", store.getState().assets);
   saveState("wallet", store.getState().wallet);
   saveState("loans", store.getState().loans);
+  saveState("account", store.getState().account);
 });
+
+const accountInfo = (state: RootState) => state.account;
+export const getAccountState = createSelector(accountInfo, (account) => account);
 
 setupListeners(store.dispatch);
 

@@ -25,14 +25,16 @@ import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
-import { enabledNetworkIds, useWeb3Context } from "@fantohm/shared-web3";
+import { enabledNetworkIds, useWeb3Context, isDev, NetworkIds } from "@fantohm/shared-web3";
 import { NftLight, NftDark } from "@fantohm/shared-ui-themes";
+import { addressEllipsis, truncateDecimals } from "@fantohm/shared-helpers";
+
 
 import { CustomInnerSwitch, setTheme } from "@fantohm/shared-ui-themes";
 import { useDispatch, useSelector } from "react-redux";
-import { addressEllipsis } from "@fantohm/shared-helpers";
 
 import { RootState } from "../../../store";
+import { logout } from "../../../store/reducers/backend-slice";
 
 import MenuLink from "./menu-link";
 import styles from "./header.module.scss";
@@ -68,20 +70,21 @@ const pages: Page[] = [
 
 const accountSubMenu: AccountSubMenu[] = [
   { title: "My profile", href: "/my-account", icon: "user" },
-  { title: "My assets", href: "#", icon: "photo" },
-  { title: "My loans", href: "#", icon: "loan" },
+  { title: "My assets", href: "/my-account#assets", icon: "photo" },
+  { title: "My loans", href: "/my-account#loans", icon: "loan" },
   { title: "Dark theme", href: "#", icon: 'sun' },
 ]
 
 export const Header = (): JSX.Element => {
   const dispatch = useDispatch();
 
-  const { connected, chainId, address } = useWeb3Context();
+  const { connected, chainId, connect, disconnect, address } = useWeb3Context();
   const allowedChain = chainId && enabledNetworkIds.includes(chainId);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(null);
   const [checked, setChecked] = useState(false);
   const themeType = useSelector((state: RootState) => state.theme.mode);
+
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -92,7 +95,11 @@ export const Header = (): JSX.Element => {
   };
 
   const accountDrop = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setFlagAccountDropDown(event.currentTarget);
+    if (connected) {
+      setFlagAccountDropDown(event.currentTarget);
+    } else {
+      onClickConnect()
+    }
   }
 
   const themeChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,6 +109,19 @@ export const Header = (): JSX.Element => {
 
   const toggleTheme = () => {
     dispatch(setTheme(themeType === "light" ? "dark" : "light"));
+  };
+
+  const onClickConnect = () => {
+    connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+  };
+
+  const USDBBalance = useSelector((state: RootState) => {
+    return truncateDecimals(Number(state.account.balances.usdb), 4).toString();
+  });
+
+  const onClickDisconnect = () => {
+    disconnect();
+    dispatch(logout());
   };
 
   return (
@@ -207,51 +227,22 @@ export const Header = (): JSX.Element => {
                         {page.title}
                       </Button>
                     </Link>
-                    <Popover
-                      id={"Account"}
-                      open={Boolean(flagAccountDropDown)}
-                      anchorEl={flagAccountDropDown}
-                      onClose={() => setFlagAccountDropDown(null)}
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left'
-                      }}
-                      className="accountDropdown"
-                    >
-                      <h3 style={{ marginBottom: '5px', marginTop: '5px' }}>{addressEllipsis(address)}</h3>
-                      <div style={{ display: "flex", alignItems: "center", marginTop: '3px' }}>
-                        {/* <h6 style={{ color: "grey", marginRight: '10px', marginTop: '5px', marginBottom: '5px' }}>0x1A2bc...4d5678</h6> */}
-                        <Box key="address-box">{addressEllipsis(address)}</Box>
-                        <IconButton
-                          size="small"
-                          aria-label="copy address"
-                          sx={{
-                            width: 40,
-                            height: 40
-                          }}
-                        >
-                          <ContentCopyIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          aria-label="copy address"
-                          sx={{
-                            width: 40,
-                            height: 40
-                          }}
-                        >
-                          <LaunchIcon fontSize="small" />
-                        </IconButton>
-                      </div>
-                      <div style={{ background: 'white', padding: '10px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <img src={coin} alt="logo" width={40} height={40} />
-                          <div className="amount" style={{ marginLeft: '10px' }}>
-                            <p style={{ color: 'grey', marginTop: '3px', marginBottom: '3px' }}>Wallet Balance</p>
-                            <p style={{ marginTop: '3px', marginBottom: '3px' }}>229.00k USDB</p>
-                          </div>
-                        </div>
-                        <div className="show_balance">
+
+                    {connected ? (
+                      <Popover
+                        id={"Account"}
+                        open={Boolean(flagAccountDropDown)}
+                        anchorEl={flagAccountDropDown}
+                        onClose={() => setFlagAccountDropDown(null)}
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'left'
+                        }}
+                        className="accountDropdown"
+                      >
+                        <h3 style={{ marginBottom: '5px', marginTop: '5px' }}>{addressEllipsis(address)}</h3>
+                        <div style={{ display: "flex", alignItems: "center", marginTop: '3px' }}>
+                          <h6 style={{ color: "grey", marginRight: '10px', marginTop: '5px', marginBottom: '5px' }}>{addressEllipsis(address)}</h6>
                           <IconButton
                             size="small"
                             aria-label="copy address"
@@ -260,72 +251,101 @@ export const Header = (): JSX.Element => {
                               height: 40
                             }}
                           >
-                            <VisibilityOffOutlinedIcon />
+                            <ContentCopyIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            aria-label="copy address"
+                            sx={{
+                              width: 40,
+                              height: 40
+                            }}
+                          >
+                            <LaunchIcon fontSize="small" />
                           </IconButton>
                         </div>
-                      </div>
-                      <Button variant="contained" sx={{ mt: "20px", mb: '20px', width: '300px', fontSize: '14px' }}>
-                        Buy USDB on Exchanges &nbsp;&nbsp;
-                        <NorthEastOutlinedIcon />
-                      </Button>
+                        <div style={{ background: 'white', padding: '10px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <img src={coin} alt="logo" width={40} height={40} />
+                            <div className="amount" style={{ marginLeft: '10px' }}>
+                              <p style={{ color: 'grey', marginTop: '3px', marginBottom: '3px' }}>Wallet Balance</p>
+                              <p style={{ marginTop: '3px', marginBottom: '3px' }}>{USDBBalance}</p>
+                            </div>
+                          </div>
+                          <div className="show_balance">
+                            <IconButton
+                              size="small"
+                              aria-label="copy address"
+                              sx={{
+                                width: 40,
+                                height: 40
+                              }}
+                            >
+                              <VisibilityOffOutlinedIcon />
+                            </IconButton>
+                          </div>
+                        </div>
+                        <Button variant="contained" sx={{ mt: "20px", mb: '20px', width: '300px', fontSize: '14px' }}>
+                          Buy USDB on Exchanges &nbsp;&nbsp;
+                          <NorthEastOutlinedIcon />
+                        </Button>
 
-                      {accountSubMenu.map((dropMenu: AccountSubMenu, index: number) => {
-                        return (
-                          <Typography
-                            key={`btn-${dropMenu.title}-${index}`}
-                            textAlign="left"
-                            style={{ opacity: dropMenu?.params?.comingSoon ? 0.2 : 1, }}
-                          >
-                            {dropMenu.icon === "sun" ?
-                              <Button style={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <LightModeOutlinedIcon />
-                                  &nbsp;&nbsp;
-                                  {dropMenu.title}
-                                </div>
-                                {/* <Switch 
+                        {accountSubMenu.map((dropMenu: AccountSubMenu, index: number) => {
+                          return (
+                            <Typography
+                              key={`btn-${dropMenu.title}-${index}`}
+                              textAlign="left"
+                              style={{ opacity: dropMenu?.params?.comingSoon ? 0.2 : 1, }}
+                            >
+                              {dropMenu.icon === "sun" ?
+                                <Button style={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'space-between' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <LightModeOutlinedIcon />
+                                    &nbsp;&nbsp;
+                                    {dropMenu.title}
+                                  </div>
+                                  {/* <Switch 
                                   onChange={themeChange}
                                   inputProps={{ 'aria-label': 'controlled' }}
                                 /> */}
-                                {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
-                                <CustomInnerSwitch onClick={toggleTheme} />
+                                  {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
+                                  <CustomInnerSwitch onClick={toggleTheme} />
 
-                              </Button>
-                              :
-                              <Link to={dropMenu.href || "#"}>
-
-                                <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }} onClick={() => setFlagAccountDropDown(null)}>
-                                  {dropMenu.icon == "user" ?
-                                    <PersonOutlineOutlinedIcon /> :
-                                    dropMenu.icon == "photo" ?
-                                      <InsertPhotoOutlinedIcon /> :
-                                      dropMenu.icon == "loan" ?
-                                        <CreditCardOutlinedIcon /> :
-                                        null
-                                  }
-                                  &nbsp;&nbsp;
-                                  {dropMenu.title}
                                 </Button>
-                              </Link>
-                            }
-                          </Typography>
-                        )
-                      })}
+                                :
+                                <Link to={dropMenu.href || "#"}>
 
-                      <Typography textAlign="left" sx={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #CCCCCC' }}>
-                        <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }}>
-                          <LogoutOutlinedIcon />
-                          &nbsp;&nbsp;
-                          Disconnect
-                        </Button>
-                      </Typography>
-                    </Popover>
+                                  <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }} onClick={() => setFlagAccountDropDown(null)}>
+                                    {dropMenu.icon == "user" ?
+                                      <PersonOutlineOutlinedIcon /> :
+                                      dropMenu.icon == "photo" ?
+                                        <InsertPhotoOutlinedIcon /> :
+                                        dropMenu.icon == "loan" ?
+                                          <CreditCardOutlinedIcon /> :
+                                          null
+                                    }
+                                    &nbsp;&nbsp;
+                                    {dropMenu.title}
+                                  </Button>
+                                </Link>
+                              }
+                            </Typography>
+                          )
+                        })}
+
+                        <Typography textAlign="left" sx={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #CCCCCC' }}>
+                          <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }} onClick={onClickDisconnect}>
+                            <LogoutOutlinedIcon />
+                            &nbsp;&nbsp;
+                            Disconnect
+                          </Button>
+                        </Typography>
+                      </Popover>
+                    ) : null}
                   </Typography>
                 );
               })}
-
             </Box>
-
           </Box>
           <NotificationMenu />
           <UserMenu />
