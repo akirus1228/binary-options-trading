@@ -12,19 +12,9 @@ import {
   InteractiveWalletErc20AsyncThunk,
 } from "../slices/interfaces";
 
-export enum AcceptedCurrencies {
-  USDB,
-  WETH,
-  DAI,
-  FTM,
-  USDC,
-}
-
-export interface Currency {
-  symbol: AcceptedCurrencies;
-  name: string;
-  balance: string;
-}
+export type Erc20Balance = {
+  [address: string]: BigNumber;
+};
 
 export type NftPermStatus = {
   [tokenIdentifier: string]: boolean;
@@ -40,6 +30,9 @@ export type NftPermissionPayload = {
   hasPermission: boolean;
 };
 
+export type PlatformFees = {
+  [currencyAddress: string]: number;
+};
 export interface WalletState {
   readonly currencyStatus: "idle" | "loading" | "succeeded" | "failed";
   readonly checkPermStatus: "idle" | "loading" | "failed";
@@ -48,9 +41,9 @@ export interface WalletState {
   readonly checkErc20AllowanceStatus: "idle" | "loading" | "failed";
   readonly nftPermStatus: NftPermStatus;
   readonly erc20Allowance: Erc20Allowance;
-  readonly currencies: Currency[];
+  readonly erc20Balance: Erc20Balance;
   readonly isDev: boolean;
-  readonly platformFee: number;
+  readonly platformFees: PlatformFees;
 }
 
 /* 
@@ -62,7 +55,11 @@ returns: void
 */
 export const loadPlatformFee = createAsyncThunk(
   "wallet/loadPlatformFee",
-  async ({ networkId, address }: IBaseAddressAsyncThunk) => {
+  async ({
+    networkId,
+    address,
+    currencyAddress,
+  }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
     const provider = await chains[networkId].provider;
 
     const usdbLendingContract = new ethers.Contract(
@@ -71,37 +68,31 @@ export const loadPlatformFee = createAsyncThunk(
       provider
     );
 
-    const platformFee = await usdbLendingContract["platformFee"]();
-    return +platformFee / 10000;
+    const platformFee = await usdbLendingContract["platformFees"](currencyAddress);
+    return { amount: +platformFee / 10000, currencyAddress };
   }
 );
 
 /* 
-loadWalletBalance: loads balances
+loadWalletCurrencies: loads balances
 params: 
 - networkId: number
 - address: string
 returns: void
 */
-export const loadWalletCurrencies = createAsyncThunk(
-  "wallet/loadWalletCurrencies",
-  async ({ networkId, address }: IBaseAddressAsyncThunk) => {
+export const loadErc20Balance = createAsyncThunk(
+  "wallet/loadErc20Balance",
+  async ({
+    networkId,
+    address,
+    currencyAddress,
+  }: IBaseAddressAsyncThunk & { currencyAddress: string }) => {
     const provider = await chains[networkId].provider;
 
-    const usdbContract = new ethers.Contract(
-      addresses[networkId]["USDB_ADDRESS"] as string,
-      ierc20Abi,
-      provider
-    );
+    const erc20Contract = new ethers.Contract(currencyAddress, ierc20Abi, provider);
 
-    const usdbBalance = await usdbContract["balanceOf"](address);
-    return [
-      {
-        symbol: AcceptedCurrencies.USDB,
-        name: "USDBalance",
-        balance: ethers.utils.formatUnits(usdbBalance, "gwei"),
-      } as Currency,
-    ];
+    const erc20Balance = await erc20Contract["balanceOf"](address);
+    return { [currencyAddress]: erc20Balance } as Erc20Balance;
   }
 );
 
@@ -202,8 +193,8 @@ export const requestErc20Allowance = createAsyncThunk(
     }
     try {
       const signer = provider.getSigner();
-      const nftContract = new ethers.Contract(assetAddress, ierc20Abi, signer);
-      const approveTx = await nftContract["approve"](
+      const erc20Contract = new ethers.Contract(assetAddress, ierc20Abi, signer);
+      const approveTx = await erc20Contract["approve"](
         addresses[networkId]["USDB_LENDING_ADDRESS"] as string,
         amount
       );
@@ -242,7 +233,7 @@ export const checkErc20Allowance = createAsyncThunk(
     if (!walletAddress || !assetAddress) {
       return rejectWithValue("Addresses and id required");
     }
-    if (networkId != NetworkIds.Ethereum && networkId != NetworkIds.Rinkeby) {
+    if (![NetworkIds.Ethereum, NetworkIds.Rinkeby].includes(networkId)) {
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
@@ -273,7 +264,8 @@ const previousState = loadState("wallet");
 const initialState: WalletState = {
   currencies: [],
   nftPermStatus: [],
-  platformFee: null,
+  platformFees: [],
+  erc20Balance: [],
   ...previousState, // overwrite assets and currencies from cache if recent
   currencyStatus: "idle", // always reset states on reload
   checkPermStatus: "idle",
@@ -289,17 +281,28 @@ const walletSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(loadPlatformFee.fulfilled, (state, action: PayloadAction<number>) => {
-      state.platformFee = action.payload;
-    });
-    builder.addCase(loadWalletCurrencies.pending, (state, action) => {
+    builder.addCase(
+      loadPlatformFee.fulfilled,
+      (state, action: PayloadAction<{ amount: number; currencyAddress: string }>) => {
+        state.platformFees = {
+          ...state.platformFees,
+          ...{ [action.payload.currencyAddress]: action.payload.amount },
+        };
+      }
+    );
+    builder.addCase(loadErc20Balance.pending, (state, action) => {
       state.currencyStatus = "loading";
     });
-    builder.addCase(loadWalletCurrencies.fulfilled, (state, action) => {
-      state.currencyStatus = "succeeded";
-      state.currencies = action.payload;
-    });
-    builder.addCase(loadWalletCurrencies.rejected, (state, action) => {
+    builder.addCase(
+      loadErc20Balance.fulfilled,
+      (state, action: PayloadAction<Erc20Balance>) => {
+        state.currencyStatus = "succeeded";
+        console.log("action.payload");
+        console.log(action.payload);
+        state.erc20Balance = { ...state.erc20Balance, ...action.payload };
+      }
+    );
+    builder.addCase(loadErc20Balance.rejected, (state, action) => {
       state.currencyStatus = "failed";
     });
     builder.addCase(checkNftPermission.pending, (state, action) => {

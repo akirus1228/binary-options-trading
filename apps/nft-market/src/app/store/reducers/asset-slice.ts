@@ -65,7 +65,7 @@ export const updateAssetsFromOpensea = createAsyncThunk(
 const previousState = loadState("asset");
 const initialState: AssetState = {
   assets: [],
-  isDev: !process.env["NODE_ENV"] || process.env["NODE_ENV"] === "development",
+  isDev: isDev(),
   ...previousState, // overwrite assets and currencies from cache if recent
   assetStatus: "idle",
   nextOpenseaLoad: 0,

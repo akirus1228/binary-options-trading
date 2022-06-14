@@ -73,6 +73,7 @@ export type Terms = {
   duration: number;
   expirationAt: string;
   signature: string;
+  currencyAddress: string;
 } & StandardBackendObject;
 
 export enum ListingStatus {
@@ -294,6 +295,8 @@ export type BackendStandardQuery = {
   skip: number;
   take: number;
 };
+
+export type FrontendAssetFilterQuery = Partial<Asset> & { openseaIds?: string[] };
 
 export type BackendAssetQueryParams = {
   status?: AssetStatus;

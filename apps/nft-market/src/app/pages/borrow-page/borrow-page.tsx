@@ -10,20 +10,35 @@ import HeaderBlurryImage from "../../components/header-blurry-image/header-blurr
 import { RootState } from "../../store";
 import { OpenseaAssetQueryParam } from "../../store/reducers/interfaces";
 import { selectAssetsByQuery } from "../../store/selectors/asset-selectors";
-import { AssetStatus, BackendAssetQueryParams } from "../../types/backend-types";
+import {
+  Asset,
+  AssetStatus,
+  BackendAssetQueryParams,
+  FrontendAssetFilterQuery,
+} from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
+  // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
     limit: 50,
+    owner: address,
   });
+
+  // query to use on frontend to filter cached results and ultimately display
+  const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
+    status: AssetStatus.Ready,
+    wallet: address,
+  });
+
+  // query to use on backend api call, to pull data we have
   const [beQuery, setBeQuery] = useState<BackendAssetQueryParams>({
     skip: 0,
     take: 50,
-    status: AssetStatus.Ready,
   });
-  const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, beQuery));
+
+  const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
@@ -33,8 +48,12 @@ export const BorrowPage = (): JSX.Element => {
 
   // using the opensea assets, crosscheck with backend api for correlated data
   const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
-    skip: !assets || !authSignature,
+    skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
   });
+
+  useEffect(() => {
+    console.log(feQuery);
+  }, [feQuery]);
 
   useEffect(() => {
     const newQuery = {
@@ -65,7 +84,7 @@ export const BorrowPage = (): JSX.Element => {
       <Box sx={{ mt: "3em" }}>
         <Grid container maxWidth="xl" columnSpacing={5}>
           <Grid item xs={0} md={3}>
-            <BorrowerAssetFilter query={beQuery} setQuery={setBeQuery} />
+            <BorrowerAssetFilter query={feQuery} setQuery={setFeQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
             {(assetsLoading || isAssetLoading) && (

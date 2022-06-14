@@ -1,8 +1,5 @@
 import {
-  addresses,
   checkErc20Allowance,
-  isDev,
-  NetworkIds,
   prettifySeconds,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
@@ -30,6 +27,9 @@ import {
 } from "../../store/reducers/loan-slice";
 import { Asset, AssetStatus, Loan, LoanStatus } from "../../types/backend-types";
 import style from "./borrower-loan-details.module.scss";
+import { desiredNetworkId } from "../../constants/network";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 
 export interface BorrowerLoanDetailsProps {
   asset: Asset;
@@ -52,17 +52,24 @@ export const BorrowerLoanDetails = ({
   const { user } = useSelector((state: RootState) => state.backend);
   const { repayLoanStatus } = useSelector((state: RootState) => state.loans);
 
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, loan.term.currencyAddress)
+  );
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(loan.term.currencyAddress));
+  }, []);
+
   // status of allowance check or approval
   const { checkErc20AllowanceStatus, requestErc20AllowanceStatus } = useSelector(
     (state: RootState) => state.wallet
   );
 
-  // select the USDB allowance provided to lending contract for this address
-  const usdbAllowance = useSelector((state: RootState) =>
+  // select the currency allowance provided to lending contract for this address
+  const erc20Allowance = useSelector((state: RootState) =>
     selectErc20AllowanceByAddress(state, {
       walletAddress: user.address,
-      erc20TokenAddress:
-        addresses[isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum]["USDB_ADDRESS"],
+      erc20TokenAddress: loanDetails.currency || "",
     })
   );
 
@@ -70,24 +77,24 @@ export const BorrowerLoanDetails = ({
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (chainId && user.address && provider) {
+    if (user.address && provider && loanDetails.currency && !erc20Allowance) {
       dispatch(
         checkErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+          networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+          assetAddress: loanDetails.currency,
         })
       );
     }
-  }, [chainId, user.address, provider]);
+  }, [user.address, provider, loanDetails.currency, erc20Allowance]);
 
   useEffect(() => {
     if (!loan || !loan.contractLoanId || !provider) return;
     dispatch(
       getLoanDetailsFromContract({
         loanId: loan.contractLoanId,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
         provider,
       })
     )
@@ -97,12 +104,12 @@ export const BorrowerLoanDetails = ({
 
   const handleRepayLoan = useCallback(async () => {
     if (!loan.contractLoanId || !provider) return;
-    if (usdbAllowance && usdbAllowance.gte(loanDetails.amountDueGwei)) {
+    if (erc20Allowance && erc20Allowance.gte(loanDetails.amountDueGwei)) {
       const repayLoanParams = {
         loanId: loan.contractLoanId,
         amountDue: loanDetails.amountDueGwei,
         provider,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
       };
       const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
       if (repayLoanResult === false) return; //todo: throw nice error
@@ -116,12 +123,12 @@ export const BorrowerLoanDetails = ({
       };
       updateLoan(updateLoanRequest);
     } else {
-      console.warn(`insufficiant allowance: ${usdbAllowance}`);
+      console.warn(`insufficiant allowance: ${erc20Allowance}`);
     }
   }, [
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    usdbAllowance,
+    erc20Allowance,
     loanDetails.amountDueGwei,
   ]);
 
@@ -129,17 +136,17 @@ export const BorrowerLoanDetails = ({
     if (!provider) return;
     dispatch(
       requestErc20Allowance({
-        networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+        networkId: desiredNetworkId,
         provider,
         walletAddress: user.address,
-        assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+        assetAddress: loanDetails.currency,
         amount: loanDetails.amountDueGwei,
       })
     );
   }, [
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    usdbAllowance,
+    erc20Allowance,
     loanDetails.amountDueGwei,
   ]);
 
@@ -216,17 +223,17 @@ export const BorrowerLoanDetails = ({
             </Box>
           </Box>
           <Box className="flex fc">
-            {!!usdbAllowance &&
-              usdbAllowance.gte(loanDetails.amountDueGwei) &&
+            {!!erc20Allowance &&
+              erc20Allowance.gte(loanDetails.amountDueGwei) &&
               !isPending && (
                 <Button variant="contained" onClick={handleRepayLoan}>
                   Repay loan
                 </Button>
               )}
-            {(!usdbAllowance || usdbAllowance.lt(loanDetails.amountDueGwei)) &&
+            {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
               !isPending && (
                 <Button variant="contained" onClick={handleRequestAllowance}>
-                  Repay loan.
+                  Approve {currency?.symbol} for repayment
                 </Button>
               )}
             {isPending && <Button variant="contained">Pending...</Button>}

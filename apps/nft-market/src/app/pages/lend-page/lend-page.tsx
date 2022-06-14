@@ -6,19 +6,20 @@ import LenderAssetFilter from "../../components/asset-filter/lender-asset-filter
 import AssetList from "../../components/asset-list/asset-list";
 import AssetTypeFilter from "../../components/asset-type-filter/asset-type-filter";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
-import { RootState } from "../../store";
 import { ListingQueryParam } from "../../store/reducers/interfaces";
+import { RootState } from "../../store";
 import { Asset, Listing, ListingStatus } from "../../types/backend-types";
 import style from "./lend-page.module.scss";
 
 export const LendPage = (): JSX.Element => {
+  const { user } = useSelector((state: RootState) => state.backend);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [query, setQuery] = useState<ListingQueryParam>({
     skip: 0,
     take: 50,
     status: ListingStatus.Listed,
   });
-  const { authSignature } = useSelector((state: RootState) => state.backend);
+  // const { authSignature } = useSelector((state: RootState) => state.backend);
   const { data: listings, isLoading } = useGetListingsQuery(query);
 
   useEffect(() => {
@@ -26,9 +27,11 @@ export const LendPage = (): JSX.Element => {
       return;
     }
     setAssets(
-      listings.map((listing: Listing): Asset => {
-        return listing.asset;
-      })
+      listings
+        .filter((listing: Listing) => listing.asset.owner.address !== user.address)
+        .map((listing: Listing): Asset => {
+          return listing.asset;
+        })
     );
   }, [listings]);
 

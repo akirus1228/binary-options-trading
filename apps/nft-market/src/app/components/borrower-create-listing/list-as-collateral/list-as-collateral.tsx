@@ -36,8 +36,8 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
           Here are a few things you must acknowledge before you continue.
         </Typography>
         <Typography>
-          Posting an NFT as collateral means you are granting [name] access to manage your
-          NFT.
+          Posting an NFT as collateral means you are granting LiqdNft access to manage
+          your NFT.
         </Typography>
         <Typography>
           You can repay a loan at any time within the agreed term, but you must still pay
@@ -62,7 +62,7 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }}>
+    <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
       <Box className="flex fr fj-c">
         <h1 style={{ margin: "0 0 0.5em 0" }}>List as collateral</h1>
       </Box>

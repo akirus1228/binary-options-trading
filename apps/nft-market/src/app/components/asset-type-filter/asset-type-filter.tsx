@@ -73,7 +73,6 @@ export const AssetTypeFilter = ({
     [buttonState]
   );
 
-  console.log(Object.entries(buttonState));
   return (
     <Box className="flex fr">
       {Object.entries(buttonState).map(([key, value]) => (

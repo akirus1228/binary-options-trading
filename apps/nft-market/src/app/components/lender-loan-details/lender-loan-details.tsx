@@ -1,4 +1,4 @@
-import { isDev, NetworkIds, prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 import {
   Box,
   Button,
@@ -13,12 +13,15 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateLoanMutation } from "../../api/backend-api";
+import { desiredNetworkId } from "../../constants/network";
 import store, { RootState } from "../../store";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import {
   forecloseLoan,
   getLoanDetailsFromContract,
   LoanDetails,
 } from "../../store/reducers/loan-slice";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { Asset, AssetStatus, Loan, LoanStatus } from "../../types/backend-types";
 import style from "./lender-loan-details.module.scss";
 
@@ -39,16 +42,22 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   // select logged in user
   const { user } = useSelector((state: RootState) => state.backend);
 
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, loan.term.currencyAddress)
+  );
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(loan.term.currencyAddress));
+  }, []);
+
   const [updateLoan] = useUpdateLoanMutation();
 
   useEffect(() => {
-    console.log("Getloandetails");
     if (!loan || !loan.contractLoanId || !provider) return;
-    console.log("Getloandetails");
     dispatch(
       getLoanDetailsFromContract({
         loanId: loan.contractLoanId,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
         provider,
       })
     )
@@ -57,19 +66,16 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   }, [loan]);
 
   const handleForecloseLoan = useCallback(async () => {
-    console.log("Handle foreclose loan");
     if (!loan.contractLoanId || !provider) {
       console.warn("Missing prereqs");
       return;
     }
-    console.log(`+loan.contractLoanId ${loan.contractLoanId}`);
-    console.log(`provider ${provider}`);
     setIsPending(true);
     const result = await dispatch(
       forecloseLoan({
         loanId: +loan.contractLoanId,
         provider,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
       })
     ).unwrap();
 
@@ -104,6 +110,9 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
           <Box className="flex fc">
             <Typography className={style["label"]}>Total repayment</Typography>
             <Typography className={`${style["data"]} ${style["primary"]}`}>
+              {loanDetails.amountDue.toFixed(4)} {currency?.symbol}
+            </Typography>
+            <Typography className={`${style["data"]} ${style["secondary"]}`}>
               {loanDetails.amountDue.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -113,6 +122,9 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
           <Box className="flex fc">
             <Typography className={style["label"]}>Principal</Typography>
             <Typography className={`${style["data"]}`}>
+              {loan.term.amount.toFixed(4)} {currency?.symbol}
+            </Typography>
+            <Typography className={`${style["data"]} ${style["secondary"]}`}>
               {loan.term.amount.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",

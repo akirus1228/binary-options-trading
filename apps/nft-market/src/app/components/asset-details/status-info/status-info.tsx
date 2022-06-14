@@ -1,15 +1,18 @@
 import { Box, Icon } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import style from "./status-info.module.scss";
-import {
-  Asset,
-  Listing,
-  ListingStatus,
-  Loan,
-  LoanStatus,
-} from "../../../types/backend-types";
+import { Asset, Listing, Loan, LoanStatus } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-helpers";
+import { useEffect, useMemo } from "react";
+import {
+  erc20Currency,
+  getErc20CurrencyFromAddress,
+} from "../../../helpers/erc20Currency";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
+import { AppDispatch, RootState } from "../../../store";
+import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 
 export interface StatusInfoProps {
   asset: Asset;
@@ -24,6 +27,13 @@ const ListedInfo = ({
   listing: Listing;
   repaymentTotal: number;
 }): JSX.Element => {
+  const dispatch: AppDispatch = useDispatch();
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, listing.term.currencyAddress)
+  );
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(listing.term.currencyAddress));
+  }, []);
   return (
     <Box className={style["mainContainer"]}>
       <Icon>
@@ -33,7 +43,8 @@ const ListedInfo = ({
         <span className={style["strong"]}>{listing.asset.name} </span>
         <span>is currently listed seeking a loan amount of &nbsp;</span>
         <span className={style["strong"]}>
-          of {formatCurrency(listing.term.amount)} in USDB.{" "}
+          of {formatCurrency(listing.term.amount * currency?.lastPrice)} in{" "}
+          {currency?.symbol}.{" "}
         </span>
         <span>Listing expires </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
@@ -49,6 +60,13 @@ const LockedInfo = ({
   loan: Loan;
   repaymentTotal: number;
 }): JSX.Element => {
+  const dispatch: AppDispatch = useDispatch();
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, loan.assetListing.term.currencyAddress)
+  );
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(loan.assetListing.term.currencyAddress));
+  }, []);
   return (
     <Box className={style["mainContainer"]}>
       <Icon>
@@ -61,7 +79,7 @@ const LockedInfo = ({
           to its borrower if a repayment amount&nbsp;
         </span>
         <span className={style["strong"]}>
-          of {formatCurrency(repaymentTotal)} in USDB{" "}
+          of {formatCurrency(repaymentTotal)} in {currency?.symbol}{" "}
         </span>
         <span>is made before </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>

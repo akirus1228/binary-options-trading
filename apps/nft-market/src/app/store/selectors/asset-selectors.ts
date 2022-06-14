@@ -3,7 +3,7 @@ import { RootState } from "..";
 import {
   Asset,
   AssetStatus,
-  BackendAssetQueryParams,
+  FrontendAssetFilterQuery,
   StandardAssetLookupParams,
 } from "../../types/backend-types";
 
@@ -47,7 +47,7 @@ export const selectMyAssets = createSelector(
   }
   //(assets, assetId) => assets.filter((asset: Asset) => asset.id === assetId)
 );
-export const selectAssetsQuery = (state: RootState, query: BackendAssetQueryParams) =>
+export const selectAssetsQuery = (state: RootState, query: FrontendAssetFilterQuery) =>
   query;
 export const selectAssetsByQuery = createSelector(
   selectAssets,
@@ -64,13 +64,23 @@ export const selectAssetsByQuery = createSelector(
         }
         const entries = Object.entries(query).map(([key, matchValue]) => {
           // does the value of this query parameter match the value of the asset for this field?
-          if (["skip", "take"].includes(key)) return true; // skip and take should be ignored
           if (key === "openseaIds")
             // look in the list of opensea id's for a match
             return openseaIds.includes(asset?.openseaId || "");
           if (key === "status" && matchValue === AssetStatus.Ready)
             return [AssetStatus.Ready, AssetStatus.New].includes(asset.status);
-          if (asset[key as keyof Asset] !== matchValue) return false;
+          if (
+            typeof asset[key as keyof Asset] === "string" &&
+            typeof matchValue === "string"
+          ) {
+            if (
+              (asset[key as keyof Asset] as string).toLowerCase() !==
+              matchValue.toLowerCase()
+            )
+              return false;
+          } else {
+            if (asset[key as keyof Asset] !== matchValue) return false;
+          }
           return true;
         });
         //. if  there are any false entries in the array, fail this asset for the filter
