@@ -29,8 +29,9 @@ export const BorrowerListingDetails = (
   );
 
   useEffect(() => {
+    if (!listing?.term?.currencyAddress) return;
     dispatch(loadCurrencyFromAddress(listing.term.currencyAddress));
-  }, [listing.term.currencyAddress]);
+  }, [listing?.term?.currencyAddress]);
 
   useGetListingsQuery(
     {
