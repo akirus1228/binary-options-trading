@@ -498,6 +498,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       {!isOwner &&
         !pending &&
         props.listing &&
+        erc20Allowance &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
         erc20Allowance.gte(
           ethers.utils.parseEther(
@@ -512,6 +513,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !pending &&
         props.listing &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
+        erc20Allowance &&
         erc20Allowance.lt(
           ethers.utils.parseEther(
             (amount * (1 + platformFees[currency?.currentAddress])).toString()
