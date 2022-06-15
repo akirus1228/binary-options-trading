@@ -49,8 +49,8 @@ export const NotificationMenu = (): JSX.Element => {
         <Badge
           overlap="circular"
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          variant="dot"
-          color="success"
+          color="error"
+          badgeContent={notifications?.length}
         >
           <NotificationsNoneOutlinedIcon sx={{ fontSize: "32px", color: "#000" }} />
         </Badge>
@@ -96,18 +96,32 @@ export const NotificationMenu = (): JSX.Element => {
             />
           </Link>
         </Box>
-        {notifications?.map((notification, i: number) => (
-          <MenuItem key={`not-men-${i}`} sx={{ maxWidth: "400px" }}>
+        {notifications?.length === 0 ? (
+          <MenuItem sx={{ maxWidth: "400px" }}>
             <Paper className="w100" sx={{ height: "5em", padding: "1em" }}>
               <Box className="flex fr ai-c w100">
-                <NotificationMessage notification={notification} short={true} />
+                <Box className="flex fr ai-c">
+                  <Box className="flex fc">Nothing new</Box>
+                </Box>
               </Box>
             </Paper>
           </MenuItem>
-        ))}
-        <Box className="flex fr fj-c" sx={{ mt: "1em" }}>
-          <span style={{ color: "#8991A2" }}>End of recent activity</span>
-        </Box>
+        ) : (
+          <>
+            {notifications?.map((notification, i: number) => (
+              <MenuItem key={`not-men-${i}`} sx={{ maxWidth: "400px" }}>
+                <Paper className="w100" sx={{ height: "5em", padding: "1em" }}>
+                  <Box className="flex fr ai-c w100">
+                    <NotificationMessage notification={notification} short={true} />
+                  </Box>
+                </Paper>
+              </MenuItem>
+            ))}
+            <Box className="flex fr fj-c" sx={{ mt: "1em" }}>
+              <span style={{ color: "#8991A2" }}>End of recent activity</span>
+            </Box>
+          </>
+        )}
       </Menu>
     </>
   );
