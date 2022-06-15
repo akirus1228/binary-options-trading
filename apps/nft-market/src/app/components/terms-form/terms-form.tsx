@@ -292,7 +292,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    setDuration(+event.target.value);
+    const value = Math.floor(+event.target.value)
+    setDuration(value == 0 ? 1 : value);
   };
 
   const handleDurationTypeChange = (event: SelectChangeEvent) => {
@@ -308,7 +309,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
-    setAmount(+event.target.value);
+    const amount = Math.floor(+event.target.value);
+    setAmount(amount == 0 ? 1 : amount);
   };
 
   // calculate repayment totals
