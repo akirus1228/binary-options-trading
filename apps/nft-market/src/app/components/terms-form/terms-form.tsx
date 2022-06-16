@@ -231,7 +231,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency
+      currency,
+      dispatch
     );
     term.signature = termSignature;
     dispatch(createListing({ term, asset })).then(() => {
@@ -269,7 +270,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency
+      currency,
+      dispatch
     );
     term.signature = termSignature;
     updateTerms(term);
@@ -343,8 +345,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       props.asset.assetContractAddress,
       props.asset.tokenId,
       preSigTerm,
-      currency
+      currency,
+      dispatch
     );
+    if(!signature) return;
 
     const term: Terms = {
       ...preSigTerm,
