@@ -26,6 +26,7 @@ export * from "./lib/store";
 export * from "./lib/helpers/all-bonds";
 export * from "./lib/helpers/index";
 export * from "./lib/helpers/environment";
+export * from "./lib/helpers/contract-type";
 export * from "./lib/constants";
 export * from "./lib/wallet";
 export * from "./lib/apis";

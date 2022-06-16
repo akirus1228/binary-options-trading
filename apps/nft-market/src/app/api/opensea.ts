@@ -121,6 +121,38 @@ export type OpenseaConfig = {
   apiEndpoint: string;
 };
 
+export type GqlAsset = {
+  decimals: string | null;
+  id: string;
+};
+
+export type GqlNode = {
+  assetQuantity: GqlAsset;
+  id: string;
+  quantity: string;
+};
+
+export type GqlEventEdges = {
+  cursor: string;
+  node: GqlNode;
+};
+
+export type GqlPageInfo = {
+  endCursor: string;
+  hasNextPage: boolean;
+};
+
+export type GqllAssetEvent = {
+  edges: GqlEventEdges[];
+  pageInfo: GqlPageInfo;
+};
+
+export type GqlGetEventResponse = {
+  data: {
+    assetEvents: GqllAssetEvent[];
+  };
+};
+
 const openseaConfig = (): OpenseaConfig => {
   const openSeaConfig: any = {
     apiKey: isDev()

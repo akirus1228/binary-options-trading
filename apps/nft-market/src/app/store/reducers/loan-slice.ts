@@ -1,5 +1,13 @@
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
-import { addresses, erc165, isDev, loadState, usdbLending } from "@fantohm/shared-web3";
+import {
+  addresses,
+  erc165Abi,
+  ercType,
+  isDev,
+  loadState,
+  TokenType,
+  usdbLending,
+} from "@fantohm/shared-web3";
 import { BackendLoadingStatus, Loan } from "../../types/backend-types";
 import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
 import { RootState } from "..";
@@ -8,7 +16,6 @@ import {
   getErc20CurrencyFromAddress,
   getSymbolFromAddress,
 } from "../../helpers/erc20Currency";
-import { ercType } from "../../helpers/contract-type";
 
 export type CreateLoanEvent = {
   event: string;
@@ -86,12 +93,6 @@ export enum LoanDetailsStatus {
   LIQUIDATED,
 }
 
-export enum TokenType {
-  ERC721,
-  ERC1155,
-  Other,
-}
-
 /*
 createLoan: add loan to contract
 params:
@@ -113,7 +114,7 @@ export const contractCreateLoan = createAsyncThunk(
 
     const nftContract = new ethers.Contract(
       loan.assetListing.asset.assetContractAddress,
-      erc165
+      erc165Abi
     );
 
     const contractType = await ercType(nftContract);

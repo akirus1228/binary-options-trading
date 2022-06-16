@@ -335,9 +335,3 @@ export type PlatformWalletInfo = {
   loansBorrowed: number;
   loansGiven: number;
 };
-
-export enum TokenType {
-  ERC721,
-  ERC1155,
-  CRYPTO_PUNKS,
-}
