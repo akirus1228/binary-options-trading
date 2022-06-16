@@ -12,23 +12,25 @@ import {
   Toolbar,
   Typography,
   Popover,
-  Switch
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import LaunchIcon from '@mui/icons-material/Launch';
-import NorthEastOutlinedIcon from '@mui/icons-material/NorthEastOutlined';
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
-import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
-import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import LaunchIcon from "@mui/icons-material/Launch";
+import NorthEastOutlinedIcon from "@mui/icons-material/NorthEastOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
-import { enabledNetworkIds, useWeb3Context, isDev, NetworkIds } from "@fantohm/shared-web3";
-import { NftLight, NftDark } from "@fantohm/shared-ui-themes";
+import {
+  enabledNetworkIds,
+  useWeb3Context,
+  isDev,
+  NetworkIds,
+} from "@fantohm/shared-web3";
 import { addressEllipsis, truncateDecimals } from "@fantohm/shared-helpers";
-
 
 import { CustomInnerSwitch, setTheme } from "@fantohm/shared-ui-themes";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,8 +59,8 @@ type AccountSubMenu = {
   title: string;
   params?: PageParams;
   href?: string;
-  icon?: string
-}
+  icon?: string;
+};
 
 const pages: Page[] = [
   { title: "Lend", href: "/lend" },
@@ -72,8 +74,8 @@ const accountSubMenu: AccountSubMenu[] = [
   { title: "My profile", href: "/my-account", icon: "user" },
   { title: "My assets", href: "/my-account#assets", icon: "photo" },
   { title: "My loans", href: "/my-account#loans", icon: "loan" },
-  { title: "Dark theme", href: "#", icon: 'sun' },
-]
+  { title: "Dark theme", href: "#", icon: "sun" },
+];
 
 export const Header = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -81,10 +83,11 @@ export const Header = (): JSX.Element => {
   const { connected, chainId, connect, disconnect, address } = useWeb3Context();
   const allowedChain = chainId && enabledNetworkIds.includes(chainId);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(null);
+  const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(
+    null
+  );
   const [checked, setChecked] = useState(false);
   const themeType = useSelector((state: RootState) => state.theme.mode);
-
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -98,14 +101,9 @@ export const Header = (): JSX.Element => {
     if (connected) {
       setFlagAccountDropDown(event.currentTarget);
     } else {
-      onClickConnect()
+      onClickConnect();
     }
-  }
-
-  const themeChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(!checked)
-    // themeChange(checked)
-  }
+  };
 
   const toggleTheme = () => {
     dispatch(setTheme(themeType === "light" ? "dark" : "light"));
@@ -217,10 +215,11 @@ export const Header = (): JSX.Element => {
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
                     <Link to={page.href || "#"}>
-                      <Button style={{ minWidth: "110px", padding: "1em 1em" }}
+                      <Button
+                        style={{ minWidth: "110px", padding: "1em 1em" }}
                         onClick={(e) => {
                           if (page.title === "Account") {
-                            accountDrop(e)
+                            accountDrop(e);
                           }
                         }}
                       >
@@ -235,20 +234,37 @@ export const Header = (): JSX.Element => {
                         anchorEl={flagAccountDropDown}
                         onClose={() => setFlagAccountDropDown(null)}
                         anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'left'
+                          vertical: "bottom",
+                          horizontal: "left",
                         }}
                         className="accountDropdown"
                       >
-                        <h3 style={{ marginBottom: '5px', marginTop: '5px' }}>{addressEllipsis(address)}</h3>
-                        <div style={{ display: "flex", alignItems: "center", marginTop: '3px' }}>
-                          <h6 style={{ color: "grey", marginRight: '10px', marginTop: '5px', marginBottom: '5px' }}>{addressEllipsis(address)}</h6>
+                        <h3 style={{ marginBottom: "5px", marginTop: "5px" }}>
+                          {addressEllipsis(address)}
+                        </h3>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginTop: "3px",
+                          }}
+                        >
+                          <h6
+                            style={{
+                              color: "grey",
+                              marginRight: "10px",
+                              marginTop: "5px",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {addressEllipsis(address)}
+                          </h6>
                           <IconButton
                             size="small"
                             aria-label="copy address"
                             sx={{
                               width: 40,
-                              height: 40
+                              height: 40,
                             }}
                           >
                             <ContentCopyIcon fontSize="small" />
@@ -258,18 +274,37 @@ export const Header = (): JSX.Element => {
                             aria-label="copy address"
                             sx={{
                               width: 40,
-                              height: 40
+                              height: 40,
                             }}
                           >
                             <LaunchIcon fontSize="small" />
                           </IconButton>
                         </div>
-                        <div style={{ background: 'white', padding: '10px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div
+                          style={{
+                            background: "white",
+                            padding: "10px",
+                            borderRadius: "20px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center" }}>
                             <img src={coin} alt="logo" width={40} height={40} />
-                            <div className="amount" style={{ marginLeft: '10px' }}>
-                              <p style={{ color: 'grey', marginTop: '3px', marginBottom: '3px' }}>Wallet Balance</p>
-                              <p style={{ marginTop: '3px', marginBottom: '3px' }}>{USDBBalance}</p>
+                            <div className="amount" style={{ marginLeft: "10px" }}>
+                              <p
+                                style={{
+                                  color: "grey",
+                                  marginTop: "3px",
+                                  marginBottom: "3px",
+                                }}
+                              >
+                                Wallet Balance
+                              </p>
+                              <p style={{ marginTop: "3px", marginBottom: "3px" }}>
+                                {USDBBalance}
+                              </p>
                             </div>
                           </div>
                           <div className="show_balance">
@@ -278,14 +313,22 @@ export const Header = (): JSX.Element => {
                               aria-label="copy address"
                               sx={{
                                 width: 40,
-                                height: 40
+                                height: 40,
                               }}
                             >
                               <VisibilityOffOutlinedIcon />
                             </IconButton>
                           </div>
                         </div>
-                        <Button variant="contained" sx={{ mt: "20px", mb: '20px', width: '300px', fontSize: '14px' }}>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            mt: "20px",
+                            mb: "20px",
+                            width: "300px",
+                            fontSize: "14px",
+                          }}
+                        >
                           Buy USDB on Exchanges &nbsp;&nbsp;
                           <NorthEastOutlinedIcon />
                         </Button>
@@ -295,11 +338,18 @@ export const Header = (): JSX.Element => {
                             <Typography
                               key={`btn-${dropMenu.title}-${index}`}
                               textAlign="left"
-                              style={{ opacity: dropMenu?.params?.comingSoon ? 0.2 : 1, }}
+                              style={{ opacity: dropMenu?.params?.comingSoon ? 0.2 : 1 }}
                             >
-                              {dropMenu.icon === "sun" ?
-                                <Button style={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'space-between' }}>
-                                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                              {dropMenu.icon === "sun" ? (
+                                <Button
+                                  style={{
+                                    minWidth: "110px",
+                                    padding: "0.5em 1em",
+                                    width: "100%",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <div style={{ display: "flex", alignItems: "center" }}>
                                     <LightModeOutlinedIcon />
                                     &nbsp;&nbsp;
                                     {dropMenu.title}
@@ -310,34 +360,53 @@ export const Header = (): JSX.Element => {
                                 /> */}
                                   {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
                                   <CustomInnerSwitch onClick={toggleTheme} />
-
                                 </Button>
-                                :
+                              ) : (
                                 <Link to={dropMenu.href || "#"}>
-
-                                  <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }} onClick={() => setFlagAccountDropDown(null)}>
-                                    {dropMenu.icon == "user" ?
-                                      <PersonOutlineOutlinedIcon /> :
-                                      dropMenu.icon == "photo" ?
-                                        <InsertPhotoOutlinedIcon /> :
-                                        dropMenu.icon == "loan" ?
-                                          <CreditCardOutlinedIcon /> :
-                                          null
-                                    }
+                                  <Button
+                                    sx={{
+                                      minWidth: "110px",
+                                      padding: "0.5em 1em",
+                                      width: "100%",
+                                      justifyContent: "left",
+                                    }}
+                                    onClick={() => setFlagAccountDropDown(null)}
+                                  >
+                                    {dropMenu.icon == "user" ? (
+                                      <PersonOutlineOutlinedIcon />
+                                    ) : dropMenu.icon == "photo" ? (
+                                      <InsertPhotoOutlinedIcon />
+                                    ) : dropMenu.icon == "loan" ? (
+                                      <CreditCardOutlinedIcon />
+                                    ) : null}
                                     &nbsp;&nbsp;
                                     {dropMenu.title}
                                   </Button>
                                 </Link>
-                              }
+                              )}
                             </Typography>
-                          )
+                          );
                         })}
 
-                        <Typography textAlign="left" sx={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #CCCCCC' }}>
-                          <Button sx={{ minWidth: "110px", padding: "0.5em 1em", width: '100%', justifyContent: 'left' }} onClick={onClickDisconnect}>
+                        <Typography
+                          textAlign="left"
+                          sx={{
+                            marginTop: "10px",
+                            paddingTop: "10px",
+                            borderTop: "1px solid #CCCCCC",
+                          }}
+                        >
+                          <Button
+                            sx={{
+                              minWidth: "110px",
+                              padding: "0.5em 1em",
+                              width: "100%",
+                              justifyContent: "left",
+                            }}
+                            onClick={onClickDisconnect}
+                          >
                             <LogoutOutlinedIcon />
-                            &nbsp;&nbsp;
-                            Disconnect
+                            &nbsp;&nbsp; Disconnect
                           </Button>
                         </Typography>
                       </Popover>

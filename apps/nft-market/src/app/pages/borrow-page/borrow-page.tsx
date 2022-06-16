@@ -52,10 +52,6 @@ export const BorrowPage = (): JSX.Element => {
   });
 
   useEffect(() => {
-    console.log(feQuery);
-  }, [feQuery]);
-
-  useEffect(() => {
     const newQuery = {
       ...beQuery,
       openseaIds: assets?.map((asset: OpenseaAsset) => asset.id.toString()),

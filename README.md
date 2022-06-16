@@ -1,6 +1,9 @@
 # Fantohm Product Ecosystem
 Fantohm product ecosystem monorepo
 
+## Installation
+`yarn`
+
 ## Development server
 
 Run `nx serve usdb` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
