@@ -254,7 +254,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             <Tooltip
               title={`~ ${formatCurrency(repaymentAmount * currency?.lastPrice || 0, 2)}`}
             >
-              <span>{repaymentAmount.toFixed(4)} </span>
+              <span>{repaymentAmount?.toFixed(4)}</span>
             </Tooltip>
             <Tooltip title={currency?.name || ""}>
               <img
