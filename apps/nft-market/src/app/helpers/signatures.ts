@@ -5,6 +5,8 @@ import { nftTokenType } from "../types/contract-types";
 import { Erc20Currency } from "./erc20Currency";
 import { addAlert } from "../store/reducers/app-slice";
 
+//_payload.borrower, _payload.nftAddress, _payload.currency, _payload.nftTokenId, _payload.duration, _payload.expiration, _payload.loanAmount, _payload.apr, _payload.nftTokenType
+
 export const signTerms = async (
   provider: JsonRpcProvider,
   borrowerAddress: string,
@@ -24,6 +26,7 @@ export const signTerms = async (
       "uint256",
       "uint256",
       "uint256",
+      "uint256",
       "uint8",
     ],
     [
@@ -32,6 +35,7 @@ export const signTerms = async (
       currency.currentAddress,
       tokenId,
       term.duration,
+      Math.round(Date.parse(term.expirationAt) / 1000),
       ethers.utils.parseUnits(term.amount.toString(), currency.decimals),
       term.apr * 100,
       nftTokenType.ERC721,

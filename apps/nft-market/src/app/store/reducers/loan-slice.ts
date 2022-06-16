@@ -123,12 +123,12 @@ export const contractCreateLoan = createAsyncThunk(
       currencyAddress: loan.assetListing.term.currencyAddress,
       nftTokenId: loan.assetListing.asset.tokenId,
       duration: loan.term.duration,
+      expiration: Math.round(Date.parse(loan.term.expirationAt) / 1000),
       loanAmount: ethers.utils.parseUnits(loan.term.amount.toString(), currency.decimals),
       apr: loan.term.apr * 100,
       nftTokenType: 0, // token type
       sig: loan.term.signature,
     };
-
     try {
       // call the contract
       const approveTx: ContractTransaction = await lendingContract["createLoan"](
