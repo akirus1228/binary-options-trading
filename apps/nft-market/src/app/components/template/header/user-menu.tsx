@@ -12,8 +12,10 @@ import {
   Avatar,
   Box,
   Button,
+  Container,
   Icon,
   IconButton,
+  Paper,
   Popover,
   SxProps,
   Theme,
@@ -39,6 +41,7 @@ import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
 import { USDBToken } from "@fantohm/shared/images";
 import { desiredNetworkId } from "../../../constants/network";
 import { ethers } from "ethers";
+import { width } from "@mui/system";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -198,7 +201,7 @@ export const UserMenu = (): JSX.Element => {
         <div
           style={{
             background: "white",
-            padding: "10px",
+            padding: "5px",
             borderRadius: "20px",
             display: "flex",
             alignItems: "center",
@@ -206,40 +209,76 @@ export const UserMenu = (): JSX.Element => {
           }}
         >
           <div style={{ display: "flex", alignItems: "center" }}>
-            <img src={USDBToken} alt="logo" width={40} height={40} />
-            <div className="amount" style={{ marginLeft: "10px" }}>
-              <p
-                style={{
-                  color: "grey",
-                  marginTop: "3px",
-                  marginBottom: "3px",
-                }}
-              >
-                Wallet Balance
-              </p>
-              <p style={{ marginTop: "3px", marginBottom: "3px" }}>
-                {!!usdbBalance &&
-                  formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))}{" "}
-                USDB
-              </p>
-            </div>
+            <Container style={{ width: "320px" }}>
+              <Paper style={{
+                marginTop: "5px",
+                marginBottom: "5px",
+                padding: "1em",
+              }} >
+                <h6
+                  style={{
+                    color: "grey",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Wallet balance
+                </h6>
+                <h4
+                  style={{
+                    marginLeft: "10px",
+                    marginTop: "5px",
+                    marginBottom: "1px",
+                  }}
+                >
+                  125.00K USDB
+                </h4>
+              </Paper>
+              <Paper style={{
+                marginTop: "5px",
+                marginBottom: "5px",
+                padding: "1em",
+              }} >
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div>
+                    <h6
+                      style={{
+                        color: "grey",
+                        marginLeft: "10px",
+                        marginTop: "5px",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      Offer balance
+                    </h6>
+                    <h4
+                      style={{
+                        marginLeft: "10px",
+                        marginTop: "5px",
+                        marginBottom: "1px",
+                      }}
+                    >
+                      125.00K USDB
+                    </h4>
+                  </div>
+                  <Button size="small"
+                    sx={{
+                      padding: "5px 20px",
+                      fontSize: "10px",
+                      height: "30px",
+                      color: "blue",
+                      backgroundColor: "#e6edfd",
+                    }}>manage</Button>
+                </Box>
+              </Paper>
+            </Container>
           </div>
-          <div className="show_balance">
-            <IconButton
-              size="small"
-              aria-label="copy address"
-              sx={{
-                width: 40,
-                height: 40,
-              }}
-            >
-              <VisibilityOffOutlinedIcon />
-            </IconButton>
-          </div>
+
         </div>
         <Button
           variant="contained"
-          sx={{ mt: "20px", mb: "20px", width: "300px", fontSize: "14px" }}
+          sx={{ mt: "10px", mb: "20px", width: "300px", fontSize: "14px" }}
         >
           Buy USDB on Exchanges &nbsp;&nbsp;
           <NorthEastOutlinedIcon />
