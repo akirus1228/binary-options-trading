@@ -132,15 +132,18 @@ export const contractCreateLoan = createAsyncThunk(
     try {
       // call the contract
       const approveTx: ContractTransaction = await lendingContract["createLoan"](
-        params.lender,
-        params.borrower,
-        params.nftAddress,
-        params.currencyAddress,
-        params.nftTokenId,
-        params.duration,
-        params.loanAmount,
-        params.apr,
-        params.nftTokenType,
+        {
+          lender: params.lender,
+          borrower: params.borrower,
+          nftAddress: params.nftAddress,
+          currency: params.currencyAddress,
+          nftTokenId: params.nftTokenId,
+          duration: params.duration,
+          expiration: params.expiration,
+          loanAmount: params.loanAmount,
+          apr: params.apr,
+          nftTokenType: params.nftTokenType,
+        },
         params.sig
       );
       const response: ContractReceipt = await approveTx.wait();
