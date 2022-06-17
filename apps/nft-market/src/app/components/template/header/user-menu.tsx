@@ -146,7 +146,7 @@ export const UserMenu = (): JSX.Element => {
   }, [listings]);
   const currency = useSelector((state: RootState) => {
     if (!activeListing) return null;
-    return selectCurrencyByAddress(state, activeListing?.term.currencyAddress);
+    return selectCurrencyByAddress(state, activeListing.term.currencyAddress);
   });
   const currencyBalance = useSelector((state: RootState) => {
     if (!currency) return null;
@@ -266,12 +266,14 @@ export const UserMenu = (): JSX.Element => {
                   {listings &&
                     listings.length > 0 &&
                     currencyBalance &&
-                    ethers.utils.formatUnits(
-                      currencyBalance,
-                      currency?.decimals || 18
+                    formatCurrency(
+                      +ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18)
                     )}{" "}
                   {(listings && currency?.symbol) || ""}
-                  {!listings && "123"}
+                  {!listings &&
+                    !!usdbBalance &&
+                    formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))}
+                  {!listings && " USDB"}
                 </h4>
               </Paper>
               {listings && listings.length > 0 && (
