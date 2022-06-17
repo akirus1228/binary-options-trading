@@ -42,10 +42,10 @@ const NewLoanLender = ({
 }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
 
-  const shortMsg = <span>You have created a new loan on {asset.name}.</span>;
+  const shortMsg = <span>Congratulations! You have a new loan on {asset.name}.</span>;
   const longMsg = (
     <span>
-      You have created a new loan on {asset.name} for{" "}
+      Congratulations! You have a new loan on {asset.name}. for{" "}
       {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
       repayment of {formatCurrency(repaymentAmount || 0, 2)}.
     </span>
