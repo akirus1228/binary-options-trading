@@ -391,10 +391,9 @@ export const networks: INetworks = {
   },
 };
 
-export const enabledNetworkIds: NetworkId[] = Object.keys(networks).map((networkID) =>
-  parseInt(networkID)
-);
-// .filter((networkID) => networks[networkID].isEnabled);
+export const enabledNetworkIds: NetworkId[] = Object.keys(networks)
+  .map((networkID) => parseInt(networkID))
+  .filter((networkID) => networks[networkID].isEnabled);
 export const enabledNetworkIdsExceptBscAndEth: NetworkId[] = Object.keys(networks)
   .map((networkID) => parseInt(networkID))
   .filter(
@@ -403,4 +402,6 @@ export const enabledNetworkIdsExceptBscAndEth: NetworkId[] = Object.keys(network
       networkID !== NetworkIds.Bsc &&
       networkID !== NetworkIds.Ethereum
   );
-export const enabledMainNetworkIds: NetworkId[] = enabledNetworkIds;
+export const enabledMainNetworkIds: NetworkId[] = enabledNetworkIds.filter(
+  (networkID) => !networks[networkID].isTestNet
+);

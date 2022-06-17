@@ -42,7 +42,6 @@ const NewLoanLender = ({
 }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
 
-  console.log(notification, asset, short, terms);
   const shortMsg = <span>You have created a new loan on {asset.name}.</span>;
   const longMsg = (
     <span>
