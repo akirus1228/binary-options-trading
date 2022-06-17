@@ -1,4 +1,4 @@
-import { Avatar, Box } from "@mui/material";
+import { Avatar, Badge, Box } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useGetListingQuery,
@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 export interface NotificationMessageProps {
   notification: Notification;
   short?: boolean;
+  showUnreadBadge?: boolean;
 }
 
 export type MessageProp = {
@@ -39,7 +40,23 @@ const NewLoanLender = ({
   short,
   terms,
 }: MessageProp): JSX.Element => {
-  return <span>New loan lender</span>;
+  const { repaymentAmount } = useTermDetails(terms);
+
+  console.log(notification, asset, short, terms);
+  const shortMsg = <span>You have created a new loan on {asset.name}.</span>;
+  const longMsg = (
+    <span>
+      You have created a new loan on {asset.name} for{" "}
+      {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
+      repayment of {formatCurrency(repaymentAmount || 0, 2)}.
+    </span>
+  );
+  return (
+    <Box className="flex fc">
+      {shortMsg}
+      {!short && longMsg}
+    </Box>
+  );
 };
 
 const NewLoanBorrower = ({
@@ -256,6 +273,7 @@ const OfferAcceptedBorrower = ({
 export const NotificationMessage = ({
   notification,
   short,
+  showUnreadBadge,
 }: NotificationMessageProps): JSX.Element => {
   const [assetListingId, setAssetListingId] = useState<string>();
   const [loanId, setLoanId] = useState<string>();
@@ -381,9 +399,19 @@ export const NotificationMessage = ({
   }, [notification, asset]);
 
   return (
-    <Box className="flex fr ai-c" onClick={handleRecordClick}>
+    <Box
+      className="flex fr ai-c"
+      onClick={handleRecordClick}
+      style={{ width: "100%", justifyContent: "space-between" }}
+    >
       <Avatar src={avatarSrc} sx={{ mr: "1em" }} />
-      {message}
+      <div style={{ marginRight: "auto" }}>{message}</div>
+
+      {showUnreadBadge && notification.status === NotificationStatus.Unread && (
+        <div>
+          <Badge color="info" badgeContent=" " />
+        </div>
+      )}
     </Box>
   );
 };
