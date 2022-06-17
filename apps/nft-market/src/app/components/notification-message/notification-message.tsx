@@ -293,7 +293,7 @@ export const NotificationMessage = ({
         break;
       case NotificationContext.OfferAccepted:
         setOfferId(notification.contextId);
-        setContextType("loan");
+        setContextType("offer");
         break;
     }
   }, [notification.context]);
