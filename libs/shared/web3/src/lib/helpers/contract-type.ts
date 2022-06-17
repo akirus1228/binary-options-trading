@@ -72,3 +72,40 @@ export const getCryptopunksPermission = async (
     addresses[networkId]["USDB_LENDING_ADDRESS"] as string
   );
 };
+
+export const checkErc721Permission = async (
+  signer: ethers.providers.JsonRpcSigner,
+  networkId: number,
+  address: string,
+  tokenId: string
+): Promise<boolean> => {
+  const nftContract = new ethers.Contract(address, ierc721Abi, signer);
+  return await nftContract["approve"](
+    addresses[networkId]["USDB_LENDING_ADDRESS"] as string,
+    tokenId
+  );
+};
+
+export const checkErc1155Permission = async (
+  signer: ethers.providers.JsonRpcSigner,
+  networkId: number,
+  ownerAddress: string,
+  address: string
+): Promise<boolean> => {
+  const nftContract = new ethers.Contract(address, erc1155Abi, signer);
+  return await nftContract["isApprovedForAll"](
+    ownerAddress,
+    addresses[networkId]["USDB_LENDING_ADDRESS"] as string
+  );
+};
+
+export const checkCryptopunksPermission = async (
+  signer: ethers.providers.JsonRpcSigner,
+  networkId: number,
+  address: string,
+  tokenId: string
+): Promise<boolean> => {
+  const nftContract = new ethers.Contract(address, cryptopunksAbi, signer);
+  // should return Offer(true, punkIndex, msg.sender, minSalePriceInWei, toAddress);
+  return await nftContract["punksOfferedForSale"](tokenId);
+};
