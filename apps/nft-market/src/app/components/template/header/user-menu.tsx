@@ -21,9 +21,9 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
@@ -42,6 +42,9 @@ import { USDBToken } from "@fantohm/shared/images";
 import { desiredNetworkId } from "../../../constants/network";
 import { ethers } from "ethers";
 import { width } from "@mui/system";
+import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
+import { selectListingsByAddress } from "../../../store/selectors/listing-selectors";
+import { Listing, ListingStatus } from "../../../types/backend-types";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -123,6 +126,32 @@ export const UserMenu = (): JSX.Element => {
       }
     );
   };
+  const location = useLocation();
+  const address1 = location.pathname.split("/");
+  const listings = useSelector((state: RootState) => {
+    if (!address1[2] && !address1[3]) return null;
+    return selectListingsByAddress(state, {
+      // contractAddress: params["contractAddress"] || "123",
+      // tokenId: params["tokenId"] || "123", 0x90267036ed282cce0a1488d19db22a04171cfbfc,26
+      contractAddress: address1[2],
+      tokenId: address1[3],
+    });
+  });
+
+  //find listing from store
+
+  const activeListing = useMemo(() => {
+    if (!listings) return null;
+    return listings.find((listing: Listing) => listing.status === ListingStatus.Listed);
+  }, [listings]);
+  const currency = useSelector((state: RootState) => {
+    if (!activeListing) return null;
+    return selectCurrencyByAddress(state, activeListing?.term.currencyAddress);
+  });
+  const currencyBalance = useSelector((state: RootState) => {
+    if (!currency) return null;
+    return selectErc20BalanceByAddress(state, currency?.currentAddress);
+  });
 
   return connected ? (
     <>
@@ -210,11 +239,13 @@ export const UserMenu = (): JSX.Element => {
         >
           <div style={{ display: "flex", alignItems: "center" }}>
             <Container style={{ width: "320px" }}>
-              <Paper style={{
-                marginTop: "5px",
-                marginBottom: "5px",
-                padding: "1em",
-              }} >
+              <Paper
+                style={{
+                  marginTop: "5px",
+                  marginBottom: "5px",
+                  padding: "1em",
+                }}
+              >
                 <h6
                   style={{
                     color: "grey",
@@ -232,49 +263,70 @@ export const UserMenu = (): JSX.Element => {
                     marginBottom: "1px",
                   }}
                 >
-                  125.00K USDB
+                  {listings &&
+                    listings.length > 0 &&
+                    currencyBalance &&
+                    ethers.utils.formatUnits(
+                      currencyBalance,
+                      currency?.decimals || 18
+                    )}{" "}
+                  {(listings && currency?.symbol) || ""}
+                  {!listings && "123"}
                 </h4>
               </Paper>
-              <Paper style={{
-                marginTop: "5px",
-                marginBottom: "5px",
-                padding: "1em",
-              }} >
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div>
-                    <h6
-                      style={{
-                        color: "grey",
-                        marginLeft: "10px",
-                        marginTop: "5px",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      Offer balance
-                    </h6>
-                    <h4
-                      style={{
-                        marginLeft: "10px",
-                        marginTop: "5px",
-                        marginBottom: "1px",
-                      }}
-                    >
-                      125.00K USDB
-                    </h4>
-                  </div>
-                  <Button size="small"
+              {listings && listings.length > 0 && (
+                <Paper
+                  style={{
+                    marginTop: "5px",
+                    marginBottom: "5px",
+                    padding: "1em",
+                  }}
+                >
+                  <Box
                     sx={{
-                      padding: "5px 20px",
-                      fontSize: "10px",
-                      height: "30px",
-                      color: "blue",
-                      backgroundColor: "#e6edfd",
-                    }}>manage</Button>
-                </Box>
-              </Paper>
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <h6
+                        style={{
+                          color: "grey",
+                          marginLeft: "10px",
+                          marginTop: "5px",
+                          marginBottom: "5px",
+                        }}
+                      >
+                        Offer balance
+                      </h6>
+                      <h4
+                        style={{
+                          marginLeft: "10px",
+                          marginTop: "5px",
+                          marginBottom: "1px",
+                        }}
+                      >
+                        125.00K USDB
+                      </h4>
+                    </div>
+                    <Button
+                      size="small"
+                      sx={{
+                        padding: "5px 20px",
+                        fontSize: "10px",
+                        height: "30px",
+                        color: "blue",
+                        backgroundColor: "#e6edfd",
+                      }}
+                    >
+                      manage
+                    </Button>
+                  </Box>
+                </Paper>
+              )}
             </Container>
           </div>
-
         </div>
         <Button
           variant="contained"
