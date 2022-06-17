@@ -6,6 +6,8 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,7 +18,16 @@ import { Asset, Listing } from "../../types/backend-types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
-import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import React, {
+  BaseSyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
 import { TextFields } from "@mui/icons-material";
 import {
@@ -29,6 +40,7 @@ import {
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
+import { blue } from "@mui/material/colors";
 
 export interface ManageFundProps {
   asset: Asset | undefined;
@@ -39,6 +51,11 @@ export interface ManageFundProps {
 
 export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const { onClose, open } = props;
+  const [value, setValue] = React.useState("Deposit");
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   const handleClose = () => {
     onClose(false);
@@ -162,69 +179,90 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
         className={`flex fc ${style["body"]}`}
         sx={{ borderTop: "1px solid #aaaaaa", paddingTop: "1em" }}
       ></Box>
-      <Box className="flex fc">
-        <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>Select Currency</Typography>
-        <Box className={`flex fr ai-c`}>
-          <Select
-            value={currency?.symbol}
-            onChange={handleCurrencyChange}
-            sx={{
-              background: "transparent",
-              width: "530px",
-              paddingLeft: "10px",
-              borderRadius: "1.5em",
-            }}
-            labelId="demo-multiple-name-label"
-            id="demo-multiple-name"
+      <TabContext value={value}>
+        <Box sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            sx={{ "&.Mui-selected": { backgroundcolor: "blue" } }}
+            onChange={handleChange}
+            variant="fullWidth"
           >
-            {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
-              <MenuItem
-                value={currencyDetails.symbol}
-                key={`currency-option-item-${tokenId}`}
-              >
-                <Box className="flex fr ai-c">
-                  <img
-                    style={{ height: "40px", width: "40px", marginRight: "5px" }}
-                    src={currencyDetails.icon}
-                    alt={`${currencyDetails.symbol} Token Icon`}
-                  />
-                  <p style={{ fontSize: "20px" }}>{currencyDetails.symbol}</p>
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
+            <Tab label="Deposit" value="Deposit" />
+            <Tab label="Withdraw" value="Withdraw" />
+          </Tabs>
         </Box>
-      </Box>
-      <Box className="flex fc">
-        <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>Deposit Amount</Typography>
-        <Box className={`flex fr ai-c`}>
-          <TextField
-            type="number"
-            value={amount}
-            onChange={handleAmountChange}
-            sx={{
-              background: "transparent",
-              width: "530px",
-              paddingLeft: "10px",
-              borderRadius: "1.5em",
-            }}
-          />
-        </Box>
-      </Box>
-      {!isOwner &&
-        !pending &&
-        props.listing &&
-        typeof platformFees[currency?.currentAddress] !== "undefined" &&
-        !!erc20Allowance && (
-          <Button variant="contained" onClick={handleRequestAllowance}>
-            Allow Liqd to Access your {currency?.symbol}
-          </Button>
-        )}
-      {pending && (
-        <Button variant="contained" disabled>
-          Pending...
-        </Button>
-      )}
+        <TabPanel value="Deposit">
+          <Box className="flx">
+            <Box className="flex fc">
+              <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
+                Select Currency
+              </Typography>
+              <Box className={`flex fr ai-c`}>
+                <Select
+                  value={currency?.symbol}
+                  onChange={handleCurrencyChange}
+                  sx={{
+                    background: "transparent",
+                    width: "530px",
+                    paddingLeft: "10px",
+                    borderRadius: "1.5em",
+                  }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                >
+                  {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
+                    <MenuItem
+                      value={currencyDetails.symbol}
+                      key={`currency-option-item-${tokenId}`}
+                    >
+                      <Box className="flex fr ai-c">
+                        <img
+                          style={{ height: "40px", width: "40px", marginRight: "5px" }}
+                          src={currencyDetails.icon}
+                          alt={`${currencyDetails.symbol} Token Icon`}
+                        />
+                        <p style={{ fontSize: "20px" }}>{currencyDetails.symbol}</p>
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Box>
+            </Box>
+            <Box className="flex fc">
+              <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
+                Deposit Amount
+              </Typography>
+              <Box className={`flex fr ai-c`}>
+                <TextField
+                  type="number"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  sx={{
+                    background: "transparent",
+                    width: "530px",
+                    paddingLeft: "10px",
+                    borderRadius: "1.5em",
+                  }}
+                />
+              </Box>
+            </Box>
+            {!isOwner &&
+              !pending &&
+              props.listing &&
+              typeof platformFees[currency?.currentAddress] !== "undefined" &&
+              !!erc20Allowance && (
+                <Button variant="contained" onClick={handleRequestAllowance}>
+                  Allow Liqd to Access your {currency?.symbol}
+                </Button>
+              )}
+            {pending && (
+              <Button variant="contained" disabled>
+                Pending...
+              </Button>
+            )}
+          </Box>
+        </TabPanel>
+        <TabPanel value="Withdraw">Item Two</TabPanel>
+      </TabContext>
     </Dialog>
   );
 };
