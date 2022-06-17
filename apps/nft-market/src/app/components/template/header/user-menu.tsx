@@ -45,6 +45,7 @@ import { width } from "@mui/system";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import { selectListingsByAddress } from "../../../store/selectors/listing-selectors";
 import { Listing, ListingStatus } from "../../../types/backend-types";
+import ManageFund from "../../managefund/managefund";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -153,6 +154,16 @@ export const UserMenu = (): JSX.Element => {
     return selectErc20BalanceByAddress(state, currency?.currentAddress);
   });
 
+  // make offer code
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleManageFund = () => {
+    setDialogOpen(true);
+  };
+
+  const onListDialogClose = (accepted: boolean) => {
+    setDialogOpen(false);
+  };
   return connected ? (
     <>
       <Button
@@ -312,8 +323,15 @@ export const UserMenu = (): JSX.Element => {
                         125.00K USDB
                       </h4>
                     </div>
+                    <ManageFund
+                      onClose={onListDialogClose}
+                      open={dialogOpen}
+                      listing={activeListing}
+                      asset={activeListing?.asset}
+                    />
                     <Button
                       size="small"
+                      onClick={handleManageFund}
                       sx={{
                         padding: "5px 20px",
                         fontSize: "10px",
