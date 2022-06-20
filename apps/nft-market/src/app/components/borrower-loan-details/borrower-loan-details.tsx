@@ -77,7 +77,14 @@ export const BorrowerLoanDetails = ({
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (user.address && provider && loanDetails.currency && !erc20Allowance) {
+    console.log(`loanDetails.currency ${loanDetails.currency}`);
+    if (
+      user.address &&
+      provider &&
+      loanDetails.currency &&
+      loanDetails.currency !== "0x0000000000000000000000000000000000000000" &&
+      !erc20Allowance
+    ) {
       dispatch(
         checkErc20Allowance({
           networkId: desiredNetworkId,

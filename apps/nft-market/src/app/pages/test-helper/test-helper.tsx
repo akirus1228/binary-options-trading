@@ -53,12 +53,13 @@ const SimpleLoanDetail = ({ loanDetails }: { loanDetails: LoanDetails }): JSX.El
       <Box>Lender: {loanDetails.lender}</Box>
       <Box>Borrower: {loanDetails.borrower}</Box>
       <Box>Amount Due: {loanDetails.amountDue}</Box>
-      <Box>Amount Due: {loanDetails.amountDueGwei.toString()}</Box>
+      <Box>Amount Due Gwei: {loanDetails.amountDueGwei.toString()}</Box>
       <Box>Currency: {loanDetails.currency}</Box>
       <Box>
         End Time: {loanDetails.endDateTime.toLocaleTimeString()}{" "}
         {loanDetails.endDateTime.toLocaleDateString()}
       </Box>
+      <Box>Created: {loanDetails.starttime}</Box>
       <Box>Status: {LoanStatusTl[loanDetails.status]}</Box>
       {loanDetails.status === 0 && <Button onClick={handleRepay}>Repay</Button>}
     </Box>

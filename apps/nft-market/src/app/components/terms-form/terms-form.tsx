@@ -231,7 +231,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency
+      currency,
+      dispatch
     );
     term.signature = termSignature;
     dispatch(createListing({ term, asset })).then(() => {
@@ -269,7 +270,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.assetContractAddress,
       asset.tokenId,
       term,
-      currency
+      currency,
+      dispatch
     );
     term.signature = termSignature;
     updateTerms(term);
@@ -292,7 +294,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    setDuration(+event.target.value);
+    const value = Math.floor(+event.target.value)
+    setDuration(value == 0 ? 1 : value);
   };
 
   const handleDurationTypeChange = (event: SelectChangeEvent) => {
@@ -308,7 +311,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
-    setAmount(+event.target.value);
+    const amount = Math.floor(+event.target.value);
+    setAmount(amount == 0 ? 1 : amount);
   };
 
   // calculate repayment totals
@@ -343,8 +347,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       props.asset.assetContractAddress,
       props.asset.tokenId,
       preSigTerm,
-      currency
+      currency,
+      dispatch
     );
+    if(!signature) return;
 
     const term: Terms = {
       ...preSigTerm,

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { GrowlNotification, clearAlert } from "../../store/reducers/app-slice";
 import "./growl.module.scss";
+import { FailIcon, SuccessCheck } from "@fantohm/shared/images";
 
 export type GrowlColor = "success" | "info" | "warning" | "error";
 
@@ -54,11 +55,45 @@ export const Growl = (): JSX.Element => {
             icon={false}
             severity={growlNotification.severity as GrowlColor}
             onClose={() => handleClose(growlNotification)}
-            style={{ wordBreak: "break-word", borderRadius: "10px" }}
+            style={{
+              wordBreak: "break-word",
+              borderRadius: "10px",
+              backgroundColor: "#000000",
+            }}
           >
-            <AlertTitle>{growlNotification.title}</AlertTitle>
-            {growlNotification.message}
-            <Linear growlNotification={growlNotification} />
+            <div
+              style={{
+                height: "30px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <img
+                src={
+                  growlNotification.severity === "error" ||
+                  growlNotification.severity === "warning"
+                    ? FailIcon
+                    : SuccessCheck
+                }
+                style={{ width: "30px", height: "30px", marginRight: "10px" }}
+              />
+
+              <AlertTitle
+                style={{
+                  height: "100%",
+                  fontWeight: "700",
+                  fontSize: "16px",
+                  marginTop: "7px",
+                }}
+              >
+                {growlNotification.title}
+              </AlertTitle>
+            </div>
+            <div style={{ marginTop: "10px" }}>
+              {growlNotification.message}
+              <Linear growlNotification={growlNotification} />
+            </div>
           </Alert>
         </Snackbar>
       ))}

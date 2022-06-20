@@ -2,7 +2,7 @@ import { useWeb3Context } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetListingsQuery } from "../../api/backend-api";
+import { useGetListingsQuery, useGetLoansQuery } from "../../api/backend-api";
 import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
 import BorrowerAssetFilter from "../../components/asset-filter/borrower-asset-filter/borrower-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
@@ -11,19 +11,21 @@ import { RootState } from "../../store";
 import { OpenseaAssetQueryParam } from "../../store/reducers/interfaces";
 import { selectAssetsByQuery } from "../../store/selectors/asset-selectors";
 import {
-  Asset,
   AssetStatus,
   BackendAssetQueryParams,
+  BackendLoanQueryParams,
   FrontendAssetFilterQuery,
+  LoanStatus,
 } from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
+  const { user } = useSelector((state: RootState) => state.backend);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
     limit: 50,
-    owner: address,
+    owner: user.address,
   });
 
   // query to use on frontend to filter cached results and ultimately display
@@ -38,13 +40,22 @@ export const BorrowPage = (): JSX.Element => {
     take: 50,
   });
 
+  // query assets in escrow
+  const [loansQuery, setLoansQuery] = useState<BackendLoanQueryParams>({
+    skip: 0,
+    take: 50,
+    lenderAddress: address,
+    status: LoanStatus.Active,
+  });
+
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
   const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
-    skip: !address,
+    skip: !user.address,
   });
+  const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {});
 
   // using the opensea assets, crosscheck with backend api for correlated data
   const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
@@ -64,11 +75,18 @@ export const BorrowPage = (): JSX.Element => {
   }, [assets]);
 
   useEffect(() => {
-    const updatedQuery = {
+    setOsQuery({
       ...osQuery,
       owner: address,
-    };
-    setOsQuery(updatedQuery);
+    });
+    setFeQuery({
+      ...feQuery,
+      wallet: address,
+    });
+    setLoansQuery({
+      ...loansQuery,
+      lenderAddress: address,
+    });
   }, [address]);
 
   return (
@@ -87,7 +105,7 @@ export const BorrowPage = (): JSX.Element => {
             <BorrowerAssetFilter query={feQuery} setQuery={setFeQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {(assetsLoading || isAssetLoading) && (
+            {(assetsLoading || isAssetLoading || isLoansLoaing) && (
               <Box className="flex fr fj-c">
                 <CircularProgress />
               </Box>
@@ -97,7 +115,14 @@ export const BorrowPage = (): JSX.Element => {
                 <h1>Please connect your wallet.</h1>
               </Box>
             )}
-            <AssetList assets={myAssets} type="borrow" />
+            <AssetList
+              assets={
+                feQuery.status === AssetStatus.Locked && loans
+                  ? loans?.map((loan) => loan.assetListing.asset)
+                  : myAssets
+              }
+              type="borrow"
+            />
           </Grid>
         </Grid>
       </Box>
