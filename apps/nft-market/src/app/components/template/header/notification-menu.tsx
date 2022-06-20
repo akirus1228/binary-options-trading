@@ -9,9 +9,12 @@ import {
   Paper,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetUserNotificationsQuery } from "../../../api/backend-api";
+import {
+  useGetUserNotificationsQuery,
+  useUpdateUserNotificationMutation,
+} from "../../../api/backend-api";
 import { RootState } from "../../../store";
 import { NotificationStatus } from "../../../types/backend-types";
 import arrowUpRight from "../../../../assets/icons/arrow-right-up.svg";
@@ -19,6 +22,7 @@ import NotificationMessage from "../../notification-message/notification-message
 
 export const NotificationMenu = (): JSX.Element => {
   // menu controls
+  const [updateNotification] = useUpdateUserNotificationMutation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -29,12 +33,34 @@ export const NotificationMenu = (): JSX.Element => {
   };
   // user data
   const { user } = useSelector((state: RootState) => state.backend);
+  const { data: unreadNotifications, isLoading: isUnreadNotificationsLoading } =
+    useGetUserNotificationsQuery({
+      userAddress: user.address,
+      status: NotificationStatus.Unread,
+    });
+
   const { data: notifications, isLoading } = useGetUserNotificationsQuery(
-    { userAddress: user.address, status: NotificationStatus.Unread, skip: 0, take: 4 },
+    {
+      userAddress: user.address,
+      status: NotificationStatus.Unread,
+      skip: 0,
+      take: 4,
+    },
     { skip: !user || !user.address }
   );
 
-  if (isLoading)
+  const handleRecordClick = useCallback(() => {
+    if (unreadNotifications) {
+      for (let i = 0; i < unreadNotifications.length; i++) {
+        updateNotification({
+          ...unreadNotifications[i],
+          status: NotificationStatus.Read,
+        });
+      }
+    }
+  }, [unreadNotifications]);
+
+  if (isLoading || isUnreadNotificationsLoading)
     return (
       <Box className="flex fr fj-c ai-c">
         <CircularProgress />
@@ -49,8 +75,8 @@ export const NotificationMenu = (): JSX.Element => {
         <Badge
           overlap="circular"
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          variant="dot"
-          color="success"
+          color="error"
+          badgeContent={unreadNotifications?.length}
         >
           <NotificationsNoneOutlinedIcon sx={{ fontSize: "32px", color: "#000" }} />
         </Badge>
@@ -96,18 +122,51 @@ export const NotificationMenu = (): JSX.Element => {
             />
           </Link>
         </Box>
-        {notifications?.map((notification, i: number) => (
-          <MenuItem key={`not-men-${i}`} sx={{ maxWidth: "400px" }}>
-            <Paper className="w100" sx={{ height: "5em", padding: "1em" }}>
-              <Box className="flex fr ai-c w100">
-                <NotificationMessage notification={notification} short={true} />
-              </Box>
-            </Paper>
-          </MenuItem>
-        ))}
-        <Box className="flex fr fj-c" sx={{ mt: "1em" }}>
-          <span style={{ color: "#8991A2" }}>End of recent activity</span>
-        </Box>
+        {(notifications?.length || 0) > 0 && (
+          <>
+            {notifications?.map((notification, i: number) => (
+              <MenuItem key={`not-men-${i}`} sx={{ maxWidth: "400px" }}>
+                <Paper className="w100" sx={{ height: "5em", padding: "1em" }}>
+                  <Box className="flex fr ai-c w100">
+                    <NotificationMessage
+                      notification={notification}
+                      short={true}
+                      showUnreadBadge
+                    />
+                  </Box>
+                </Paper>
+              </MenuItem>
+            ))}
+            <Box
+              className="flex fr fj-c ai-c"
+              sx={{ mt: "1em" }}
+              style={{ cursor: "pointer" }}
+              onClick={handleRecordClick}
+            >
+              <span>Mark all as read</span>
+            </Box>
+            <Box className="flex fr fj-c" sx={{ mt: "1em" }}>
+              <span style={{ color: "#8991A2" }}>End of recent activity</span>
+            </Box>
+          </>
+        )}
+        {(notifications?.length || 0) === 0 && (
+          <Box
+            className="flex fr fj-c ai-c"
+            style={{
+              width: "250px",
+              height: "300px",
+              flexDirection: "column",
+              margin: "0px 50px",
+              textAlign: "center",
+            }}
+          >
+            <h3>No new notifications</h3>
+            <span style={{ color: "#8991A2" }}>
+              Your recent offers, listings and activity will show up here.
+            </span>
+          </Box>
+        )}
       </Menu>
     </>
   );
