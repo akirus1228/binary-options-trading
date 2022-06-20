@@ -1,0 +1,19 @@
+.valueContainer {
+    border: 1px solid gray;
+    background-color: transparent;
+    border-radius: 1em;
+    padding: 0.4em;
+    height: 60px;
+
+    .leftSide {
+        border-right: 2px solid #aaaaaa;
+        width: 25%;
+        padding-left: 10px;
+        height: 40px;
+    }
+    .rightSide {
+        padding-left: 1em;
+        width: 75%;
+    }
+
+}

@@ -13,9 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-
 import { enabledNetworkIds, useWeb3Context } from "@fantohm/shared-web3";
-
 import MenuLink from "./menu-link";
 import styles from "./header.module.scss";
 import UserMenu from "./user-menu";
