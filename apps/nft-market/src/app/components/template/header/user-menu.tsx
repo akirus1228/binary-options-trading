@@ -47,6 +47,9 @@ import { selectListingsByAddress } from "../../../store/selectors/listing-select
 import { Listing, ListingStatus } from "../../../types/backend-types";
 import ManageFund from "../../managefund/managefund";
 
+import { useTermDetails } from "../../../hooks/use-term-details";
+
+
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
   comingSoon?: boolean;
@@ -164,6 +167,9 @@ export const UserMenu = (): JSX.Element => {
   const onListDialogClose = (accepted: boolean) => {
     setDialogOpen(false);
   };
+
+  const { repaymentTotal, repaymentAmount } = useTermDetails(activeListing?.term);
+
   return connected ? (
     <>
       <Button
@@ -320,7 +326,8 @@ export const UserMenu = (): JSX.Element => {
                           marginBottom: "1px",
                         }}
                       >
-                        125.00K USDB
+                        {repaymentTotal.toFixed(2)}{" "}
+                        {(listings && currency?.symbol) || ""}
                       </h4>
                     </div>
                     <ManageFund
