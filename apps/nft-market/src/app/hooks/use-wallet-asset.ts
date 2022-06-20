@@ -23,7 +23,7 @@ export const useWalletAsset = (
       asset_contract_address: contractAddress,
       limit: 1,
     },
-    { skip: !!asset }
+    { skip: !!asset || !address }
   );
 
   useGetAssetsQuery(
