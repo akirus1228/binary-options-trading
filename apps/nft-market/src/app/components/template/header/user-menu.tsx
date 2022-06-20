@@ -101,15 +101,9 @@ export const UserMenu = (): JSX.Element => {
 
   // theme control
   const themeType = useSelector((state: RootState) => state.theme.mode);
-  const [checked, setChecked] = useState(false);
 
   const accountDrop = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagAccountDropDown(event.currentTarget);
-  };
-
-  const themeChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(!checked);
-    // themeChange(checked)
   };
 
   const toggleTheme = () => {
@@ -164,7 +158,7 @@ export const UserMenu = (): JSX.Element => {
     setDialogOpen(false);
   };
 
-  const { repaymentTotal, repaymentAmount } = useTermDetails(activeListing?.term);
+  const { repaymentTotal } = useTermDetails(activeListing?.term);
 
   return connected ? (
     <>
@@ -397,11 +391,11 @@ export const UserMenu = (): JSX.Element => {
                     }}
                     onClick={() => setFlagAccountDropDown(null)}
                   >
-                    {dropMenu.icon == "user" ? (
+                    {dropMenu.icon === "user" ? (
                       <PersonOutlineOutlinedIcon />
-                    ) : dropMenu.icon == "photo" ? (
+                    ) : dropMenu.icon === "photo" ? (
                       <InsertPhotoOutlinedIcon />
-                    ) : dropMenu.icon == "loan" ? (
+                    ) : dropMenu.icon === "loan" ? (
                       <CreditCardOutlinedIcon />
                     ) : null}
                     &nbsp;&nbsp;
