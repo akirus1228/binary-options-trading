@@ -1,7 +1,7 @@
 import { ethers, BigNumber } from "ethers";
 import { addresses } from "../constants";
-import { ierc20Abi, prizePool2Abi as PrizePool, award2Abi as AwardPool  } from "../abi";
-import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
+import { ierc20Abi, prizePool2Abi as PrizePool, award2Abi as AwardPool } from "../abi";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { clearPendingTxn, fetchPendingTxns } from "./pending-txns-slice";
 import { fetchAccountSuccess, getBalances } from "./account-slice";
 import { getCreditMaturationDaysAndLimitPercentage } from "../helpers/33-together";
@@ -13,7 +13,6 @@ import {
   IChangeApprovalAsyncThunk,
   IActionValueAsyncThunk,
   IActionAsyncThunk,
-  IJsonRPCError,
 } from "./interfaces";
 import { chains } from "../providers";
 
@@ -22,16 +21,28 @@ export const getPoolValues = createAsyncThunk(
   async ({ networkId }: IBaseAsyncThunk) => {
     // calculate 33-together
     const provider = await chains[networkId].provider;
-    const poolReader = new ethers.Contract(addresses[networkId]["PT_PRIZE_POOL_ADDRESS"], PrizePool, provider);
+    const poolReader = new ethers.Contract(
+      addresses[networkId]["PT_PRIZE_POOL_ADDRESS"],
+      PrizePool,
+      provider
+    );
     const poolAwardBalance = await poolReader.callStatic["captureAwardBalance"]();
-    const creditPlanOf = await poolReader["creditPlanOf"](addresses[networkId]["PT_TOKEN_ADDRESS"]);
+    const creditPlanOf = await poolReader["creditPlanOf"](
+      addresses[networkId]["PT_TOKEN_ADDRESS"]
+    );
     const poolCredit = getCreditMaturationDaysAndLimitPercentage(
       creditPlanOf.creditRateMantissa,
-      creditPlanOf.creditLimitMantissa,
+      creditPlanOf.creditLimitMantissa
     );
 
-    const awardReader = new ethers.Contract(addresses[networkId]["PT_PRIZE_STRATEGY_ADDRESS"], AwardPool, provider);
-    const poolAwardPeriodRemainingSeconds = await awardReader["prizePeriodRemainingSeconds"]();
+    const awardReader = new ethers.Contract(
+      addresses[networkId]["PT_PRIZE_STRATEGY_ADDRESS"],
+      AwardPool,
+      provider
+    );
+    const poolAwardPeriodRemainingSeconds = await awardReader[
+      "prizePeriodRemainingSeconds"
+    ]();
 
     return {
       awardBalance: ethers.utils.formatUnits(poolAwardBalance, "gwei"),
@@ -39,36 +50,53 @@ export const getPoolValues = createAsyncThunk(
       creditMaturationInDays: poolCredit[0],
       creditLimitPercentage: poolCredit[1],
     };
-  },
+  }
 );
 
-export const getRNGStatus = createAsyncThunk("pool/getRNGStatus", async ({ networkId }: IBaseAsyncThunk) => {
-  const provider = await chains[networkId].provider;
-  const awardReader = new ethers.Contract(addresses[networkId]["PT_PRIZE_STRATEGY_ADDRESS"], AwardPool, provider);
-  const isRngRequested = await awardReader["isRngRequested"]();
-  let isRngTimedOut = false;
-  if (isRngRequested) isRngTimedOut = await awardReader["isRngTimedOut"]();
+export const getRNGStatus = createAsyncThunk(
+  "pool/getRNGStatus",
+  async ({ networkId }: IBaseAsyncThunk) => {
+    const provider = await chains[networkId].provider;
+    const awardReader = new ethers.Contract(
+      addresses[networkId]["PT_PRIZE_STRATEGY_ADDRESS"],
+      AwardPool,
+      provider
+    );
+    const isRngRequested = await awardReader["isRngRequested"]();
+    let isRngTimedOut = false;
+    if (isRngRequested) isRngTimedOut = await awardReader["isRngTimedOut"]();
 
-  return {
-    isRngRequested: isRngRequested,
-    isRngTimedOut: isRngTimedOut,
-    rngRequestCompleted: Date.now(),
-  };
-});
+    return {
+      isRngRequested: isRngRequested,
+      isRngTimedOut: isRngTimedOut,
+      rngRequestCompleted: Date.now(),
+    };
+  }
+);
 
 const changeApproval = createAsyncThunk(
   "pool/changeApproval",
-  async ({ token, provider, address, networkId }: IChangeApprovalAsyncThunk, { dispatch }) => {
+  async (
+    { token, provider, address, networkId }: IChangeApprovalAsyncThunk,
+    { dispatch }
+  ) => {
     if (!provider) {
       dispatch(error("Please connect your wallet!"));
       return;
     }
 
     const signer = provider.getSigner();
-    const sohmContract = new ethers.Contract(addresses[networkId]["SOHM_ADDRESS"], ierc20Abi, signer);
+    const sohmContract = new ethers.Contract(
+      addresses[networkId]["SOHM_ADDRESS"],
+      ierc20Abi,
+      signer
+    );
 
     let approveTx;
-    let depositAllowance = await sohmContract["allowance"](address, addresses[networkId]["PT_PRIZE_POOL_ADDRESS"]);
+    let depositAllowance = await sohmContract["allowance"](
+      address,
+      addresses[networkId]["PT_PRIZE_POOL_ADDRESS"]
+    );
 
     // return early if approval already exists
     if (depositAllowance.gt(BigNumber.from("0"))) {
@@ -78,7 +106,7 @@ const changeApproval = createAsyncThunk(
           pooling: {
             sohmPool: +depositAllowance,
           },
-        }),
+        })
       );
     }
 
@@ -86,12 +114,14 @@ const changeApproval = createAsyncThunk(
       if (token === "sfhm") {
         approveTx = await sohmContract["approve"](
           addresses[networkId]["PT_PRIZE_POOL_ADDRESS"],
-          ethers.utils.parseUnits("1000000000", "gwei").toString(),
+          ethers.utils.parseUnits("1000000000", "gwei").toString()
         );
 
         const text = "Approve Pool Deposit";
         const pendingTxnType = "approve_pool_together";
-        dispatch(fetchPendingTxns({ txnHash: approveTx.hash, text, type: pendingTxnType }));
+        dispatch(
+          fetchPendingTxns({ txnHash: approveTx.hash, text, type: pendingTxnType })
+        );
         await approveTx.wait();
       }
     } catch (e: any) {
@@ -116,28 +146,38 @@ const changeApproval = createAsyncThunk(
     }
 
     // go get fresh allowance
-    depositAllowance = await sohmContract["allowance"](address, addresses[networkId]["PT_PRIZE_POOL_ADDRESS"]);
+    depositAllowance = await sohmContract["allowance"](
+      address,
+      addresses[networkId]["PT_PRIZE_POOL_ADDRESS"]
+    );
 
     return dispatch(
       fetchAccountSuccess({
         pooling: {
           sohmPool: +depositAllowance,
         },
-      }),
+      })
     );
-  },
+  }
 );
 
 // NOTE (appleseed): https://docs.pooltogether.com/protocol/prize-pool#depositing
 export const poolDeposit = createAsyncThunk(
   "pool/deposit",
-  async ({ action, value, provider, address, networkId }: IActionValueAsyncThunk, { dispatch }) => {
+  async (
+    { action, value, provider, address, networkId }: IActionValueAsyncThunk,
+    { dispatch }
+  ) => {
     if (!provider) {
       dispatch(error("Please connect your wallet!"));
       return;
     }
     const signer = provider.getSigner();
-    const poolContract = new ethers.Contract(addresses[networkId]["PT_PRIZE_POOL_ADDRESS"], PrizePool, signer);
+    const poolContract = new ethers.Contract(
+      addresses[networkId]["PT_PRIZE_POOL_ADDRESS"],
+      PrizePool,
+      signer
+    );
     let poolTx;
 
     try {
@@ -146,11 +186,13 @@ export const poolDeposit = createAsyncThunk(
           address,
           ethers.utils.parseUnits(value, "gwei"),
           addresses[networkId]["PT_TOKEN_ADDRESS"],
-          "0x0000000000000000000000000000000000000000", // referral address
+          "0x0000000000000000000000000000000000000000" // referral address
         );
         const text = "Pool " + action;
         const pendingTxnType = "pool_deposit";
-        dispatch(fetchPendingTxns({ txnHash: poolTx.hash, text: text, type: pendingTxnType }));
+        dispatch(
+          fetchPendingTxns({ txnHash: poolTx.hash, text: text, type: pendingTxnType })
+        );
         await poolTx.wait();
       } else {
         console.log("unrecognized action: ", action);
@@ -170,7 +212,11 @@ export const poolDeposit = createAsyncThunk(
         e.error.code === -32603 &&
         e.error.message.indexOf("ds-math-sub-underflow") >= 0
       ) {
-        dispatch(error("You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"));
+        dispatch(
+          error(
+            "You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"
+          )
+        );
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }
@@ -182,14 +228,18 @@ export const poolDeposit = createAsyncThunk(
     }
 
     dispatch(getBalances({ address, networkId }));
-  },
+  }
 );
 
 export const getEarlyExitFee = createAsyncThunk(
   "pool/getEarlyExitFee",
   async ({ value, address, networkId }: IValueAsyncThunk) => {
     const provider = await chains[networkId].provider;
-    const poolReader = new ethers.Contract(addresses[networkId]["PT_PRIZE_POOL_ADDRESS"], PrizePool, provider);
+    const poolReader = new ethers.Contract(
+      addresses[networkId]["PT_PRIZE_POOL_ADDRESS"],
+      PrizePool,
+      provider
+    );
     // NOTE (appleseed): we chain callStatic in the below function to force the transaction through w/o a gas fee
     // ... this may be a result of `calculateEarlyExitFee` not being explicity declared as `view` or `pure` in the contract.
     // Explanation from ethers docs: https://docs.ethers.io/v5/api/contract/contract/#contract-callStatic
@@ -202,10 +252,13 @@ export const getEarlyExitFee = createAsyncThunk(
     const earlyExitFee = await poolReader.callStatic["calculateEarlyExitFee"](
       address,
       addresses[networkId]["PT_TOKEN_ADDRESS"],
-      ethers.utils.parseUnits(value, "gwei"),
+      ethers.utils.parseUnits(value, "gwei")
     );
     // NOTE (appleseed): poolTogether calcs this credit, but it's not used...
-    const credit = await poolReader.callStatic["balanceOfCredit"](address, addresses[networkId]["PT_TOKEN_ADDRESS"]);
+    const credit = await poolReader.callStatic["balanceOfCredit"](
+      address,
+      addresses[networkId]["PT_TOKEN_ADDRESS"]
+    );
 
     return {
       withdraw: {
@@ -214,37 +267,48 @@ export const getEarlyExitFee = createAsyncThunk(
         credit: credit,
       },
     };
-  },
+  }
 );
 
 // NOTE (appleseed): https://docs.pooltogether.com/protocol/prize-pool#withdraw-instantly
 export const poolWithdraw = createAsyncThunk(
   "pool/withdraw",
-  async ({ action, value, provider, address, networkId }: IActionValueAsyncThunk, { dispatch }) => {
+  async (
+    { action, value, provider, address, networkId }: IActionValueAsyncThunk,
+    { dispatch }
+  ) => {
     if (!provider) {
       dispatch(error("Please connect your wallet!"));
       return;
     }
 
     const signer = provider.getSigner();
-    const poolContract = new ethers.Contract(addresses[networkId]["PT_PRIZE_POOL_ADDRESS"], PrizePool, signer);
+    const poolContract = new ethers.Contract(
+      addresses[networkId]["PT_PRIZE_POOL_ADDRESS"],
+      PrizePool,
+      signer
+    );
 
     let poolTx;
 
     try {
       if (action === "withdraw") {
-        const earlyExitFee = await dispatch(getEarlyExitFee({ value, address, networkId }));
+        const earlyExitFee = await dispatch(
+          getEarlyExitFee({ value, address, networkId })
+        );
 
         poolTx = await poolContract["withdrawInstantlyFrom"](
           address,
           ethers.utils.parseUnits(value, "gwei"),
           addresses[networkId]["PT_TOKEN_ADDRESS"],
-          (earlyExitFee.payload as any).withdraw.earlyExitFee.exitFee, // maximum exit fee
+          (earlyExitFee.payload as any).withdraw.earlyExitFee.exitFee // maximum exit fee
           // TS-REFACTOR-TODO: set the payload type above once we've added typechain in.
         );
         const text = "Pool " + action;
         const pendingTxnType = "pool_withdraw";
-        dispatch(fetchPendingTxns({ txnHash: poolTx.hash, text: text, type: pendingTxnType }));
+        dispatch(
+          fetchPendingTxns({ txnHash: poolTx.hash, text: text, type: pendingTxnType })
+        );
         await poolTx.wait();
       } else {
         console.log("unrecognized action: ", action);
@@ -264,7 +328,11 @@ export const poolWithdraw = createAsyncThunk(
         e.error.code === -32603 &&
         e.error.message.indexOf("ds-math-sub-underflow") >= 0
       ) {
-        dispatch(error("You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"));
+        dispatch(
+          error(
+            "You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"
+          )
+        );
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }
@@ -276,7 +344,7 @@ export const poolWithdraw = createAsyncThunk(
     }
 
     dispatch(getBalances({ address, networkId }));
-  },
+  }
 );
 
 export const awardProcess = createAsyncThunk(
@@ -288,7 +356,11 @@ export const awardProcess = createAsyncThunk(
     }
 
     const signer = provider.getSigner();
-    const poolContract = new ethers.Contract(addresses[networkId]["PT_PRIZE_STRATEGY_ADDRESS"], AwardPool, signer);
+    const poolContract = new ethers.Contract(
+      addresses[networkId]["PT_PRIZE_STRATEGY_ADDRESS"],
+      AwardPool,
+      signer
+    );
 
     let poolTx;
 
@@ -304,7 +376,9 @@ export const awardProcess = createAsyncThunk(
       }
       const text = "Pool " + action;
       const pendingTxnType = "pool_" + action;
-      dispatch(fetchPendingTxns({ txnHash: poolTx.hash, text: text, type: pendingTxnType }));
+      dispatch(
+        fetchPendingTxns({ txnHash: poolTx.hash, text: text, type: pendingTxnType })
+      );
       await poolTx.wait();
     } catch (e: any) {
       if (e.error === undefined) {
@@ -321,7 +395,11 @@ export const awardProcess = createAsyncThunk(
         e.error.code === -32603 &&
         e.error.message.indexOf("ds-math-sub-underflow") >= 0
       ) {
-        dispatch(error("You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"));
+        dispatch(
+          error(
+            "You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"
+          )
+        );
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }
@@ -333,7 +411,7 @@ export const awardProcess = createAsyncThunk(
     }
 
     dispatch(getBalances({ address, networkId }));
-  },
+  }
 );
 
 const initialState = {
@@ -344,9 +422,9 @@ const poolTogetherSlice = createSlice({
   name: "poolData",
   initialState,
   reducers: {},
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(getPoolValues.pending, state => {
+      .addCase(getPoolValues.pending, (state) => {
         state.loading = true;
       })
       .addCase(getPoolValues.fulfilled, (state, action) => {
@@ -357,7 +435,7 @@ const poolTogetherSlice = createSlice({
         state.loading = false;
         console.log(error);
       })
-      .addCase(getRNGStatus.pending, state => {
+      .addCase(getRNGStatus.pending, (state) => {
         state.loading = true;
       })
       .addCase(getRNGStatus.fulfilled, (state, action) => {
