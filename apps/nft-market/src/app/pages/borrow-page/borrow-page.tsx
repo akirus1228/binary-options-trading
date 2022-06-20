@@ -20,10 +20,11 @@ import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
+  const { user } = useSelector((state: RootState) => state.backend);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
     limit: 50,
-    owner: address,
+    owner: user.address,
   });
 
   // query to use on frontend to filter cached results and ultimately display
@@ -43,7 +44,7 @@ export const BorrowPage = (): JSX.Element => {
 
   // load assets from opensea api
   const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
-    skip: !address,
+    skip: !user.address,
   });
 
   // using the opensea assets, crosscheck with backend api for correlated data
