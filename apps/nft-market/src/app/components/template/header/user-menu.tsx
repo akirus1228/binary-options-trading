@@ -33,22 +33,18 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import NorthEastOutlinedIcon from "@mui/icons-material/NorthEastOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { addressEllipsis } from "@fantohm/shared-helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { logout } from "../../../store/reducers/backend-slice";
 import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
-import { USDBToken } from "@fantohm/shared/images";
 import { desiredNetworkId } from "../../../constants/network";
 import { ethers } from "ethers";
-import { width } from "@mui/system";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import { selectListingsByAddress } from "../../../store/selectors/listing-selectors";
 import { Listing, ListingStatus } from "../../../types/backend-types";
 import ManageFund from "../../managefund/managefund";
 
 import { useTermDetails } from "../../../hooks/use-term-details";
-
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -326,8 +322,7 @@ export const UserMenu = (): JSX.Element => {
                           marginBottom: "1px",
                         }}
                       >
-                        {repaymentTotal.toFixed(2)}{" "}
-                        {(listings && currency?.symbol) || ""}
+                        {repaymentTotal.toFixed(2)} {(listings && currency?.symbol) || ""}
                       </h4>
                     </div>
                     <ManageFund

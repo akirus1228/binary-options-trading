@@ -294,7 +294,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    const value = Math.floor(+event.target.value)
+    const value = Math.floor(+event.target.value);
     setDuration(value == 0 ? 1 : value);
   };
 
@@ -350,7 +350,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currency,
       dispatch
     );
-    if(!signature) return;
+    if (!signature) return;
 
     const term: Terms = {
       ...preSigTerm,
