@@ -43,7 +43,7 @@ export const BorrowPage = (): JSX.Element => {
   const [loansQuery, setLoansQuery] = useState<BackendLoanQueryParams>({
     skip: 0,
     take: 50,
-    lenderAddress: address,
+    walletAddress: address,
     status: LoanStatus.Active,
   });
 
@@ -84,7 +84,7 @@ export const BorrowPage = (): JSX.Element => {
     });
     setLoansQuery({
       ...loansQuery,
-      lenderAddress: address,
+      walletAddress: address,
     });
   }, [address]);
 
