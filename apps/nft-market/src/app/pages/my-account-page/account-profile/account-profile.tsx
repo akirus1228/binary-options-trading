@@ -69,6 +69,7 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
             variant="contained"
             sx={{ ml: "7px" }}
             href={`https://etherscan.io/address/${user.address}`}
+            target="_blank"
           >
             <Icon component={OpenInNewIcon} /> View on Etherscan
           </Button>
