@@ -84,7 +84,7 @@ export function MyAccountLoans(props: MyAccountLoansProps) {
             activeLenderLoans?.length === 0 &&
             historicalBorrowerLoans?.length === 0 &&
             historicalLenderLoans?.length === 0 &&
-            "There is not any offer."}
+            "There is not any loan."}
         </Typography>
       </Box>
     </Container>
