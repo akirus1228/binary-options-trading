@@ -70,8 +70,8 @@ export const UserMenu = (): JSX.Element => {
 
   const accountSubMenu: AccountSubMenu[] = [
     { title: "My profile", href: "/my-account", icon: "user" },
-    { title: "My assets", href: "#", icon: "photo" },
-    { title: "My loans", href: "#", icon: "loan" },
+    { title: "My assets", href: "/my-account#3", icon: "photo" },
+    { title: "My loans", href: "/my-account#1", icon: "loan" },
     { title: "Dark theme", href: "#", icon: "sun" },
   ];
 
