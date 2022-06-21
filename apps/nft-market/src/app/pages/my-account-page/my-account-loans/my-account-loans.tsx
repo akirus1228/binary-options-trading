@@ -1,5 +1,6 @@
 import { useWeb3Context } from "@fantohm/shared-web3";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../../api/backend-api";
 import { RootState } from "../../../store";
@@ -53,14 +54,39 @@ export function MyAccountLoans(props: MyAccountLoansProps) {
 
   return (
     <Container className={style["myAccountContainer"]} maxWidth="xl">
-      <h2>Active loans as borrower({activeBorrowerLoans?.length})</h2>
-      <MyAccountActiveLoansTable loans={activeBorrowerLoans} />
-      <h2>Active loans as lender({activeLenderLoans?.length})</h2>
-      <MyAccountActiveLoansTable loans={activeLenderLoans} />
-      <h2>Previous loans as borrower({historicalBorrowerLoans?.length})</h2>
-      <MyAccountActiveLoansTable loans={historicalBorrowerLoans} />
-      <h2>Previous loans as lender({historicalLenderLoans?.length})</h2>
-      <MyAccountActiveLoansTable loans={historicalLenderLoans} />
+      {activeBorrowerLoans?.length ? (
+        <>
+          <h2>Active loans as borrower({activeBorrowerLoans?.length})</h2>
+          <MyAccountActiveLoansTable loans={activeBorrowerLoans} />
+        </>
+      ) : null}
+      {activeLenderLoans?.length ? (
+        <>
+          <h2>Active loans as lender({activeLenderLoans?.length})</h2>
+          <MyAccountActiveLoansTable loans={activeLenderLoans} />
+        </>
+      ) : null}
+      {historicalBorrowerLoans?.length ? (
+        <>
+          <h2>Previous loans as borrower({historicalBorrowerLoans?.length})</h2>
+          <MyAccountActiveLoansTable loans={historicalBorrowerLoans} />
+        </>
+      ) : null}
+      {historicalLenderLoans?.length ? (
+        <>
+          <h2>Previous loans as lender({historicalLenderLoans?.length})</h2>
+          <MyAccountActiveLoansTable loans={historicalLenderLoans} />
+        </>
+      ) : null}
+      <Box className="flex fc fj-c ai-c">
+        <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
+          {activeBorrowerLoans?.length === 0 &&
+            activeLenderLoans?.length === 0 &&
+            historicalBorrowerLoans?.length === 0 &&
+            historicalLenderLoans?.length === 0 &&
+            "There is not any loan."}
+        </Typography>
+      </Box>
     </Container>
   );
 }

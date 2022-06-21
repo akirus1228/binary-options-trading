@@ -53,7 +53,7 @@ export const BorrowPage = (): JSX.Element => {
 
   // load assets from opensea api
   const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
-    skip: !user.address,
+    skip: !osQuery.owner,
   });
   const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {});
 

@@ -108,7 +108,7 @@ export const contractCreateLoan = createAsyncThunk(
     const state: RootState = getState() as RootState;
     const currency =
       state.currency.currencies[
-      getSymbolFromAddress(loan.assetListing.term.currencyAddress)
+        getSymbolFromAddress(loan.assetListing.term.currencyAddress)
       ] || getErc20CurrencyFromAddress(loan.assetListing.term.currencyAddress);
 
     const signer = provider.getSigner();
@@ -169,7 +169,6 @@ export const contractCreateLoan = createAsyncThunk(
         return false;
       }
     } catch (e: any) {
-
       if (e.error === undefined) {
         let message;
         if (e.message === "Internal JSON-RPC error.") {

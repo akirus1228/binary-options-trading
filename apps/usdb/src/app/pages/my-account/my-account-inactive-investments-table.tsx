@@ -13,10 +13,10 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import { format } from "date-fns";
 import style from "./my-account.module.scss";
 import { styled } from "@mui/material/styles";
-import Info from "../../../assets/icons/info.svg";
 import Investment from "./my-account-investments";
 import { useSelector } from "react-redux";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { RootState } from "../../store";
 
 export const currencyFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -54,7 +54,7 @@ export const MyAccountInactiveInvestmentsTable = ({
 }: {
   investments: Investment[];
 }): JSX.Element => {
-  const themeType = useSelector((state: any) => state.app.theme);
+  const themeType = useSelector((state: RootState) => state.app.theme);
   const backgroundColor = themeType === "light" ? "#f7f7ff" : "#0E0F10";
 
   return (

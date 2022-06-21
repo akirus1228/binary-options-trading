@@ -58,7 +58,7 @@ export const Footer = (): JSX.Element => {
           </Box>
           <Box sx={{ mt: { xs: "20px", md: "0" } }}>
             <Typography textAlign="center" variant="body2" color="white">
-              Copyright &copy; 2022. All rights reserved.
+              Copyright &copy; 2022 Balance Capital. All rights reserved.
             </Typography>
           </Box>
         </Toolbar>

@@ -29,8 +29,8 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
 
   return (
     <Box sx={{ mb: "5em" }}>
-      <Box className="flex fr fj-sb ai-c fw">
-        <Box className="flex fr fj-sb ai-c fw">
+      <Box className={`flex fr fj-sb ai-c fw`}>
+        <Box className={`flex fr fj-sb ai-c fw ${style["left"]}`}>
           <Box className={`${style["profileImageContainer"]} flex fr ai-c`}>
             <img
               src={profileImagePlaceholder}
@@ -53,7 +53,7 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
             </Button>
           </Box>
         </Box>
-        <Box className="flex fr ai-c">
+        <Box className={`flex fr ai-c ${style["right"]}`}>
           <a href={`https://opensea.io/${user.address}`} target="_blank" rel="noreferrer">
             <img src={openseaIcon} alt="opensea icon" className={style["iconWrapper"]} />
           </a>
@@ -69,6 +69,7 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
             variant="contained"
             sx={{ ml: "7px" }}
             href={`https://etherscan.io/address/${user.address}`}
+            target="_blank"
           >
             <Icon component={OpenInNewIcon} /> View on Etherscan
           </Button>

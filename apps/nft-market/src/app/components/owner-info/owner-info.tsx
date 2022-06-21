@@ -11,7 +11,7 @@ import {
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { User } from "../../types/backend-types";
 import SimpleProfile from "../simple-profile/simple-profile";
-import "./owner-info.module.scss";
+import style from "./owner-info.module.scss";
 import ArrowRightUp from "../../../assets/icons/arrow-right-up.svg";
 import { isDev } from "@fantohm/shared-web3";
 import { CircleGraph } from "@fantohm/shared/ui-charts";
@@ -56,7 +56,7 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
     <Box className="flex fc fj-fs" sx={{ mb: "5em", ...sx }}>
       <h2>Owner information</h2>
       <Paper className="flex fr fw ai-c" sx={{ minHeight: "180px" }}>
-        <Box className="flex fc fw ai-c" sx={{ mr: "2em" }}>
+        <Box className={`flex fc fw ai-c ${style["view_eth_button"]}`} sx={{ mr: "2em" }}>
           <SimpleProfile user={owner} />
           <Button
             className="slim lowContrast"
@@ -101,7 +101,7 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
               </span>
               <Box className="flex fr">
                 <Box className="flex fc" sx={{ mr: "2em" }}>
-                  <ColorLabel color="#1B9385" label="Loans reapid" />
+                  <ColorLabel color="#1B9385" label="Loans repaid" />
                   <span>{ownerInfo?.loansRepaid}</span>
                 </Box>
                 <Box className="flex fc">

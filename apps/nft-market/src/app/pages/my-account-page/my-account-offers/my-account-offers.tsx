@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useGetOffersQuery } from "../../../api/backend-api";
@@ -7,7 +7,7 @@ import OffersList, {
 } from "../../../components/offers-list/offers-list";
 import { RootState } from "../../../store";
 import { Offer, OfferStatus } from "../../../types/backend-types";
-import "./my-account-offers.module.scss";
+import style from "./my-account-offers.module.scss";
 
 /* eslint-disable-next-line */
 export type MyAccountOffersProps = {};
@@ -79,7 +79,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
   ];
 
   return (
-    <Box className="flex fc fj-c ai-c">
+    <Box className={`flex fc fj-c ai-c ${style["responsive_table"]}`}>
       <Box>
         <OffersList
           offers={activeOffersAsBorrower}
@@ -111,6 +111,15 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           isLoading={isOffersAsLenderLoading}
           title="Previous offers as a lender"
         />
+      </Box>
+      <Box>
+        <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
+          {activeOffersAsBorrower.length === 0 &&
+            activeOffersAsLender.length === 0 &&
+            historicalOffersAsBorrower.length === 0 &&
+            historicalOffersAsLender.length === 0 &&
+            "There is not any offer."}
+        </Typography>
       </Box>
     </Box>
   );

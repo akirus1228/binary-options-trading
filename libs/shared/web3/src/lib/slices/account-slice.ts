@@ -4,15 +4,10 @@ import {
   ierc20Abi,
   usdbContractAbi as usdbAbi,
   daiContractAbi as daiAbi,
-  sOhmv2Abi as sOHMv2,
-  wsOhmAbi as wsOHM,
-  olympusStakingv2Abi as OlympusStaking,
   masterChefAbi as masterchefAbi,
 } from "../abi";
-
 import { setAll, trim } from "../helpers";
-
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   IBaseAddressAsyncThunk,
   ICalcAllUserBondDetailsAsyncThunk,
@@ -20,9 +15,7 @@ import {
 } from "./interfaces";
 import { chains } from "../providers";
 import { BondAction, BondType, PaymentToken } from "../lib/bond";
-
 import { findOrLoadMarketPrice } from "./bond-slice";
-import { truncateDecimals } from "@fantohm/shared-helpers";
 
 export const getBalances = createAsyncThunk(
   "account/getBalances",
@@ -84,71 +77,10 @@ export const getBalances = createAsyncThunk(
   }
 );
 
-interface IUserAccountDetails {
-  balances: {
-    dai: string;
-    ohm: string;
-    sohm: string;
-    wsohm: string;
-    usdb: string;
-  };
-  staking: {
-    ohmStake: number;
-    ohmUnstake: number;
-  };
-  warmup: {
-    depositAmount: number;
-    warmUpAmount: number;
-    expiryBlock: number;
-  };
-  bonding: {
-    daiAllowance: number;
-  };
-  bridging: {
-    // for incoming (in FHM.m)
-    bridgeDownstreamAllowance: number;
-    // for outgoing (in FHM)
-    bridgeUpstreamAllowance: number;
-  };
-}
-
 export const loadAccountDetails = createAsyncThunk(
   "account/loadAccountDetails",
   async ({ networkId, address }: IBaseAddressAsyncThunk, { dispatch }) => {
     const provider = await chains[networkId].provider;
-
-    async function loadBridgeAccountDetails() {
-      let bridgeTokenBalance = 0;
-      let bridgeUpstreamAllowance = 0;
-      let bridgeDownstreamAllowance = 0;
-      if (
-        addresses[networkId]["BRIDGE_TOKEN_ADDRESS"] &&
-        addresses[networkId]["BRIDGE_ADDRESS"]
-      ) {
-        const ohmContract = new ethers.Contract(
-          addresses[networkId]["OHM_ADDRESS"] as string,
-          ierc20Abi,
-          provider
-        );
-        const bridgeContract = new ethers.Contract(
-          addresses[networkId]["BRIDGE_TOKEN_ADDRESS"] as string,
-          ierc20Abi,
-          provider
-        );
-        [bridgeTokenBalance, bridgeUpstreamAllowance, bridgeDownstreamAllowance] =
-          await Promise.all([
-            bridgeContract["balanceOf"](address),
-            ohmContract["allowance"](address, addresses[networkId]["BRIDGE_ADDRESS"]),
-            bridgeContract["allowance"](address, addresses[networkId]["BRIDGE_ADDRESS"]),
-          ]);
-      }
-
-      return {
-        bridgeTokenBalance,
-        bridgeUpstreamAllowance,
-        bridgeDownstreamAllowance,
-      };
-    }
 
     const daiContract = new ethers.Contract(
       addresses[networkId]["DAI_ADDRESS"] as string,

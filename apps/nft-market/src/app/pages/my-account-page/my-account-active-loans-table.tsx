@@ -26,7 +26,6 @@ import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import { getLoanDetailsFromContract, LoanDetails } from "../../store/reducers/loan-slice";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { Loan, LoanStatus } from "../../types/backend-types";
-// import style from "./my-account.module.scss";
 
 export const currencyFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -156,7 +155,7 @@ export const MyAccountActiveLoansTable = (
     <TableContainer>
       <PaperTable aria-label="Active investments">
         <PaperTableHead>
-          <TableRow>
+          <TableRow className={`myStyle["responsive_table_header"]`}>
             <PaperTableCell>Asset</PaperTableCell>
             <PaperTableCell>Name</PaperTableCell>
             <PaperTableCell>Loan Value</PaperTableCell>

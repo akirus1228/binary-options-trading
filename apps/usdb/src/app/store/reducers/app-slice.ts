@@ -18,53 +18,56 @@ export const loadAppDetails = createAsyncThunk(
   "app/loadAppDetails",
   async ({ networkId }: IBaseAsyncThunk, { dispatch }) => {
     const networkDetailsList = await Promise.all(
-      enabledNetworkIdsExceptBscAndEth.map((enabledNetworkId: any) =>
+      enabledNetworkIdsExceptBscAndEth.map((enabledNetworkId: number) =>
         dispatch(loadNetworkDetails({ networkId: enabledNetworkId })).unwrap()
       )
     );
     const localNetworkDetails = networkDetailsList.find(
-      (networkDetails: { networkId: any }) => networkDetails.networkId === networkId
+      (networkDetails: { networkId: number }) => networkDetails.networkId === networkId
     );
     if (localNetworkDetails === undefined) {
       throw new Error(`Unable to load local network details. networkId: ${networkId}`);
     }
 
     const prodNetworkDetailsList = networkDetailsList.filter(
-      (networkDetails: { networkId: any }) =>
+      (networkDetails: { networkId: number }) =>
         enabledMainNetworkIds.includes(networkDetails.networkId)
     );
 
     // Global network calculations
     const globalMarketCap = prodNetworkDetailsList
-      .map((networkDetails: { marketCap: any }) => networkDetails.marketCap)
-      .reduce((sum: any, a: any) => sum + a, 0);
+      .map((networkDetails: { marketCap: number }) => networkDetails.marketCap)
+      .reduce((sum: number, a: number) => sum + a, 0);
     const globalCircSupply = prodNetworkDetailsList
-      .map((networkDetails: { circSupply: any }) => networkDetails.circSupply)
-      .reduce((sum: any, a: any) => sum + a, 0);
+      .map((networkDetails: { circSupply: number }) => networkDetails.circSupply)
+      .reduce((sum: number, a: number) => sum + a, 0);
     const globalTotalSupply = prodNetworkDetailsList
-      .map((networkDetails: { totalSupply: any }) => networkDetails.totalSupply)
-      .reduce((sum: any, a: any) => sum + a, 0);
+      .map((networkDetails: { totalSupply: number }) => networkDetails.totalSupply)
+      .reduce((sum: number, a: number) => sum + a, 0);
     const globalStakingTVL = prodNetworkDetailsList
-      .map((networkDetails: { stakingTVL: any }) => networkDetails.stakingTVL)
-      .reduce((sum: any, a: any) => sum + a, 0);
+      .map((networkDetails: { stakingTVL: number }) => networkDetails.stakingTVL)
+      .reduce((sum: number, a: number) => sum + a, 0);
     const globalStakingRewardFHM = prodNetworkDetailsList
-      .map((networkDetails: { stakingRewardFHM: any }) => networkDetails.stakingRewardFHM)
-      .reduce((sum: any, a: any) => sum + a, 0);
+      .map(
+        (networkDetails: { stakingRewardFHM: number }) => networkDetails.stakingRewardFHM
+      )
+      .reduce((sum: number, a: number) => sum + a, 0);
     const globalStakingCircSupply = prodNetworkDetailsList
       .map(
-        (networkDetails: { stakingCircSupply: any }) => networkDetails.stakingCircSupply
+        (networkDetails: { stakingCircSupply: number }) =>
+          networkDetails.stakingCircSupply
       )
-      .reduce((sum: any, a: any) => sum + a, 0);
+      .reduce((sum: number, a: number) => sum + a, 0);
 
     const globalStakingRebase = globalStakingRewardFHM / globalStakingCircSupply;
     const globalFiveDayRate = prodNetworkDetailsList
-      .map((networkDetails: { fiveDayRate: any }) => networkDetails.fiveDayRate)
+      .map((networkDetails: { fiveDayRate: number }) => networkDetails.fiveDayRate)
       .reduce(
         (sum: number, a: number) => sum + a * (1 / enabledMainNetworkIds.length),
         0
       );
     const globalStakingAPY = prodNetworkDetailsList
-      .map((networkDetails: { stakingAPY: any }) => networkDetails.stakingAPY)
+      .map((networkDetails: { stakingAPY: number }) => networkDetails.stakingAPY)
       .reduce(
         (sum: number, a: number) => sum + a * (1 / enabledMainNetworkIds.length),
         0
