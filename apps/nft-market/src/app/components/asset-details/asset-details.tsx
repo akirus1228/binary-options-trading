@@ -1,4 +1,3 @@
-import { prettifySeconds } from "@fantohm/shared-web3";
 import {
   Box,
   Chip,
@@ -14,7 +13,7 @@ import { useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { RootState } from "../../store";
-import { Listing, LoanStatus } from "../../types/backend-types";
+import { Listing } from "../../types/backend-types";
 import AssetOwnerTag from "../asset-owner-tag/asset-owner-tag";
 import HeaderBlurryImage from "../header-blurry-image/header-blurry-image";
 import style from "./asset-details.module.scss";
@@ -37,7 +36,7 @@ export const AssetDetails = ({
 }: AssetDetailsProps): JSX.Element => {
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const asset = useWalletAsset(contractAddress, tokenId);
-  const { data: loan, isLoading: isLoanLoading } = useGetLoansQuery(
+  const { data: loan } = useGetLoansQuery(
     {
       skip: 0,
       take: 1,

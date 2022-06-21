@@ -33,12 +33,10 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import NorthEastOutlinedIcon from "@mui/icons-material/NorthEastOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { addressEllipsis } from "@fantohm/shared-helpers";
 import { AppDispatch, RootState } from "../../../store";
 import { logout } from "../../../store/reducers/backend-slice";
 import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
-import { USDBToken } from "@fantohm/shared/images";
 import { desiredNetworkId } from "../../../constants/network";
 import { ethers } from "ethers";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
@@ -102,15 +100,9 @@ export const UserMenu = (): JSX.Element => {
 
   // theme control
   const themeType = useSelector((state: RootState) => state.theme.mode);
-  const [checked, setChecked] = useState(false);
 
   const accountDrop = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagAccountDropDown(event.currentTarget);
-  };
-
-  const themeChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(!checked);
-    // themeChange(checked)
   };
 
   const toggleTheme = () => {
@@ -165,7 +157,7 @@ export const UserMenu = (): JSX.Element => {
     setDialogOpen(false);
   };
 
-  const { repaymentTotal, repaymentAmount } = useTermDetails(activeListing?.term);
+  const { repaymentTotal } = useTermDetails(activeListing?.term);
 
   return connected ? (
     <>
@@ -398,11 +390,11 @@ export const UserMenu = (): JSX.Element => {
                     }}
                     onClick={() => setFlagAccountDropDown(null)}
                   >
-                    {dropMenu.icon == "user" ? (
+                    {dropMenu.icon === "user" ? (
                       <PersonOutlineOutlinedIcon />
-                    ) : dropMenu.icon == "photo" ? (
+                    ) : dropMenu.icon === "photo" ? (
                       <InsertPhotoOutlinedIcon />
-                    ) : dropMenu.icon == "loan" ? (
+                    ) : dropMenu.icon === "loan" ? (
                       <CreditCardOutlinedIcon />
                     ) : null}
                     &nbsp;&nbsp;
