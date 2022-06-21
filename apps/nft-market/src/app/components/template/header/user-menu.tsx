@@ -229,7 +229,7 @@ export const UserMenu = (): JSX.Element => {
               height: 40,
             }}
             href={`https://etherscan.io/address/${address}`}
-            target='_blank'
+            target="_blank"
           >
             <LaunchIcon fontSize="small" />
           </IconButton>
