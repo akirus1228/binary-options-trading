@@ -43,7 +43,6 @@ import { selectCurrencyByAddress } from "../../../store/selectors/currency-selec
 import { selectListingsByAddress } from "../../../store/selectors/listing-selectors";
 import { Listing, ListingStatus } from "../../../types/backend-types";
 import ManageFund from "../../managefund/managefund";
-
 import { useTermDetails } from "../../../hooks/use-term-details";
 
 type PageParams = {

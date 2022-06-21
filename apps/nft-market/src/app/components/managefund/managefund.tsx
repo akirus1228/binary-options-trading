@@ -12,14 +12,12 @@ import {
   Typography,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import TermsForm from "../terms-form/terms-form";
 import style from "./managefund.module.scss";
 import { Asset, Listing } from "../../types/backend-types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
 import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import React, {
   BaseSyntheticEvent,
@@ -40,8 +38,6 @@ import {
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
-import { blue } from "@mui/material/colors";
-
 export interface ManageFundProps {
   asset: Asset | undefined;
   listing: Listing | null | undefined;
@@ -287,34 +283,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                     </Typography>
                   </Box>
                 </Box>
-                {/* <Box className="flex fr">
-                  <Box className="flex fr ai-c" sx={{ mr: 4 }}>
-                    <img
-                      style={{ height: "30px", width: "30px", marginRight: "5px" }}
-                      src={currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`]?.icon}
-                      alt={currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`].icon}
-                    />
-                    <p style={{ fontSize: "16px" }}>{currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`].symbol}</p>
-                  </Box>
-                  <TextField
-                    type="number"
-                    value={amount}
-                    onChange={handleAmountChange}
-                    sx={{
-                      background: "transparent",
-                      width: "100%",
-                    }}
-                    InputProps={{
-                      sx: {
-                        border: 'none',
-                        outline: 'none'
-                      }
-                    }}
-                  />
-                  <Box sx={{ ml: 3 }}>
-                    <p>MAX</p>
-                  </Box>
-                </Box> */}
               </Box>
               {!isOwner &&
                 !pending &&
