@@ -1,6 +1,5 @@
 import { useWeb3Context } from "@fantohm/shared-web3";
-import { Container, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, Container, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../../api/backend-api";
 import { RootState } from "../../../store";
