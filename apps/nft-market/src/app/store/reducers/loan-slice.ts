@@ -1,5 +1,13 @@
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
-import { addresses, isDev, loadState, usdbLending } from "@fantohm/shared-web3";
+import {
+  addresses,
+  erc165Abi,
+  ercType,
+  isDev,
+  loadState,
+  TokenType,
+  usdbLending,
+} from "@fantohm/shared-web3";
 import { BackendLoadingStatus, Loan } from "../../types/backend-types";
 import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
 import { RootState } from "..";
@@ -86,12 +94,6 @@ export enum LoanDetailsStatus {
   LIQUIDATED,
 }
 
-export enum TokenType {
-  ERC721,
-  ERC1155,
-  Other,
-}
-
 /*
 createLoan: add loan to contract
 params:
@@ -108,7 +110,16 @@ export const contractCreateLoan = createAsyncThunk(
       state.currency.currencies[
         getSymbolFromAddress(loan.assetListing.term.currencyAddress)
       ] || getErc20CurrencyFromAddress(loan.assetListing.term.currencyAddress);
+
     const signer = provider.getSigner();
+
+    const nftContract = new ethers.Contract(
+      loan.assetListing.asset.assetContractAddress,
+      erc165Abi
+    );
+
+    const contractType = await ercType(nftContract);
+
     const lendingContract = new ethers.Contract(
       addresses[networkId]["USDB_LENDING_ADDRESS"],
       usdbLending,
@@ -126,7 +137,7 @@ export const contractCreateLoan = createAsyncThunk(
       expiration: Math.round(Date.parse(loan.term.expirationAt) / 1000),
       loanAmount: ethers.utils.parseUnits(loan.term.amount.toString(), currency.decimals),
       apr: loan.term.apr * 100,
-      nftTokenType: 0, // token type
+      nftTokenType: contractType || 0, // token type
       sig: loan.term.signature,
     };
     try {

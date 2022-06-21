@@ -198,6 +198,7 @@ export const TestHelper = (): JSX.Element => {
               currencyDetails.addresses[NetworkIds.Rinkeby]
             }#writeContract`}
             target="_blank"
+            key={`mint-helper-${currencyDetails.symbol}`}
           >
             Mint test {currencyDetails.symbol}
           </Button>

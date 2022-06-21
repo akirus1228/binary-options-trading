@@ -1,8 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BigNumber, ethers } from "ethers";
-import { ierc20Abi, ierc721Abi, usdbLending } from "../abi";
+import { erc165Abi, ierc20Abi, ierc721Abi, usdbLending } from "../abi";
 import { addresses } from "../constants";
 import { isDev, loadState } from "../helpers";
+import {
+  ercType,
+  getCryptopunksPermission,
+  getErc1155Permission,
+  getErc721Permission,
+  TokenType,
+} from "../helpers/contract-type";
 import { NetworkIds } from "../networks";
 import { chains } from "../providers";
 import {
@@ -113,11 +120,26 @@ export const requestNftPermission = createAsyncThunk(
     }
     try {
       const signer = provider.getSigner();
-      const nftContract = new ethers.Contract(assetAddress, ierc721Abi, signer);
-      const approveTx = await nftContract["approve"](
-        addresses[networkId]["USDB_LENDING_ADDRESS"] as string,
-        tokenId
-      );
+      const typeContract = new ethers.Contract(assetAddress, erc165Abi);
+      const contractType: TokenType = await ercType(typeContract);
+
+      let approveTx;
+      switch (contractType) {
+        case TokenType.ERC721:
+          approveTx = await getErc721Permission(signer, networkId, assetAddress, tokenId);
+          break;
+        case TokenType.ERC1155:
+          approveTx = await getErc1155Permission(signer, networkId, assetAddress);
+          break;
+        case TokenType.CRYPTO_PUNKS:
+          approveTx = await getCryptopunksPermission(
+            signer,
+            networkId,
+            assetAddress,
+            tokenId
+          );
+      }
+
       await approveTx.wait();
       const payload: NftPermStatus = {};
       payload[`${tokenId}:::${assetAddress}`] = true;
