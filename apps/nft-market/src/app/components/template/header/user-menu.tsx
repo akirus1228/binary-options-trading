@@ -229,6 +229,7 @@ export const UserMenu = (): JSX.Element => {
               height: 40,
             }}
             href={`https://etherscan.io/address/${address}`}
+            target='_blank'
           >
             <LaunchIcon fontSize="small" />
           </IconButton>
@@ -372,7 +373,7 @@ export const UserMenu = (): JSX.Element => {
                     &nbsp;&nbsp;
                     {dropMenu.title}
                   </div>
-                  {/* <Switch 
+                  {/* <Switch
                                   onChange={themeChange}
                                   inputProps={{ 'aria-label': 'controlled' }}
                                 /> */}
