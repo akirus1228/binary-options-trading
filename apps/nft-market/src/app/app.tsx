@@ -107,7 +107,9 @@ export const App = (): JSX.Element => {
     setPromptTerms(false);
     localStorage.setItem("termsAgreedUsdb", "true");
   };
-
+  const handleCheck = () => {
+    setIsChecked(!isChecked);
+  };
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -133,10 +135,10 @@ export const App = (): JSX.Element => {
                   >
                     <input
                       type="checkbox"
-                      defaultChecked={isChecked}
                       onChange={() => setIsChecked(!isChecked)}
+                      checked={isChecked}
                     />
-                    <Typography>
+                    <Typography onClick={handleCheck}>
                       I agree that I have read, understood and accepted all of the{" "}
                       <a
                         href={"./../assets/Terms_and_Conditions.pdf"}
