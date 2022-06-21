@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useGetOffersQuery } from "../../../api/backend-api";
@@ -111,6 +111,15 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           isLoading={isOffersAsLenderLoading}
           title="Previous offers as a lender"
         />
+      </Box>
+      <Box>
+        <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
+          {activeOffersAsBorrower.length === 0 &&
+            activeOffersAsLender.length === 0 &&
+            historicalOffersAsBorrower.length === 0 &&
+            historicalOffersAsLender.length === 0 &&
+            "There is not any offer."}
+        </Typography>
       </Box>
     </Box>
   );
