@@ -1,9 +1,7 @@
 import { useCallback, useMemo } from "react";
-import { Avatar, Box, Paper } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Box, Paper } from "@mui/material";
 import { prettifySeconds } from "@fantohm/shared-web3";
 import { Notification, NotificationStatus } from "../../../types/backend-types";
-import userProfilePic from "../../../../assets/images/profile-placeholder.svg";
 import { useUpdateUserNotificationMutation } from "../../../api/backend-api";
 import NotificationMessage from "../../../components/notification-message/notification-message";
 
@@ -14,6 +12,15 @@ export type NotificationEntryProps = {
 export const NotificationEntry = ({
   notification,
 }: NotificationEntryProps): JSX.Element => {
+  const [updateNotification] = useUpdateUserNotificationMutation();
+  const handleRecordClick = useCallback(() => {
+    if (notification?.status !== NotificationStatus.Read) {
+      updateNotification({ ...notification, status: NotificationStatus.Read });
+    } else {
+      updateNotification({ ...notification, status: NotificationStatus.Unread });
+    }
+  }, [notification]);
+
   const createdAgo = useMemo(() => {
     if (!notification || !notification.createdAt) return "";
     const createdAtTimestamp = Date.parse(notification?.createdAt);
@@ -24,7 +31,43 @@ export const NotificationEntry = ({
     <Paper sx={{ my: "1em", width: "100%", cursor: "pointer" }}>
       <Box className="flex fr">
         <NotificationMessage notification={notification} />
-        <Box sx={{ color: "#8991A2", ml: "auto" }}>{createdAgo} ago</Box>
+        <Box
+          sx={{
+            display: "flex",
+            width: "200px",
+            justifyContent: "space-around",
+            alignItems: "center",
+            ml: "10px",
+            mr: "10px",
+          }}
+          onClick={handleRecordClick}
+        >
+          {notification.status === NotificationStatus.Read && `Mark as unread`}
+          {notification.status === NotificationStatus.Unread && (
+            <>
+              <Box
+                sx={{
+                  width: "30px",
+                  height: "30px",
+                  background: "#3288d0",
+                  borderRadius: "50%",
+                }}
+              />
+              Mark as read
+            </>
+          )}
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            color: "#8991A2",
+            ml: "auto",
+            width: "200px",
+            alignItems: "center",
+          }}
+        >
+          {createdAgo} ago
+        </Box>
       </Box>
     </Paper>
   );

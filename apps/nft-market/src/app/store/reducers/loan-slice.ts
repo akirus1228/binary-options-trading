@@ -16,6 +16,7 @@ import {
   getErc20CurrencyFromAddress,
   getSymbolFromAddress,
 } from "../../helpers/erc20Currency";
+import { addAlert } from "./app-slice";
 
 export type CreateLoanEvent = {
   event: string;
@@ -103,11 +104,11 @@ returns: void
 */
 export const contractCreateLoan = createAsyncThunk(
   "loan/contractCreateLoan",
-  async ({ loan, provider, networkId }: LoanAsyncThunk, { getState }) => {
+  async ({ loan, provider, networkId }: LoanAsyncThunk, { getState, dispatch }) => {
     const state: RootState = getState() as RootState;
     const currency =
       state.currency.currencies[
-        getSymbolFromAddress(loan.assetListing.term.currencyAddress)
+      getSymbolFromAddress(loan.assetListing.term.currencyAddress)
       ] || getErc20CurrencyFromAddress(loan.assetListing.term.currencyAddress);
 
     const signer = provider.getSigner();
@@ -139,32 +140,49 @@ export const contractCreateLoan = createAsyncThunk(
       nftTokenType: contractType || 0, // token type
       sig: loan.term.signature,
     };
+    try {
+      // call the contract
+      const approveTx: ContractTransaction = await lendingContract["createLoan"](
+        {
+          lender: params.lender,
+          borrower: params.borrower,
+          nftAddress: params.nftAddress,
+          currency: params.currencyAddress,
+          nftTokenId: params.nftTokenId,
+          duration: params.duration,
+          expiration: params.expiration,
+          loanAmount: params.loanAmount,
+          apr: params.apr,
+          nftTokenType: params.nftTokenType,
+        },
+        params.sig
+      );
+      const response: ContractReceipt = await approveTx.wait();
+      const event: Event | undefined = response.events?.find(
+        (event: CreateLoanEvent | Event) => !!event.event && event.event === "LoanCreated"
+      );
+      if (event && event.args) {
+        const [originator, borrower, nftAddress, nftTokenId, currentId] = event.args;
+        // update loan record with Id
+        return +currentId;
+      } else {
+        return false;
+      }
+    } catch (e: any) {
 
-    // call the contract
-    const approveTx: ContractTransaction = await lendingContract["createLoan"](
-      {
-        lender: params.lender,
-        borrower: params.borrower,
-        nftAddress: params.nftAddress,
-        currency: params.currencyAddress,
-        nftTokenId: params.nftTokenId,
-        duration: params.duration,
-        expiration: params.expiration,
-        loanAmount: params.loanAmount,
-        apr: params.apr,
-        nftTokenType: params.nftTokenType,
-      },
-      params.sig
-    );
-    const response: ContractReceipt = await approveTx.wait();
-    const event: Event | undefined = response.events?.find(
-      (event: CreateLoanEvent | Event) => !!event.event && event.event === "LoanCreated"
-    );
-    if (event && event.args) {
-      const [originator, borrower, nftAddress, nftTokenId, currentId] = event.args;
-      // update loan record with Id
-      return +currentId;
-    } else {
+      if (e.error === undefined) {
+        let message;
+        if (e.message === "Internal JSON-RPC error.") {
+          message = e.data.message;
+        } else {
+          message = e.message;
+        }
+        if (typeof message === "string") {
+          dispatch(addAlert({ message: `Unknown error: ${message}` }));
+        }
+      } else {
+        dispatch(addAlert({ message: `Unknown error: ${e.error.message}` }));
+      }
       return false;
     }
   }
