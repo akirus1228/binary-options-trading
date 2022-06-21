@@ -7,7 +7,7 @@ import OffersList, {
 } from "../../../components/offers-list/offers-list";
 import { RootState } from "../../../store";
 import { Offer, OfferStatus } from "../../../types/backend-types";
-import "./my-account-offers.module.scss";
+import style from "./my-account-offers.module.scss";
 
 /* eslint-disable-next-line */
 export type MyAccountOffersProps = {};
@@ -79,7 +79,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
   ];
 
   return (
-    <Box className="flex fc fj-c ai-c">
+    <Box className={`flex fc fj-c ai-c ${style["responsive_table"]}`}>
       <Box>
         <OffersList
           offers={activeOffersAsBorrower}
