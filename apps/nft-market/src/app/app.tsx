@@ -29,8 +29,7 @@ export const App = (): JSX.Element => {
   );
 
   const [promptTerms, setPromptTerms] = useState<boolean>(
-    true
-    //TODO localStorage.getItem("termsAgreedUsdb") !== "true"
+    localStorage.getItem("termsAgreedUsdb") !== "true"
   );
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [theme, setTheme] = useState(NftLight);

@@ -12,16 +12,18 @@ import {
   Avatar,
   Box,
   Button,
+  Container,
   Icon,
   IconButton,
+  Paper,
   Popover,
   SxProps,
   Theme,
   Typography,
 } from "@mui/material";
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
@@ -39,6 +41,14 @@ import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
 import { USDBToken } from "@fantohm/shared/images";
 import { desiredNetworkId } from "../../../constants/network";
 import { ethers } from "ethers";
+import { width } from "@mui/system";
+import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
+import { selectListingsByAddress } from "../../../store/selectors/listing-selectors";
+import { Listing, ListingStatus } from "../../../types/backend-types";
+import ManageFund from "../../managefund/managefund";
+
+import { useTermDetails } from "../../../hooks/use-term-details";
+
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -120,6 +130,45 @@ export const UserMenu = (): JSX.Element => {
       }
     );
   };
+  const location = useLocation();
+  const address1 = location.pathname.split("/");
+  const listings = useSelector((state: RootState) => {
+    if (!address1[2] && !address1[3]) return null;
+    return selectListingsByAddress(state, {
+      // contractAddress: params["contractAddress"] || "123",
+      // tokenId: params["tokenId"] || "123", 0x90267036ed282cce0a1488d19db22a04171cfbfc,26
+      contractAddress: address1[2],
+      tokenId: address1[3],
+    });
+  });
+
+  //find listing from store
+
+  const activeListing = useMemo(() => {
+    if (!listings) return null;
+    return listings.find((listing: Listing) => listing.status === ListingStatus.Listed);
+  }, [listings]);
+  const currency = useSelector((state: RootState) => {
+    if (!activeListing) return null;
+    return selectCurrencyByAddress(state, activeListing.term.currencyAddress);
+  });
+  const currencyBalance = useSelector((state: RootState) => {
+    if (!currency) return null;
+    return selectErc20BalanceByAddress(state, currency?.currentAddress);
+  });
+
+  // make offer code
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleManageFund = () => {
+    setDialogOpen(true);
+  };
+
+  const onListDialogClose = (accepted: boolean) => {
+    setDialogOpen(false);
+  };
+
+  const { repaymentTotal, repaymentAmount } = useTermDetails(activeListing?.term);
 
   return connected ? (
     <>
@@ -198,7 +247,7 @@ export const UserMenu = (): JSX.Element => {
         <div
           style={{
             background: "white",
-            padding: "10px",
+            padding: "5px",
             borderRadius: "20px",
             display: "flex",
             alignItems: "center",
@@ -206,40 +255,109 @@ export const UserMenu = (): JSX.Element => {
           }}
         >
           <div style={{ display: "flex", alignItems: "center" }}>
-            <img src={USDBToken} alt="logo" width={40} height={40} />
-            <div className="amount" style={{ marginLeft: "10px" }}>
-              <p
+            <Container style={{ width: "320px" }}>
+              <Paper
                 style={{
-                  color: "grey",
-                  marginTop: "3px",
-                  marginBottom: "3px",
+                  marginTop: "5px",
+                  marginBottom: "5px",
+                  padding: "1em",
                 }}
               >
-                Wallet Balance
-              </p>
-              <p style={{ marginTop: "3px", marginBottom: "3px" }}>
-                {!!usdbBalance &&
-                  formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))}{" "}
-                USDB
-              </p>
-            </div>
-          </div>
-          <div className="show_balance">
-            <IconButton
-              size="small"
-              aria-label="copy address"
-              sx={{
-                width: 40,
-                height: 40,
-              }}
-            >
-              <VisibilityOffOutlinedIcon />
-            </IconButton>
+                <h6
+                  style={{
+                    color: "grey",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Wallet balance
+                </h6>
+                <h4
+                  style={{
+                    marginLeft: "10px",
+                    marginTop: "5px",
+                    marginBottom: "1px",
+                  }}
+                >
+                  {listings &&
+                    listings.length > 0 &&
+                    currencyBalance &&
+                    formatCurrency(
+                      +ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18)
+                    )}{" "}
+                  {(listings && currency?.symbol) || ""}
+                  {!listings &&
+                    !!usdbBalance &&
+                    formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))}
+                  {!listings && " USDB"}
+                </h4>
+              </Paper>
+              {listings && listings.length > 0 && (
+                <Paper
+                  style={{
+                    marginTop: "5px",
+                    marginBottom: "5px",
+                    padding: "1em",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <h6
+                        style={{
+                          color: "grey",
+                          marginLeft: "10px",
+                          marginTop: "5px",
+                          marginBottom: "5px",
+                        }}
+                      >
+                        Offer balance
+                      </h6>
+                      <h4
+                        style={{
+                          marginLeft: "10px",
+                          marginTop: "5px",
+                          marginBottom: "1px",
+                        }}
+                      >
+                        {repaymentTotal.toFixed(2)}{" "}
+                        {(listings && currency?.symbol) || ""}
+                      </h4>
+                    </div>
+                    <ManageFund
+                      onClose={onListDialogClose}
+                      open={dialogOpen}
+                      listing={activeListing}
+                      asset={activeListing?.asset}
+                    />
+                    <Button
+                      size="small"
+                      onClick={handleManageFund}
+                      sx={{
+                        padding: "5px 20px",
+                        fontSize: "10px",
+                        height: "30px",
+                        color: "blue",
+                        backgroundColor: "#e6edfd",
+                      }}
+                    >
+                      manage
+                    </Button>
+                  </Box>
+                </Paper>
+              )}
+            </Container>
           </div>
         </div>
         <Button
           variant="contained"
-          sx={{ mt: "20px", mb: "20px", width: "300px", fontSize: "14px" }}
+          sx={{ mt: "10px", mb: "20px", width: "300px", fontSize: "14px" }}
         >
           Buy USDB on Exchanges &nbsp;&nbsp;
           <NorthEastOutlinedIcon />

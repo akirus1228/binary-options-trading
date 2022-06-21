@@ -242,7 +242,7 @@ export const backendApi = createApi({
         const { data }: { data: Listing[] } = await queryFulfilled;
         const assets = data.map((listing: Listing) => listing.asset);
         dispatch(updateListings(listingAryToListings(data)));
-        dispatch(updateAssets(assetAryToAssets(assets)));
+        dispatch(updateAssets(assetAryToAssets(assets))); // could this potentially update with old listing data?
       },
       providesTags: (result, error, queryParams) =>
         result

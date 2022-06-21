@@ -267,6 +267,7 @@ export const checkErc20Allowance = createAsyncThunk(
       }
     }
     try {
+      console.log(`assetAddress ${assetAddress}`);
       const erc20Contract = new ethers.Contract(assetAddress, ierc20Abi, provider);
       const response: BigNumber = await erc20Contract["allowance"](
         walletAddress,
