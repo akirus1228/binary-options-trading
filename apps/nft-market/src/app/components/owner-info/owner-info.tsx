@@ -101,7 +101,7 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
               </span>
               <Box className="flex fr">
                 <Box className="flex fc" sx={{ mr: "2em" }}>
-                  <ColorLabel color="#1B9385" label="Loans reapid" />
+                  <ColorLabel color="#1B9385" label="Loans repaid" />
                   <span>{ownerInfo?.loansRepaid}</span>
                 </Box>
                 <Box className="flex fc">
