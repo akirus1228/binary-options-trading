@@ -61,6 +61,6 @@ export const signTerms = async (
     } else {
       dispatch(addAlert({ message: `Unknown error: ${e.error.message}` }));
     }
-    return '';
+    return "";
   }
 };

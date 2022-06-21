@@ -68,7 +68,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     selectCurrencyById(state, `${selectedCurrency.toUpperCase()}_ADDRESS`)
   );
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
-    console.log('selected', event.target.value);
+    console.log("selected", event.target.value);
     setSelectedCurrency(event.target.value);
   };
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
@@ -168,11 +168,9 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
 
   const setMax = () => {
     if (currencyBalance) {
-      setAmount(
-        +ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18)
-      )
+      setAmount(+ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18));
     }
-  }
+  };
 
   return (
     <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
@@ -187,7 +185,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
           <CancelOutlinedIcon />
         </IconButton>
       </Box>
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: "100%" }}>
         <TabContext value={value}>
           <Tabs
             value={value}
@@ -195,7 +193,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
             TabIndicatorProps={{
               style: {
                 backgroundColor: "blue",
-              }
+              },
             }}
             textColor="inherit"
             variant="fullWidth"
@@ -203,7 +201,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
             <Tab value="Deposit" label="Deposit" />
             <Tab value="Withdraw" label="Withdraw" />
           </Tabs>
-          <TabPanel value="Deposit" sx={{ height: '350px' }}>
+          <TabPanel value="Deposit" sx={{ height: "350px" }}>
             <Box className="flx">
               <Box className="flex fc">
                 <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
@@ -238,7 +236,9 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                             src={currencyDetails.icon}
                             alt={`${currencyDetails.symbol} Token Icon`}
                           />
-                          <p style={{ fontSize: "16px" }}>{currencyDetails.symbol} - {currencyDetails.name}</p>
+                          <p style={{ fontSize: "16px" }}>
+                            {currencyDetails.symbol} - {currencyDetails.name}
+                          </p>
                         </Box>
                       </MenuItem>
                     ))}
@@ -246,17 +246,21 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                 </Box>
               </Box>
               <Box className="flex fc">
-                <Typography sx={{ color: "#aaa", mb: "1em", mt: '1em' }}>
+                <Typography sx={{ color: "#aaa", mb: "1em", mt: "1em" }}>
                   Deposit Amount
                 </Typography>
                 <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
                   <Box className={`flex fr ai-c ${style["leftSide"]}`}>
                     <img
                       style={{ height: "30px", width: "30px", marginRight: "5px" }}
-                      src={currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`]?.icon}
+                      src={
+                        currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`]?.icon
+                      }
                       alt={currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`].icon}
                     />
-                    <p style={{ fontSize: "16px" }}>{currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`].symbol}</p>
+                    <p style={{ fontSize: "16px" }}>
+                      {currencyInfo[`${selectedCurrency.toUpperCase()}_ADDRESS`].symbol}
+                    </p>
                   </Box>
                   <Box className={`flex fr ai-c ${style["rightSide"]}`}>
                     <TextField
@@ -268,7 +272,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                         disableUnderline: true,
                       }}
                       sx={{
-                        width: '85%'
+                        width: "85%",
                       }}
                     />
                     <Typography sx={{ color: "#aaaaaa" }}>
@@ -276,7 +280,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                         variant="text"
                         onClick={setMax}
                         color="primary"
-                        sx={{ padding: 'none' }}
+                        sx={{ padding: "none" }}
                       >
                         Max
                       </Button>
@@ -331,7 +335,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
               )}
             </Box>
           </TabPanel>
-          <TabPanel value="Withdraw" sx={{ height: '350px' }}>
+          <TabPanel value="Withdraw" sx={{ height: "350px" }}>
             <Box className="flex fc" sx={{ mt: 6 }}>
               <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
                 Select Currency
@@ -365,7 +369,9 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                           src={currencyDetails.icon}
                           alt={`${currencyDetails.symbol} Token Icon`}
                         />
-                        <p style={{ fontSize: "16px" }}>{currencyDetails.symbol} - {currencyDetails.name}</p>
+                        <p style={{ fontSize: "16px" }}>
+                          {currencyDetails.symbol} - {currencyDetails.name}
+                        </p>
                       </Box>
                     </MenuItem>
                   ))}
@@ -375,12 +381,11 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
               <Button variant="contained" sx={{ width: "100%", mt: 10 }}>
                 Withdraw
               </Button>
-
             </Box>
           </TabPanel>
         </TabContext>
       </Box>
-    </Dialog >
+    </Dialog>
   );
 };
 

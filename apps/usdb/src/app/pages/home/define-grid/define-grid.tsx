@@ -1,5 +1,4 @@
-import { Box, Button, Grid, OutlinedInput, Typography } from "@mui/material";
-import BalanceIconLink from "../../../components/balance-icon-link/balance-icon-link";
+import { Box, Button, Grid, OutlinedInput } from "@mui/material";
 import style from "./define-grid.module.scss";
 import { BalanceDefine1, BalanceDefine2 } from "@fantohm/shared/images";
 import { error, info } from "@fantohm/shared-web3";
@@ -66,7 +65,7 @@ export const DefineGrid = (): JSX.Element => {
       }),
     };
 
-    const response = await fetch("https://api.sendinblue.com/v3/contacts", options)
+    await fetch("https://api.sendinblue.com/v3/contacts", options)
       .then((response) => response.json())
       .then((response) => console.log(response))
       .catch(async (err) => await updateContact());
@@ -165,7 +164,11 @@ export const DefineGrid = (): JSX.Element => {
           paddingTop: "30px",
         }}
       >
-        <img src={BalanceDefine2} style={{ width: "100%" }} />
+        <img
+          src={BalanceDefine2}
+          style={{ width: "100%" }}
+          alt="Balance USDB definition."
+        />
       </Grid>
 
       <Grid
@@ -179,7 +182,11 @@ export const DefineGrid = (): JSX.Element => {
           paddingTop: "30px",
         }}
       >
-        <img src={BalanceDefine1} style={{ width: "100%" }} />
+        <img
+          src={BalanceDefine1}
+          style={{ width: "100%" }}
+          alt="Balance USDB definition. Part 2"
+        />
       </Grid>
       <Grid
         item

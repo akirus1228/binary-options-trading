@@ -6,11 +6,7 @@ import { clearPendingTxn, fetchPendingTxns } from "./pending-txns-slice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchAccountSuccess, getBalances } from "./account-slice";
 import { error, info } from "./messages-slice";
-import {
-  IActionValueAsyncThunk,
-  IChangeApprovalAsyncThunk,
-  IJsonRPCError,
-} from "./interfaces";
+import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk } from "./interfaces";
 import { segmentUA } from "../helpers/user-analytic-helpers";
 import { NetworkId } from "../networks";
 import { chains } from "../providers";
@@ -251,7 +247,11 @@ export const convert = createAsyncThunk(
         e.error.code === -32603 &&
         e.error.message.indexOf("ds-math-sub-underflow") >= 0
       ) {
-        dispatch(error("You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"));
+        dispatch(
+          error(
+            "You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"
+          )
+        );
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }

@@ -51,11 +51,14 @@ export const AssetDetailsPage = (): JSX.Element => {
   );
 
   // load asset data from opensea
-  const { data: assets, isLoading: isAssetLoading } = useGetOpenseaAssetsQuery({
-    asset_contract_address: params["contractAddress"],
-    token_ids: [params["tokenId"] || ""],
-    limit: 1,
-  });
+  const { data: assets, isLoading: isAssetLoading } = useGetOpenseaAssetsQuery(
+    {
+      asset_contract_address: params["contractAddress"],
+      token_ids: [params["tokenId"] || ""],
+      limit: 1,
+    },
+    { skip: !params["contractAddress"] }
+  );
 
   // load listing data from backend
   const { isLoading: isListingLoading } = useGetListingsQuery(

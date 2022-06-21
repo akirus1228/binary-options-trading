@@ -15,11 +15,7 @@ import {
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchAccountSuccess, getBalances, loadAccountDetails } from "./account-slice";
 import { error, info } from "./messages-slice";
-import {
-  IActionValueAsyncThunk,
-  IChangeApprovalAsyncThunk,
-  IJsonRPCError,
-} from "./interfaces";
+import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk } from "./interfaces";
 import { segmentUA } from "../helpers/user-analytic-helpers";
 import { sleep } from "../helpers/sleep";
 
@@ -313,7 +309,11 @@ export const changeStake = createAsyncThunk(
         e.error.code === -32603 &&
         e.error.message.indexOf("ds-math-sub-underflow") >= 0
       ) {
-        dispatch(error("You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"));
+        dispatch(
+          error(
+            "You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"
+          )
+        );
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }
@@ -391,7 +391,11 @@ export const changeMint = createAsyncThunk(
         e.error.code === -32603 &&
         e.error.message.indexOf("ds-math-sub-underflow") >= 0
       ) {
-        dispatch(error("You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"));
+        dispatch(
+          error(
+            "You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"
+          )
+        );
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }
