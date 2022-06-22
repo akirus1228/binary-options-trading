@@ -28,7 +28,7 @@ export const MyAccountActivity = (): JSX.Element => {
         </Box>
       )}
       <Box className="flex fc ai-fs">
-        <h2>Unread Notifications ({unreadNotifications?.length})</h2>
+        <h2>Unread Notifications ({unreadNotifications?.length || 0})</h2>
         {!!unreadNotifications &&
           unreadNotifications.length > 0 &&
           unreadNotifications.map((notification: Notification, index: number) => (
@@ -37,7 +37,7 @@ export const MyAccountActivity = (): JSX.Element => {
               key={`unread-notification-${index}`}
             />
           ))}
-        <h2>Past Notifications ({readNotifications?.length})</h2>
+        <h2>Past Notifications ({readNotifications?.length || 0})</h2>
         {!!readNotifications &&
           readNotifications.length > 0 &&
           readNotifications.map((notification: Notification, index: number) => (
