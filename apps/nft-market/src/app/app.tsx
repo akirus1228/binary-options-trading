@@ -70,7 +70,7 @@ export const App = (): JSX.Element => {
       }
     }
     // if there's a cached provider and it has connected, connection check is good.
-    if (hasCachedProvider && hasCachedProvider && connected)
+    if (hasCachedProvider && hasCachedProvider() && connected)
       dispatch(setCheckedConnection(true));
 
     // if there's not a cached provider and we're not connected, connection check is good

@@ -114,13 +114,21 @@ export const createListing = (
     });
 };
 
-export const handleSignMessage = (
+export const handleSignMessage = async (
   address: string,
   provider: JsonRpcProvider
-): Promise<string> | string => {
+): Promise<string> => {
   try {
     const signer = provider.getSigner(address);
-    return signer.signMessage(WEB3_SIGN_MESSAGE);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const result = await signer.signMessage(WEB3_SIGN_MESSAGE);
+        resolve(result);
+      } catch (e) {
+        resolve("");
+      }
+    });
+    // return signer.signMessage(WEB3_SIGN_MESSAGE);
   } catch (err) {
     return "";
     console.warn(err);
