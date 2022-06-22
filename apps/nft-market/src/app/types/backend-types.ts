@@ -310,6 +310,7 @@ export type BackendLoanQueryParams = {
   assetListingId?: string;
   lenderAddress?: string;
   borrowerAddress?: string;
+  walletAddress?: string;
   status?: LoanStatus;
 } & BackendStandardQuery;
 
