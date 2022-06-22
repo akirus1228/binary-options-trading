@@ -15,16 +15,17 @@ import {
   User,
   UserType,
 } from "../../types/backend-types";
-import "./notification-message.module.scss";
+import style from "./notification-message.module.scss";
 import avatarPlaceholder from "../../../assets/images/profile-placeholder.svg";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useNavigate } from "react-router-dom";
+import { prettifySeconds } from "@fantohm/shared-web3";
 
 export interface NotificationMessageProps {
   notification: Notification;
   short?: boolean;
-  showUnreadBadge?: boolean;
+  isMenu?: boolean;
 }
 
 export type MessageProp = {
@@ -32,6 +33,10 @@ export type MessageProp = {
   asset: Asset;
   short: boolean;
   terms?: Terms;
+};
+
+const getBlueText = (text: any) => {
+  return <span style={{ color: "#374fff" }}>{text}</span>;
 };
 
 const NewLoanLender = ({
@@ -42,10 +47,12 @@ const NewLoanLender = ({
 }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
 
-  const shortMsg = <span>Congratulations! You have a new loan on {asset.name}.</span>;
+  const shortMsg = (
+    <span>Congratulations! You have a new loan on {getBlueText(asset.name)}.</span>
+  );
   const longMsg = (
-    <span>
-      Congratulations! You have a new loan on {asset.name}. for{" "}
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      Congratulations! You have a new loan on {getBlueText(asset.name)}. for{" "}
       {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
       repayment of {formatCurrency(repaymentAmount || 0, 2)}.
     </span>
@@ -67,13 +74,15 @@ const NewLoanBorrower = ({
   const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address, 3)} has funded your loan on {asset.name}
+      {addressEllipsis(asset.owner.address, 3)} has funded your loan on{" "}
+      {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
-    <span>
-      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on {asset.name}.
-      {formatCurrency(repaymentTotal, 2)} has been transferred to your wallet.
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on{" "}
+      {getBlueText(asset.name)}.{formatCurrency(repaymentTotal, 2)} has been transferred
+      to your wallet.
     </span>
   );
   return (
@@ -90,11 +99,13 @@ const LiquidationLender = ({
   short,
   terms,
 }: MessageProp): JSX.Element => {
-  const shortMsg = <span>The loan on {asset.name} has been liquidated.</span>;
+  const shortMsg = (
+    <span>The loan on {getBlueText(asset.name)} has been liquidated.</span>
+  );
   const longMsg = (
-    <span>
-      You liquidated the loan on {asset.name} and the token has been transferred to your
-      wallet.
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      You liquidated the loan on {getBlueText(asset.name)} and the token has been
+      transferred to your wallet.
     </span>
   );
   return (
@@ -110,11 +121,13 @@ const LiquidationBorrower = ({
   asset,
   short,
 }: MessageProp): JSX.Element => {
-  const shortMsg = <span>The loan on {asset.name} has been liquidated.</span>;
+  const shortMsg = (
+    <span>The loan on {getBlueText(asset.name)} has been liquidated.</span>
+  );
   const longMsg = (
-    <span>
-      The loan on {asset.name} has expired without payment and the lender has claimed the
-      collateral.
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      The loan on {getBlueText(asset.name)} has expired without payment and the lender has
+      claimed the collateral.
     </span>
   );
   return (
@@ -134,13 +147,15 @@ const RepaymentLender = ({
   const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on {asset.name}
+      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on{" "}
+      {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
-    <span>
-      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on {asset.name}.
-      {formatCurrency(repaymentTotal, 2)} has been transferred to your wallet.
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on{" "}
+      {getBlueText(asset.name)}.{formatCurrency(repaymentTotal, 2)} has been transferred
+      to your wallet.
     </span>
   );
   return (
@@ -158,11 +173,11 @@ const RepaymentBorrower = ({
   terms,
 }: MessageProp): JSX.Element => {
   //  const { repaymentTotal } = useTermDetails(terms);
-  const shortMsg = <span>You have repaid your loan on {asset.name}</span>;
+  const shortMsg = <span>You have repaid your loan on {getBlueText(asset.name)}</span>;
   const longMsg = (
-    <span>
-      Your loan has repaid their loan on and {asset.name} has been transferred back to
-      your wallet.
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      Your loan has repaid their loan on and {getBlueText(asset.name)} has been
+      transferred back to your wallet.
     </span>
   );
   return (
@@ -180,10 +195,10 @@ const NewOfferLender = ({
   terms,
 }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
-  const shortMsg = <span>You gave new offer on {asset.name}</span>;
+  const shortMsg = <span>You gave new offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
-    <span>
-      You have given a new offer on {asset.name} for{" "}
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      You have given a new offer on {getBlueText(asset.name)} for{" "}
       {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
       repayment of {formatCurrency(repaymentAmount || 0, 2)}.
     </span>
@@ -203,10 +218,10 @@ const NewOfferBorrower = ({
   terms,
 }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
-  const shortMsg = <span>You have a new offer on {asset.name}</span>;
+  const shortMsg = <span>You have a new offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
-    <span>
-      You have recieved an offer on {asset.name} for{" "}
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      You have recieved an offer on {getBlueText(asset.name)} for{" "}
       {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
       repayment of {formatCurrency(repaymentAmount || 0, 2)}.
     </span>
@@ -228,14 +243,16 @@ const OfferAcceptedLender = ({
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address, 3)} has accepted your offer on {asset.name}
+      {addressEllipsis(asset.owner.address, 3)} has accepted your offer on{" "}
+      {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
-    <span>
-      {addressEllipsis(asset.owner.address, 3)} has accepted your offer on {asset.name}{" "}
-      for {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
-      repayment of {formatCurrency(repaymentAmount || 0, 2)}.
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      {addressEllipsis(asset.owner.address, 3)} has accepted your offer on{" "}
+      {getBlueText(asset.name)} for {formatCurrency(terms?.amount || 0, 2)} over{" "}
+      {terms?.duration} days, with a repayment of{" "}
+      {formatCurrency(repaymentAmount || 0, 2)}.
     </span>
   );
   return (
@@ -253,10 +270,10 @@ const OfferAcceptedBorrower = ({
   terms,
 }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
-  const shortMsg = <span>You have accepted an offer on {asset.name}</span>;
+  const shortMsg = <span>You have accepted an offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
-    <span>
-      You have accepted an offer on {asset.name}
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      You have accepted an offer on {getBlueText(asset.name)}
       for {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
       repayment of {formatCurrency(repaymentAmount || 0, 2)}.
     </span>
@@ -272,7 +289,7 @@ const OfferAcceptedBorrower = ({
 export const NotificationMessage = ({
   notification,
   short,
-  showUnreadBadge,
+  isMenu,
 }: NotificationMessageProps): JSX.Element => {
   const [assetListingId, setAssetListingId] = useState<string>();
   const [loanId, setLoanId] = useState<string>();
@@ -284,6 +301,11 @@ export const NotificationMessage = ({
   const [borrower, setBorrower] = useState<User>();
   const navigate = useNavigate();
   const [updateNotification] = useUpdateUserNotificationMutation();
+  const createdAgo = useMemo(() => {
+    if (!notification || !notification.createdAt) return "";
+    const createdAtTimestamp = Date.parse(notification?.createdAt);
+    return prettifySeconds((Date.now() - createdAtTimestamp) / 1000);
+  }, [notification.createdAt]);
 
   const { data: listing } = useGetListingQuery(assetListingId, {
     skip: !assetListingId,
@@ -398,20 +420,51 @@ export const NotificationMessage = ({
   }, [notification, asset]);
 
   return (
-    <Box
-      className="flex fr ai-c"
-      onClick={handleRecordClick}
-      style={{ width: "100%", justifyContent: "space-between" }}
-    >
-      <Avatar src={avatarSrc} sx={{ mr: "1em" }} />
-      <div style={{ marginRight: "auto" }}>{message}</div>
-
-      {showUnreadBadge && notification.status === NotificationStatus.Unread && (
-        <div>
-          <Badge color="info" badgeContent=" " />
+    <>
+      <Box
+        className="flex fr ai-c"
+        onClick={handleRecordClick}
+        style={{ width: "100%", justifyContent: "space-between" }}
+      >
+        <Avatar
+          src={avatarSrc}
+          sx={{ mr: "1em", borderRadius: "50%" }}
+          variant="circular"
+        />
+        <div style={{ marginRight: "auto" }}>
+          {message}
+          {isMenu && (
+            <Box
+              sx={{
+                display: "flex",
+                color: "#8991A2",
+                ml: "auto",
+                width: "200px",
+                alignItems: "center",
+                marginTop: "5px",
+                marginLeft: "0px",
+                fontSize: "0.8rem",
+              }}
+            >
+              {createdAgo} ago
+            </Box>
+          )}
+        </div>
+      </Box>
+      {isMenu && notification.status === NotificationStatus.Unread && (
+        <div style={{ width: "20px", marginLeft: "20px" }}>
+          <Badge
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            color="info"
+            className="unreadBadge"
+            classes={{
+              colorInfo: style["unreadBadge"],
+            }}
+            badgeContent=" "
+          />
         </div>
       )}
-    </Box>
+    </>
   );
 };
 
