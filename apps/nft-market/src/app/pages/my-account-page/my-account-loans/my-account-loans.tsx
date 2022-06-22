@@ -51,7 +51,10 @@ export function MyAccountLoans(props: MyAccountLoansProps) {
     },
     { skip: !address || !authSignature }
   );
-
+  console.log("activeBorrowerLoans?.length", activeBorrowerLoans?.length);
+  console.log("activeLenderLoans?.length", activeLenderLoans?.length);
+  console.log("historicalBorrowerLoans?.length", historicalBorrowerLoans?.length);
+  console.log("historicalLenderLoans?.length", historicalLenderLoans?.length);
   return (
     <Container className={style["myAccountContainer"]} maxWidth="xl">
       {activeBorrowerLoans?.length ? (
@@ -80,10 +83,12 @@ export function MyAccountLoans(props: MyAccountLoansProps) {
       ) : null}
       <Box className="flex fc fj-c ai-c">
         <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
-          {activeBorrowerLoans?.length === 0 &&
-            activeLenderLoans?.length === 0 &&
-            historicalBorrowerLoans?.length === 0 &&
-            historicalLenderLoans?.length === 0 &&
+          {(activeBorrowerLoans === undefined || activeBorrowerLoans?.length === 0) &&
+            (activeLenderLoans === undefined || activeLenderLoans?.length === 0) &&
+            (historicalBorrowerLoans === undefined ||
+              historicalBorrowerLoans?.length === 0) &&
+            (historicalLenderLoans === undefined ||
+              historicalLenderLoans?.length === 0) &&
             "There is not any loan."}
         </Typography>
       </Box>
