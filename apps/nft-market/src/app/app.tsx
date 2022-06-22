@@ -45,6 +45,15 @@ export const App = (): JSX.Element => {
 
   useEffect(() => {
     setTheme(themeType === "light" ? NftLight : NftDark);
+    switch (themeType) {
+      case "dark":
+        document.body.classList.add("darkTheme");
+        document.body.classList.remove("lightTheme");
+        break;
+      case "light":
+        document.body.classList.add("lightTheme");
+        document.body.classList.remove("darkTheme");
+    }
   }, [themeType]);
 
   // if the wallet address doesn't equal the logged in user, log out

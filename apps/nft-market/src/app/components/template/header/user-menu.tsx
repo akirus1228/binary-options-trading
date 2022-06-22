@@ -44,6 +44,8 @@ import { selectListingsByAddress } from "../../../store/selectors/listing-select
 import { Listing, ListingStatus } from "../../../types/backend-types";
 import ManageFund from "../../managefund/managefund";
 import { useTermDetails } from "../../../hooks/use-term-details";
+import styles from "./header.module.scss";
+
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -168,9 +170,10 @@ export const UserMenu = (): JSX.Element => {
         aria-expanded={flagAccountDropDown ? "true" : undefined}
         onClick={accountDrop}
         sx={{ background: "#FFF", py: "0.5em", fontSize: "16px" }}
+        className={styles["accountButton"]}
       >
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <Avatar sx={{ mr: "1em" }} src={AvatarPlaceholder}></Avatar>
+        <Box sx={{ display: "block"  }} className={styles["accountAvatar"]}>
+          <Avatar sx={{ mr: {sm: "0", md: "1em" }}} src={AvatarPlaceholder}></Avatar>
         </Box>
         {addressEllipsis(address)}
         <Box
@@ -217,6 +220,7 @@ export const UserMenu = (): JSX.Element => {
               width: 40,
               height: 40,
             }}
+            className={styles["addressSvg"]}
             onClick={copyToClipboard}
           >
             <ContentCopyIcon fontSize="small" />
@@ -228,6 +232,7 @@ export const UserMenu = (): JSX.Element => {
               width: 40,
               height: 40,
             }}
+            className={styles["addressSvg"]}
             href={`https://etherscan.io/address/${address}`}
             target="_blank"
           >
@@ -236,16 +241,15 @@ export const UserMenu = (): JSX.Element => {
         </div>
         <div
           style={{
-            background: "white",
-            padding: "5px",
+            padding: "5px 0",
             borderRadius: "20px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-around",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Container style={{ width: "320px" }}>
+          <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+            <Container style={{ width: "100%", flex: "0 0 100%", padding: "0" }}>
               <Paper
                 style={{
                   marginTop: "5px",

@@ -60,19 +60,20 @@ export const Header = (): JSX.Element => {
             noWrap
             component="div"
             sx={{
-              mr: 4,
+              mr: {xs:"0", md:"10px"},
               display: { xs: "none", md: "flex" },
               alignItems: "center",
               fontSize: "28px",
               minWidth: "70px",
             }}
+            className={styles["mainLogo"]}
           >
             <Link to="/">
               <img src={logo} alt="liqd logo" style={{ height: "1.5em" }} />
             </Link>
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" }, maxWidth: {xs:"48px"}, mr: {xs:"20px;"} }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -122,6 +123,7 @@ export const Header = (): JSX.Element => {
           <Typography
             component="div"
             sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+            className={styles["mainLogo"]}
           >
             <Link to="/">
               <img src={logo} alt="liqd logo" style={{ height: "1.5em" }} />
@@ -145,7 +147,7 @@ export const Header = (): JSX.Element => {
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
                     <Link to={page.href || "#"}>
-                      <Button style={{ minWidth: "110px", padding: "1em 1em" }}>
+                      <Button style={{ padding: "1em 1.25em" }}>
                         {page.title}
                       </Button>
                     </Link>
