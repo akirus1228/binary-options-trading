@@ -106,3 +106,95 @@
     }
   }
 }
+.accountButton {
+  padding-left:10px !important;
+  padding-right:10px !important;
+}
+@media (max-width:1200px) {
+  .accountButton {
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+  .mainLogo {
+    img {width:100%; height:auto;}
+    a {display:flex;}
+  }
+  .accountButton {
+    font-size:12px !important;
+    img {
+      height:30px;
+      width:auto;
+      margin-right:5px;
+      border-radius:50px;
+    }
+  }
+  .notificationIcon {
+    svg {
+      height:28px;
+      width:auto;
+    }
+  }
+}
+@media (max-width:900px) {
+
+  .accountButton {
+    font-size:14px !important;
+  }
+  .notificationIcon {
+    svg {
+      height:28px;
+      width:auto;
+    }
+  }
+  .mainLogo {
+    img {width:100px; height:auto !important;}
+  }
+}
+@media (max-width:560px) {
+
+  .accountButton {
+    font-size:12px !important;
+    img {height:25px;}
+  }
+  .notificationIcon {
+    svg {
+      height:24px;
+      width:auto;
+    }
+  }
+  .mainLogo {
+    img {width:70px; height:auto !important;}
+  }
+}
+@media (max-width:440px) {
+
+  .accountButton {
+    font-size:11px !important;
+    img {height:22px;}
+  }
+  .notificationIcon {
+    svg {
+      height:22px;
+      width:auto;
+    }
+  }
+  .mainLogo {
+    img {width:55px; height:auto !important;}
+  }
+  .accountAvatar {display:none !important;}
+}
+body[class*=darkTheme] {
+  .mainLogo {
+    img {filter:invert(1)}
+  }
+  .addressSvg {
+    color:#fff;
+  }
+  .notificationIcon, .accountButton {
+    background:#222;
+    svg {
+    color:#fff;
+    }
+  }
+}
+

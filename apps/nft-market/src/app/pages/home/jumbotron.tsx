@@ -5,11 +5,13 @@ import BackgroundImage from "../../../assets/images/homepage-bg.png";
 import ArrowRightDown from "../../../assets/icons/arrow-right-down.svg";
 import ArrowRightUp from "../../../assets/icons/arrow-right-up.svg";
 
+import style from "./jumbotron.module.scss";
+
 export const Jumbotron = (): JSX.Element => {
   return (
     <Container maxWidth="xl" sx={{ pt: { xs: "100px", md: "200px" } }}>
       <Grid container spacing={4}>
-        <Grid item xs={12} md={6} sx={{ position: "relative" }}>
+        <Grid item xs={12} md={6} sx={{ position: "relative", order: {xs: "2", md: "1"}, textAlign: {xs:"center", md:"left"}}}>
           <Box
             sx={{
               display: "flex",
@@ -17,7 +19,7 @@ export const Jumbotron = (): JSX.Element => {
               justifyContent: "center",
             }}
           >
-            <Box sx={{ mb: "30px" }}>
+            <Box sx={{ mb: "30px", mt: {xs: "0px", sm: "100px"} }}>
               <Typography variant="h4">
                 Unlock the liquidity you need with the NFTs you already own
               </Typography>
@@ -26,7 +28,7 @@ export const Jumbotron = (): JSX.Element => {
               sx={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "flex-start",
+                justifyContent: {xs: "center", md:"flex-start"},
                 mb: "100px",
               }}
             >
@@ -50,8 +52,8 @@ export const Jumbotron = (): JSX.Element => {
               }}
             >
               <Grid container>
-                <Grid item xs={6} sx={{ borderRight: "2px solid #7E9AA936" }}>
-                  <Box sx={{ p: "40px" }}>
+                <Grid item xs={6} sx={{ borderRight: "2px solid #7E9AA936" }} className={style["jumboText"]}>
+                  <Box sx={{ p: {xs:"40px 10px 20px 10px", md:"40px"} }}>
                     <Box sx={{ mb: "20px" }}>
                       <img src={ArrowRightDown} alt="Borrow" />
                     </Box>
@@ -65,8 +67,8 @@ export const Jumbotron = (): JSX.Element => {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item xs={6}>
-                  <Box sx={{ p: "40px" }}>
+                <Grid item xs={6} className={style["jumboText"]}>
+                  <Box sx={{ p: {xs:"40px 10px 20px 10px", md:"40px"}}}>
                     <Box sx={{ mb: "20px" }}>
                       <img src={ArrowRightUp} alt="Lend" />
                     </Box>
@@ -84,8 +86,8 @@ export const Jumbotron = (): JSX.Element => {
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Box sx={{ display: "flex", justifyContent: "center", px: "15px" }}>
+        <Grid item xs={12} md={6} sx={{order: {xs: "1", md: "2"}}} >
+          <Box sx={{ display: "flex", justifyContent: "center", px: "15px" }} className={style["jumboImg"]}>
             <img
               src={BackgroundImage}
               alt="Colorful rectangles with rounded corners stacked"

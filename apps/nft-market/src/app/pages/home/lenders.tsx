@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import BlueLongArrowRight from "../../../assets/icons/blue-long-arrow-right.svg";
 import BlueCheckImage from "../../../assets/images/blue-check.png";
 
+
+import style from "./borrowers.module.scss";
+
 export const Lenders = (): JSX.Element => {
   const steps = [
     {
@@ -57,15 +60,16 @@ export const Lenders = (): JSX.Element => {
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} md={8}>
-          <Grid container spacing={1} sx={{ mt: "50px" }}>
+        <Grid item xs={12} md={8} className={style["borrowRow"]}>
+          <Grid container spacing={4} sx={{ mt: "0px" }}>
             {steps.map((step: any, index: number) => {
               return (
                 <Grid item xs={12} md={4} key={`lender_${index}`}>
                   <Box
                     sx={{
-                      borderRadius: "25px",
-                    }}
+                      borderRadius: "30px",
+                    }} 
+                    className={style["borrowBoxElem"]}
                   >
                     <Box
                       sx={{

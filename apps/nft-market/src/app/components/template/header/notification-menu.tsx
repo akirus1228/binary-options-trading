@@ -19,6 +19,8 @@ import { RootState } from "../../../store";
 import { NotificationStatus } from "../../../types/backend-types";
 import arrowUpRight from "../../../../assets/icons/arrow-right-up.svg";
 import NotificationMessage from "../../notification-message/notification-message";
+import styles from "./header.module.scss";
+
 
 export const NotificationMenu = (): JSX.Element => {
   // menu controls
@@ -71,6 +73,7 @@ export const NotificationMenu = (): JSX.Element => {
       <IconButton
         onClick={handleClick}
         sx={{ background: "#FFF", mr: "10px", padding: "12px" }}
+        className={styles["notificationIcon"]}
       >
         <Badge
           overlap="circular"
