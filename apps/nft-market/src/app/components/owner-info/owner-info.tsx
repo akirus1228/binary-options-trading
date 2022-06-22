@@ -6,6 +6,7 @@ import {
   Paper,
   SxProps,
   Theme,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -24,6 +25,28 @@ export interface OwnerInfoProps {
   owner: User | undefined;
   sx?: SxProps<Theme>;
 }
+
+const OwnerInfoTooltip = (title: string) => {
+  return (
+    <Tooltip
+      title={title}
+      componentsProps={{
+        tooltip: {
+          style: {
+            marginTop: "0.5rem",
+            width: "16em",
+            background: "black",
+            padding: "1rem",
+            borderRadius: "1rem",
+            fontSize: "1rem",
+          },
+        },
+      }}
+    >
+      <Icon component={InfoOutlinedIcon} />
+    </Tooltip>
+  );
+};
 
 export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
   const { data: ownerInfo, isLoading: isOwnerInfoLoading } = useGetWalletQuery(
@@ -77,7 +100,8 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
         </Box>
         <Box className="flex fc">
           <Typography>
-            Overview <Icon component={InfoOutlinedIcon} />
+            Overview
+            {OwnerInfoTooltip("The total value borrowed/lent by this user.")}
           </Typography>
           <Box className="flex fr fj-sb" sx={{ mt: "2em" }}>
             <Box className="flex fc" sx={{ mr: "2em" }}>
@@ -97,7 +121,10 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
             <CircleGraph progress={defaultRate} sx={{ mr: "2em" }} />
             <Box className="flex fc">
               <span>
-                Default rate <Icon component={InfoOutlinedIcon} />
+                Default rate
+                {OwnerInfoTooltip(
+                  "The ratio to which this user has repaid versus defaulted on loans borrowed."
+                )}
               </span>
               <Box className="flex fr">
                 <Box className="flex fc" sx={{ mr: "2em" }}>
@@ -119,7 +146,10 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
             <CircleGraph progress={lendToBorrowRatio} sx={{ mr: "2em" }} />
             <Box className="flex fc">
               <span>
-                Loan Activity <Icon component={InfoOutlinedIcon} />
+                Loan Activity
+                {OwnerInfoTooltip(
+                  "The number of times this user has borrowed versus lent money."
+                )}
               </span>
               <Box className="flex fr">
                 <Box className="flex fc" sx={{ mr: "2em" }}>
