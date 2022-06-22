@@ -39,6 +39,7 @@ export const NotificationEntry = ({
             alignItems: "center",
             ml: "10px",
             mr: "10px",
+            color: "#8991A2",
           }}
           onClick={handleRecordClick}
         >
@@ -47,9 +48,9 @@ export const NotificationEntry = ({
             <>
               <Box
                 sx={{
-                  width: "30px",
-                  height: "30px",
-                  background: "#3288d0",
+                  width: "15px",
+                  height: "15px",
+                  background: "#374fff",
                   borderRadius: "50%",
                 }}
               />

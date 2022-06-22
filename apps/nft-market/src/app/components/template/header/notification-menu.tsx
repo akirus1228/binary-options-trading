@@ -118,7 +118,7 @@ export const NotificationMenu = (): JSX.Element => {
             <img
               src={arrowUpRight}
               alt="arrow pointing up and to the right"
-              style={{ height: "12px", width: "12px" }}
+              style={{ height: "10px", width: "10px", opacity: "70%" }}
             />
           </Link>
         </Box>
@@ -126,12 +126,12 @@ export const NotificationMenu = (): JSX.Element => {
           <>
             {notifications?.map((notification, i: number) => (
               <MenuItem key={`not-men-${i}`} sx={{ maxWidth: "400px" }}>
-                <Paper className="w100" sx={{ height: "5em", padding: "1em" }}>
+                <Paper className="w100" sx={{ padding: "1em" }}>
                   <Box className="flex fr ai-c w100">
                     <NotificationMessage
                       notification={notification}
                       short={true}
-                      showUnreadBadge
+                      isMenu
                     />
                   </Box>
                 </Paper>
@@ -139,7 +139,7 @@ export const NotificationMenu = (): JSX.Element => {
             ))}
             <Box
               className="flex fr fj-c ai-c"
-              sx={{ mt: "1em" }}
+              sx={{ mt: "1em", fontSize: "0.9rem" }}
               style={{ cursor: "pointer" }}
               onClick={handleRecordClick}
             >
@@ -161,8 +161,8 @@ export const NotificationMenu = (): JSX.Element => {
               textAlign: "center",
             }}
           >
-            <h3>No new notifications</h3>
-            <span style={{ color: "#8991A2" }}>
+            <span style={{ fontSize: "1.4rem" }}>No new notifications</span>
+            <span style={{ color: "#8991A2", fontSize: "0.9rem" }}>
               Your recent offers, listings and activity will show up here.
             </span>
           </Box>
