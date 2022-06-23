@@ -41,12 +41,13 @@ returns: void
 */
 export const authorizeAccount = createAsyncThunk(
   "backend/authorizeAccount",
-  async ({ address, networkId, provider }: SignerAsyncThunk, { rejectWithValue }) => {
+  async ({ address, networkId, provider, onFailed }: SignerAsyncThunk, { rejectWithValue }) => {
     const loginResponse: LoginResponse = await BackendApi.doLogin(address);
     if (loginResponse.id) {
       const signature = await BackendApi.handleSignMessage(address, provider);
       if (!signature) {
-        rejectWithValue("Login Failed");
+        if(onFailed) onFailed()
+        return rejectWithValue("Login Failed");
       }
       return { signature, address, user: loginResponse };
     } else {

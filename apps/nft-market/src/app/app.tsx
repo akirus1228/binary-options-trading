@@ -37,6 +37,7 @@ export const App = (): JSX.Element => {
     address,
     chainId,
     connected,
+    disconnect,
     hasCachedProvider,
     connect,
     provider,
@@ -89,7 +90,15 @@ export const App = (): JSX.Element => {
       typeof user.address == "undefined"
     ) {
       dispatch(
-        authorizeAccount({ networkId: chainId || defaultNetworkId, address, provider })
+        authorizeAccount({
+          networkId: chainId || defaultNetworkId,
+          address,
+          provider,
+          onFailed: () => {
+            disconnect();
+            dispatch(logout());
+          },
+        })
       );
     }
   }, [provider, address, connected, authorizedAccount, accountStatus, user]);
