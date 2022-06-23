@@ -40,6 +40,7 @@ export const OffersList = ({
     );
   }
   if ((!offers || offers.length < 1) && !isLoading) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
   return (

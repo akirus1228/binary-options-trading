@@ -76,6 +76,7 @@ export const Growl = (): JSX.Element => {
                     ? FailIcon
                     : SuccessCheck
                 }
+                alt=""
                 style={{ width: "30px", height: "30px", marginRight: "10px" }}
               />
 

@@ -162,7 +162,7 @@ export const contractCreateLoan = createAsyncThunk(
         (event: CreateLoanEvent | Event) => !!event.event && event.event === "LoanCreated"
       );
       if (event && event.args) {
-        const [originator, borrower, nftAddress, nftTokenId, currentId] = event.args;
+        const [, , , , currentId] = event.args;
         // update loan record with Id
         return +currentId;
       } else {
@@ -215,7 +215,7 @@ export const repayLoan = createAsyncThunk(
       (event: RepayLoanEvent | Event) => !!event.event && event.event === "LoanLiquidated"
     );
     if (event && event.args) {
-      const [lender, borrower, nftAddress, nftTokenId, loanId] = event.args;
+      const [, , , , loanId] = event.args;
       return +loanId;
     } else {
       return false;
@@ -248,7 +248,7 @@ export const forecloseLoan = createAsyncThunk(
       (event: Event) => !!event.event && event.event === "LoanTerminated"
     );
     if (event && event.args) {
-      const [lender, borrower, nftAddress, nftTokenId, loanId] = event.args;
+      const [, , , , loanId] = event.args;
       return +loanId;
     } else {
       return false;

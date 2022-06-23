@@ -44,8 +44,7 @@ export const Borrowers = (): JSX.Element => {
           </Box>
         </Box>
       </Box>
-      <Grid container spacing={4} sx={{ mt: "50px" }}
-                className={style["borrowRow"]}>
+      <Grid container spacing={4} sx={{ mt: "50px" }} className={style["borrowRow"]}>
         {steps.map((step: any, index: number) => {
           return (
             <Grid item xs={12} md={4} key={`borrower_steps_${index}`}>

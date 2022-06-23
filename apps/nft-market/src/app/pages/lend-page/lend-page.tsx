@@ -1,18 +1,15 @@
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useGetListingsQuery } from "../../api/backend-api";
 import LenderAssetFilter from "../../components/asset-filter/lender-asset-filter/lender-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import AssetTypeFilter from "../../components/asset-type-filter/asset-type-filter";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
 import { ListingQueryParam } from "../../store/reducers/interfaces";
-import { RootState } from "../../store";
 import { Asset, Listing, ListingStatus } from "../../types/backend-types";
 import style from "./lend-page.module.scss";
 
 export const LendPage = (): JSX.Element => {
-  const { user } = useSelector((state: RootState) => state.backend);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [query, setQuery] = useState<ListingQueryParam>({
     skip: 0,

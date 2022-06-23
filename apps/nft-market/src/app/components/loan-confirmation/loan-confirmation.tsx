@@ -98,15 +98,8 @@ export const LoanConfirmation = ({
   );
 
   // createloan backend api call
-  const [
-    createLoan,
-    {
-      isLoading: isCreating,
-      error: createLoanError,
-      data: createLoanData,
-      reset: resetCreateLoan,
-    },
-  ] = useCreateLoanMutation();
+  const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
+    useCreateLoanMutation();
 
   // click accept term button
   const handleAcceptTerms = useCallback(async () => {

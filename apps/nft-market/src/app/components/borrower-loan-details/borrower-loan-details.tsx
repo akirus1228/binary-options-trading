@@ -45,7 +45,7 @@ export const BorrowerLoanDetails = ({
   sx,
 }: BorrowerLoanDetailsProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const { provider, chainId } = useWeb3Context();
+  const { provider } = useWeb3Context();
   const [isPending, setIsPending] = useState(false);
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({} as LoanDetails);
   // select logged in user

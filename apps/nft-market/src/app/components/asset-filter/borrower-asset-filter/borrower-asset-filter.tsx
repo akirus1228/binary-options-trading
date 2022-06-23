@@ -9,7 +9,6 @@ import {
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import {
   AssetStatus,
-  BackendAssetQueryParams,
   Collection,
   FrontendAssetFilterQuery,
 } from "../../../types/backend-types";

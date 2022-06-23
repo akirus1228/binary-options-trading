@@ -46,7 +46,6 @@ import ManageFund from "../../managefund/managefund";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import styles from "./header.module.scss";
 
-
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
   comingSoon?: boolean;
@@ -172,8 +171,8 @@ export const UserMenu = (): JSX.Element => {
         sx={{ background: "#FFF", py: "0.5em", fontSize: "16px" }}
         className={styles["accountButton"]}
       >
-        <Box sx={{ display: "block"  }} className={styles["accountAvatar"]}>
-          <Avatar sx={{ mr: {sm: "0", md: "1em" }}} src={AvatarPlaceholder}></Avatar>
+        <Box sx={{ display: "block" }} className={styles["accountAvatar"]}>
+          <Avatar sx={{ mr: { sm: "0", md: "1em" } }} src={AvatarPlaceholder}></Avatar>
         </Box>
         {addressEllipsis(address)}
         <Box

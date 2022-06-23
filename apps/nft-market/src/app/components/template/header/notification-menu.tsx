@@ -21,7 +21,6 @@ import arrowUpRight from "../../../../assets/icons/arrow-right-up.svg";
 import NotificationMessage from "../../notification-message/notification-message";
 import styles from "./header.module.scss";
 
-
 export const NotificationMenu = (): JSX.Element => {
   // menu controls
   const [updateNotification] = useUpdateUserNotificationMutation();

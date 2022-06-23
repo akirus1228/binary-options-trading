@@ -1,4 +1,4 @@
-import { NetworkIds, saveState, useWeb3Context } from "@fantohm/shared-web3";
+import { NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import { Button, Box, CircularProgress } from "@mui/material";
 import { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";

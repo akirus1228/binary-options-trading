@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import BlueLongArrowRight from "../../../assets/icons/blue-long-arrow-right.svg";
 import BlueCheckImage from "../../../assets/images/blue-check.png";
 
-
 import style from "./borrowers.module.scss";
 
 export const Lenders = (): JSX.Element => {
@@ -68,7 +67,7 @@ export const Lenders = (): JSX.Element => {
                   <Box
                     sx={{
                       borderRadius: "30px",
-                    }} 
+                    }}
                     className={style["borrowBoxElem"]}
                   >
                     <Box

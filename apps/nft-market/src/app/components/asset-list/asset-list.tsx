@@ -22,7 +22,6 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
             key={`asset-${index}`}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
-            
           />
         ))}
     </Box>

@@ -1,4 +1,3 @@
-import { loadState } from "@fantohm/shared-web3";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   erc20Currency,
@@ -67,7 +66,6 @@ interface CurrencyData {
   readonly currencyState: CurrencyState;
 }
 
-const previousState = loadState("currency");
 const initialState: CurrencyData = {
   currencies: {} as CurrencyList,
   currencyState: {} as CurrencyState,

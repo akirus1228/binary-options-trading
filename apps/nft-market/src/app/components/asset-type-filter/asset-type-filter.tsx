@@ -1,9 +1,9 @@
 import { capitalizeFirstLetter } from "@fantohm/shared-helpers";
-import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Box, ToggleButton } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { ListingQueryParam } from "../../store/reducers/interfaces";
 import { CollectibleMediaType } from "../../types/backend-types";
-import  styles from "./asset-type-filter.module.scss";
+import styles from "./asset-type-filter.module.scss";
 
 export interface AssetTypeFilterProps {
   query: ListingQueryParam;
@@ -74,7 +74,7 @@ export const AssetTypeFilter = ({
   );
 
   return (
-    <Box sx={{margin: "10px 0 50px 10px"}} className={styles["filterElems"]}>
+    <Box sx={{ margin: "10px 0 50px 10px" }} className={styles["filterElems"]}>
       {Object.entries(buttonState).map(([key, value]) => (
         <ToggleButton
           sx={{ m: "5px" }}
