@@ -14,6 +14,8 @@ import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-web3";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
+import style from "./lender-asset.module.scss";
+
 
 export interface LenderAssetProps {
   contractAddress: string;
@@ -57,10 +59,10 @@ export function LenderAsset(props: LenderAssetProps) {
         borderRadius: "28px",
         display: "flex",
         flexDirection: "column",
-        width: "fit-content",
-        margin: "1em",
         padding: "0",
+        position: "relative"
       }}
+      className={style["assetBox"]}
     >
       <Box sx={{ position: "absolute" }}>
         <Chip
@@ -74,16 +76,14 @@ export function LenderAsset(props: LenderAssetProps) {
           className={chipColor}
         />
       </Box>
-      <Box sx={{ position: "absolute" }}>
+      <Box sx={{ position: "absolute", right: "20px" }}>
         <IconButton
           sx={{
             position: "relative",
             top: "10px",
-            left: "250px",
-            backgroundColor: "#FFFFFF40",
-            color: "#000",
             zIndex: 10,
           }}
+          className={style["moreButton"]}
         >
           <MoreHorizOutlinedIcon />
         </IconButton>
@@ -98,7 +98,11 @@ export function LenderAsset(props: LenderAssetProps) {
           />
         </Link>
       )}
-      <Box className="flex fc fj-fs ai-c">
+      <Box className="flex fc fj-fs ai-c" sx={{
+        margin: {
+          xs: "10px 0 0 0"
+        }
+      }}>
         {asset.collection && asset.collection.name && (
           <Box sx={{ position: "absolute" }}>
             <span
@@ -109,7 +113,7 @@ export function LenderAsset(props: LenderAssetProps) {
                 top: "-12px",
                 background: "#FFF",
                 borderRadius: "2em",
-                padding: "1em",
+                padding: "0.1em",
                 width: "80%",
                 alignSelf: "center",
                 textAlign: "center",
@@ -120,10 +124,28 @@ export function LenderAsset(props: LenderAssetProps) {
             </span>
           </Box>
         )}
-        <Box className="flex fc fj-c ai-c w100" sx={{ p: "2em" }}>
-          <Box className="flex fr fj-sb ai-c w100">
-            <Box className="flex fr ai-c">
-              <span style={{ fontWeight: "700", fontSize: "24px" }}>
+        <Box className="flex fc fj-c ai-c w100" sx={{ 
+          p: {
+            xs: "1em",
+            sm: "1.5em",
+            md: "2em" 
+          }
+        }}>
+          <Box className="flex fr fj-sb ai-c w100" sx={{
+            flexFlow: {
+              xs: "wrap"
+            },
+            margin: {
+              xs: "0 0 10px 0"
+            }
+          }}>
+            <Box className="flex fr ai-c" sx={{
+              width: {
+                xs: "100%",
+                sm: "auto"
+              }
+            }}>
+              <span className={style["assetPrice"]}>
                 {listing.term.amount}
               </span>
               <Tooltip title={currency?.name || ""}>
@@ -140,9 +162,9 @@ export function LenderAsset(props: LenderAssetProps) {
                 color: "#1b9385",
                 backgroundColor: "#1b938517",
                 padding: "0.25em 1em",
-                fontSize: "12px",
                 fontWeight: "600",
               }}
+              className={style["assetPriceStable"]}
             >
               {repaymentAmount.toFixed(4)} {currency?.symbol}
             </span>
@@ -157,20 +179,20 @@ export function LenderAsset(props: LenderAssetProps) {
                 color: "#1b9385",
                 backgroundColor: "#1b938517",
                 padding: "0.25em 1em",
-                fontSize: "12px",
                 fontWeight: "600",
               }}
+              className={style["assetPriceStableFiat"]}
             >
               ~{formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
             </span>
           </Box>
-          <Box className="flex fr fj-sb ai-c w100">
-            <span style={{ color: "#8991A2", fontSize: "15px" }}>Duration</span>
-            <span style={{ color: "#8991A2", fontSize: "15px" }}>APY</span>
+          <Box className="flex fr fj-sb ai-c w100" style={{margin: "15px 0 0 0"}}>
+            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>Duration</span>
+            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>APY</span>
           </Box>
           <Box className="flex fr fj-sb ai-c w100">
-            <span>{listing.term.duration} days</span>
-            <span>{listing.term.apr}%</span>
+            <span className={style["termValue"]}>{listing.term.duration} days</span>
+            <span className={style["termValue"]}>{listing.term.apr}%</span>
           </Box>
         </Box>
       </Box>
