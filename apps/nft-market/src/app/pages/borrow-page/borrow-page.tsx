@@ -101,8 +101,8 @@ export const BorrowPage = (): JSX.Element => {
         <h1>Choose an asset to collateralize</h1>
       </Box>
       <Box sx={{ mt: "3em" }}>
-        <Grid container maxWidth="xl" columnSpacing={5}>
-          <Grid item xs={0} md={3}>
+        <Grid container columnSpacing={5}>
+          <Grid item xs={12} md={3}>
             <BorrowerAssetFilter query={feQuery} setQuery={setFeQuery} />
           </Grid>
           <Grid item xs={12} md={9}>

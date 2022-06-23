@@ -1,8 +1,44 @@
-.assetImg:hover {
-    transform: scale(1.05);
-    transform-style: preserve-3d;
-    -webkit-transition: all 0.25s 0s ease-out;
-    -moz-transition: all 0.25s 0s ease-out;
-    -o-transition: all 0.25s 0s ease-out;
-    transition: all 0.25s 0s ease-out;
+.assetBox {
+    width:calc(33.33% - 2em);
+    margin:1em;
+    @media (max-width:1200px) {
+        width:calc(50% - 2em)
+    }
+
+    
+
+    & > a {
+        display:block;
+    }
+    a > div {
+        width:100% !important;
+        height:auto !important;
+        padding-top:100%;
+        position:relative;
+        img {
+            width:100%;
+            max-width:100%;
+            display:block;
+            position:absolute;
+            top:0;
+            left:0;
+        }
+    }
+    
+    .moreButton {
+        color:#000;
+        background:rgba(0,0,0,0.4);
+        @media (max-width:480px) {
+            margin-right:-10px !important;
+            svg {
+                width:20px;
+                height:20px;
+        }}
+    }
+}
+body[class*=darkTheme] {
+    .moreButton {
+        color:#fff;
+        background:#000;
+    }
 }
