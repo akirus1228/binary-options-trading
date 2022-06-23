@@ -86,7 +86,7 @@ export const AssetTypeFilter = ({
           key={`filter-btn-${key}`}
           className="highContrast"
         >
-          {capitalizeFirstLetter(key)}
+          {key === "three_d" ? "3D" : capitalizeFirstLetter(key)}
         </ToggleButton>
       ))}
     </Box>
