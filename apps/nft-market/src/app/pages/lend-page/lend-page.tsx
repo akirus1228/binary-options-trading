@@ -28,7 +28,7 @@ export const LendPage = (): JSX.Element => {
     }
     setAssets(
       listings
-        // .filter((listing: Listing) => listing.asset.owner.address !== user.address)
+        .filter((listing: Listing) => listing.asset.owner.address !== user.address)
         .map((listing: Listing): Asset => {
           return listing.asset;
         })
