@@ -10,14 +10,10 @@ import {
   Asset,
   CreateAssetResponse,
   CreateListingRequest,
-  AllNotificationsResponse,
-  ApiResponse,
-  EditNotificationRequest,
   Listing,
   LoginResponse,
   Terms,
   Notification,
-  NotificationStatus,
   CreateListingResponse,
   Loan,
   Offer,
@@ -118,20 +114,11 @@ export const handleSignMessage = async (
   address: string,
   provider: JsonRpcProvider
 ): Promise<string> => {
+  const signer = provider.getSigner(address);
   try {
-    const signer = provider.getSigner(address);
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await signer.signMessage(WEB3_SIGN_MESSAGE);
-        resolve(result);
-      } catch (e) {
-        resolve("");
-      }
-    });
-    // return signer.signMessage(WEB3_SIGN_MESSAGE);
-  } catch (err) {
+    return (await signer.signMessage(WEB3_SIGN_MESSAGE)) as string;
+  } catch (e) {
     return "";
-    console.warn(err);
   }
 };
 

@@ -8,9 +8,9 @@ import { BigNumber } from "ethers";
 import { Asset, BackendAssetQueryParams, Loan, Terms } from "../../types/backend-types";
 
 // nft-marketplace slice
-export interface SignerAsyncThunk
-  extends IBaseAddressAsyncThunk,
-    IInteractiveAsyncThunk {}
+export interface SignerAsyncThunk extends IBaseAddressAsyncThunk, IInteractiveAsyncThunk {
+  onFailed?: Function;
+}
 
 export interface AssetAsyncThunk {
   readonly asset: Asset;
