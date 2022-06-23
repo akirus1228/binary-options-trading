@@ -1,7 +1,7 @@
 import { Box, Chip, IconButton, Paper } from "@mui/material";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 
-// import style from "./borrower-asset.module.scss";
+import style from "./borrower-asset.module.scss";
 import { Link } from "react-router-dom";
 import { useWalletAsset } from "../../../hooks/use-wallet-asset";
 import PreviewImage from "../preview-image/preview-image";
@@ -56,10 +56,10 @@ export const BorrowerAsset = (props: BorrowerAssetProps): JSX.Element => {
         borderRadius: "28px",
         display: "flex",
         flexDirection: "column",
-        width: "fit-content",
-        margin: "1em",
         padding: "0",
+        position: "relative",
       }}
+      className={style["assetBox"]}
     >
       <Box sx={{ position: "absolute" }}>
         <Chip
@@ -83,6 +83,7 @@ export const BorrowerAsset = (props: BorrowerAssetProps): JSX.Element => {
             color: "#000",
             zIndex: 10,
           }}
+          className={style["moreButton"]}
         >
           <MoreHorizOutlinedIcon />
         </IconButton>

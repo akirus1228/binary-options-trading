@@ -14,7 +14,7 @@ import {
 } from "../../../types/backend-types";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import CollectionsFilter from "../../collections-filter/collections-filter";
-// import style from "./borrower-asset-filter.module.scss";
+import style from "./borrower-asset-filter.module.scss";
 
 export interface BorrowerAssetFilterProps {
   query: FrontendAssetFilterQuery;
@@ -69,32 +69,43 @@ export const BorrowerAssetFilter = ({
   };
 
   return (
-    <Box sx={{ maxWidth: "250px", ml: "auto" }}>
+    <Box sx={{ ml: "auto" }}>
       <Select
         labelId="asset-sort-by"
         label="Sort by"
         defaultValue="Unlisted"
         id="asset-sort-select"
-        sx={{ width: "100%" }}
+        sx={{
+          width: "100%",
+          borderRadius: "10px",
+          border: "3px solid rgba(0,0,0,0.1)",
+          padding: "0 10px 0 20px",
+        }}
         onChange={handleStatusChange}
         value={status}
+        className={style["sortList"]}
       >
         <MenuItem value="Listed">Listed</MenuItem>
         <MenuItem value="Unlisted">Unlisted</MenuItem>
         <MenuItem value="In Escrow">In Escrow</MenuItem>
       </Select>
-      <hr />
       <CollectionsFilter collection={collection} setCollection={setCollection} />
-      <hr />
       <Box
         className="flex fr ai-c"
-        sx={{ cursor: "pointer" }}
+        sx={{
+          cursor: "pointer",
+          margin: "20px 0 0 0",
+          padding: "20px 0 0 0",
+          borderTop: "1px solid rgba(0,0,0,0.1)",
+        }}
         onClick={handleResetFilters}
       >
-        <Icon>
+        <Icon sx={{ opacity: "0.4" }}>
           <CancelOutlinedIcon />
         </Icon>
-        <Typography>Reset filter</Typography>
+        <Typography sx={{ opacity: "0.4", margin: "5px 0 0 15px" }}>
+          Reset filter
+        </Typography>
       </Box>
     </Box>
   );
