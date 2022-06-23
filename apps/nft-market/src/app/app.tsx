@@ -20,8 +20,6 @@ import { TestHelper } from "./pages/test-helper/test-helper";
 import Growl from "./components/growl/growl";
 import { desiredNetworkId } from "./constants/network";
 
-import "./app.module.scss";
-
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
 
