@@ -373,6 +373,7 @@ export const NotificationMessage = ({
   }, [contextType, loan, offer, listing]);
 
   const message = useMemo(() => {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     if (!asset) return <></>;
     const msgParams = {
       notification,

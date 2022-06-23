@@ -1,4 +1,5 @@
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+// eslint-disable-next-line node/no-unpublished-require
 const nrwlConfig = require("@nrwl/react/plugins/webpack.js");
 
 module.exports = (config, context) => {

@@ -30,7 +30,12 @@ export const VerifiedCollections = (): JSX.Element => {
       <Grid container spacing={2} sx={{ mt: "50px" }}>
         <Grid item xs={12} md={4}>
           <Box
-            sx={{ display: "flex", flexDirection: "column", justifyContent: "center", pr: "30px" }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              pr: "30px",
+            }}
           >
             <Typography variant="subtitle2" style={{ color: "#384BFF" }}>
               BlueChips only
@@ -104,7 +109,13 @@ export const VerifiedCollections = (): JSX.Element => {
                         }}
                         className={style["collectionTitle"]}
                       >
-                        <Typography style={{ color: "#384BFF", fontSize: "12px", padding: "10px 0" }}>
+                        <Typography
+                          style={{
+                            color: "#384BFF",
+                            fontSize: "12px",
+                            padding: "10px 0",
+                          }}
+                        >
                           {collection.title}
                         </Typography>
                         <Box sx={{ ml: "5px", mt: "3px" }}>

@@ -76,6 +76,12 @@ export const Growl = (): JSX.Element => {
                     ? FailIcon
                     : SuccessCheck
                 }
+                alt={
+                  growlNotification.severity === "error" ||
+                  growlNotification.severity === "warning"
+                    ? "Icon showing red X"
+                    : "Icon showing green checkbox"
+                }
                 style={{ width: "30px", height: "30px", marginRight: "10px" }}
               />
 

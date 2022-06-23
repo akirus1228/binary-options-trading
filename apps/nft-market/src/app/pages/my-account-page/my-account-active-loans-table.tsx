@@ -149,6 +149,7 @@ export const MyAccountActiveLoansTable = (
     return <LinearProgress />;
   }
   if (props.loans.length < 1) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
   return (

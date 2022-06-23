@@ -27,7 +27,13 @@ export const HomePage = (): JSX.Element => {
         }}
       >
         <Grid item xs={12} md={6}></Grid>
-        <Grid item xs={12} md={6} sx={{ background: "#F5F5F5" }} className={style["jumboRight"]}></Grid>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{ background: "#F5F5F5" }}
+          className={style["jumboRight"]}
+        ></Grid>
       </Grid>
       <Jumbotron />
       <Borrowers />

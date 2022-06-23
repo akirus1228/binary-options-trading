@@ -16,7 +16,6 @@ import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice"
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
 
-
 export interface LenderAssetProps {
   contractAddress: string;
   tokenId: string;
@@ -60,7 +59,7 @@ export function LenderAsset(props: LenderAssetProps) {
         display: "flex",
         flexDirection: "column",
         padding: "0",
-        position: "relative"
+        position: "relative",
       }}
       className={style["assetBox"]}
     >
@@ -98,11 +97,14 @@ export function LenderAsset(props: LenderAssetProps) {
           />
         </Link>
       )}
-      <Box className="flex fc fj-fs ai-c" sx={{
-        margin: {
-          xs: "10px 0 0 0"
-        }
-      }}>
+      <Box
+        className="flex fc fj-fs ai-c"
+        sx={{
+          margin: {
+            xs: "10px 0 0 0",
+          },
+        }}
+      >
         {asset.collection && asset.collection.name && (
           <Box sx={{ position: "absolute" }}>
             <span
@@ -124,30 +126,37 @@ export function LenderAsset(props: LenderAssetProps) {
             </span>
           </Box>
         )}
-        <Box className="flex fc fj-c ai-c w100" sx={{ 
-          p: {
-            xs: "1em",
-            sm: "1.5em",
-            md: "2em" 
-          }
-        }}>
-          <Box className="flex fr fj-sb ai-c w100" sx={{
-            flexFlow: {
-              xs: "wrap"
+        <Box
+          className="flex fc fj-c ai-c w100"
+          sx={{
+            p: {
+              xs: "1em",
+              sm: "1.5em",
+              md: "2em",
             },
-            margin: {
-              xs: "0 0 10px 0"
-            }
-          }}>
-            <Box className="flex fr ai-c" sx={{
-              width: {
-                xs: "100%",
-                sm: "auto"
-              }
-            }}>
-              <span className={style["assetPrice"]}>
-                {listing.term.amount}
-              </span>
+          }}
+        >
+          <Box
+            className="flex fr fj-sb ai-c w100"
+            sx={{
+              flexFlow: {
+                xs: "wrap",
+              },
+              margin: {
+                xs: "0 0 10px 0",
+              },
+            }}
+          >
+            <Box
+              className="flex fr ai-c"
+              sx={{
+                width: {
+                  xs: "100%",
+                  sm: "auto",
+                },
+              }}
+            >
+              <span className={style["assetPrice"]}>{listing.term.amount}</span>
               <Tooltip title={currency?.name || ""}>
                 <img
                   src={currency?.icon}
@@ -186,9 +195,13 @@ export function LenderAsset(props: LenderAssetProps) {
               ~{formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
             </span>
           </Box>
-          <Box className="flex fr fj-sb ai-c w100" style={{margin: "15px 0 0 0"}}>
-            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>Duration</span>
-            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>APY</span>
+          <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
+            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>
+              Duration
+            </span>
+            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>
+              APY
+            </span>
           </Box>
           <Box className="flex fr fj-sb ai-c w100">
             <span className={style["termValue"]}>{listing.term.duration} days</span>

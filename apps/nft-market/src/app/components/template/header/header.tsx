@@ -60,7 +60,7 @@ export const Header = (): JSX.Element => {
             noWrap
             component="div"
             sx={{
-              mr: {xs:"0", md:"10px"},
+              mr: { xs: "0", md: "10px" },
               display: { xs: "none", md: "flex" },
               alignItems: "center",
               fontSize: "28px",
@@ -73,7 +73,14 @@ export const Header = (): JSX.Element => {
             </Link>
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" }, maxWidth: {xs:"48px"}, mr: {xs:"20px;"} }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "flex", md: "none" },
+              maxWidth: { xs: "48px" },
+              mr: { xs: "20px;" },
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -147,9 +154,7 @@ export const Header = (): JSX.Element => {
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
                     <Link to={page.href || "#"}>
-                      <Button style={{ padding: "1em 1.25em" }}>
-                        {page.title}
-                      </Button>
+                      <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
                     </Link>
                   </Typography>
                 );

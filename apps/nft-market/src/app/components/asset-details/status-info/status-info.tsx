@@ -92,6 +92,7 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
   } else if (!loan && listing) {
     return <ListedInfo listing={listing} repaymentTotal={repaymentTotal} />;
   } else {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 };

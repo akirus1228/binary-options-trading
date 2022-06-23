@@ -9,7 +9,7 @@ import { Asset, BackendAssetQueryParams, Loan, Terms } from "../../types/backend
 
 // nft-marketplace slice
 export interface SignerAsyncThunk extends IBaseAddressAsyncThunk, IInteractiveAsyncThunk {
-  onFailed?: Function;
+  onFailed?: () => void;
 }
 
 export interface AssetAsyncThunk {

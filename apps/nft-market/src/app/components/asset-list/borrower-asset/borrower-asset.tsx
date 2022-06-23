@@ -7,7 +7,6 @@ import { useWalletAsset } from "../../../hooks/use-wallet-asset";
 import PreviewImage from "../preview-image/preview-image";
 import { AssetStatus } from "../../../types/backend-types";
 import { useMemo } from "react";
-import { capitalizeFirstLetter } from "@fantohm/shared-helpers";
 
 export interface BorrowerAssetProps {
   contractAddress: string;

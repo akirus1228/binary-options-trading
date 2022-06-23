@@ -28,14 +28,10 @@ import React, {
 } from "react";
 import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
 import {
-  formatCurrency,
   requestErc20Allowance,
-  requestNftPermission,
-  selectErc20AllowanceByAddress,
   useWeb3Context,
   selectErc20BalanceByAddress,
 } from "@fantohm/shared-web3";
-import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
 export interface ManageFundProps {
@@ -75,38 +71,10 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const isOwner = useMemo(() => {
     return address.toLowerCase() === props.asset?.owner?.address.toLowerCase();
   }, [props.asset, address]);
-  // select perm status for this asset from state
-  const hasPermission = useSelector((state: RootState) => {
-    if (!props.asset) return null;
-    return selectNftPermFromAsset(state, props.asset);
-  });
   // primary form pending state
   const [pending, setPending] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
-  // request permission to access the NFT from the contract
-  const handlePermissionRequest = useCallback(() => {
-    if (
-      props.asset &&
-      chainId &&
-      address &&
-      props.asset.assetContractAddress &&
-      provider
-    ) {
-      setPending(true);
-      dispatch(
-        requestNftPermission({
-          networkId: chainId,
-          provider,
-          walletAddress: address,
-          assetAddress: props.asset.assetContractAddress,
-          tokenId: props.asset.tokenId,
-        })
-      );
-    } else {
-      console.warn("unable to process permission request");
-    }
-  }, [chainId, address]);
   const {
     checkPermStatus,
     requestPermStatus,
@@ -132,13 +100,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     requestErc20AllowanceStatus,
     checkErc20AllowanceStatus,
   ]);
-  // select the USDB allowance provided to lending contract for this address
-  const erc20Allowance = useSelector((state: RootState) =>
-    selectErc20AllowanceByAddress(state, {
-      walletAddress: address,
-      erc20TokenAddress: currency?.currentAddress || "",
-    })
-  );
   // request allowance necessary to create loan with these term
   const handleRequestAllowance = useCallback(() => {
     if (provider && address && props.listing) {

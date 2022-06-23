@@ -33,7 +33,12 @@ export const Footer = (): JSX.Element => {
   ];
 
   return (
-    <FooterBar elevation={0} position="sticky" style={{ marginTop: "auto", zIndex: "0" }} className={style["footerBar"]}>
+    <FooterBar
+      elevation={0}
+      position="sticky"
+      style={{ marginTop: "auto", zIndex: "0" }}
+      className={style["footerBar"]}
+    >
       <Container maxWidth="xl" sx={{ my: "2em" }}>
         <Toolbar
           sx={{
