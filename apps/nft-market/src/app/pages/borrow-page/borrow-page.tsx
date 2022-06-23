@@ -11,6 +11,7 @@ import { RootState } from "../../store";
 import { OpenseaAssetQueryParam } from "../../store/reducers/interfaces";
 import { selectAssetsByQuery } from "../../store/selectors/asset-selectors";
 import {
+  Asset,
   AssetStatus,
   BackendAssetQueryParams,
   BackendLoanQueryParams,
@@ -85,6 +86,11 @@ export const BorrowPage = (): JSX.Element => {
     });
   }, [address]);
 
+  const assetsToShow: Asset[] =
+    feQuery.status === AssetStatus.Locked && loans
+      ? loans?.map((loan) => loan.assetListing.asset)
+      : myAssets;
+
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
@@ -93,7 +99,6 @@ export const BorrowPage = (): JSX.Element => {
       />
       <Box className="flex fr fj-sb ai-c">
         <h1>Choose an asset to collateralize</h1>
-        <span>{myAssets.length} assets available</span>
       </Box>
       <Box sx={{ mt: "3em" }}>
         <Grid container maxWidth="xl" columnSpacing={5}>
@@ -101,24 +106,30 @@ export const BorrowPage = (): JSX.Element => {
             <BorrowerAssetFilter query={feQuery} setQuery={setFeQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {(assetsLoading || isAssetLoading || isLoansLoaing) && (
+            {assetsLoading || isAssetLoading || isLoansLoaing ? (
               <Box className="flex fr fj-c">
                 <CircularProgress />
               </Box>
+            ) : (
+              assetsToShow.length === 0 && (
+                <Box
+                  className="flex fr fj-c"
+                  sx={{
+                    mt: "5rem",
+                    fontWeight: "400",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  No assets have been found in your wallet
+                </Box>
+              )
             )}
             {(!address || !authSignature) && (
               <Box className="flex fr fj-c">
                 <h1>Please connect your wallet.</h1>
               </Box>
             )}
-            <AssetList
-              assets={
-                feQuery.status === AssetStatus.Locked && loans
-                  ? loans?.map((loan) => loan.assetListing.asset)
-                  : myAssets
-              }
-              type="borrow"
-            />
+            <AssetList assets={assetsToShow} type="borrow" />
           </Grid>
         </Grid>
       </Box>
