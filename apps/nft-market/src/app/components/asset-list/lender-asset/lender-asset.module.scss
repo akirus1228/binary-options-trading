@@ -5,25 +5,23 @@
         width:calc(50% - 2em)
     }
 
-    @media (max-width:480px) {
-        flex-direction: row !important;
-        width: 100%;
-        margin:0 0 1em 0;
-    }
+    
 
     & > a {
         display:block;
-        @media (max-width:480px) {
-            flex:0 0 50%;
-        }
     }
     a > div {
         width:100% !important;
         height:auto !important;
-
+        padding-top:100%;
+        position:relative;
         img {
+            width:100%;
             max-width:100%;
             display:block;
+            position:absolute;
+            top:0;
+            left:0;
         }
     }
     .assetPrice {
