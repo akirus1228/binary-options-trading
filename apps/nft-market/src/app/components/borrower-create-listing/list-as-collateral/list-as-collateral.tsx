@@ -33,22 +33,22 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
     return (
       <>
         <Typography>
-          Here are a few things you must acknowledge before you continue.
+          By continuing, you agree and accept the below terms and conditions.
         </Typography>
         <Typography>
-          Posting an NFT as collateral means you are granting LiqdNft access to manage
-          your NFT.
+          You agree and accept to grant Liqd the full management and control access to your NFT posted as collateral.
         </Typography>
         <Typography>
-          You can repay a loan at any time within the agreed term, but you must still pay
-          the full interest amount.
+          You agree and accept to pay the full interest amount on the acquired loan even when its repayment is completed within the agreed upon terms.
         </Typography>
         <Typography>
-          You can only repay the loan with the wallet you started it with.
+          You agree and accept to repay the loan with interest only with the wallet address used to sign the loan contract.
         </Typography>
         <Typography>
-          Once a loan has been defaulted on, it cannot be repaid any longer and the lender
-          becomes the sole owner.
+          You agree and accept that the lender becomes the sole owner of your NFT should your loan has been defaulted on.
+        </Typography>
+        <Typography>
+          You agree and accept that you cannot repay any loans and negotiate new loan terms after the loans have been defaulted on.
         </Typography>
         <Button onClick={onAcceptTerms} variant="contained">
           Accept & continue
