@@ -437,7 +437,7 @@ export const LoanConfirmation = ({
         <Box className="flex fr fj-c" sx={{ pt: "2em", pb: "1em" }}>
           {!hasAllowance && !isPending && (
             <Button variant="outlined" onClick={handleRequestAllowance}>
-              Allow LiqdNft access to your {currency?.symbol || ""}
+              Allow Liqd access to your {currency?.symbol || ""}
             </Button>
           )}
           {hasAllowance &&
