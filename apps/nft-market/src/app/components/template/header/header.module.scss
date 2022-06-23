@@ -1,3 +1,25 @@
+body {
+  &:before {
+      content:'';
+      z-index:-1;
+      background-image:
+      radial-gradient(at top left, rgba(46,126,232,1) 0%, rgba(46,126,232,0) 25%),
+      radial-gradient(at 25% 0%, rgb(46, 232, 139) 0%, rgba(46, 232, 139,0) 25%),
+      radial-gradient(at 50% 0%, rgb(232, 46, 207) 0%, rgba(232, 46, 207,0) 45%),
+      radial-gradient(at 70% 0%, rgb(213, 232, 46) 0%, rgba(213, 232, 46,0) 45%),
+      radial-gradient(at 85% 0%, rgb(46, 105, 232) 0%, rgba(46, 105, 232,0) 25%);
+      background-size:100% 100%;
+      position:fixed;
+      top:0;
+      left:0;
+      bottom:0;
+      right:0;
+      opacity:0.3;
+  }
+  
+}
+
+
 .comingSoonTitle {
   font-size: 18px;
   font-weight: 400;

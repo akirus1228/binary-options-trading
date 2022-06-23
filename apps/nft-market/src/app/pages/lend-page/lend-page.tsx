@@ -36,15 +36,15 @@ export const LendPage = (): JSX.Element => {
   }, [listings]);
 
   return (
-    <Container className={style["lendPageContainer"]} maxWidth={`xl`}>
+    <Container className={style["lendPageContainer"]}>
       <HeaderBlurryImage
         url={listings && listings.length > 0 ? listings[0].asset.imageUrl : undefined}
         height="300px"
       />
       <h1>Explore loan requests</h1>
       <Box sx={{ mt: "3em" }}>
-        <Grid container maxWidth="xl" columnSpacing={5}>
-          <Grid item xs={0} md={3}>
+        <Grid container columnSpacing={5}>
+          <Grid item xs={12} md={3}>
             <LenderAssetFilter query={query} setQuery={setQuery} />
           </Grid>
           <Grid item xs={12} md={9}>

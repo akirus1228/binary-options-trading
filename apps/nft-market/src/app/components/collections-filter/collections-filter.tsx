@@ -26,7 +26,14 @@ export const CollectionsFilter = ({
     [collection, setCollection]
   );
   return (
-    <List component="nav" subheader={<ListSubheader>Collections</ListSubheader>}>
+    <List component="nav" subheader={<ListSubheader sx={{
+      background: "none",
+      padding: "40px 0 0 0",
+      margin: "40px 0 20px 0",
+      lineHeight: "20px",
+      borderTop: "1px solid rgba(0,0,0,0.1)",
+      position: "static"
+    }}>Collections</ListSubheader>}>
       {collections?.map((collectionMap: Collection, index: number) => (
         <ListItemButton
           key={`collection-filter-item-${index}`}
@@ -34,8 +41,18 @@ export const CollectionsFilter = ({
             handleCollectionClick(collectionMap);
           }}
           selected={collection.slug === collectionMap.slug}
+          sx={{
+            padding: "10px 0"
+          }}
         >
-          <Avatar src={collectionMap.imageUrl} />
+          <Avatar src={collectionMap.imageUrl} sx={{
+            borderRadius: "50px",
+            border: "3px solid #fff",
+            boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+            margin: "0 10px 0 0",
+            height: "60px",
+            width: "60px"
+          }}/>
           <ListItemText primary={collectionMap.name} />
         </ListItemButton>
       ))}

@@ -2,6 +2,7 @@
 import {
   Box,
   Icon,
+  ListSubheader,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -20,6 +21,8 @@ import {
 import { ListingQueryParam } from "../../../store/reducers/interfaces";
 import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
+import style from "./lender-asset-filter.module.scss";
+
 
 export interface LenderAssetFilterProps {
   query: ListingQueryParam;
@@ -123,22 +126,38 @@ export const LenderAssetFilter = ({
   };
 
   return (
-    <Box sx={{ maxWidth: "250px", ml: "auto" }}>
+    <Box sx={{ ml: "auto" }}>
       <Select
         labelId="asset-sort-by"
         label="Sort by"
         defaultValue="Recent"
         id="asset-sort-select"
-        sx={{ width: "100%" }}
+        sx={{ width: "100%",
+      borderRadius: "10px",
+      border: "3px solid rgba(0,0,0,0.1)",
+    padding:"0 10px 0 20px" }}
         onChange={handleSortChange}
+        className={style["sortList"]}
       >
         <MenuItem value="Recent">Sort By: Recently Listed</MenuItem>
         <MenuItem value="Oldest">Sort By: Oldest Listed</MenuItem>
         <MenuItem value="Highest Price">Sort By: Price Higest</MenuItem>
         <MenuItem value="Lowest Price">Sort By: Price Lowest</MenuItem>
       </Select>
-      <Box className="flex fc">
-        <span>Price range</span>
+      <Box className="flex fc" sx={{padding: "0 10px", mt: {
+        xs: "20px",
+        md: "40px"}
+        }}>
+        <ListSubheader sx={{
+          background: "none",
+          padding: "0",
+          margin: {
+            xs: "0 -10px 0px -10px",
+            sm: "0 -10px 10px -10px"
+          },
+          lineHeight: "20px",
+          position: "static"
+        }}>Price range</ListSubheader>
         <Slider
           getAriaLabel={() => "Price range"}
           value={priceRange}
@@ -148,14 +167,28 @@ export const LenderAssetFilter = ({
           getAriaValueText={valuetext}
           min={0}
           max={10000}
+          sx={{margin: {
+            xs: "0",
+            sm: "10px 0"
+          }
+        }}
         />
-        <Box className="flex fj-sb">
+        <Box className="flex fj-sb" sx={{margin: "0 -10px"}}>
           <span style={{ fontSize: "10px" }}>{priceRange[0]} USDB</span>
           <span style={{ fontSize: "10px" }}>{priceRange[1]} USDB</span>
         </Box>
       </Box>
-      <Box className="flex fc">
-        <span>Apr range</span>
+      <Box className="flex fc" sx={{padding: "0 10px", borderTop: "1px solid rgba(0,0,0,0.1)", mt: "40px", pt: "40px"}}>
+        <ListSubheader sx={{
+          background: "none",
+          padding: "0",
+          margin: {
+            xs: "0 -10px 0px -10px",
+            sm: "0 -10px 10px -10px"
+          },
+          lineHeight: "20px",
+          position: "static"
+        }}>Apr range</ListSubheader>
         <Slider
           getAriaLabel={() => "Apr range"}
           value={aprRange}
@@ -171,8 +204,19 @@ export const LenderAssetFilter = ({
         <span style={{ fontSize: "10px" }}>{aprRange[0]}%</span>
         <span style={{ fontSize: "10px" }}>{aprRange[1]}%</span>
       </Box>
-      <Box className="flex fc">
-        <span>Duration</span>
+      <Box className="flex fc" sx={{padding: "0 10px", borderTop: "1px solid rgba(0,0,0,0.1)", mt: "40px", pt: "40px"}}
+    
+      >
+        <ListSubheader sx={{
+          background: "none",
+          padding: "0",
+          margin: {
+            xs: "0 -10px 0px -10px",
+            sm: "0 -10px 10px -10px"
+          },
+          lineHeight: "20px",
+          position: "static"
+        }}>Duration</ListSubheader>
         <Slider
           getAriaLabel={() => "Duratioun range"}
           value={durationRange}
@@ -189,16 +233,21 @@ export const LenderAssetFilter = ({
         <span style={{ fontSize: "10px" }}>{durationRange[1]} days</span>
       </Box>
       <CollectionsFilter collection={collection} setCollection={setCollection} />
-      <hr />
+    
       <Box
         className="flex fr ai-c"
-        sx={{ cursor: "pointer" }}
+        sx={{ cursor: "pointer",
+        margin: "20px 0 0 0",
+        padding: "20px 0 0 0",
+        borderTop: "1px solid rgba(0,0,0,0.1)"
+      }}
+      
         onClick={handleResetFilters}
       >
-        <Icon>
+        <Icon sx={{opacity: "0.4"}}>
           <CancelOutlinedIcon />
         </Icon>
-        <Typography>Reset filter</Typography>
+        <Typography sx={{opacity: "0.4", margin:"5px 0 0 15px"}}>Reset filter</Typography>
       </Box>
     </Box>
   );

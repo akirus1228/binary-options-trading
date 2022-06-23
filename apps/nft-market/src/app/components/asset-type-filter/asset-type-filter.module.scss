@@ -1,0 +1,6 @@
+body[class*=darkTheme] {
+    .filterElems {
+        button {filter:invert(1);
+        }
+    }
+}
