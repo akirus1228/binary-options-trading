@@ -234,10 +234,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       dispatch
     );
     term.signature = termSignature;
-    dispatch(createListing({ term, asset })).then(() => {
-      dispatch(addAlert({ message: "Listing created" }));
-      props.onClose(true);
-    });
+    if (term.signature) {
+      dispatch(createListing({ term, asset })).then(() => {
+        dispatch(addAlert({ message: "Listing created" }));
+        props.onClose(true);
+      });
+    } else {
+      setPending(false);
+    }
     return;
   };
 
