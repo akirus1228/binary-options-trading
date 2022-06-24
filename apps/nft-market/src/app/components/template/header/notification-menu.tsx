@@ -125,7 +125,7 @@ export const NotificationMenu = (): JSX.Element => {
           </Link>
         </Box>
         {(notifications?.length || 0) > 0 && (
-          <>
+          <Box>
             {notifications?.map((notification, i: number) => (
               <MenuItem key={`not-men-${i}`} sx={{ maxWidth: "400px" }}>
                 <Paper className="w100" sx={{ padding: "1em" }}>
@@ -150,7 +150,7 @@ export const NotificationMenu = (): JSX.Element => {
             <Box className="flex fr fj-c" sx={{ mt: "1em" }}>
               <span style={{ color: "#8991A2" }}>End of recent activity</span>
             </Box>
-          </>
+          </Box>
         )}
         {(notifications?.length || 0) === 0 && (
           <Box
