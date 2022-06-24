@@ -28,7 +28,7 @@ export const useWeb3Context = () => {
   }, [web3Context]);
 };
 
-export const saveNetworkId = (NetworkId: NetworkId) => {
+const saveNetworkId = (NetworkId: NetworkId) => {
   if (window.localStorage) {
     window.localStorage.setItem("defaultNetworkId", NetworkId.toString());
   }

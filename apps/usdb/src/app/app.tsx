@@ -104,9 +104,6 @@ export const App = (): JSX.Element => {
     setPromptTerms(false);
     localStorage.setItem("termsAgreed", "true");
   };
-
-  saveNetworkId(isDev() ? NetworkIds.FantomTestnet : NetworkIds.FantomOpera);
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
