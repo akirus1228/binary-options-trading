@@ -134,6 +134,9 @@ export const App = (): JSX.Element => {
   const handleCheck = () => {
     setIsChecked(!isChecked);
   };
+
+  saveNetworkId(isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
