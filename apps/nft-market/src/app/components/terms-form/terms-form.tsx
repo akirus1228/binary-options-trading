@@ -214,8 +214,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     } else {
       asset = { ...props.asset, status: AssetStatus.Listed };
     }
-    const expirationAt = new Date();
-    expirationAt.setDate(expirationAt.getDate() + 1);
+    const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     const term: Terms = {
       amount,
       apr,
@@ -252,8 +251,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     } else {
       asset = props.asset;
     }
-    const expirationAt = new Date();
-    expirationAt.setDate(expirationAt.getDate() + 1);
+    const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     const term: Terms = {
       ...props?.listing?.term,
       amount,
