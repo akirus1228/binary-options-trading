@@ -4,7 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Backdrop, Box, Button, CssBaseline, Fade, Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { NftLight, NftDark } from "@fantohm/shared-ui-themes";
-import { useWeb3Context, defaultNetworkId, isDev } from "@fantohm/shared-web3";
+import {
+  useWeb3Context,
+  defaultNetworkId,
+  isDev,
+  saveNetworkId,
+  NetworkIds,
+} from "@fantohm/shared-web3";
 import { Header, Footer } from "./components/template";
 // import { Messages } from "./components/messages/messages";
 import { HomePage } from "./pages/home/home-page";
@@ -128,6 +134,9 @@ export const App = (): JSX.Element => {
   const handleCheck = () => {
     setIsChecked(!isChecked);
   };
+
+  saveNetworkId(isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
