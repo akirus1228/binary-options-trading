@@ -309,7 +309,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   const handleAprChange = (event: BaseSyntheticEvent) => {
-    setApr(+event.target.value);
+    const apr = Math.floor(+event.target.value);
+    setApr(apr === 0 ? 1 : apr);
   };
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
