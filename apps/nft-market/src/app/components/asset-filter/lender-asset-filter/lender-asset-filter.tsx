@@ -177,7 +177,7 @@ export const LenderAssetFilter = ({
           valueLabelDisplay="auto"
           getAriaValueText={valuetext}
           min={0}
-          max={10000}
+          max={10000000}
           sx={{
             margin: {
               xs: "0",
@@ -186,8 +186,8 @@ export const LenderAssetFilter = ({
           }}
         />
         <Box className="flex fj-sb" sx={{ margin: "0 -10px" }}>
-          <span style={{ fontSize: "10px" }}>{priceRange[0]} USDB</span>
-          <span style={{ fontSize: "10px" }}>{priceRange[1]} USDB</span>
+          <span style={{ fontSize: "10px" }}>{priceRange[0]} USD</span>
+          <span style={{ fontSize: "10px" }}>{priceRange[1]} USD</span>
         </Box>
       </Box>
       <Box
