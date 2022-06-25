@@ -309,7 +309,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   const handleAprChange = (event: BaseSyntheticEvent) => {
-    setApr(+event.target.value);
+    const apr = Math.floor(+event.target.value);
+    setApr(apr === 0 ? 1 : apr);
   };
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
@@ -486,18 +487,29 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         <Box className={`flex fr ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>APR</Box>
           <Box className={`flex fr ${style["rightSide"]}`}>
-            <TextField
-              value={apr}
-              type="number"
-              onChange={handleAprChange}
-              variant="standard"
-              InputProps={{
-                disableUnderline: true,
+            <Box className="flex fr" component="div">
+              <TextField
+                value={apr}
+                type="number"
+                onChange={handleAprChange}
+                variant="standard"
+                InputProps={{
+                  disableUnderline: true,
+                }}
+              />
+            </Box>
+            <Box
+              className="flex ai-c"
+              sx={{
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                color: "#aaaaaa",
+                width: "150px",
+                paddingLeft: "10px",
               }}
-            />
-            <Typography sx={{ color: "#aaaaaa" }}>
+            >
               {formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
-            </Typography>
+            </Box>
           </Box>
         </Box>
       </Box>
