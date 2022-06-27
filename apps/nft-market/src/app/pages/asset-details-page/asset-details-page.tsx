@@ -117,6 +117,8 @@ export const AssetDetailsPage = (): JSX.Element => {
       </Box>
     );
   }
+
+
   return (
     <>
       <AssetDetails
