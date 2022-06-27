@@ -1,5 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "..";
+import { sortListingByDate } from "../../helpers/sort-functions";
 import {
   Asset,
   Listing,
@@ -16,15 +17,17 @@ export const selectListingFromAsset = createSelector(
   selectListingAsset,
   (listings, asset) => {
     if (asset === null) return {} as Listing;
-    const key = Object.keys(listings).find((key: string) => {
+    const matches = Object.entries(listings).filter(([key, listing]) => {
       const rtn =
-        listings[key].asset.assetContractAddress === asset.assetContractAddress &&
-        listings[key].asset.tokenId === asset.tokenId;
+        listing.asset.assetContractAddress === asset.assetContractAddress &&
+        listing.asset.tokenId === asset.tokenId;
       return rtn;
     });
+    const listingMatches = matches.map(([key, listing]) => listing); // get just the listings
+    listingMatches.sort(sortListingByDate); // sort by date to get the most recent in case there's more than one
 
-    if (key) {
-      return listings[key];
+    if (listingMatches) {
+      return listingMatches[0];
     } else {
       return {} as Listing;
     }
