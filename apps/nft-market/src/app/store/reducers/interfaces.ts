@@ -52,6 +52,13 @@ export interface SkipLimitAsyncThunk {
   readonly limit: number;
 }
 
+export enum ListingSort {
+  Recently = "Recent",
+  Oldest = "Oldest",
+  Highest = "Highest Price",
+  Lowest = "Lowest Price",
+}
+
 export type ListingQueryParam = {
   skip: number;
   take: number;
@@ -66,6 +73,7 @@ export type ListingQueryParam = {
   minPrice?: number;
   maxPrice?: number;
   borrower?: string;
+  sort?: ListingSort;
 };
 
 export interface ListingQueryAsyncThunk {

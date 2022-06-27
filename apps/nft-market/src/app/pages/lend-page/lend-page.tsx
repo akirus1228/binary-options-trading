@@ -7,7 +7,7 @@ import AssetList from "../../components/asset-list/asset-list";
 import AssetTypeFilter from "../../components/asset-type-filter/asset-type-filter";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
 import { RootState } from "../../store";
-import { ListingQueryParam } from "../../store/reducers/interfaces";
+import { ListingQueryParam, ListingSort } from "../../store/reducers/interfaces";
 import { Asset, Listing, ListingStatus } from "../../types/backend-types";
 import style from "./lend-page.module.scss";
 
@@ -17,6 +17,7 @@ export const LendPage = (): JSX.Element => {
     skip: 0,
     take: 50,
     status: ListingStatus.Listed,
+    sort: ListingSort.Recently,
   });
   const { user } = useSelector((state: RootState) => state.backend);
   const { data: listings, isLoading } = useGetListingsQuery(query);
@@ -28,11 +29,29 @@ export const LendPage = (): JSX.Element => {
     setAssets(
       listings
         .filter((listing: Listing) => listing.asset.owner.address !== user.address)
+        .sort((a, b) => {
+          if (query.sort === ListingSort.Recently) {
+            return (
+              new Date(b.createdAt || "0").getTime() -
+              new Date(a.createdAt || "0").getTime()
+            );
+          } else if (query.sort === ListingSort.Oldest) {
+            return (
+              new Date(a.createdAt || "0").getTime() -
+              new Date(b.createdAt || "0").getTime()
+            );
+          } else if (query.sort === ListingSort.Highest) {
+            return b.term.amount - a.term.amount;
+          } else if (query.sort === ListingSort.Lowest) {
+            return a.term.amount - b.term.amount;
+          }
+          return 0;
+        })
         .map((listing: Listing): Asset => {
           return listing.asset;
         })
     );
-  }, [listings]);
+  }, [listings, query.sort]);
 
   return (
     <Container className={style["lendPageContainer"]}>

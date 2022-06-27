@@ -18,7 +18,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { ListingQueryParam } from "../../../store/reducers/interfaces";
+import { ListingQueryParam, ListingSort } from "../../../store/reducers/interfaces";
 import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
 import style from "./lender-asset-filter.module.scss";
@@ -40,6 +40,7 @@ export const LenderAssetFilter = ({
   const [aprRange, setAprRange] = useState<number[]>(initialAprRange);
   const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);
   const [collection, setCollection] = useState<Collection>({} as Collection);
+  const [sort, setSort] = useState<string>(ListingSort.Recently);
 
   const valuetext = (value: number) => {
     return `$${value}`;
@@ -53,9 +54,27 @@ export const LenderAssetFilter = ({
     return `${value} days`;
   };
 
+  const getSortType = (status: string): ListingSort => {
+    switch (status) {
+      case "Recent":
+        return ListingSort.Recently;
+      case "Oldest":
+        return ListingSort.Oldest;
+      case "Highest Price":
+        return ListingSort.Highest;
+      case "Lowest Price":
+        return ListingSort.Lowest;
+      default:
+        return ListingSort.Recently;
+    }
+  };
+
   const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
-    let sort;
-    console.log(event);
+    if (!event) return;
+    setSort(event.target.value);
+
+    //trigger query update
+    setQuery({ ...query, sort: getSortType(event.target.value) });
   }, []);
 
   const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
@@ -192,6 +211,7 @@ export const LenderAssetFilter = ({
           border: "3px solid rgba(0,0,0,0.1)",
           padding: "0 10px 0 20px",
         }}
+        value={sort}
         onChange={handleSortChange}
         className={style["sortList"]}
       >
