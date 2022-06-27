@@ -77,7 +77,6 @@ export const BorrowerLoanDetails = ({
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    console.log(`loanDetails.currency ${loanDetails.currency}`);
     if (
       user.address &&
       provider &&

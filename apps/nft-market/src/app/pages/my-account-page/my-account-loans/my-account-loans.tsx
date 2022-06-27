@@ -50,10 +50,6 @@ export function MyAccountLoans(props: MyAccountLoansProps) {
     },
     { skip: !address || !authSignature }
   );
-  console.log("activeBorrowerLoans?.length", activeBorrowerLoans?.length);
-  console.log("activeLenderLoans?.length", activeLenderLoans?.length);
-  console.log("historicalBorrowerLoans?.length", historicalBorrowerLoans?.length);
-  console.log("historicalLenderLoans?.length", historicalLenderLoans?.length);
   return (
     <Container className={style["myAccountContainer"]} maxWidth="xl">
       {activeBorrowerLoans?.length ? (

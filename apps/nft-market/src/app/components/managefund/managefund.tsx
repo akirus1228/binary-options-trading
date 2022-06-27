@@ -60,7 +60,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     selectCurrencyById(state, `${selectedCurrency.toUpperCase()}_ADDRESS`)
   );
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
-    console.log("selected", event.target.value);
     setSelectedCurrency(event.target.value);
   };
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
