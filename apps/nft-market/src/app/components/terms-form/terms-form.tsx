@@ -400,8 +400,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [chainId, address, amount, provider, currency]);
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
-    //do something
-    console.log(event.target.value);
     setSelectedCurrency(event.target.value);
   };
 

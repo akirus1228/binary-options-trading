@@ -93,7 +93,6 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
     };
     updateLoan(updateLoanRequest);
     setIsPending(false);
-    console.log(result);
   }, [loan, provider]);
 
   if (!loan || !loan.term || !loanDetails.amountDue) {

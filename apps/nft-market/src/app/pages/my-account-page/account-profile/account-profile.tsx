@@ -19,7 +19,7 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(user.address).then(
       function () {
-        console.log("Async: Copying to clipboard was successful!");
+        //console.log("Async: Copying to clipboard was successful!");
       },
       function (err) {
         console.error("Async: Could not copy text: ", err);

@@ -42,9 +42,7 @@ const SimpleLoanDetail = ({ loanDetails }: { loanDetails: LoanDetails }): JSX.El
       provider,
       networkId: desiredNetworkId,
     };
-    console.log(repayLoanParams);
     const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
-    console.log(repayLoanResult);
   }, [loanDetails, provider]);
 
   return (
