@@ -28,7 +28,7 @@ export interface LenderAssetFilterProps {
   setQuery: Dispatch<SetStateAction<ListingQueryParam>>;
 }
 
-const initialPriceRange = [0, 10000000];
+const initialPriceRange = [0, 25];
 const initialAprRange = [0, 400];
 const initialDurationRange = [0, 365];
 
@@ -60,7 +60,7 @@ export const LenderAssetFilter = ({
 
   const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
     if (!event || typeof newValue === "number") return;
-    setPriceRange([newValue[0], newValue[1]]);
+    setPriceRange(newValue);
   };
 
   const handlePriceRangeChangeCommitted = (
@@ -68,10 +68,14 @@ export const LenderAssetFilter = ({
     newValue: number | number[]
   ) => {
     if (!event || typeof newValue === "number") return;
-    setPriceRange([newValue[0], newValue[1]]);
+    setPriceRange(newValue);
 
     //trigger query update
-    setQuery({ ...query, minPrice: newValue[0], maxPrice: newValue[1] });
+    setQuery({
+      ...query,
+      minPrice: scaleValues(newValue)[0],
+      maxPrice: scaleValues(newValue)[1],
+    });
   };
 
   const handleAprRangeChange = (event: Event, newValue: number | number[]) => {
@@ -123,6 +127,57 @@ export const LenderAssetFilter = ({
     handleSortChange({ target: { value: "Recent" } } as SelectChangeEvent<string>);
     setCollection({} as Collection);
   };
+  const followersMarks = [
+    {
+      value: 0,
+      scaledValue: 0,
+      label: "0",
+    },
+    {
+      value: 25,
+      scaledValue: 10000,
+      label: "10k",
+    },
+    {
+      value: 50,
+      scaledValue: 50000,
+      label: "50k",
+    },
+    {
+      value: 75,
+      scaledValue: 250000,
+      label: "250k",
+    },
+    {
+      value: 100,
+      scaledValue: 1000000,
+      label: "1M",
+    },
+  ];
+  const scaleValues = (valueArray: any) => {
+    return [scale(valueArray[0]), scale(valueArray[1])];
+  };
+  const scale = (value: any) => {
+    const previousMarkIndex = Math.floor(value / 25);
+    const previousMark = followersMarks[previousMarkIndex];
+    const remainder = value % 25;
+    if (remainder === 0) {
+      return previousMark.scaledValue;
+    }
+    const nextMark = followersMarks[previousMarkIndex + 1];
+    const increment = (nextMark.scaledValue - previousMark.scaledValue) / 25;
+    return remainder * increment + previousMark.scaledValue;
+  };
+
+  function numFormatter(num: any) {
+    if (num > 999 && num < 1000000) {
+      return (num / 1000).toFixed(0) + "K"; // convert to K for number from > 1000 < 1 million
+    } else if (num >= 1000000) {
+      return (num / 1000000).toFixed(0) + "M"; // convert to M for number from > 1 million
+    } else if (num < 900) {
+      return num; // if value < 1000, nothing to do
+    }
+  }
 
   return (
     <Box sx={{ ml: "auto" }}>
@@ -171,13 +226,17 @@ export const LenderAssetFilter = ({
         </ListSubheader>
         <Slider
           getAriaLabel={() => "Price range"}
+          min={0}
+          step={1}
+          max={100}
+          valueLabelFormat={numFormatter}
+          marks={followersMarks}
+          scale={scale}
           value={priceRange}
           onChange={handlePriceRangeChange}
           onChangeCommitted={handlePriceRangeChangeCommitted}
           valueLabelDisplay="auto"
           getAriaValueText={valuetext}
-          min={0}
-          max={10000000}
           sx={{
             margin: {
               xs: "0",
@@ -185,9 +244,8 @@ export const LenderAssetFilter = ({
             },
           }}
         />
-        <Box className="flex fj-sb" sx={{ margin: "0 -10px" }}>
-          <span style={{ fontSize: "10px" }}>{priceRange[0]} USD</span>
-          <span style={{ fontSize: "10px" }}>{priceRange[1]} USD</span>
+        <Box className="flex fj-sb" sx={{ paddingTop: "10px" }}>
+          <Typography>Values: {JSON.stringify(scaleValues(priceRange))} USD</Typography>
         </Box>
       </Box>
       <Box
