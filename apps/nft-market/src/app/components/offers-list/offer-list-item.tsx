@@ -193,14 +193,14 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             {offer.lender.address.toLowerCase() === user.address.toLowerCase() ? (
               "You"
             ) : (
-              <>
+              <Box>
                 {addressEllipsis(offer.lender.address, 3)}{" "}
                 <img
                   src={ArrowUpRight}
                   alt="arrow pointing up and to the right"
                   style={{ height: "16px", width: "16px" }}
                 />
-              </>
+              </Box>
             )}
           </a>
         );
@@ -213,14 +213,14 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             user.address.toLowerCase() ? (
               "You"
             ) : (
-              <>
+              <Box>
                 {addressEllipsis(offer.assetListing.asset?.owner.address, 3)}{" "}
                 <img
                   src={ArrowUpRight}
                   alt="arrow pointing up and to the right"
                   style={{ height: "16px", width: "16px" }}
                 />
-              </>
+              </Box>
             )}
           </a>
         );
@@ -228,7 +228,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         return <SimpleProfile user={offer.lender} />;
       case OffersListFields.REPAYMENT_TOTAL:
         return (
-          <>
+          <Box>
             <Tooltip
               title={`~ ${formatCurrency(repaymentTotal * currency?.lastPrice || 0, 2)}`}
             >
@@ -246,11 +246,11 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 }}
               />
             </Tooltip>
-          </>
+          </Box>
         );
       case OffersListFields.REPAYMENT_AMOUNT:
         return (
-          <>
+          <Box>
             <Tooltip
               title={`~ ${formatCurrency(repaymentAmount * currency?.lastPrice || 0, 2)}`}
             >
@@ -268,7 +268,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 }}
               />
             </Tooltip>
-          </>
+          </Box>
         );
       case OffersListFields.APR:
         return `${offer.term.apr}%`;
@@ -325,18 +325,15 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         {!isOwner && (
           <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
         )}
-        {offer.status !== OfferStatus.Ready ||
-          (!isOwner && (
-            <Button
-              variant="contained"
-              className="offer slim"
-              disabled={[OfferStatus.Expired, OfferStatus.Cancelled].includes(
-                offer.status
-              )}
-            >
-              {offer.status}
-            </Button>
-          ))}
+        {(!isOwner || offer.status !== OfferStatus.Ready) && (
+          <Button
+            variant="contained"
+            className="offer slim"
+            disabled={[OfferStatus.Expired, OfferStatus.Cancelled].includes(offer.status)}
+          >
+            {offer.status}
+          </Button>
+        )}
       </PaperTableCell>
     </PaperTableRow>
   );
