@@ -48,7 +48,6 @@ export const BorrowerListingDetails = (
   // update term
   const [dialogOpen, setDialogOpen] = useState(false);
   const onClickButton = useCallback(() => {
-    console.log("Open dialog");
     setDialogOpen(true);
   }, []);
 

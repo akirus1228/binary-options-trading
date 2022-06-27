@@ -59,7 +59,6 @@ export const AssetTypeFilter = ({
     }
     const mediaType: CollectibleMediaType = getMediaType(queryConditions[0]);
     setQuery({ ...query, mediaType });
-    console.log(queryConditions);
   }, [buttonState]);
 
   const handleStateChange = useCallback(
