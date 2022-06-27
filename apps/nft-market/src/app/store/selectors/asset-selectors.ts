@@ -67,6 +67,9 @@ export const selectAssetsByQuery = createSelector(
           if (key === "openseaIds")
             // look in the list of opensea id's for a match
             return openseaIds.includes(asset?.openseaId || "");
+          if (key === "status" && matchValue === "All") {
+            return true;
+          }
           if (key === "status" && matchValue === AssetStatus.Ready)
             return [AssetStatus.Ready, AssetStatus.New].includes(asset.status);
           if (
