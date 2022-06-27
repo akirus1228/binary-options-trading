@@ -296,7 +296,10 @@ export type BackendStandardQuery = {
   take: number;
 };
 
-export type FrontendAssetFilterQuery = Partial<Asset> & { openseaIds?: string[] };
+export type FrontendAssetFilterQuery = Omit<Partial<Asset>, "status"> & {
+  openseaIds?: string[];
+  status: AssetStatus | "All";
+};
 
 export type BackendAssetQueryParams = {
   status?: AssetStatus;

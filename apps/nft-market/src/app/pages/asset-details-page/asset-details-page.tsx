@@ -117,6 +117,7 @@ export const AssetDetailsPage = (): JSX.Element => {
       </Box>
     );
   }
+  console.log("activeListing =", activeListing);
   return (
     <>
       <AssetDetails

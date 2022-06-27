@@ -25,11 +25,13 @@ export const BorrowerAssetFilter = ({
   query,
   setQuery,
 }: BorrowerAssetFilterProps): JSX.Element => {
-  const [status, setStatus] = useState<string>("Unlisted");
+  const [status, setStatus] = useState<string>("All");
   const [collection, setCollection] = useState<Collection>({} as Collection);
 
-  const getStatusType = (status: string): AssetStatus => {
+  const getStatusType = (status: string): AssetStatus | "All" => {
     switch (status) {
+      case "All":
+        return "All";
       case "Listed":
         return AssetStatus.Listed;
       case "Unlisted":
@@ -43,7 +45,8 @@ export const BorrowerAssetFilter = ({
 
   const handleStatusChange = useCallback(
     (event: SelectChangeEvent<string>) => {
-      if (!["Unlisted", "Listed", "In Escrow"].includes(event.target.value)) return;
+      if (!["All", "Unlisted", "Listed", "In Escrow"].includes(event.target.value))
+        return;
       setStatus(event.target.value);
       const updatedQuery: FrontendAssetFilterQuery = {
         ...query,
@@ -64,7 +67,7 @@ export const BorrowerAssetFilter = ({
   }, [collection]);
 
   const handleResetFilters = () => {
-    handleStatusChange({ target: { value: "Unlisted" } } as SelectChangeEvent<string>);
+    handleStatusChange({ target: { value: "All" } } as SelectChangeEvent<string>);
     setCollection({} as Collection);
   };
 
@@ -85,6 +88,7 @@ export const BorrowerAssetFilter = ({
         value={status}
         className={style["sortList"]}
       >
+        <MenuItem value="All">All</MenuItem>
         <MenuItem value="Listed">Listed</MenuItem>
         <MenuItem value="Unlisted">Unlisted</MenuItem>
         <MenuItem value="In Escrow">In Escrow</MenuItem>
