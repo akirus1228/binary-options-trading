@@ -185,7 +185,11 @@ export const LoanConfirmation = ({
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (user.address && provider && platformFees[listing.term.currencyAddress]) {
+    if (
+      user.address &&
+      provider &&
+      typeof platformFees[listing.term.currencyAddress] !== "undefined"
+    ) {
       dispatch(
         checkErc20Allowance({
           networkId: desiredNetworkId,
