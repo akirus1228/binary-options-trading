@@ -207,7 +207,7 @@ export const BorrowerLoanDetails = ({
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>Principal</Typography>
+            <Typography className={style["label"]}>Loan amount</Typography>
             <Typography className={`${style["data"]}`}>
               {loan.term.amount.toLocaleString("en-US", {
                 style: "currency",

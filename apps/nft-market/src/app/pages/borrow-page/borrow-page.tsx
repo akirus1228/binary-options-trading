@@ -98,7 +98,7 @@ export const BorrowPage = (): JSX.Element => {
         height="300px"
       />
       <Box className="flex fr fj-sb ai-c">
-        <h1>Choose an asset to collateralize</h1>
+        <h1>Choose an asset to borrow against</h1>
       </Box>
       <Box sx={{ mt: "3em" }}>
         <Grid container columnSpacing={5}>

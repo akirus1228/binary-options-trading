@@ -54,7 +54,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
       <Paper>
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
-            <Typography className={style["label"]}>Principal</Typography>
+            <Typography className={style["label"]}>Loan amount</Typography>
             <Typography className={`${style["data"]} ${style["primary"]}`}>
               {props.listing.term.amount.toFixed(4)} {currency?.symbol}
             </Typography>

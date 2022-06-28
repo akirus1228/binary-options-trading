@@ -119,7 +119,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>Principal</Typography>
+            <Typography className={style["label"]}>Loan amount</Typography>
             <Typography className={`${style["data"]}`}>
               {loan.term.amount.toFixed(4)} {currency?.symbol}
             </Typography>
@@ -146,7 +146,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
           <Box className="flex fc">
             {loanDetails.endTime < Date.now() / 1000 && !isPending && (
               <Button variant="contained" onClick={handleForecloseLoan}>
-                Foreclose Loan
+                Claim NFT
               </Button>
             )}
             {isPending && <Button variant="contained">Pending...</Button>}
