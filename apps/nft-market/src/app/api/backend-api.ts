@@ -200,6 +200,12 @@ export const backendApi = createApi({
       },
       invalidatesTags: (result, error, arg) => [{ type: "Asset", id: arg.id }],
     }),
+    validateNFT: builder.query<boolean, string | undefined>({
+      query: (id) => ({
+        url: `nft/validate-nft/${id}`,
+      }),
+      providesTags: ["Asset"],
+    }),
     // Collections
     getCollections: builder.query<Collection[], Partial<BackendCollectionQuery>>({
       query: (queryParams) => ({
@@ -267,7 +273,7 @@ export const backendApi = createApi({
       invalidatesTags: ["Listing", "Asset", "Terms"],
     }),
     deleteListing: builder.mutation<Listing, Partial<Listing> & Pick<Listing, "id">>({
-      query: ({ id, ...listing }) => {
+      query: ({ id }) => {
         return {
           url: `asset-listing/${id}`,
           method: "DELETE",
@@ -474,6 +480,7 @@ export const {
   useGetAssetsQuery,
   useGetCollectionsQuery,
   useDeleteAssetMutation,
+  useValidateNFTQuery,
   useGetListingsQuery,
   useGetListingQuery,
   useDeleteListingMutation,

@@ -1,5 +1,5 @@
 import { useWeb3Context } from "@fantohm/shared-web3";
-import { Box, CircularProgress, Container, Grid } from "@mui/material";
+import { Box, CircularProgress, Container, Grid, Paper, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
   useGetListingsQuery,
   useGetLoansQuery,
   useGetOffersQuery,
+  useValidateNFTQuery,
 } from "../../api/backend-api";
 import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
 import { AssetDetails } from "../../components/asset-details/asset-details";
@@ -70,6 +71,10 @@ export const AssetDetailsPage = (): JSX.Element => {
     { skip: !assets || !authSignature }
   );
 
+  const { data: isValidNFT, isLoading: isValidating } = useValidateNFTQuery(
+    asset?.id?.toString() || ""
+  );
+
   // load loans for this contract
   const { data: loans, isLoading: isLoansLoading } = useGetLoansQuery(
     {
@@ -110,7 +115,7 @@ export const AssetDetailsPage = (): JSX.Element => {
     OffersListFields.EXPIRATION,
   ];
 
-  if (isListingLoading || isAssetLoading || !asset || isLoansLoading) {
+  if (isListingLoading || isAssetLoading || !asset || isLoansLoading || isValidating) {
     return (
       <Box className="flex fr fj-c">
         <CircularProgress />
@@ -134,7 +139,19 @@ export const AssetDetailsPage = (): JSX.Element => {
             <h2>Connect your wallet to fund the loan or make an offer.</h2>
           </Box>
         )}
-      {asset &&
+      {!isValidNFT && (
+        <Container sx={{ mt: "3em" }}>
+          <Paper>
+            <Box className="flex fr fj-sa fw">
+              <Box className="flex fc">
+                <Typography>NFT has been transferred</Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Container>
+      )}
+      {isValidNFT &&
+        asset &&
         authSignature &&
         !isOwner &&
         activeListing &&
@@ -142,7 +159,8 @@ export const AssetDetailsPage = (): JSX.Element => {
         activeListing.asset?.status === AssetStatus.Listed && (
           <LenderListingTerms listing={activeListing} sx={{ mt: "3em" }} />
         )}
-      {asset &&
+      {isValidNFT &&
+        asset &&
         !isOwner &&
         activeLoan &&
         activeLoan.assetListing &&
@@ -150,16 +168,18 @@ export const AssetDetailsPage = (): JSX.Element => {
         authSignature && (
           <LenderLoanDetails asset={asset} loan={activeLoan} sx={{ mt: "3em" }} />
         )}
-      {isOwner && [AssetStatus.Ready, AssetStatus.New].includes(asset?.status) && (
-        <BorrowerCreateListing asset={asset} sx={{ mt: "3em" }} />
-      )}
-      {isOwner && asset?.status === AssetStatus.Listed && (
+      {isValidNFT &&
+        isOwner &&
+        [AssetStatus.Ready, AssetStatus.New].includes(asset?.status) && (
+          <BorrowerCreateListing asset={asset} sx={{ mt: "3em" }} />
+        )}
+      {isValidNFT && isOwner && asset?.status === AssetStatus.Listed && (
         <BorrowerListingDetails asset={asset} sx={{ mt: "3em" }} />
       )}
-      {isOwner && asset?.status === AssetStatus.Locked && activeLoan && (
+      {isValidNFT && isOwner && asset?.status === AssetStatus.Locked && activeLoan && (
         <BorrowerLoanDetails asset={asset} loan={activeLoan} sx={{ mt: "3em" }} />
       )}
-      {asset.id && (
+      {isValidNFT && asset.id && (
         <OffersList
           offers={offers}
           isLoading={isOffersLoading}
