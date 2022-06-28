@@ -71,7 +71,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
       return;
     }
     setIsPending(true);
-    const result = await dispatch(
+    await dispatch(
       forecloseLoan({
         loanId: +loan.contractLoanId,
         provider,

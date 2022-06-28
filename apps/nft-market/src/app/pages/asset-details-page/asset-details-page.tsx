@@ -118,7 +118,6 @@ export const AssetDetailsPage = (): JSX.Element => {
     );
   }
 
-
   return (
     <>
       <AssetDetails
