@@ -28,7 +28,11 @@ export const LendPage = (): JSX.Element => {
     }
     setAssets(
       listings
-        .filter((listing: Listing) => listing.asset.owner.address !== user.address)
+        .filter(
+          (listing: Listing) =>
+            listing.asset.owner.address !== user.address &&
+            new Date(listing.term.expirationAt).getTime() >= new Date().getTime()
+        )
         .sort((a, b) => {
           if (query.sort === ListingSort.Recently) {
             return (
