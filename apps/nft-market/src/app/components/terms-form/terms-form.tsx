@@ -523,7 +523,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       )}
       {isOwner && hasPermission && !pending && !props.listing && (
         <Button variant="contained" onClick={handleCreateListing}>
-          List as collateral
+          Get liquidity
         </Button>
       )}
       {isOwner && hasPermission && !pending && props.listing && (

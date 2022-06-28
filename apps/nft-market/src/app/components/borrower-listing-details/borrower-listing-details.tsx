@@ -78,7 +78,7 @@ export const BorrowerListingDetails = (
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>Principal</Typography>
+            <Typography className={style["label"]}>Loan amount</Typography>
             <Typography className={`${style["data"]}`}>
               {listing.term.amount.toFixed(4)}
             </Typography>

@@ -442,7 +442,7 @@ export const LoanConfirmation = ({
             currencyBalance &&
             currencyBalance.gte(listing.term.amount * currency?.decimals || 0) && (
               <Button variant="contained" onClick={handleAcceptTerms}>
-                Create Loan
+                Lend {currency?.symbol}
               </Button>
             )}
           {hasAllowance &&
