@@ -71,7 +71,9 @@ export const AssetDetailsPage = (): JSX.Element => {
     { skip: !assets || !authSignature }
   );
 
-  const { isLoading: isValidating } = useValidateNFTQuery(asset?.id?.toString() || "");
+  const { error: isValidNFTError, isLoading: isValidating } = useValidateNFTQuery(
+    asset?.id?.toString() || ""
+  );
 
   // load loans for this contract
   const { data: loans, isLoading: isLoansLoading } = useGetLoansQuery(
@@ -91,6 +93,13 @@ export const AssetDetailsPage = (): JSX.Element => {
   );
 
   // is the user the owner of the asset?
+  const isValidNFT = useMemo(() => {
+    return (
+      (isValidNFTError as any)?.data?.message !==
+      "This asset is already transferred to someone."
+    );
+  }, [isValidNFTError]);
+
   const isOwner = useMemo(() => {
     return address.toLowerCase() === asset?.owner?.address.toLowerCase();
   }, [asset, address]);
@@ -137,7 +146,7 @@ export const AssetDetailsPage = (): JSX.Element => {
             <h2>Connect your wallet to fund the loan or make an offer.</h2>
           </Box>
         )}
-      {asset.status === AssetStatus.Listed && !activeListing && (
+      {isValidNFT === false && (
         <Container sx={{ mt: "3em" }}>
           <Paper>
             <Box className="flex fr fj-sa fw">
@@ -148,7 +157,8 @@ export const AssetDetailsPage = (): JSX.Element => {
           </Paper>
         </Container>
       )}
-      {asset &&
+      {isValidNFT !== false &&
+        asset &&
         authSignature &&
         !isOwner &&
         activeListing &&
@@ -156,7 +166,8 @@ export const AssetDetailsPage = (): JSX.Element => {
         activeListing.asset?.status === AssetStatus.Listed && (
           <LenderListingTerms listing={activeListing} sx={{ mt: "3em" }} />
         )}
-      {asset &&
+      {isValidNFT !== false &&
+        asset &&
         !isOwner &&
         activeLoan &&
         activeLoan.assetListing &&
@@ -164,15 +175,20 @@ export const AssetDetailsPage = (): JSX.Element => {
         authSignature && (
           <LenderLoanDetails asset={asset} loan={activeLoan} sx={{ mt: "3em" }} />
         )}
-      {isOwner && [AssetStatus.Ready, AssetStatus.New].includes(asset?.status) && (
-        <BorrowerCreateListing asset={asset} sx={{ mt: "3em" }} />
-      )}
-      {isOwner && asset?.status === AssetStatus.Listed && (
+      {isValidNFT !== false &&
+        isOwner &&
+        [AssetStatus.Ready, AssetStatus.New].includes(asset?.status) && (
+          <BorrowerCreateListing asset={asset} sx={{ mt: "3em" }} />
+        )}
+      {isValidNFT !== false && isOwner && asset?.status === AssetStatus.Listed && (
         <BorrowerListingDetails asset={asset} sx={{ mt: "3em" }} />
       )}
-      {isOwner && asset?.status === AssetStatus.Locked && activeLoan && (
-        <BorrowerLoanDetails asset={asset} loan={activeLoan} sx={{ mt: "3em" }} />
-      )}
+      {isValidNFT !== false &&
+        isOwner &&
+        asset?.status === AssetStatus.Locked &&
+        activeLoan && (
+          <BorrowerLoanDetails asset={asset} loan={activeLoan} sx={{ mt: "3em" }} />
+        )}
       {asset.id && (
         <OffersList
           offers={offers}
