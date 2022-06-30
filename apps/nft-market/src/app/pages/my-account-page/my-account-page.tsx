@@ -85,16 +85,16 @@ export const MyAccountPage = (): JSX.Element => {
         <MyAccountDetails address={address} />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
-        <MyAccountLoans />
+        <MyAccountLoans address={address} />
       </TabPanel>
       <TabPanel value={activeTab} index={2}>
-        <MyAccountOffers />
+        <MyAccountOffers address={address} />
       </TabPanel>
       <TabPanel value={activeTab} index={3}>
-        <MyAccountAssets />
+        <MyAccountAssets address={address} />
       </TabPanel>
       <TabPanel value={activeTab} index={4}>
-        <MyAccountActivity />
+        <MyAccountActivity address={address} />
       </TabPanel>
     </Box>
   );
