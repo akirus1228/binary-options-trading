@@ -25,6 +25,7 @@ import {
   BackendNotificationQueryParams,
   Collection,
   BackendCollectionQuery,
+  User,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -465,6 +466,14 @@ export const backendApi = createApi({
       transformResponse: (response: Notification, meta, arg) => response,
       invalidatesTags: ["Notification"],
     }),
+    // User
+    getUser: builder.query<User, string | undefined>({
+      query: (walletAddress) => ({
+        url: `user/all`,
+        params: { walletAddress },
+      }),
+      providesTags: ["User"],
+    }),
     // Wallet
     getWallet: builder.query<PlatformWalletInfo, string | undefined>({
       query: (walletAddress) => ({
@@ -500,5 +509,6 @@ export const {
   useDeleteOfferMutation,
   useGetWalletQuery,
   useGetUserNotificationsQuery,
+  useGetUserQuery,
   useUpdateUserNotificationMutation,
 } = backendApi;

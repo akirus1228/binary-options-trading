@@ -1,5 +1,4 @@
 import { Box, Button, Icon, IconButton } from "@mui/material";
-import { User } from "../../../types/backend-types";
 import profileImagePlaceholder from "../../../../assets/images/profile-placeholder.svg";
 import style from "./account-profile.module.scss";
 import { addressEllipsis } from "@fantohm/shared-helpers";
@@ -12,12 +11,12 @@ import openseaIcon from "../../../../assets/icons/opensea-icon.svg";
 import raribleIcon from "../../../../assets/icons/rarible-icon.svg";
 
 export type AccountProfileProps = {
-  user: User;
+  address: string;
 };
 
-export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
+export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element => {
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(user.address).then(
+    navigator.clipboard.writeText(address).then(
       function () {
         //console.log("Async: Copying to clipboard was successful!");
       },
@@ -40,7 +39,7 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
           </Box>
           <Box className="flex fc" sx={{ ml: "2em" }}>
             <h1>
-              {addressEllipsis(user.address)}
+              {addressEllipsis(address)}
               <img src={bluechip} alt="bluechip" />
             </h1>
             <Button
@@ -48,17 +47,17 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
               variant="contained"
               onClick={copyToClipboard}
             >
-              {addressEllipsis(user.address)}{" "}
+              {addressEllipsis(address)}{" "}
               <Icon component={ContentCopyIcon} sx={{ ml: "1em" }} />
             </Button>
           </Box>
         </Box>
         <Box className={`flex fr ai-c ${style["right"]}`}>
-          <a href={`https://opensea.io/${user.address}`} target="_blank" rel="noreferrer">
+          <a href={`https://opensea.io/${address}`} target="_blank" rel="noreferrer">
             <img src={openseaIcon} alt="opensea icon" className={style["iconWrapper"]} />
           </a>
           <a
-            href={`https://rarible.com/user/${user.address}/owned`}
+            href={`https://rarible.com/user/${address}/owned`}
             target="_blank"
             rel="noreferrer"
           >
@@ -68,7 +67,7 @@ export const AccountProfile = ({ user }: AccountProfileProps): JSX.Element => {
             className="lowContrast slim"
             variant="contained"
             sx={{ ml: "7px" }}
-            href={`https://etherscan.io/address/${user.address}`}
+            href={`https://etherscan.io/address/${address}`}
             target="_blank"
           >
             <Icon component={OpenInNewIcon} /> View on Etherscan

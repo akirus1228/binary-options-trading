@@ -9,7 +9,7 @@ import MyAccountDetails from "./my-account-details/my-account-details";
 import MyAccountOffers from "./my-account-offers/my-account-offers";
 import MyAccountAssets from "./my-account-assets/my-account-assets";
 import MyAccountActivity from "./my-account-activity/my-account-activity";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export function shorten(str: string) {
   if (str.length < 10) return str;
@@ -46,10 +46,17 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const MyAccountPage = (): JSX.Element => {
+  const params = useParams();
   const { user } = useSelector((state: RootState) => state.backend);
   const [activeTab, setActiveTab] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const address = useMemo(() => {
+    return !!params["walletAddress"] && params["walletAddress"].length > 1
+      ? params["walletAddress"]
+      : user.address;
+  }, [user, params["walletAddress"]]);
 
   useMemo(() => {
     setActiveTab(+location.hash.substring(1));
@@ -63,7 +70,7 @@ export const MyAccountPage = (): JSX.Element => {
   return (
     <Box>
       <Container>
-        <AccountProfile user={user} />
+        <AccountProfile address={address} />
       </Container>
       <Box sx={{ borderBottom: 2, borderColor: "divider" }}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
@@ -75,7 +82,7 @@ export const MyAccountPage = (): JSX.Element => {
         </Tabs>
       </Box>
       <TabPanel value={activeTab} index={0}>
-        <MyAccountDetails />
+        <MyAccountDetails address={address} />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
         <MyAccountLoans />
