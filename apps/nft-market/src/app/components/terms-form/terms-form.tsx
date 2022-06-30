@@ -300,7 +300,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    console.log(event.target.value);
     const value = Math.floor(+event.target.value);
     setDuration(value);
   };
