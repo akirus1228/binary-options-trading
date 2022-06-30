@@ -45,6 +45,12 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+type TabContent = {
+  title: string;
+  component: JSX.Element;
+  isGlobal: boolean;
+};
+
 export const MyAccountPage = (): JSX.Element => {
   const params = useParams();
   const { user } = useSelector((state: RootState) => state.backend);
@@ -63,9 +69,21 @@ export const MyAccountPage = (): JSX.Element => {
   }, [location]);
 
   const handleTabChange = (event: SyntheticEvent, newValue: number) => {
-    navigate(`/my-account#${newValue.toString()}`);
+    navigate(`#${newValue.toString()}`);
     //setActiveTab(newValue);
   };
+
+  const tabs: TabContent[] = [
+    {
+      title: "Details",
+      component: <MyAccountDetails address={address} />,
+      isGlobal: true,
+    },
+    { title: "Loans", component: <MyAccountLoans />, isGlobal: false },
+    { title: "Offers", component: <MyAccountOffers />, isGlobal: false },
+    { title: "Assets", component: <MyAccountAssets address={address} />, isGlobal: true },
+    { title: "Activity", component: <MyAccountActivity />, isGlobal: false },
+  ];
 
   return (
     <Box>
@@ -74,28 +92,22 @@ export const MyAccountPage = (): JSX.Element => {
       </Container>
       <Box sx={{ borderBottom: 2, borderColor: "divider" }}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
-          <Tab label="Details" {...a11yProps(0)} />
-          <Tab label="Loans" {...a11yProps(1)} />
-          <Tab label="Offers" {...a11yProps(2)} />
-          <Tab label="Assets" {...a11yProps(3)} />
-          <Tab label="Activity" {...a11yProps(4)} />
+          {tabs
+            .filter(
+              (tab: TabContent) => tab.isGlobal || (!!user && !params["walletAddress"])
+            )
+            .map((tab: TabContent, tabIndex: number) => (
+              <Tab label={tab.title} {...a11yProps(tabIndex)} key={`tab-${tabIndex}`} />
+            ))}
         </Tabs>
       </Box>
-      <TabPanel value={activeTab} index={0}>
-        <MyAccountDetails address={address} />
-      </TabPanel>
-      <TabPanel value={activeTab} index={1}>
-        <MyAccountLoans address={address} />
-      </TabPanel>
-      <TabPanel value={activeTab} index={2}>
-        <MyAccountOffers address={address} />
-      </TabPanel>
-      <TabPanel value={activeTab} index={3}>
-        <MyAccountAssets address={address} />
-      </TabPanel>
-      <TabPanel value={activeTab} index={4}>
-        <MyAccountActivity address={address} />
-      </TabPanel>
+      {tabs
+        .filter((tab: TabContent) => tab.isGlobal || (!!user && !params["walletAddress"]))
+        .map((tab: TabContent, tabIndex: number) => (
+          <TabPanel value={activeTab} index={tabIndex} key={`tabPanel-${tabIndex}`}>
+            {tab.component}
+          </TabPanel>
+        ))}
     </Box>
   );
 };

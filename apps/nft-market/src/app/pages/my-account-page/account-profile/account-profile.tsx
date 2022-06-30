@@ -1,7 +1,7 @@
 import { Box, Button, Icon, IconButton } from "@mui/material";
 import profileImagePlaceholder from "../../../../assets/images/profile-placeholder.svg";
 import style from "./account-profile.module.scss";
-import { addressEllipsis } from "@fantohm/shared-helpers";
+import { addressEllipsis, copyToClipboard } from "@fantohm/shared-helpers";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import IosShareIcon from "@mui/icons-material/IosShare";
@@ -9,21 +9,36 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import bluechip from "../../../../assets/icons/blue-chip.svg";
 import openseaIcon from "../../../../assets/icons/opensea-icon.svg";
 import raribleIcon from "../../../../assets/icons/rarible-icon.svg";
+import { AppDispatch } from "../../../store";
+import { useDispatch } from "react-redux";
+import { addAlert, GrowlNotification } from "../../../store/reducers/app-slice";
+import { isDev } from "@fantohm/shared-web3";
 
 export type AccountProfileProps = {
   address: string;
 };
 
 export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element => {
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(address).then(
-      function () {
-        //console.log("Async: Copying to clipboard was successful!");
-      },
-      function (err) {
-        console.error("Async: Could not copy text: ", err);
-      }
-    );
+  const dispatch: AppDispatch = useDispatch();
+
+  const handleCopyAddress = () => {
+    copyToClipboard(address);
+    const notification: Partial<GrowlNotification> = {
+      message: "Address copied to clipboard",
+      duration: 5000,
+    };
+    dispatch(addAlert(notification));
+  };
+
+  const handleShareLink = () => {
+    const baseUrl = isDev() ? "https://mvp.liqdnft.com" : "https://liqdnft.com";
+    const copyString = `${baseUrl}/account/${address}`;
+    copyToClipboard(copyString);
+    const notification: Partial<GrowlNotification> = {
+      message: "Share link copied to clipboard",
+      duration: 5000,
+    };
+    dispatch(addAlert(notification));
   };
 
   return (
@@ -45,7 +60,7 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
             <Button
               className="lowContrast slim"
               variant="contained"
-              onClick={copyToClipboard}
+              onClick={handleCopyAddress}
             >
               {addressEllipsis(address)}{" "}
               <Icon component={ContentCopyIcon} sx={{ ml: "1em" }} />
@@ -72,7 +87,12 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
           >
             <Icon component={OpenInNewIcon} /> View on Etherscan
           </Button>
-          <Button className="slim lowContrast" variant="contained" sx={{ ml: "7px" }}>
+          <Button
+            className="slim lowContrast"
+            variant="contained"
+            sx={{ ml: "7px" }}
+            onClick={handleShareLink}
+          >
             <Icon component={IosShareIcon} /> Share
           </Button>
           <IconButton className="lowContrast" sx={{ ml: "7px" }}>

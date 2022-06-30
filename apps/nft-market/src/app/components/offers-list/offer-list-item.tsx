@@ -186,7 +186,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   const getFieldData = (field: OffersListFields): JSX.Element | string => {
     switch (field) {
       case OffersListFields.LENDER_PROFILE:
-        return <SimpleProfile user={offer.lender} />;
+        return <SimpleProfile address={offer.lender.address} />;
       case OffersListFields.LENDER_ADDRESS:
         return (
           <a href={`https://etherscan.io/address/${offer.lender.address}`}>
@@ -225,7 +225,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           </a>
         );
       case OffersListFields.OWNER_PROFILE:
-        return <SimpleProfile user={offer.lender} />;
+        return <SimpleProfile address={offer.lender.address} />;
       case OffersListFields.REPAYMENT_TOTAL:
         return (
           <Box>
