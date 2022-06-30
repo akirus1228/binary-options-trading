@@ -1,4 +1,4 @@
-import { addresses, getTokenPrice, NetworkIds } from "@fantohm/shared-web3";
+import { addresses, getTokenPrice, NetworkIds, networks } from "@fantohm/shared-web3";
 import {
   DaiToken,
   EthToken,
@@ -50,7 +50,7 @@ export const currencyInfo: CurrencyInfo = {
     icon: USDBToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["USDB_ADDRESS"],
-      [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["USDB_ADDRESS"],
+      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDB_ADDRESS"],
     },
     coingeckoStub: "usd-balance",
   },
@@ -60,7 +60,7 @@ export const currencyInfo: CurrencyInfo = {
     icon: DaiToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["DAI_ADDRESS"],
-      [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["DAI_ADDRESS"],
+      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["DAI_ADDRESS"],
     },
     coingeckoStub: "dai",
   },
@@ -70,7 +70,7 @@ export const currencyInfo: CurrencyInfo = {
     icon: EthToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["WETH_ADDRESS"],
-      [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["WETH_ADDRESS"],
+      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["WETH_ADDRESS"],
     },
     coingeckoStub: "weth",
   },
@@ -80,7 +80,7 @@ export const currencyInfo: CurrencyInfo = {
     icon: WbtcToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["WBTC_ADDRESS"],
-      [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["WBTC_ADDRESS"],
+      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["WBTC_ADDRESS"],
     },
     coingeckoStub: "wrapped-bitcoin",
     decimals: 8,
@@ -91,7 +91,7 @@ export const currencyInfo: CurrencyInfo = {
     icon: UsdcToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["USDC_ADDRESS"],
-      [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["USDC_ADDRESS"],
+      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDC_ADDRESS"],
     },
     coingeckoStub: "usd-coin",
     decimals: 6,
@@ -102,7 +102,7 @@ export const currencyInfo: CurrencyInfo = {
     icon: UsdtToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["USDT_ADDRESS"],
-      [NetworkIds.Rinkeby]: addresses[NetworkIds.Rinkeby]["USDT_ADDRESS"],
+      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDT_ADDRESS"],
     },
     coingeckoStub: "tether",
   },
