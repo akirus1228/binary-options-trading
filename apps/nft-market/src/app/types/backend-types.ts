@@ -32,6 +32,7 @@ export enum AssetStatus {
   Ready = "READY", // on backend, unlisted, unlocked
   Listed = "LISTED",
   Locked = "LOCKED",
+  TRANSFERRED = "TRANSFERRED",
 }
 
 export enum CollectibleMediaType {
