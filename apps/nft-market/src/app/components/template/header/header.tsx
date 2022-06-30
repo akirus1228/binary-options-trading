@@ -1,5 +1,4 @@
 import { MouseEvent, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -14,11 +13,11 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { enabledNetworkIds, useWeb3Context } from "@fantohm/shared-web3";
-import MenuLink from "./menu-link";
 import styles from "./header.module.scss";
 import UserMenu from "./user-menu";
 import NotificationMenu from "./notification-menu";
 import logo from "../../../../assets/images/logo.svg";
+import { HashLink as Link } from "react-router-hash-link";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -29,6 +28,7 @@ type Page = {
   title: string;
   params?: PageParams;
   href?: string;
+  hash?: string;
 };
 
 const pages: Page[] = [
@@ -36,7 +36,7 @@ const pages: Page[] = [
   { title: "Borrow", href: "/borrow" },
   { title: "Learn", href: "/learn" },
   { title: "Account", href: "/my-account" },
-  { title: "About", href: "/about" },
+  { title: "About", href: "/", hash: "#about-section" },
 ];
 
 export const Header = (): JSX.Element => {
@@ -111,9 +111,9 @@ export const Header = (): JSX.Element => {
               }}
             >
               {pages.map((page: Page) => (
-                <MenuLink
+                <Link
                   // href={page.href ? page.href : '#'}
-                  href={page?.params?.comingSoon ? "#" : page.href}
+                  to={{ pathname: page.href || "#", hash: page.hash }}
                   onClick={handleCloseNavMenu}
                   key={page.title}
                 >
@@ -123,7 +123,7 @@ export const Header = (): JSX.Element => {
                   >
                     <Button style={{ width: "100%" }}>{page.title}</Button>
                   </Typography>
-                </MenuLink>
+                </Link>
               ))}
             </Menu>
           </Box>
@@ -153,7 +153,7 @@ export const Header = (): JSX.Element => {
                     textAlign="center"
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
-                    <Link to={page.href || "#"}>
+                    <Link to={{ pathname: page.href || "#", hash: page.hash }}>
                       <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
                     </Link>
                   </Typography>

@@ -35,7 +35,7 @@ export const Borrowers = (): JSX.Element => {
           alignItems: { xs: "end", md: "center" },
         }}
       >
-        <Box>
+        <Box id="about-section">
           <Typography variant="subtitle2" style={{ color: "#384BFF" }}>
             For borrowers
           </Typography>

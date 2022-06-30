@@ -1,10 +1,10 @@
 import { CustomInnerSwitch, setTheme } from "@fantohm/shared-ui-themes";
 import {
-  addresses,
   formatCurrency,
   isDev,
   loadErc20Balance,
   NetworkIds,
+  networks,
   selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
@@ -66,7 +66,10 @@ export const UserMenu = (): JSX.Element => {
   );
 
   const usdbBalance = useSelector((state: RootState) =>
-    selectErc20BalanceByAddress(state, addresses[desiredNetworkId]["USDB_ADDRESS"])
+    selectErc20BalanceByAddress(
+      state,
+      networks[desiredNetworkId].addresses["USDB_ADDRESS"]
+    )
   );
 
   const accountSubMenu: AccountSubMenu[] = [
@@ -85,7 +88,7 @@ export const UserMenu = (): JSX.Element => {
       loadErc20Balance({
         networkId: desiredNetworkId,
         address,
-        currencyAddress: addresses[desiredNetworkId]["USDB_ADDRESS"],
+        currencyAddress: networks[desiredNetworkId].addresses["USDB_ADDRESS"],
       })
     );
   }, [address]);

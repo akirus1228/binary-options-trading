@@ -71,7 +71,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // primary form pending state
   const [pending, setPending] = useState(false);
   // primary term variables
-  const [duration, setDuration] = useState(props?.listing?.term.duration || 1);
+  const [duration, setDuration] = useState(props?.listing?.term.duration || "");
   const [durationType, setDurationType] = useState("days");
   const [apr, setApr] = useState(props?.listing?.term.apr || 25);
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
@@ -220,7 +220,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const term: Terms = {
       amount,
       apr,
-      duration,
+      duration: +duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
       currencyAddress: currency?.currentAddress,
@@ -263,7 +263,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       ...props?.listing?.term,
       amount,
       apr,
-      duration: termTypes[durationType] * duration,
+      duration: termTypes[durationType] * +duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
       currencyAddress: currency?.currentAddress,
@@ -301,7 +301,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
     const value = Math.floor(+event.target.value);
-    setDuration(value === 0 ? 1 : value);
+    setDuration(value);
   };
 
   const handleDurationTypeChange = (event: SelectChangeEvent) => {
@@ -313,18 +313,18 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   const handleAprChange = (event: BaseSyntheticEvent) => {
-    const apr = Math.floor(+event.target.value);
-    setApr(apr === 0 ? 1 : apr);
+    const apr = +event.target.value;
+    setApr(apr);
   };
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
-    const amount = Math.floor(+event.target.value);
-    setAmount(amount === 0 ? 1 : amount);
+    const amount = +event.target.value;
+    setAmount(amount);
   };
 
   // calculate repayment totals
   useEffect(() => {
-    const wholePercent = ((termTypes[durationType] * duration) / 365) * apr;
+    const wholePercent = ((termTypes[durationType] * +duration) / 365) * apr;
     const realPercent = wholePercent / 100;
     const _repaymentAmount = amount * realPercent;
     setRepaymentAmount(_repaymentAmount);
@@ -339,7 +339,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const preSigTerm: Terms = {
       ...listingTerm,
       amount: amount,
-      duration: termTypes[durationType] * duration,
+      duration: termTypes[durationType] * +duration,
       apr: apr,
       expirationAt: expirationAt.toJSON(),
       signature: "",
