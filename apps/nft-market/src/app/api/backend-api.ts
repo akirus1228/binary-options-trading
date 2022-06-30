@@ -34,7 +34,11 @@ import {
   listingAryToListings,
   listingToCreateListingRequest,
 } from "../helpers/data-translations";
-import { updateAsset, updateAssets } from "../store/reducers/asset-slice";
+import {
+  updateAsset,
+  updateAssets,
+  updateAssetsFromListings,
+} from "../store/reducers/asset-slice";
 import { updateListing, updateListings } from "../store/reducers/listing-slice";
 
 export const WEB3_SIGN_MESSAGE =
@@ -243,7 +247,7 @@ export const backendApi = createApi({
         const { data }: { data: Listing[] } = await queryFulfilled;
         const assets = data.map((listing: Listing) => listing.asset);
         dispatch(updateListings(listingAryToListings(data)));
-        dispatch(updateAssets(assetAryToAssets(assets))); // could this potentially update with old listing data?
+        dispatch(updateAssetsFromListings(assetAryToAssets(assets))); // could this potentially update with old listing data?
       },
       providesTags: (result, error, queryParams) =>
         result

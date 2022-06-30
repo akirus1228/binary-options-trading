@@ -93,7 +93,6 @@ export const BorrowerAssetFilter = ({
         <MenuItem value="Unlisted">Unlisted</MenuItem>
         <MenuItem value="In Escrow">In Escrow</MenuItem>
       </Select>
-      <CollectionsFilter collection={collection} setCollection={setCollection} />
       <Box
         className="flex fr ai-c"
         sx={{
@@ -111,6 +110,7 @@ export const BorrowerAssetFilter = ({
           Reset filter
         </Typography>
       </Box>
+      <CollectionsFilter collection={collection} setCollection={setCollection} />
     </Box>
   );
 };

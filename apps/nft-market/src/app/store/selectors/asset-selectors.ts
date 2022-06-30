@@ -63,6 +63,7 @@ export const selectAssetsByQuery = createSelector(
           openseaIds = [];
         }
         const entries = Object.entries(query).map(([key, matchValue]) => {
+          if (matchValue === undefined) return true;
           // does the value of this query parameter match the value of the asset for this field?
           if (key === "openseaIds")
             // look in the list of opensea id's for a match

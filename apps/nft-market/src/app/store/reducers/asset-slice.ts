@@ -5,7 +5,7 @@ import {
   isAssetValid,
 } from "@fantohm/shared/fetch-nft";
 import { isDev, loadState } from "@fantohm/shared-web3";
-import { Asset, BackendLoadingStatus } from "../../types/backend-types";
+import { Asset, AssetStatus, BackendLoadingStatus } from "../../types/backend-types";
 import { OpenseaAsset } from "../../api/opensea";
 import { openseaAssetToAsset } from "../../helpers/data-translations";
 
@@ -95,9 +95,27 @@ const assetsSlice = createSlice({
       });
       state.assets = { ...state.assets, ...mergedAssets };
     },
+    updateAssetsFromListings: (state, action: PayloadAction<Assets>) => {
+      const mergedAssets: Assets = state.assets;
+      Object.entries(action.payload).forEach(([assetId, asset]) => {
+        if (mergedAssets[assetId] && asset.status === AssetStatus.TRANSFERRED) {
+          mergedAssets[assetId] = {
+            ...mergedAssets[assetId],
+            id: asset.id,
+          };
+        } else {
+          mergedAssets[assetId] = {
+            ...mergedAssets[assetId],
+            ...asset,
+          };
+        }
+      });
+      state.assets = { ...mergedAssets };
+    },
   },
 });
 
 export const assetsReducer = assetsSlice.reducer;
 // actions are automagically generated and exported by the builder/thunk
-export const { updateAsset, updateAssets } = assetsSlice.actions;
+export const { updateAsset, updateAssets, updateAssetsFromListings } =
+  assetsSlice.actions;
