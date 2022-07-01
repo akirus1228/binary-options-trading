@@ -200,7 +200,7 @@ export const AssetDetailsPage = (): JSX.Element => {
       <Container maxWidth="xl" sx={{ mt: "5em" }}>
         <Grid container columnSpacing={3}>
           <Grid item xs={12} md={5}>
-            <OwnerInfo owner={asset.owner} />
+            <OwnerInfo address={asset.owner.address} />
           </Grid>
           <Grid item xs={12} md={7}>
             <PreviousLoans asset={asset} />

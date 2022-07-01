@@ -19,3 +19,14 @@ export const objectToQueryParams = (o: any) =>
   Object.entries(o)
     .map((p: any) => `${encodeURIComponent(p[0])}=${encodeURIComponent(p[1])}`)
     .join("&");
+
+export const copyToClipboard = (content: string) => {
+  navigator.clipboard.writeText(content).then(
+    function () {
+      //console.log("Async: Copying to clipboard was successful!");
+    },
+    function (err) {
+      console.error("Async: Could not copy text: ", err);
+    }
+  );
+};

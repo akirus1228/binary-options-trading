@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { User } from "../../types/backend-types";
 import SimpleProfile from "../simple-profile/simple-profile";
 import style from "./owner-info.module.scss";
 import ArrowRightUp from "../../../assets/icons/arrow-right-up.svg";
@@ -22,7 +21,7 @@ import { useMemo } from "react";
 import ColorLabel from "./color-label";
 
 export interface OwnerInfoProps {
-  owner: User | undefined;
+  address: string;
   sx?: SxProps<Theme>;
 }
 
@@ -48,10 +47,10 @@ const OwnerInfoTooltip = (title: string) => {
   );
 };
 
-export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
+export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
   const { data: ownerInfo, isLoading: isOwnerInfoLoading } = useGetWalletQuery(
-    owner?.address || "",
-    { skip: !owner || !owner.address }
+    address || "",
+    { skip: !address }
   );
 
   const defaultRate = useMemo(() => {
@@ -68,7 +67,7 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
     return (ownerInfo.loansGiven / totalLoans) * 100;
   }, [ownerInfo?.loansBorrowed, ownerInfo?.loansGiven]);
 
-  if (!owner || isOwnerInfoLoading) {
+  if (isOwnerInfoLoading) {
     return (
       <Box className="flex fr fj-c">
         <CircularProgress />
@@ -80,14 +79,14 @@ export const OwnerInfo = ({ owner, sx }: OwnerInfoProps): JSX.Element => {
       <h2>Owner information</h2>
       <Paper className="flex fr fw ai-c" sx={{ minHeight: "180px" }}>
         <Box className={`flex fc fw ai-c ${style["view_eth_button"]}`} sx={{ mr: "2em" }}>
-          <SimpleProfile user={owner} />
+          <SimpleProfile address={address} />
           <Button
             className="slim lowContrast"
             variant="contained"
             sx={{ fontSize: "10px", mt: "1em" }}
-            href={`https://${isDev() ? "rinkeby" : "www"}.etherscan.io/address/${
-              owner.address
-            }`}
+            href={`https://${
+              isDev() ? "rinkeby" : "www"
+            }.etherscan.io/address/${address}`}
             target="_blank"
           >
             View on Etherscan
