@@ -181,6 +181,7 @@ export enum NotificationContext {
   Liquidation = "LIQUIDATION",
   NewOffer = "NEW_OFFER",
   OfferAccepted = "OFFER_ACCEPTED",
+  ListingCancelled = "LISTING_CANCELLED",
 }
 
 export enum Importance {

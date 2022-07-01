@@ -286,6 +286,52 @@ const OfferAcceptedBorrower = ({
   );
 };
 
+const ListingCancelledLender = ({
+  notification,
+  asset,
+  short,
+  terms,
+}: MessageProp): JSX.Element => {
+  const { repaymentAmount } = useTermDetails(terms);
+  const shortMsg = <span>Your listing on {getBlueText(asset.name)} is cancelled</span>;
+  const longMsg = (
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      Your listing on {getBlueText(asset.name)} for{" "}
+      {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
+      repayment of {formatCurrency(repaymentAmount || 0, 2)} is cancelled.
+    </span>
+  );
+  return (
+    <Box className="flex fc">
+      {shortMsg}
+      {!short && longMsg}
+    </Box>
+  );
+};
+
+const ListingCancelledBorrower = ({
+  notification,
+  asset,
+  short,
+  terms,
+}: MessageProp): JSX.Element => {
+  const { repaymentAmount } = useTermDetails(terms);
+  const shortMsg = <span>The listing on {getBlueText(asset.name)} is cancelled</span>;
+  const longMsg = (
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      The listing on {getBlueText(asset.name)} for {formatCurrency(terms?.amount || 0, 2)}{" "}
+      over {terms?.duration} days, with a repayment of{" "}
+      {formatCurrency(repaymentAmount || 0, 2)} is cancelled.
+    </span>
+  );
+  return (
+    <Box className="flex fc">
+      {shortMsg}
+      {!short && longMsg}
+    </Box>
+  );
+};
+
 export const NotificationMessage = ({
   notification,
   short,
@@ -317,6 +363,7 @@ export const NotificationMessage = ({
     skip: !offerId,
   });
 
+  console.log(notification, listing);
   // set the ID for the correct object to trigger get query
   useEffect(() => {
     switch (notification.context) {
@@ -326,6 +373,7 @@ export const NotificationMessage = ({
         setLoanId(notification.contextId);
         setContextType("loan");
         break;
+      case NotificationContext.ListingCancelled:
       case NotificationContext.NewOffer:
         setAssetListingId(notification.contextId);
         setContextType("listing");
@@ -405,6 +453,12 @@ export const NotificationMessage = ({
       case NotificationContext.NewOffer:
         MsgType =
           notification.userType === UserType.Lender ? NewOfferLender : NewOfferBorrower;
+        break;
+      case NotificationContext.ListingCancelled:
+        MsgType =
+          notification.userType === UserType.Lender
+            ? ListingCancelledLender
+            : ListingCancelledBorrower;
         break;
       case NotificationContext.OfferAccepted:
         MsgType =
