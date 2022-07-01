@@ -28,7 +28,7 @@ export interface LenderAssetFilterProps {
   setQuery: Dispatch<SetStateAction<ListingQueryParam>>;
 }
 
-const initialPriceRange = [0, 25];
+const initialPriceRange = [0, 100];
 const initialAprRange = [0, 400];
 const initialDurationRange = [0, 365];
 
