@@ -384,6 +384,9 @@ export const NotificationMessage = ({
       lender,
     };
     let MsgType;
+    console.log(notification.id);
+    console.log(notification.context);
+    console.log(notification.userType);
     switch (notification.context) {
       case NotificationContext.NewLoan:
         MsgType =
