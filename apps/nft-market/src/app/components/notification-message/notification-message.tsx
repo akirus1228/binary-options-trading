@@ -359,12 +359,12 @@ export const NotificationMessage = ({
           : avatarPlaceholder;
         break;
       case "offer":
-        setAsset(offer?.assetListing.asset);
+        setAsset(offer?.assetListing?.asset);
         setTerms(offer?.term);
         setLender(offer?.lender);
-        setBorrower(offer?.assetListing.asset.owner);
-        return offer && offer.assetListing.asset.imageUrl
-          ? offer.assetListing.asset.imageUrl
+        setBorrower(offer?.assetListing?.asset.owner);
+        return offer && offer.assetListing?.asset.imageUrl
+          ? offer.assetListing?.asset.imageUrl
           : avatarPlaceholder;
         break;
       default:

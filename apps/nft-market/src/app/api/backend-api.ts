@@ -260,7 +260,9 @@ export const backendApi = createApi({
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         const { data }: { data: Listing } = await queryFulfilled;
-        dispatch(updateListing(data));
+        if (data && data.id) {
+          dispatch(updateListing(data));
+        }
       },
       providesTags: (result, error, queryParams) => [
         { type: "Listing" as const, id: result?.id || "" },
