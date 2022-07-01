@@ -15,7 +15,6 @@ export const signTerms = async (
   tokenId: string,
   term: Terms,
   currency: Erc20Currency,
-  message: string,
   dispatch: any
 ): Promise<string> => {
   const payload = ethers.utils.defaultAbiCoder.encode(
@@ -44,15 +43,11 @@ export const signTerms = async (
   );
   try {
     const payloadHash = ethers.utils.keccak256(payload);
-    if (message) {
-      const signature = await provider.getSigner().signMessage(message);
-      return signature;
-    } else {
-      const signature = await provider
-        .getSigner()
-        .signMessage(ethers.utils.arrayify(payloadHash));
-      return signature;
-    }
+
+    const signature = await provider
+      .getSigner()
+      .signMessage(ethers.utils.arrayify(payloadHash));
+    return signature;
   } catch (e: any) {
     if (e.error === undefined) {
       let message;

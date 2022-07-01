@@ -62,11 +62,11 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   // nft permission status updates from state
   const { requestPermStatus } = useSelector((state: RootState) => state.wallet);
 
-  const asset = useMemo(() => offer.assetListing.asset, [offer]);
+  const asset = useMemo(() => offer?.assetListing?.asset, [offer]);
 
   // select perm status for this asset from state
   const hasPermission = useSelector((state: RootState) =>
-    selectNftPermFromAsset(state, offer.assetListing.asset)
+    selectNftPermFromAsset(state, offer?.assetListing?.asset)
   );
 
   // is the user the owner of the asset?

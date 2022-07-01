@@ -203,7 +203,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const isOwner = useMemo(() => {
     return address.toLowerCase() === props.asset?.owner?.address.toLowerCase();
   }, [props.asset, address]);
-  let message = "";
+
   const handleCreateListing = async () => {
     if (!provider || !chainId) return;
     // send listing data to backend
@@ -215,8 +215,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset = { ...props.asset, status: AssetStatus.Listed };
     }
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
-    message =
-      "Please sign this transaction to post your NFT as collateral. This won't incur a gas fee.";
+    // const message =
+    //   "Please sign this transaction to post your NFT as collateral. This won't incur a gas fee.";
     const term: Terms = {
       amount,
       apr,
@@ -233,7 +233,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.tokenId,
       term,
       currency,
-      message,
       dispatch
     );
     term.signature = termSignature;
@@ -276,7 +275,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       asset.tokenId,
       term,
       currency,
-      message,
       dispatch
     );
     term.signature = termSignature;
@@ -354,7 +352,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       props.asset.tokenId,
       preSigTerm,
       currency,
-      message,
       dispatch
     );
     if (!signature) return;

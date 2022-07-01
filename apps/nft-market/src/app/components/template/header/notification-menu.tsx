@@ -33,7 +33,7 @@ export const NotificationMenu = (): JSX.Element => {
     setAnchorEl(null);
   };
   // user data
-  const { user } = useSelector((state: RootState) => state.backend);
+  const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const { data: unreadNotifications, isLoading: isUnreadNotificationsLoading } =
     useGetUserNotificationsQuery({
       userAddress: user.address,
@@ -47,7 +47,7 @@ export const NotificationMenu = (): JSX.Element => {
       skip: 0,
       take: 4,
     },
-    { skip: !user || !user.address }
+    { skip: !user || !user.address || !authSignature }
   );
 
   const handleRecordClick = useCallback(() => {
