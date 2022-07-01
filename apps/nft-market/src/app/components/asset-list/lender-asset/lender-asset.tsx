@@ -28,7 +28,8 @@ export function LenderAsset(props: LenderAssetProps) {
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
   );
-  const { repaymentAmount } = useTermDetails(listing.term);
+
+  const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
     if (!asset) return;
     switch (asset.status) {
@@ -45,7 +46,7 @@ export function LenderAsset(props: LenderAssetProps) {
   }, [asset]);
 
   useEffect(() => {
-    dispatch(loadCurrencyFromAddress(listing.term.currencyAddress));
+    dispatch(loadCurrencyFromAddress(listing?.term?.currencyAddress));
   }, [listing]);
 
   if (asset === null || !asset || !listing) {
