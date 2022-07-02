@@ -161,7 +161,7 @@ export const UserMenu = (): JSX.Element => {
     setDialogOpen(false);
   };
 
-  const { repaymentTotal } = useTermDetails(activeListing?.term);
+  const { amount } = useTermDetails(activeListing?.term);
 
   return connected ? (
     <>
@@ -322,7 +322,7 @@ export const UserMenu = (): JSX.Element => {
                           marginBottom: "1px",
                         }}
                       >
-                        {repaymentTotal.toFixed(2)} {(listings && currency?.symbol) || ""}
+                        {amount.toFixed(2)} {(listings && currency?.symbol) || ""}
                       </h4>
                     </div>
                     <ManageFund
