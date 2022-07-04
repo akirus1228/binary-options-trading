@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { isDev } from "@fantohm/shared-web3";
 import { OpenseaAssetQueryParam } from "../store/reducers/interfaces";
 import { updateAssetsFromOpensea } from "../store/reducers/asset-slice";
+import { FetchArgs } from "@reduxjs/toolkit/dist/query";
 
 export type Nullable<T> = T | null;
 
@@ -169,13 +170,19 @@ const openseaConfig = (): OpenseaConfig => {
 };
 
 const staggeredBaseQuery = retry(
-  fetchBaseQuery({
-    baseUrl: openseaConfig().apiEndpoint,
-    prepareHeaders: (headers) => {
-      headers.set("X-API-KEY", openseaConfig().apiKey);
-      return headers;
-    },
-  }),
+  async (args: string | FetchArgs, api, extraOptions) => {
+    const result = await fetchBaseQuery({
+      baseUrl: openseaConfig().apiEndpoint,
+      prepareHeaders: (headers) => {
+        headers.set("X-API-KEY", openseaConfig().apiKey);
+        return headers;
+      },
+    })(args, api, extraOptions);
+    if (result.error) {
+      alert("Opensea is retrying");
+    }
+    return result;
+  },
   {
     maxRetries: 5,
   }
