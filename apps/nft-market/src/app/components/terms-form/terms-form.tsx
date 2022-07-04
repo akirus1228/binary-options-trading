@@ -39,6 +39,7 @@ import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency"
 import { desiredNetworkId } from "../../constants/network";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromId } from "../../store/reducers/currency-slice";
+import ConfirmDialog from "../confirm-modal/confirm-dialog";
 
 export interface TermsFormProps {
   asset: Asset;
@@ -79,6 +80,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [selectedCurrency, setSelectedCurrency] = useState(
     props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "USDB"
   );
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   // currency info
   const currency = useSelector((state: RootState) =>
@@ -538,7 +540,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             (amount * (1 + platformFees[currency?.currentAddress])).toString()
           )
         ) && (
-          <Button variant="contained" onClick={handleMakeOffer}>
+          <Button variant="contained" onClick={() => setConfirmOpen(true)}>
             Make Offer
           </Button>
         )}
@@ -561,6 +563,18 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           Pending...
         </Button>
       )}
+      <ConfirmDialog
+        title="Confirm Accept Offer"
+        open={confirmOpen}
+        platformfee={platformFees[currency?.currentAddress]}
+        currencyConfirm={currency?.symbol}
+        interest={
+          amount + amount * ((((termTypes[durationType] * +duration) / 365) * apr) / 100)
+        }
+        duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
+        setOpen={setConfirmOpen}
+        onConfirm={handleMakeOffer}
+      ></ConfirmDialog>
     </Box>
   );
 };
