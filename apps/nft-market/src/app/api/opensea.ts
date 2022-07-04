@@ -179,7 +179,7 @@ const staggeredBaseQuery = retry(
       },
     })(args, api, extraOptions);
     if (result.error) {
-      alert("Opensea is retrying");
+      alert("Fetching metadata, please wait...");
     }
     return result;
   },
