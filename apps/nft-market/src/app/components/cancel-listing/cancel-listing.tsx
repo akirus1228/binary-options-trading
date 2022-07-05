@@ -112,12 +112,11 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
           <CancelOutlinedIcon />
         </IconButton>
       </Box>
-      <Box
-        className={`flex fc ${style["body"]}`}
-        sx={{ borderTop: "1px solid #aaaaaa", paddingTop: "1em" }}
-      >
+      <Box className={`flex fc ${style["body"]}`} sx={{ borderTop: "1px solid #aaaaaa" }}>
         <Box className="flex fc" sx={{ padding: "1em" }}>
-          <Typography>Do you want to cancel listing?</Typography>
+          <Box className="flex fc" sx={{ padding: "1em" }}>
+            <Typography>Do you want to cancel listing?</Typography>
+          </Box>
           {isOwner && hasPermission && !pending && props.listing && (
             <Button variant="contained" onClick={handleCancelListing}>
               Cancel Listing (no cost)
