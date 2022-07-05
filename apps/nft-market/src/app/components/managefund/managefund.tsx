@@ -174,8 +174,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                       borderRadius: "1.2em",
                       height: "60px",
                     }}
-                    labelId="demo-multiple-name G-label"
-                    id="demo-multiple-name"
                   >
                     {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
                       <MenuItem
