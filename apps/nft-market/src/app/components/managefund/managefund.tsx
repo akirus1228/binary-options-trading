@@ -22,7 +22,8 @@ import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency"
 import {
   requestErc20Allowance,
   useWeb3Context,
-  selectErc20BalanceByAddress,
+  selectErc20AllowanceByAddress,
+  checkErc20Allowance,
 } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
@@ -49,17 +50,9 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   );
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     setSelectedCurrency(event.target.value);
-    setAmount("0");
   };
 
-  const [amount, setAmount] = useState(
-    props?.listing
-      ? (
-          props.listing.term.amount *
-          (1 + ((props.listing.term.duration / 365) * props.listing.term.apr) / 100)
-        ).toFixed(currency.decimals)
-      : "0"
-  );
+  const [amount, setAmount] = useState("0");
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
     let value = event.target.value.replace(/-/g, "") || "0";
@@ -121,16 +114,38 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     }
   }, [chainId, address, amount, provider, currency]);
 
-  const currencyBalance = useSelector((state: RootState) => {
+  const currencyAllowance = useSelector((state: RootState) => {
     if (!currency) return null;
-    return selectErc20BalanceByAddress(state, currency?.currentAddress);
+    return selectErc20AllowanceByAddress(state, {
+      walletAddress: address,
+      erc20TokenAddress: currency?.currentAddress,
+    });
   });
 
+  console.log(currency, currencyAllowance);
+
   const setMax = () => {
-    if (currencyBalance) {
-      setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
-    }
+    setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
   };
+
+  useEffect(() => {
+    if (provider && currency) {
+      dispatch(
+        checkErc20Allowance({
+          networkId: desiredNetworkId,
+          provider,
+          walletAddress: address,
+          assetAddress: currency.currentAddress,
+        })
+      );
+    }
+  }, [provider, currency]);
+
+  useEffect(() => {
+    if (currencyAllowance && currency) {
+      setAmount(ethers.utils.formatUnits(currencyAllowance, currency.decimals));
+    }
+  }, [currencyAllowance, currency]);
 
   return (
     <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
@@ -205,7 +220,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
               </Box>
               <Box className="flex fc">
                 <Typography sx={{ color: "#aaa", mb: "1em", mt: "1em" }}>
-                  Deposit Amount
+                  Allowance
                 </Typography>
                 <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
                   <Box className={`flex fr ai-c ${style["leftSide"]}`}>
