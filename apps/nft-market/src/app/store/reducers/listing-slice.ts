@@ -84,6 +84,9 @@ const listingsSlice = createSlice({
     updateListings: (state, action: PayloadAction<Listings>) => {
       state.listings = { ...state.listings, ...action.payload };
     },
+    deleteListing: (state, action: PayloadAction<Listing>) => {
+      delete state.listings[action.payload.id || ""];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createListing.pending, (state, action) => {
@@ -113,7 +116,7 @@ const listingsSlice = createSlice({
 
 export const listingsReducer = listingsSlice.reducer;
 // actions are automagically generated and exported by the builder/thunk
-export const { updateListing, updateListings } = listingsSlice.actions;
+export const { updateListing, updateListings, deleteListing } = listingsSlice.actions;
 
 const baseInfo = (state: RootState) => state.listings;
 export const getListingState = createSelector(baseInfo, (listings) => listings);
