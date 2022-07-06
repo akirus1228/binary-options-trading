@@ -6,8 +6,6 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Tab,
-  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -19,13 +17,7 @@ import { AppDispatch, RootState } from "../../store";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
-import React, {
-  BaseSyntheticEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
 import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
 import {
   requestErc20Allowance,
@@ -43,11 +35,7 @@ export interface ManageFundProps {
 
 export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const { onClose, open } = props;
-  const [value, setValue] = React.useState("Deposit");
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-  };
+  const [value] = React.useState("Deposit");
 
   const handleClose = () => {
     onClose(false);
@@ -61,6 +49,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   );
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     setSelectedCurrency(event.target.value);
+    setAmount("0");
   };
 
   const [amount, setAmount] = useState(
@@ -68,9 +57,10 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
       ? (
           props.listing.term.amount *
           (1 + ((props.listing.term.duration / 365) * props.listing.term.apr) / 100)
-        ).toString()
+        ).toFixed(currency.decimals)
       : "0"
   );
+
   const handleAmountChange = (event: BaseSyntheticEvent) => {
     let value = event.target.value.replace(/-/g, "") || "0";
     const [wholeNumber, fractional] = value.split(".");
@@ -87,9 +77,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     }
   };
   const { address, chainId, provider } = useWeb3Context();
-  const isOwner = useMemo(() => {
-    return address.toLowerCase() === props.asset?.owner?.address.toLowerCase();
-  }, [props.asset, address]);
   // primary form pending state
   const [pending, setPending] = useState(false);
 
@@ -99,7 +86,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     requestPermStatus,
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    platformFees,
   } = useSelector((state: RootState) => state.wallet);
   // watch the status of the wallet for pending txns to clear
   useEffect(() => {
@@ -121,7 +107,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   ]);
   // request allowance necessary to create loan with these term
   const handleRequestAllowance = useCallback(() => {
-    if (provider && address && props.listing) {
+    if (provider && address) {
       setPending(true);
       dispatch(
         requestErc20Allowance({
@@ -161,7 +147,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
       </Box>
       <Box sx={{ width: "100%" }}>
         <TabContext value={value}>
-          <Tabs
+          {/* <Tabs
             value={value}
             onChange={handleChange}
             TabIndicatorProps={{
@@ -174,7 +160,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
           >
             <Tab value="Deposit" label="Deposit" />
             <Tab value="Withdraw" label="Withdraw" />
-          </Tabs>
+          </Tabs> */}
           <TabPanel value="Deposit" sx={{ height: "350px" }}>
             <Box className="flx">
               <Box className="flex fc">
@@ -260,18 +246,15 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                   </Box>
                 </Box>
               </Box>
-              {!isOwner &&
-                !pending &&
-                props.listing &&
-                typeof platformFees[currency?.currentAddress] !== "undefined" && (
-                  <Button
-                    variant="contained"
-                    onClick={handleRequestAllowance}
-                    sx={{ width: "100%", mt: 4 }}
-                  >
-                    Allow Liqd to Access your {currency?.symbol}
-                  </Button>
-                )}
+              {!pending && (
+                <Button
+                  variant="contained"
+                  onClick={handleRequestAllowance}
+                  sx={{ width: "100%", mt: 4 }}
+                >
+                  Allow Liqd to Access your {currency?.symbol}
+                </Button>
+              )}
               {pending && (
                 <Button variant="contained" disabled sx={{ width: "100%", mt: 4 }}>
                   Pending...
@@ -279,7 +262,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
               )}
             </Box>
           </TabPanel>
-          <TabPanel value="Withdraw" sx={{ height: "350px" }}>
+          {/* <TabPanel value="Withdraw" sx={{ height: "350px" }}>
             <Box className="flex fc" sx={{ mt: 6 }}>
               <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
                 Select Currency
@@ -326,7 +309,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                 Withdraw
               </Button>
             </Box>
-          </TabPanel>
+          </TabPanel> */}
         </TabContext>
       </Box>
     </Dialog>
