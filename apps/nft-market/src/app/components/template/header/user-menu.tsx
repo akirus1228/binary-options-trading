@@ -289,64 +289,63 @@ export const UserMenu = (): JSX.Element => {
                   {!listings && " USDB"}
                 </h4>
               </Paper>
-              {listings && listings.length > 0 && (
-                <Paper
-                  style={{
-                    marginTop: "5px",
-                    marginBottom: "5px",
-                    padding: "1em",
+              <Paper
+                style={{
+                  marginTop: "5px",
+                  marginBottom: "5px",
+                  padding: "1em",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div>
-                      <h6
-                        style={{
-                          color: "grey",
-                          marginLeft: "10px",
-                          marginTop: "5px",
-                          marginBottom: "5px",
-                        }}
-                      >
-                        Offer balance
-                      </h6>
-                      <h4
-                        style={{
-                          marginLeft: "10px",
-                          marginTop: "5px",
-                          marginBottom: "1px",
-                        }}
-                      >
-                        {repaymentTotal.toFixed(2)} {(listings && currency?.symbol) || ""}
-                      </h4>
-                    </div>
-                    <ManageFund
-                      onClose={onListDialogClose}
-                      open={dialogOpen}
-                      listing={activeListing}
-                      asset={activeListing?.asset}
-                    />
-                    <Button
-                      size="small"
-                      onClick={handleManageFund}
-                      sx={{
-                        padding: "5px 20px",
-                        fontSize: "10px",
-                        height: "30px",
-                        color: "blue",
-                        backgroundColor: "#e6edfd",
+                  <div>
+                    <h6
+                      style={{
+                        color: "grey",
+                        marginLeft: "10px",
+                        marginTop: "5px",
+                        marginBottom: "5px",
                       }}
                     >
-                      manage
-                    </Button>
-                  </Box>
-                </Paper>
-              )}
+                      Offer balance
+                    </h6>
+                    <h4
+                      style={{
+                        marginLeft: "10px",
+                        marginTop: "5px",
+                        marginBottom: "1px",
+                      }}
+                    >
+                      {repaymentTotal.toFixed(2)}{" "}
+                      {(listings && currency?.symbol) || "USDB"}
+                    </h4>
+                  </div>
+                  <ManageFund
+                    onClose={onListDialogClose}
+                    open={dialogOpen}
+                    listing={activeListing}
+                    asset={activeListing?.asset}
+                  />
+                  <Button
+                    size="small"
+                    onClick={handleManageFund}
+                    sx={{
+                      padding: "5px 20px",
+                      fontSize: "10px",
+                      height: "30px",
+                      color: "blue",
+                      backgroundColor: "#e6edfd",
+                    }}
+                  >
+                    manage
+                  </Button>
+                </Box>
+              </Paper>
             </Container>
           </div>
         </div>

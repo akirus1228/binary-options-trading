@@ -62,7 +62,15 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     setSelectedCurrency(event.target.value);
   };
-  const [amount, setAmount] = useState((props?.listing?.term.amount || 10000).toString());
+
+  const [amount, setAmount] = useState(
+    props?.listing
+      ? (
+          props.listing.term.amount *
+          (1 + ((props.listing.term.duration / 365) * props.listing.term.apr) / 100)
+        ).toString()
+      : "0"
+  );
   const handleAmountChange = (event: BaseSyntheticEvent) => {
     let value = event.target.value.replace(/-/g, "") || "0";
     const [wholeNumber, fractional] = value.split(".");
