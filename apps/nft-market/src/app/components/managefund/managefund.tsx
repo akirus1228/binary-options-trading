@@ -62,9 +62,21 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     setSelectedCurrency(event.target.value);
   };
-  const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
+  const [amount, setAmount] = useState((props?.listing?.term.amount || 10000).toString());
   const handleAmountChange = (event: BaseSyntheticEvent) => {
-    setAmount(+event.target.value);
+    let value = event.target.value.replace(/-/g, "") || "0";
+    const [wholeNumber, fractional] = value.split(".");
+    if ((fractional || "").length > currency.decimals) {
+      value = wholeNumber + "." + fractional.slice(0, currency.decimals);
+    }
+
+    const newAmount = ethers.utils.parseUnits(value, currency.decimals);
+    if (newAmount.gt(ethers.constants.MaxUint256)) {
+      setMax();
+    } else {
+      console.log(event.target.value);
+      setAmount(value);
+    }
   };
   const { address, chainId, provider } = useWeb3Context();
   const isOwner = useMemo(() => {
@@ -109,9 +121,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
           provider,
           walletAddress: address,
           assetAddress: currency?.currentAddress,
-          amount: ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency?.currentAddress])).toString()
-          ),
+          amount: ethers.utils.parseUnits(amount, currency.decimals),
         })
       );
     }
@@ -124,7 +134,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
 
   const setMax = () => {
     if (currencyBalance) {
-      setAmount(+ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18));
+      setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
     }
   };
 
