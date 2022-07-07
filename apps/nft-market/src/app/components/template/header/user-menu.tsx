@@ -161,7 +161,7 @@ export const UserMenu = (): JSX.Element => {
     setDialogOpen(false);
   };
 
-  const { repaymentTotal } = useTermDetails(activeListing?.term);
+  const { amount } = useTermDetails(activeListing?.term);
 
   return connected ? (
     <>
@@ -276,20 +276,19 @@ export const UserMenu = (): JSX.Element => {
                     marginBottom: "1px",
                   }}
                 >
-                  {listings &&
-                    listings.length > 0 &&
+                  {activeListing &&
                     currencyBalance &&
                     formatCurrency(
                       +ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18)
                     )}{" "}
-                  {(listings && currency?.symbol) || ""}
-                  {!listings &&
+                  {(activeListing && currency?.symbol) || ""}
+                  {!activeListing &&
                     !!usdbBalance &&
                     formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))}
-                  {!listings && " USDB"}
+                  {!activeListing && " USDB"}
                 </h4>
               </Paper>
-              {listings && listings.length > 0 && (
+              {activeListing && (
                 <Paper
                   style={{
                     marginTop: "5px",
@@ -322,7 +321,7 @@ export const UserMenu = (): JSX.Element => {
                           marginBottom: "1px",
                         }}
                       >
-                        {repaymentTotal.toFixed(2)} {(listings && currency?.symbol) || ""}
+                        {amount.toFixed(2)} {(listings && currency?.symbol) || ""}
                       </h4>
                     </div>
                     <ManageFund
