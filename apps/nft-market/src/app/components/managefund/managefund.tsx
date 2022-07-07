@@ -11,14 +11,13 @@ import {
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import style from "./managefund.module.scss";
-import { Asset, Listing } from "../../types/backend-types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
 import React, { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
-import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
+import { currencyInfo } from "../../helpers/erc20Currency";
 import {
   requestErc20Allowance,
   useWeb3Context,
@@ -28,8 +27,6 @@ import {
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
 export interface ManageFundProps {
-  asset: Asset | undefined;
-  listing: Listing | null | undefined;
   onClose: (value: boolean) => void;
   open: boolean;
 }
@@ -38,12 +35,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const { onClose, open } = props;
   const [value] = React.useState("Deposit");
 
-  const handleClose = () => {
-    onClose(false);
-  };
-  const [selectedCurrency, setSelectedCurrency] = useState(
-    props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "USDB"
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState("USDB");
   // currency info
   const currency = useSelector((state: RootState) =>
     selectCurrencyById(state, `${selectedCurrency.toUpperCase()}_ADDRESS`)
@@ -65,7 +57,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     if (newAmount.gt(ethers.constants.MaxUint256)) {
       setMax();
     } else {
-      console.log(event.target.value);
       setAmount(value);
     }
   };
@@ -122,8 +113,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     });
   });
 
-  console.log(currency, currencyAllowance);
-
   const setMax = () => {
     setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
   };
@@ -146,6 +135,11 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
       setAmount(ethers.utils.formatUnits(currencyAllowance, currency.decimals));
     }
   }, [currencyAllowance, currency]);
+
+  const handleClose = () => {
+    onClose(false);
+    setAmount(ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals));
+  };
 
   return (
     <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
@@ -266,6 +260,9 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                   variant="contained"
                   onClick={handleRequestAllowance}
                   sx={{ width: "100%", mt: 4 }}
+                  disabled={currencyAllowance?.eq(
+                    ethers.utils.parseUnits(amount, currency.decimals)
+                  )}
                 >
                   Allow Liqd to Access your {currency?.symbol}
                 </Button>
