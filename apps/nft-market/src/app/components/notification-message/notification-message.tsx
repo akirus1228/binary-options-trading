@@ -363,7 +363,6 @@ export const NotificationMessage = ({
     skip: !offerId,
   });
 
-  console.log(notification, listing);
   // set the ID for the correct object to trigger get query
   useEffect(() => {
     switch (notification.context) {
@@ -432,9 +431,6 @@ export const NotificationMessage = ({
       lender,
     };
     let MsgType;
-    console.log(notification.id);
-    console.log(notification.context);
-    console.log(notification.userType);
     switch (notification.context) {
       case NotificationContext.NewLoan:
         MsgType =
