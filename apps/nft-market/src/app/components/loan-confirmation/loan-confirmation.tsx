@@ -40,6 +40,7 @@ import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { addAlert } from "../../store/reducers/app-slice";
+import ConfirmDialog from "../confirm-modal/confirm-dialog";
 import { Erc20Currency } from "../../helpers/erc20Currency";
 
 export interface LoanConfirmationProps {
@@ -66,6 +67,7 @@ export const LoanConfirmation = ({
   const { provider } = useWeb3Context();
 
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const { repaymentTotal, estRepaymentDate } = useTermDetails(listing.term);
   const { user } = useSelector((state: RootState) => state.backend);
   const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
@@ -282,7 +284,6 @@ export const LoanConfirmation = ({
   const handleClickLend = () => {
     setOpen(true);
   };
-
   return (
     <>
       <Button variant="outlined" onClick={handleClickLend}>
@@ -454,7 +455,7 @@ export const LoanConfirmation = ({
             !isPending &&
             currencyBalance &&
             currencyBalance.gte(listing.term.amount * currency?.decimals || 0) && (
-              <Button variant="contained" onClick={handleAcceptTerms}>
+              <Button variant="contained" onClick={() => setConfirmOpen(true)}>
                 Lend {currency?.symbol}
               </Button>
             )}
@@ -475,6 +476,16 @@ export const LoanConfirmation = ({
         <Box className="flex fr fj-c" onClick={handleClose} sx={{ cursor: "pointer" }}>
           <span className="subtle">Nevermind</span>
         </Box>
+        <ConfirmDialog
+          title="Confirm Accept terms"
+          open={confirmOpen}
+          platformfee={platformFees[listing.term.currencyAddress]}
+          currencyConfirm={currency?.symbol}
+          interest={repaymentTotal}
+          duedata={estRepaymentDate.toLocaleString()}
+          setOpen={setConfirmOpen}
+          onConfirm={handleAcceptTerms}
+        ></ConfirmDialog>
       </Dialog>
     </>
   );
