@@ -10,6 +10,7 @@ import UpdateTerms from "../update-terms/update-terms";
 import style from "./borrower-listing-details.module.scss";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
+import CancelListing from "../cancel-listing/cancel-listing";
 
 export interface BorrowerListingDetailsProps {
   asset: Asset;
@@ -46,13 +47,23 @@ export const BorrowerListingDetails = (
   const { repaymentTotal } = useListingTermDetails(listing);
 
   // update term
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const onClickButton = useCallback(() => {
-    setDialogOpen(true);
+  const [dialogUpdateTermsOpen, setDialogUpdateTermsOpen] = useState(false);
+  const onDialogUpdateTermsOpen = useCallback(() => {
+    setDialogUpdateTermsOpen(true);
   }, []);
 
-  const onListDialogClose = (accepted: boolean) => {
-    setDialogOpen(false);
+  const onDialogUpdateTermsClose = (accepted: boolean) => {
+    setDialogUpdateTermsOpen(false);
+  };
+
+  // close listing
+  const [dialogCancelListingOpen, setDialogCancelListingOpen] = useState(false);
+  const onDialogCancelListingOpen = useCallback(() => {
+    setDialogCancelListingOpen(true);
+  }, []);
+
+  const onDialogCancelListingClose = (accepted: boolean) => {
+    setDialogCancelListingOpen(false);
   };
 
   if (typeof listing.term === "undefined") {
@@ -61,7 +72,16 @@ export const BorrowerListingDetails = (
 
   return (
     <Container sx={props.sx}>
-      <UpdateTerms onClose={onListDialogClose} open={dialogOpen} listing={listing} />
+      <UpdateTerms
+        onClose={onDialogUpdateTermsClose}
+        open={dialogUpdateTermsOpen}
+        listing={listing}
+      />
+      <CancelListing
+        onClose={onDialogCancelListingClose}
+        open={dialogCancelListingOpen}
+        listing={listing}
+      />
       <Paper>
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
@@ -102,8 +122,13 @@ export const BorrowerListingDetails = (
             </Box>
           </Box>
           <Box className="flex fc">
-            <Button variant="contained" onClick={onClickButton}>
+            <Button variant="contained" onClick={onDialogUpdateTermsOpen}>
               Update Terms
+            </Button>
+          </Box>
+          <Box className="flex fc">
+            <Button variant="contained" onClick={onDialogCancelListingOpen}>
+              Cancel Listing
             </Button>
           </Box>
         </Box>

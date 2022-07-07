@@ -140,6 +140,7 @@ export const contractCreateLoan = createAsyncThunk(
       nftTokenType: contractType || 0, // token type
       sig: loan.term.signature,
     };
+
     try {
       // call the contract
       const approveTx: ContractTransaction = await lendingContract["createLoan"](

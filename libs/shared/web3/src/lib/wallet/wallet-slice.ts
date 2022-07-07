@@ -76,7 +76,7 @@ export const loadPlatformFee = createAsyncThunk(
     );
 
     const platformFee = await usdbLendingContract["platformFees"](currencyAddress);
-    return { amount: +platformFee / 10000, currencyAddress };
+    return { amount: +platformFee, currencyAddress };
   }
 );
 
@@ -255,7 +255,6 @@ export const checkErc20Allowance = createAsyncThunk(
     if (!walletAddress || !assetAddress) {
       return rejectWithValue("Addresses and id required");
     }
-    console.log(`checking erc20 allowance for ${assetAddress}`);
     if (![NetworkIds.Ethereum, NetworkIds.Rinkeby].includes(networkId)) {
       try {
         await window.ethereum.request({
@@ -267,7 +266,6 @@ export const checkErc20Allowance = createAsyncThunk(
       }
     }
     try {
-      console.log(`assetAddress ${assetAddress}`);
       const erc20Contract = new ethers.Contract(assetAddress, ierc20Abi, provider);
       const response: BigNumber = await erc20Contract["allowance"](
         walletAddress,
@@ -288,9 +286,9 @@ const previousState = loadState("wallet");
 const initialState: WalletState = {
   currencies: [],
   nftPermStatus: [],
+  ...previousState, // overwrite assets and currencies from cache if recent
   platformFees: [],
   erc20Balance: [],
-  ...previousState, // overwrite assets and currencies from cache if recent
   currencyStatus: "idle", // always reset states on reload
   checkPermStatus: "idle",
   requestPermStatus: "idle",
