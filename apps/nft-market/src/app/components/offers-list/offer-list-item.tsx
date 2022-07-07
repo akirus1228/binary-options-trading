@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Box, Button, Tooltip } from "@mui/material";
+import { Avatar, Box, Button, Chip, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -298,7 +298,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           <Box className="flex fr ai-c">{getFieldData(field)}</Box>
         </PaperTableCell>
       ))}
-      <PaperTableCell>
+      <PaperTableCell sx={{ display: "flex" }}>
         {isOwner &&
           !hasPermission &&
           !isPending &&
@@ -326,13 +326,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
         )}
         {(!isOwner || offer.status !== OfferStatus.Ready) && (
-          <Button
-            variant="contained"
-            className="offer slim"
-            disabled={[OfferStatus.Expired, OfferStatus.Cancelled].includes(offer.status)}
-          >
-            {offer.status}
-          </Button>
+          <Chip label={offer.status} sx={{ fontSize: "17px", marginRight: "2em" }}></Chip>
         )}
       </PaperTableCell>
     </PaperTableRow>
