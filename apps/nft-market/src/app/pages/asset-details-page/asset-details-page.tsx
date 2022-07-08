@@ -35,6 +35,7 @@ export const AssetDetailsPage = (): JSX.Element => {
   const params = useParams();
   const { address } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
+
   // find listing from store
   const listings = useSelector((state: RootState) =>
     selectListingsByAddress(state, {
@@ -72,7 +73,8 @@ export const AssetDetailsPage = (): JSX.Element => {
   );
 
   const { error: isValidNFTError, isLoading: isValidating } = useValidateNFTQuery(
-    asset?.id?.toString() || ""
+    asset?.id?.toString() || "",
+    { skip: !asset?.id }
   );
 
   // load loans for this contract

@@ -33,18 +33,28 @@ import {
 } from "@fantohm/shared-web3";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { desiredNetworkId } from "../../constants/network";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { contractCreateLoan } from "../../store/reducers/loan-slice";
 import { useCreateLoanMutation, useGetCollectionsQuery } from "../../api/backend-api";
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { addAlert } from "../../store/reducers/app-slice";
+import ConfirmDialog from "../confirm-modal/confirm-dialog";
+import { Erc20Currency } from "../../helpers/erc20Currency";
 
 export interface LoanConfirmationProps {
   listing: Listing;
   onClose?: () => void;
 }
+
+type CalculatedTermData = {
+  amountGwei: BigNumber;
+  platformFeeAmtGwei: BigNumber;
+  platformFeeAmt: number;
+  minRequiredBalanceGwei: BigNumber;
+  totalAmt: number;
+};
 
 export const LoanConfirmation = ({
   listing,
@@ -57,8 +67,10 @@ export const LoanConfirmation = ({
   const { provider } = useWeb3Context();
 
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const { repaymentTotal, estRepaymentDate } = useTermDetails(listing.term);
   const { user } = useSelector((state: RootState) => state.backend);
+  const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
 
   const { data: collections, isLoading: isCollectionLoading } = useGetCollectionsQuery({
     contractAddress: listing.asset.assetContractAddress,
@@ -93,7 +105,8 @@ export const LoanConfirmation = ({
       erc20TokenAddress: listing.term.currencyAddress,
     })
   );
-  const currency = useSelector((state: RootState) =>
+
+  const currency: Erc20Currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing.term.currencyAddress)
   );
 
@@ -101,19 +114,46 @@ export const LoanConfirmation = ({
   const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
 
+  const {
+    amountGwei,
+    platformFeeAmtGwei,
+    platformFeeAmt,
+    minRequiredBalanceGwei,
+    totalAmt,
+  }: CalculatedTermData = useMemo(() => {
+    if (
+      typeof platformFees[listing.term.currencyAddress] === "undefined" ||
+      typeof listing === "undefined" ||
+      typeof currency === undefined
+    )
+      return {} as CalculatedTermData;
+    const amountGwei = ethers.utils.parseUnits(
+      listing.term.amount.toString(),
+      currency?.decimals
+    );
+    const platformFeeAmtGwei: BigNumber = BigNumber.from(
+      platformFees[listing.term.currencyAddress]
+    )
+      .mul(amountGwei)
+      .div(10000);
+    const minRequiredBalanceGwei = amountGwei.add(platformFeeAmtGwei);
+    const platformFeeAmt = +ethers.utils.formatUnits(
+      platformFeeAmtGwei,
+      currency.decimals
+    );
+    const totalAmt = listing.term.amount + platformFeeAmt;
+    return {
+      amountGwei,
+      platformFeeAmtGwei,
+      platformFeeAmt,
+      minRequiredBalanceGwei,
+      totalAmt,
+    };
+  }, [platformFees, listing.term, currency?.decimals]);
+
   // click accept term button
   const handleAcceptTerms = useCallback(async () => {
-    if (
-      !allowance ||
-      allowance.lt(
-        ethers.utils.parseEther(
-          (
-            listing.term.amount *
-            (1 + platformFees[listing.term.currencyAddress])
-          ).toString()
-        )
-      )
-    ) {
+    if (!allowance || allowance.lt(minRequiredBalanceGwei)) {
       console.warn("Insufficiant allownace. Trigger request");
       return;
     }
@@ -151,45 +191,34 @@ export const LoanConfirmation = ({
               "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
           })
         );
+        handleClose();
       });
     }
-  }, [listing, provider, listing.asset, allowance, user.address]);
+  }, [listing, provider, listing.asset, allowance, user.address, platformFees]);
 
   // request allowance necessary to complete txn
   const handleRequestAllowance = useCallback(() => {
     if (
       provider &&
+      currency &&
       user.address &&
-      typeof platformFees[listing.term.currencyAddress] !== "undefined"
-    )
+      typeof minRequiredBalanceGwei !== "undefined"
+    ) {
       dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
           assetAddress: listing.term.currencyAddress,
-          amount: ethers.utils.parseEther(
-            (
-              listing.term.amount *
-              (1 + platformFees[listing.term.currencyAddress])
-            ).toString()
-          ),
+          amount: minRequiredBalanceGwei,
         })
       );
-  }, [
-    provider,
-    user.address,
-    listing.term.amount,
-    platformFees[listing.term.currencyAddress],
-  ]);
+    }
+  }, [currency, provider, user.address, minRequiredBalanceGwei]);
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (
-      user.address &&
-      provider &&
-      typeof platformFees[listing.term.currencyAddress] !== "undefined"
-    ) {
+    if (user.address && provider) {
       dispatch(
         checkErc20Allowance({
           networkId: desiredNetworkId,
@@ -199,42 +228,43 @@ export const LoanConfirmation = ({
         })
       );
     }
-  }, [user.address, provider, platformFees[listing.term.currencyAddress]]);
+  }, [user.address, provider]);
 
   const hasAllowance: boolean = useMemo(() => {
+    if (!currency || typeof minRequiredBalanceGwei === "undefined") return false;
     if (
-      typeof platformFees[listing.term.currencyAddress] !== "undefined" &&
+      currency &&
+      typeof minRequiredBalanceGwei !== "undefined" &&
       checkErc20AllowanceStatus === "idle" &&
       requestErc20AllowanceStatus === "idle" &&
       !!allowance &&
-      allowance.gte(
-        ethers.utils.parseEther(
-          (
-            listing.term.amount *
-            (1 + platformFees[listing.term.currencyAddress])
-          ).toString()
-        )
-      )
+      allowance.gte(minRequiredBalanceGwei)
     )
       return true;
     return false;
   }, [
+    currency,
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
     allowance,
-    listing.term.amount,
-    platformFees[listing.term.currencyAddress],
+    minRequiredBalanceGwei,
   ]);
 
   const isPending = useMemo(() => {
     if (
       isCreating ||
       checkErc20AllowanceStatus === BackendLoadingStatus.loading ||
-      requestErc20AllowanceStatus === BackendLoadingStatus.loading
+      requestErc20AllowanceStatus === BackendLoadingStatus.loading ||
+      loanCreationStatus === BackendLoadingStatus.loading
     )
       return true;
     return false;
-  }, [isCreating, checkErc20AllowanceStatus, requestErc20AllowanceStatus]);
+  }, [
+    isCreating,
+    checkErc20AllowanceStatus,
+    requestErc20AllowanceStatus,
+    loanCreationStatus,
+  ]);
 
   const currencyBalance = useSelector((state: RootState) =>
     selectErc20BalanceByAddress(state, currency?.currentAddress)
@@ -254,7 +284,6 @@ export const LoanConfirmation = ({
   const handleClickLend = () => {
     setOpen(true);
   };
-
   return (
     <>
       <Button variant="outlined" onClick={handleClickLend}>
@@ -310,19 +339,13 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {platformFees[listing.term.currencyAddress] * listing.term.amount}{" "}
+                    {platformFeeAmt}
                     {currency?.symbol}{" "}
                     <span className="subtle" style={{ marginLeft: "1em" }}>
                       (platform fee)
                     </span>
                   </span>
-                  <span className="subtle">
-                    ~
-                    {formatCurrency(
-                      platformFees[listing.term.currencyAddress] * listing.term.amount,
-                      2
-                    )}
-                  </span>
+                  <span className="subtle">~{formatCurrency(platformFeeAmt, 2)}</span>
                 </Box>
                 <span className="strong" style={{ marginTop: "1em" }}>
                   Total
@@ -339,19 +362,10 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {(
-                      (1 + platformFees[listing.term.currencyAddress]) *
-                      listing.term.amount
-                    ).toFixed(5)}{" "}
-                    {currency?.symbol}
+                    {totalAmt?.toFixed(5)} {currency?.symbol}
                   </span>
                   <span className="subtle">
-                    ~
-                    {formatCurrency(
-                      (1 + platformFees[listing.term.currencyAddress]) *
-                        listing.term.amount,
-                      2
-                    )}
+                    ~{formatCurrency(totalAmt * currency?.lastPrice)}
                   </span>
                 </Box>
                 <Box
@@ -441,7 +455,7 @@ export const LoanConfirmation = ({
             !isPending &&
             currencyBalance &&
             currencyBalance.gte(listing.term.amount * currency?.decimals || 0) && (
-              <Button variant="contained" onClick={handleAcceptTerms}>
+              <Button variant="contained" onClick={() => setConfirmOpen(true)}>
                 Lend {currency?.symbol}
               </Button>
             )}
@@ -462,6 +476,16 @@ export const LoanConfirmation = ({
         <Box className="flex fr fj-c" onClick={handleClose} sx={{ cursor: "pointer" }}>
           <span className="subtle">Nevermind</span>
         </Box>
+        <ConfirmDialog
+          title="Confirm Accept terms"
+          open={confirmOpen}
+          platformfee={platformFees[listing.term.currencyAddress]}
+          currencyConfirm={currency?.symbol}
+          interest={repaymentTotal}
+          duedata={estRepaymentDate.toLocaleString()}
+          setOpen={setConfirmOpen}
+          onConfirm={handleAcceptTerms}
+        ></ConfirmDialog>
       </Dialog>
     </>
   );

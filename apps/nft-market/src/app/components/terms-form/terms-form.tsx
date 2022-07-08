@@ -39,6 +39,7 @@ import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency"
 import { desiredNetworkId } from "../../constants/network";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromId } from "../../store/reducers/currency-slice";
+import ConfirmDialog from "../confirm-modal/confirm-dialog";
 
 export interface TermsFormProps {
   asset: Asset;
@@ -68,17 +69,43 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       reset: updateTermsReset,
     },
   ] = useUpdateTermsMutation();
+
+  const calcDurationType = (totaldays: number) => {
+    if (totaldays == 0) return "days";
+    if (totaldays % 7 == 0) {
+      return "weeks";
+    } else if (totaldays % 30 == 0) {
+      return "months";
+    }
+    return "days";
+  };
+
+  const calcDuration = (durationDay: number, exactType: string) => {
+    return durationDay / termTypes[exactType];
+  };
   // primary form pending state
   const [pending, setPending] = useState(false);
   // primary term variables
-  const [duration, setDuration] = useState(props?.listing?.term.duration || "");
-  const [durationType, setDurationType] = useState("days");
+  const [duration, setDuration] = useState(
+    props?.listing?.term.duration
+      ? calcDuration(
+          props?.listing?.term.duration,
+          calcDurationType(props?.listing?.term.duration)
+        )
+      : ""
+  );
+  const [durationType, setDurationType] = useState(
+    props?.listing?.term.duration
+      ? calcDurationType(props?.listing?.term.duration)
+      : "days"
+  );
   const [apr, setApr] = useState(props?.listing?.term.apr || 25);
   const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
   const [selectedCurrency, setSelectedCurrency] = useState(
     props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "USDB"
   );
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   // currency info
   const currency = useSelector((state: RootState) =>
@@ -220,7 +247,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const term: Terms = {
       amount,
       apr,
-      duration: +duration,
+      duration: termTypes[durationType] * +duration,
       expirationAt: expirationAt.toJSON(),
       signature: "",
       currencyAddress: currency?.currentAddress,
@@ -538,7 +565,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             (amount * (1 + platformFees[currency?.currentAddress])).toString()
           )
         ) && (
-          <Button variant="contained" onClick={handleMakeOffer}>
+          <Button variant="contained" onClick={() => setConfirmOpen(true)}>
             Make Offer
           </Button>
         )}
@@ -561,6 +588,18 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           Pending...
         </Button>
       )}
+      <ConfirmDialog
+        title="Confirm Accept Offer"
+        open={confirmOpen}
+        platformfee={platformFees[currency?.currentAddress]}
+        currencyConfirm={currency?.symbol}
+        interest={
+          amount + amount * ((((termTypes[durationType] * +duration) / 365) * apr) / 100)
+        }
+        duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
+        setOpen={setConfirmOpen}
+        onConfirm={handleMakeOffer}
+      ></ConfirmDialog>
     </Box>
   );
 };
