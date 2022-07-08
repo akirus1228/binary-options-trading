@@ -5,7 +5,7 @@ import {
   loadErc20Balance,
   NetworkIds,
   networks,
-  selectErc20BalanceByAddress,
+  selectErc20Balance,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
@@ -21,9 +21,9 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
-import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
@@ -39,11 +39,8 @@ import { logout } from "../../../store/reducers/backend-slice";
 import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
 import { desiredNetworkId } from "../../../constants/network";
 import { ethers } from "ethers";
-import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
-import { selectListingsByAddress } from "../../../store/selectors/listing-selectors";
-import { Listing, ListingStatus } from "../../../types/backend-types";
+import { selectCurrencies } from "../../../store/selectors/currency-selectors";
 import ManageFund from "../../managefund/managefund";
-import { useTermDetails } from "../../../hooks/use-term-details";
 import styles from "./header.module.scss";
 
 type PageParams = {
@@ -65,13 +62,6 @@ export const UserMenu = (): JSX.Element => {
     null
   );
 
-  const usdbBalance = useSelector((state: RootState) =>
-    selectErc20BalanceByAddress(
-      state,
-      networks[desiredNetworkId].addresses["USDB_ADDRESS"]
-    )
-  );
-
   const accountSubMenu: AccountSubMenu[] = [
     { title: "My profile", href: "/my-account", icon: "user" },
     { title: "My assets", href: "/my-account#3", icon: "photo" },
@@ -81,6 +71,9 @@ export const UserMenu = (): JSX.Element => {
 
   // web3 wallet
   const { connect, disconnect, connected, address } = useWeb3Context();
+
+  const currencies = useSelector((state: RootState) => selectCurrencies(state));
+  const erc20Balances = useSelector((state: RootState) => selectErc20Balance(state));
 
   useEffect(() => {
     if (!address) return;
@@ -123,32 +116,6 @@ export const UserMenu = (): JSX.Element => {
       }
     );
   };
-  const location = useLocation();
-  const address1 = location.pathname.split("/");
-  const listings = useSelector((state: RootState) => {
-    if (!address1[2] && !address1[3]) return null;
-    return selectListingsByAddress(state, {
-      // contractAddress: params["contractAddress"] || "123",
-      // tokenId: params["tokenId"] || "123", 0x90267036ed282cce0a1488d19db22a04171cfbfc,26
-      contractAddress: address1[2],
-      tokenId: address1[3],
-    });
-  });
-
-  //find listing from store
-
-  const activeListing = useMemo(() => {
-    if (!listings) return null;
-    return listings.find((listing: Listing) => listing.status === ListingStatus.Listed);
-  }, [listings]);
-  const currency = useSelector((state: RootState) => {
-    if (!activeListing) return null;
-    return selectCurrencyByAddress(state, activeListing.term.currencyAddress);
-  });
-  const currencyBalance = useSelector((state: RootState) => {
-    if (!currency) return null;
-    return selectErc20BalanceByAddress(state, currency?.currentAddress);
-  });
 
   // make offer code
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -161,7 +128,19 @@ export const UserMenu = (): JSX.Element => {
     setDialogOpen(false);
   };
 
-  const { amount } = useTermDetails(activeListing?.term);
+  useEffect(() => {
+    if (currencies) {
+      Object.values(currencies).forEach((currency) => {
+        return dispatch(
+          loadErc20Balance({
+            networkId: desiredNetworkId,
+            address: address,
+            currencyAddress: currency.currentAddress,
+          })
+        );
+      });
+    }
+  }, [currencies]);
 
   return connected ? (
     <>
@@ -259,93 +238,93 @@ export const UserMenu = (): JSX.Element => {
                   padding: "1em",
                 }}
               >
-                <h6
-                  style={{
-                    color: "grey",
-                    marginLeft: "10px",
-                    marginTop: "10px",
-                    marginBottom: "5px",
+                <Box
+                  sx={{
+                    marginBottom: "20px",
                   }}
                 >
-                  Wallet balance
-                </h6>
-                <h4
-                  style={{
-                    marginLeft: "10px",
-                    marginTop: "5px",
-                    marginBottom: "1px",
-                  }}
-                >
-                  {activeListing &&
-                    currencyBalance &&
-                    formatCurrency(
-                      +ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18)
-                    )}{" "}
-                  {(activeListing && currency?.symbol) || ""}
-                  {!activeListing &&
-                    !!usdbBalance &&
-                    formatCurrency(+ethers.utils.formatUnits(usdbBalance, "ether"))}
-                  {!activeListing && " USDB"}
-                </h4>
-              </Paper>
-              {activeListing && (
-                <Paper
-                  style={{
-                    marginTop: "5px",
-                    marginBottom: "5px",
-                    padding: "1em",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                  <h6
+                    style={{
+                      color: "grey",
+                      marginLeft: "10px",
+                      marginTop: "10px",
+                      marginBottom: "5px",
                     }}
                   >
-                    <div>
-                      <h6
-                        style={{
-                          color: "grey",
-                          marginLeft: "10px",
-                          marginTop: "5px",
-                          marginBottom: "5px",
-                        }}
-                      >
-                        Offer balance
-                      </h6>
+                    Wallet balance
+                  </h6>
+                  {Object.values(currencies).map((currencyInfo) => {
+                    const balance =
+                      erc20Balances[currencyInfo.currentAddress] ||
+                      ethers.BigNumber.from(0);
+                    const value = +ethers.utils.formatUnits(
+                      balance,
+                      currencyInfo.decimals || 18
+                    );
+
+                    if (value === 0 && currencyInfo.symbol !== "USDB") {
+                      return null;
+                    }
+
+                    return (
                       <h4
+                        key={currencyInfo.symbol}
                         style={{
                           marginLeft: "10px",
                           marginTop: "5px",
                           marginBottom: "1px",
                         }}
                       >
-                        {amount.toFixed(2)} {(listings && currency?.symbol) || ""}
+                        {formatCurrency(value)} {currencyInfo.symbol}
                       </h4>
-                    </div>
-                    <ManageFund
-                      onClose={onListDialogClose}
-                      open={dialogOpen}
-                      listing={activeListing}
-                      asset={activeListing?.asset}
-                    />
-                    <Button
-                      size="small"
-                      onClick={handleManageFund}
-                      sx={{
-                        padding: "5px 20px",
-                        fontSize: "10px",
-                        height: "30px",
-                        color: "blue",
-                        backgroundColor: "#e6edfd",
+                    );
+                  })}
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {/* <div>
+                    <h6
+                      style={{
+                        color: "grey",
+                        marginLeft: "10px",
+                        marginTop: "5px",
+                        marginBottom: "5px",
                       }}
                     >
-                      manage
-                    </Button>
-                  </Box>
-                </Paper>
-              )}
+                      Offer balance
+                    </h6>
+                    <h4
+                      style={{
+                        marginLeft: "10px",
+                        marginTop: "5px",
+                        marginBottom: "1px",
+                      }}
+                    >
+                      {repaymentTotal.toFixed(2)}{" "}
+                      {(listings && currency?.symbol) || "USDB"}
+                    </h4>
+                  </div> */}
+                  <ManageFund onClose={onListDialogClose} open={dialogOpen} />
+                  <Button
+                    size="small"
+                    onClick={handleManageFund}
+                    sx={{
+                      padding: "5px 20px",
+                      fontSize: "10px",
+                      height: "30px",
+                      color: "blue",
+                      backgroundColor: "#e6edfd",
+                    }}
+                  >
+                    Manage Allownace
+                  </Button>
+                </Box>
+              </Paper>
             </Container>
           </div>
         </div>

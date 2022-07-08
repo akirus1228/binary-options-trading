@@ -6,55 +6,36 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Tab,
-  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import style from "./managefund.module.scss";
-import { Asset, Listing } from "../../types/backend-types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { selectCurrencyById } from "../../store/selectors/currency-selectors";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
-import React, {
-  BaseSyntheticEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
+import React, { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
+import { currencyInfo } from "../../helpers/erc20Currency";
 import {
   requestErc20Allowance,
   useWeb3Context,
-  selectErc20BalanceByAddress,
+  selectErc20AllowanceByAddress,
+  checkErc20Allowance,
 } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
 export interface ManageFundProps {
-  asset: Asset | undefined;
-  listing: Listing | null | undefined;
   onClose: (value: boolean) => void;
   open: boolean;
 }
 
 export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const { onClose, open } = props;
-  const [value, setValue] = React.useState("Deposit");
+  const [value] = React.useState("Deposit");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-  };
-
-  const handleClose = () => {
-    onClose(false);
-  };
-  const [selectedCurrency, setSelectedCurrency] = useState(
-    props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "USDB"
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState("USDB");
   // currency info
   const currency = useSelector((state: RootState) =>
     selectCurrencyById(state, `${selectedCurrency.toUpperCase()}_ADDRESS`)
@@ -62,14 +43,24 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     setSelectedCurrency(event.target.value);
   };
-  const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
+
+  const [amount, setAmount] = useState("0");
+
   const handleAmountChange = (event: BaseSyntheticEvent) => {
-    setAmount(+event.target.value);
+    let value = event.target.value.replace(/-/g, "") || "0";
+    const [wholeNumber, fractional] = value.split(".");
+    if ((fractional || "").length > currency.decimals) {
+      value = wholeNumber + "." + fractional.slice(0, currency.decimals);
+    }
+
+    const newAmount = ethers.utils.parseUnits(value, currency.decimals);
+    if (newAmount.gt(ethers.constants.MaxUint256)) {
+      setMax();
+    } else {
+      setAmount(value);
+    }
   };
   const { address, chainId, provider } = useWeb3Context();
-  const isOwner = useMemo(() => {
-    return address.toLowerCase() === props.asset?.owner?.address.toLowerCase();
-  }, [props.asset, address]);
   // primary form pending state
   const [pending, setPending] = useState(false);
 
@@ -79,7 +70,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     requestPermStatus,
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    platformFees,
   } = useSelector((state: RootState) => state.wallet);
   // watch the status of the wallet for pending txns to clear
   useEffect(() => {
@@ -101,7 +91,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   ]);
   // request allowance necessary to create loan with these term
   const handleRequestAllowance = useCallback(() => {
-    if (provider && address && props.listing) {
+    if (provider && address) {
       setPending(true);
       dispatch(
         requestErc20Allowance({
@@ -109,23 +99,46 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
           provider,
           walletAddress: address,
           assetAddress: currency?.currentAddress,
-          amount: ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency?.currentAddress])).toString()
-          ),
+          amount: ethers.utils.parseUnits(amount, currency.decimals),
         })
       );
     }
   }, [chainId, address, amount, provider, currency]);
 
-  const currencyBalance = useSelector((state: RootState) => {
+  const currencyAllowance = useSelector((state: RootState) => {
     if (!currency) return null;
-    return selectErc20BalanceByAddress(state, currency?.currentAddress);
+    return selectErc20AllowanceByAddress(state, {
+      walletAddress: address,
+      erc20TokenAddress: currency?.currentAddress,
+    });
   });
 
   const setMax = () => {
-    if (currencyBalance) {
-      setAmount(+ethers.utils.formatUnits(currencyBalance, currency?.decimals || 18));
+    setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
+  };
+
+  useEffect(() => {
+    if (provider && currency) {
+      dispatch(
+        checkErc20Allowance({
+          networkId: desiredNetworkId,
+          provider,
+          walletAddress: address,
+          assetAddress: currency.currentAddress,
+        })
+      );
     }
+  }, [provider, currency]);
+
+  useEffect(() => {
+    if (currencyAllowance && currency) {
+      setAmount(ethers.utils.formatUnits(currencyAllowance, currency.decimals));
+    }
+  }, [currencyAllowance, currency]);
+
+  const handleClose = () => {
+    onClose(false);
+    setAmount(ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals));
   };
 
   return (
@@ -143,7 +156,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
       </Box>
       <Box sx={{ width: "100%" }}>
         <TabContext value={value}>
-          <Tabs
+          {/* <Tabs
             value={value}
             onChange={handleChange}
             TabIndicatorProps={{
@@ -156,7 +169,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
           >
             <Tab value="Deposit" label="Deposit" />
             <Tab value="Withdraw" label="Withdraw" />
-          </Tabs>
+          </Tabs> */}
           <TabPanel value="Deposit" sx={{ height: "350px" }}>
             <Box className="flx">
               <Box className="flex fc">
@@ -201,7 +214,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
               </Box>
               <Box className="flex fc">
                 <Typography sx={{ color: "#aaa", mb: "1em", mt: "1em" }}>
-                  Deposit Amount
+                  Allowance
                 </Typography>
                 <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
                   <Box className={`flex fr ai-c ${style["leftSide"]}`}>
@@ -242,18 +255,18 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                   </Box>
                 </Box>
               </Box>
-              {!isOwner &&
-                !pending &&
-                props.listing &&
-                typeof platformFees[currency?.currentAddress] !== "undefined" && (
-                  <Button
-                    variant="contained"
-                    onClick={handleRequestAllowance}
-                    sx={{ width: "100%", mt: 4 }}
-                  >
-                    Allow Liqd to Access your {currency?.symbol}
-                  </Button>
-                )}
+              {!pending && (
+                <Button
+                  variant="contained"
+                  onClick={handleRequestAllowance}
+                  sx={{ width: "100%", mt: 4 }}
+                  disabled={currencyAllowance?.eq(
+                    ethers.utils.parseUnits(amount, currency.decimals)
+                  )}
+                >
+                  Allow Liqd to Access your {currency?.symbol}
+                </Button>
+              )}
               {pending && (
                 <Button variant="contained" disabled sx={{ width: "100%", mt: 4 }}>
                   Pending...
@@ -261,7 +274,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
               )}
             </Box>
           </TabPanel>
-          <TabPanel value="Withdraw" sx={{ height: "350px" }}>
+          {/* <TabPanel value="Withdraw" sx={{ height: "350px" }}>
             <Box className="flex fc" sx={{ mt: 6 }}>
               <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
                 Select Currency
@@ -308,7 +321,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                 Withdraw
               </Button>
             </Box>
-          </TabPanel>
+          </TabPanel> */}
         </TabContext>
       </Box>
     </Dialog>

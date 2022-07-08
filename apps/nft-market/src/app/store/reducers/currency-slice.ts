@@ -1,5 +1,7 @@
+import { isDev, NetworkIds } from "@fantohm/shared-web3";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
+  currencyInfo,
   erc20Currency,
   Erc20Currency,
   getErc20CurrencyFromAddress,
@@ -66,10 +68,32 @@ interface CurrencyData {
   readonly currencyState: CurrencyState;
 }
 
-const initialState: CurrencyData = {
-  currencies: {} as CurrencyList,
-  currencyState: {} as CurrencyState,
+const getInitialCurrencyState = (): CurrencyData => {
+  let currencies = {} as CurrencyList;
+  let currencyState = {} as CurrencyState;
+
+  const network = isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
+
+  Object.entries(currencyInfo).forEach(([tokenId, info]) => {
+    if (info.addresses[network]) {
+      currencyState = {
+        ...currencyState,
+        ...{ [tokenId]: BackendLoadingStatus.succeeded },
+      };
+      currencies = {
+        ...currencies,
+        ...{ [tokenId]: new erc20Currency(tokenId) },
+      };
+    }
+  });
+
+  return {
+    currencies,
+    currencyState,
+  };
 };
+
+const initialState: CurrencyData = getInitialCurrencyState();
 
 const currencySlice = createSlice({
   name: "currencySlice",

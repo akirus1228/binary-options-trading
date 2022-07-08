@@ -43,6 +43,10 @@ export const useTermDetails = (term: Terms | undefined): TermDetails => {
       if (term.duration && term.duration !== duration) {
         setDuration(term.duration);
       }
+    } else {
+      setRepaymentAmount(0);
+      setRepaymentTotal(0);
+      setEstRepaymentDate(new Date(Date.now() + duration * 86400 * 1000));
     }
   }, [JSON.stringify(term)]);
 
