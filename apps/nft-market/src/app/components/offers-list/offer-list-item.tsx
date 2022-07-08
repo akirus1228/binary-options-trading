@@ -163,10 +163,6 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       createLoanRequest.contractLoanId = createLoanResult;
       createLoan(createLoanRequest);
     }
-
-    // update offer as accepted
-    const updateOfferRequest = { ...offer, status: OfferStatus.Accepted };
-    updateOffer(updateOfferRequest);
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
 
   const offerExpires = useMemo(() => {
