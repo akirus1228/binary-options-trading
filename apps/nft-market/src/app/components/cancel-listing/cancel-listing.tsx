@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useWeb3Context } from "@fantohm/shared-web3";
-import { Box, Button, Dialog, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { AssetStatus, Listing } from "../../types/backend-types";
 import { useDeleteListingMutation } from "../../api/backend-api";
@@ -124,7 +131,7 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
           )}
           {pending && (
             <Button variant="contained" disabled>
-              Pending...
+              <CircularProgress />
             </Button>
           )}
         </Box>

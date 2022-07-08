@@ -11,6 +11,7 @@ import {
 import {
   Box,
   Button,
+  CircularProgress,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -585,7 +586,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         )}
       {pending && (
         <Button variant="contained" disabled>
-          Pending...
+          <CircularProgress />
         </Button>
       )}
       <ConfirmDialog

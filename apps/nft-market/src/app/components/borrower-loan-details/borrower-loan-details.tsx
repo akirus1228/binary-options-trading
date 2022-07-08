@@ -242,7 +242,11 @@ export const BorrowerLoanDetails = ({
                   Approve {currency?.symbol} for repayment
                 </Button>
               )}
-            {isPending && <Button variant="contained">Pending...</Button>}
+            {isPending && (
+              <Button variant="contained">
+                <CircularProgress />
+              </Button>
+            )}
           </Box>
         </Box>
       </Paper>

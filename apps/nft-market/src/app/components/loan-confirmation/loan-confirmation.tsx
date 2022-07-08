@@ -112,42 +112,37 @@ export const LoanConfirmation = ({
   const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
 
-  const {
-    amountGwei,
-    platformFeeAmtGwei,
-    platformFeeAmt,
-    minRequiredBalanceGwei,
-    totalAmt,
-  }: CalculatedTermData = useMemo(() => {
-    if (
-      typeof platformFees[listing.term.currencyAddress] === "undefined" ||
-      typeof listing === "undefined" ||
-      typeof currency === undefined
-    )
-      return {} as CalculatedTermData;
-    const amountGwei = ethers.utils.parseUnits(
-      listing.term.amount.toString(),
-      currency?.decimals
-    );
-    const platformFeeAmtGwei: BigNumber = BigNumber.from(
-      platformFees[listing.term.currencyAddress]
-    )
-      .mul(amountGwei)
-      .div(10000);
-    const minRequiredBalanceGwei = amountGwei.add(platformFeeAmtGwei);
-    const platformFeeAmt = +ethers.utils.formatUnits(
-      platformFeeAmtGwei,
-      currency.decimals
-    );
-    const totalAmt = listing.term.amount + platformFeeAmt;
-    return {
-      amountGwei,
-      platformFeeAmtGwei,
-      platformFeeAmt,
-      minRequiredBalanceGwei,
-      totalAmt,
-    };
-  }, [platformFees, listing.term, currency?.decimals]);
+  const { platformFeeAmt, minRequiredBalanceGwei, totalAmt }: CalculatedTermData =
+    useMemo(() => {
+      if (
+        typeof platformFees[listing.term.currencyAddress] === "undefined" ||
+        typeof listing === "undefined" ||
+        typeof currency === undefined
+      )
+        return {} as CalculatedTermData;
+      const amountGwei = ethers.utils.parseUnits(
+        listing.term.amount.toString(),
+        currency?.decimals
+      );
+      const platformFeeAmtGwei: BigNumber = BigNumber.from(
+        platformFees[listing.term.currencyAddress]
+      )
+        .mul(amountGwei)
+        .div(10000);
+      const minRequiredBalanceGwei = amountGwei.add(platformFeeAmtGwei);
+      const platformFeeAmt = +ethers.utils.formatUnits(
+        platformFeeAmtGwei,
+        currency.decimals
+      );
+      const totalAmt = listing.term.amount + platformFeeAmt;
+      return {
+        amountGwei,
+        platformFeeAmtGwei,
+        platformFeeAmt,
+        minRequiredBalanceGwei,
+        totalAmt,
+      };
+    }, [platformFees, listing.term, currency?.decimals]);
 
   // click accept term button
   const handleAcceptTerms = useCallback(async () => {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Box, Button, Chip, Tooltip } from "@mui/material";
+import { Avatar, Box, Button, Chip, CircularProgress, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -319,7 +319,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         )}
         {isPending && (
           <Button variant="contained" className="offer slim">
-            Pending...
+            <CircularProgress />
           </Button>
         )}
         {!isOwner && (
