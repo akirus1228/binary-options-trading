@@ -149,7 +149,11 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
                 Claim NFT
               </Button>
             )}
-            {isPending && <Button variant="contained">Pending...</Button>}
+            {isPending && (
+              <Button variant="contained">
+                <CircularProgress color="inherit" />
+              </Button>
+            )}
           </Box>
         </Box>
       </Paper>

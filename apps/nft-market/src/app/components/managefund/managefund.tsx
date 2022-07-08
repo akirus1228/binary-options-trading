@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   IconButton,
   MenuItem,
@@ -256,7 +257,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                 )}
               {pending && (
                 <Button variant="contained" disabled sx={{ width: "100%", mt: 4 }}>
-                  Pending...
+                  <CircularProgress />
                 </Button>
               )}
             </Box>

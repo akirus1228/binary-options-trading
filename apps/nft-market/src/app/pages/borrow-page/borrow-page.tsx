@@ -88,7 +88,9 @@ export const BorrowPage = (): JSX.Element => {
 
   const assetsToShow: Asset[] =
     feQuery.status === AssetStatus.Locked && loans
-      ? loans?.map((loan) => loan.assetListing.asset)
+      ? loans
+          ?.map((loan) => loan.assetListing.asset)
+          .filter((asset) => asset.status === AssetStatus.Locked)
       : myAssets;
 
   return (
