@@ -592,11 +592,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       <ConfirmDialog
         title="Confirm Accept Offer"
         open={confirmOpen}
-        platformfee={platformFees[currency?.currentAddress]}
-        currencyConfirm={currency?.symbol}
-        interest={
-          amount + amount * ((((termTypes[durationType] * +duration) / 365) * apr) / 100)
-        }
+        principal={amount}
+        platformfee={(platformFees[currency?.currentAddress] / 10000) * amount}
+        currencySymbol={currency?.symbol}
+        interest={repaymentAmount}
         duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
         setOpen={setConfirmOpen}
         onConfirm={handleMakeOffer}
