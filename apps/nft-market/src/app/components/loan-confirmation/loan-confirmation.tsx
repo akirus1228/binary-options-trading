@@ -112,37 +112,42 @@ export const LoanConfirmation = ({
   const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
 
-  const { platformFeeAmt, minRequiredBalanceGwei, totalAmt }: CalculatedTermData =
-    useMemo(() => {
-      if (
-        typeof platformFees[listing.term.currencyAddress] === "undefined" ||
-        typeof listing === "undefined" ||
-        typeof currency === undefined
-      )
-        return {} as CalculatedTermData;
-      const amountGwei = ethers.utils.parseUnits(
-        listing.term.amount.toString(),
-        currency?.decimals
-      );
-      const platformFeeAmtGwei: BigNumber = BigNumber.from(
-        platformFees[listing.term.currencyAddress]
-      )
-        .mul(amountGwei)
-        .div(10000);
-      const minRequiredBalanceGwei = amountGwei.add(platformFeeAmtGwei);
-      const platformFeeAmt = +ethers.utils.formatUnits(
-        platformFeeAmtGwei,
-        currency.decimals
-      );
-      const totalAmt = listing.term.amount + platformFeeAmt;
-      return {
-        amountGwei,
-        platformFeeAmtGwei,
-        platformFeeAmt,
-        minRequiredBalanceGwei,
-        totalAmt,
-      };
-    }, [platformFees, listing.term, currency?.decimals]);
+  const {
+    platformFeeAmt,
+    minRequiredBalanceGwei,
+    totalAmt,
+    amountGwei,
+    platformFeeAmtGwei,
+  }: CalculatedTermData = useMemo(() => {
+    if (
+      typeof platformFees[listing.term.currencyAddress] === "undefined" ||
+      typeof listing === "undefined" ||
+      typeof currency === undefined
+    )
+      return {} as CalculatedTermData;
+    const amountGwei = ethers.utils.parseUnits(
+      listing.term.amount.toString(),
+      currency?.decimals
+    );
+    const platformFeeAmtGwei: BigNumber = BigNumber.from(
+      platformFees[listing.term.currencyAddress]
+    )
+      .mul(amountGwei)
+      .div(10000);
+    const minRequiredBalanceGwei = amountGwei.add(platformFeeAmtGwei);
+    const platformFeeAmt = +ethers.utils.formatUnits(
+      platformFeeAmtGwei,
+      currency.decimals
+    );
+    const totalAmt = listing.term.amount + platformFeeAmt;
+    return {
+      amountGwei,
+      platformFeeAmtGwei,
+      platformFeeAmt,
+      minRequiredBalanceGwei,
+      totalAmt,
+    };
+  }, [platformFees, listing.term, currency?.decimals]);
 
   // click accept term button
   const handleAcceptTerms = useCallback(async () => {
@@ -447,7 +452,9 @@ export const LoanConfirmation = ({
           {hasAllowance &&
             !isPending &&
             currencyBalance &&
-            currencyBalance.gte(listing.term.amount * currency?.decimals || 0) && (
+            amountGwei &&
+            platformFeeAmtGwei &&
+            currencyBalance.gte(amountGwei.add(platformFeeAmtGwei)) && (
               <Button variant="contained" onClick={handleAcceptTerms}>
                 Lend {currency?.symbol}
               </Button>
@@ -455,7 +462,9 @@ export const LoanConfirmation = ({
           {hasAllowance &&
             !isPending &&
             currencyBalance &&
-            currencyBalance.lt(listing.term.amount * currency?.decimals || 0) && (
+            amountGwei &&
+            platformFeeAmtGwei &&
+            currencyBalance.lt(amountGwei.add(platformFeeAmtGwei)) && (
               <Button variant="contained" disabled={true}>
                 Insufficiant funds
               </Button>
