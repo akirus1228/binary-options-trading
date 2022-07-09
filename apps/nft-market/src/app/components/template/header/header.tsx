@@ -34,7 +34,7 @@ type Page = {
 const pages: Page[] = [
   { title: "Lend", href: "/lend" },
   { title: "Borrow", href: "/borrow" },
-  { title: "Learn", href: "/learn" },
+  // { title: "Blog", href: "/blog" },
   { title: "Account", href: "/my-account" },
   { title: "About", href: "/", hash: "#about-section" },
 ];
