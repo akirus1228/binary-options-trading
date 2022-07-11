@@ -186,10 +186,24 @@ export const BorrowerLoanDetails = ({
     repayLoanStatus,
   ]);
 
-  const canRepay = useMemo(
-    () => loanDetails?.endTime && loanDetails.endTime >= new Date().getTime() / 1000,
-    [loanDetails]
-  );
+  const [currentBlockTime, setCurrentBlockTime] = useState<number>();
+
+  useEffect(() => {
+    if (!provider) {
+      return;
+    }
+    provider.getBlockNumber().then((blockNumber) => {
+      provider.getBlock(blockNumber).then((block) => {
+        setCurrentBlockTime(block.timestamp);
+      });
+    });
+  }, [provider]);
+
+  const canRepay = useMemo(() => {
+    return (
+      loanDetails?.endTime && currentBlockTime && loanDetails.endTime >= currentBlockTime
+    );
+  }, [loanDetails, currentBlockTime]);
 
   if (!loan || !loan.term || !loanDetails.amountDue) {
     return (
