@@ -16,7 +16,7 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../store";
 import { useUpdateLoanMutation } from "../../api/backend-api";
@@ -186,6 +186,11 @@ export const BorrowerLoanDetails = ({
     repayLoanStatus,
   ]);
 
+  const canRepay = useMemo(
+    () => loanDetails?.endTime && loanDetails.endTime >= new Date().getTime() / 1000,
+    [loanDetails]
+  );
+
   if (!loan || !loan.term || !loanDetails.amountDue) {
     return (
       <Box className="flex fr fj-c">
@@ -228,26 +233,28 @@ export const BorrowerLoanDetails = ({
               <LinearProgress variant="determinate" value={10} />
             </Box>
           </Box>
-          <Box className="flex fc">
-            {!!erc20Allowance &&
-              erc20Allowance.gte(loanDetails.amountDueGwei) &&
-              !isPending && (
-                <Button variant="contained" onClick={handleRepayLoan}>
-                  Repay loan
+          {canRepay && (
+            <Box className="flex fc">
+              {!!erc20Allowance &&
+                erc20Allowance.gte(loanDetails.amountDueGwei) &&
+                !isPending && (
+                  <Button variant="contained" onClick={handleRepayLoan}>
+                    Repay loan
+                  </Button>
+                )}
+              {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
+                !isPending && (
+                  <Button variant="contained" onClick={handleRequestAllowance}>
+                    Approve {currency?.symbol} for repayment
+                  </Button>
+                )}
+              {isPending && (
+                <Button variant="contained">
+                  <CircularProgress color="inherit" />
                 </Button>
               )}
-            {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
-              !isPending && (
-                <Button variant="contained" onClick={handleRequestAllowance}>
-                  Approve {currency?.symbol} for repayment
-                </Button>
-              )}
-            {isPending && (
-              <Button variant="contained">
-                <CircularProgress />
-              </Button>
-            )}
-          </Box>
+            </Box>
+          )}
         </Box>
       </Paper>
     </Container>
