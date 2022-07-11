@@ -7,6 +7,7 @@ import {
   Dialog,
   IconButton,
   Paper,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -125,10 +126,9 @@ export const LoanConfirmation = ({
       typeof currency === undefined
     )
       return {} as CalculatedTermData;
-    const amountGwei = ethers.utils.parseUnits(
-      listing.term.amount.toString(),
-      currency?.decimals
-    );
+    const amountGwei = ethers.utils
+      .parseUnits(listing.term.amount.toString(), currency?.decimals)
+      .mul(10000);
     const platformFeeAmtGwei: BigNumber = BigNumber.from(
       platformFees[listing.term.currencyAddress]
     )
@@ -282,9 +282,23 @@ export const LoanConfirmation = ({
   const handleClickLend = () => {
     setOpen(true);
   };
+
+  const hasEnoughBalance =
+    !isPending &&
+    currencyBalance &&
+    amountGwei &&
+    platformFeeAmtGwei &&
+    currencyBalance.gte(amountGwei.add(platformFeeAmtGwei));
+
+  const notEnoughBalance =
+    !isPending &&
+    currencyBalance &&
+    amountGwei &&
+    platformFeeAmtGwei &&
+    currencyBalance.lt(amountGwei.add(platformFeeAmtGwei));
   return (
     <>
-      <Button variant="outlined" onClick={handleClickLend}>
+      <Button variant="outlined" onClick={handleClickLend} disabled={!hasEnoughBalance}>
         Lend {currency?.symbol}
       </Button>
       <Dialog onClose={handleClose} open={open} fullScreen={isSmall}>
@@ -444,31 +458,21 @@ export const LoanConfirmation = ({
           </Paper>
         </Box>
         <Box className="flex fr fj-c" sx={{ pt: "2em", pb: "1em" }}>
-          {!hasAllowance && !isPending && (
+          {!hasAllowance && hasEnoughBalance && (
             <Button variant="outlined" onClick={handleRequestAllowance}>
               Allow Liqd access to your {currency?.symbol || ""}
             </Button>
           )}
-          {hasAllowance &&
-            !isPending &&
-            currencyBalance &&
-            amountGwei &&
-            platformFeeAmtGwei &&
-            currencyBalance.gte(amountGwei.add(platformFeeAmtGwei)) && (
-              <Button variant="contained" onClick={handleAcceptTerms}>
-                Lend {currency?.symbol}
-              </Button>
-            )}
-          {hasAllowance &&
-            !isPending &&
-            currencyBalance &&
-            amountGwei &&
-            platformFeeAmtGwei &&
-            currencyBalance.lt(amountGwei.add(platformFeeAmtGwei)) && (
-              <Button variant="contained" disabled={true}>
-                Insufficiant funds
-              </Button>
-            )}
+          {hasAllowance && hasEnoughBalance && (
+            <Button variant="contained" onClick={handleAcceptTerms}>
+              Lend {currency?.symbol}
+            </Button>
+          )}
+          {notEnoughBalance && (
+            <Button variant="contained" disabled={true}>
+              Insufficiant funds
+            </Button>
+          )}
           {isPending && (
             <Button>
               <CircularProgress />
