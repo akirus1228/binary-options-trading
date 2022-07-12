@@ -34,9 +34,9 @@ type Page = {
 const pages: Page[] = [
   { title: "Lend", href: "/lend" },
   { title: "Borrow", href: "/borrow" },
-  // { title: "Blog", href: "/blog" },
   { title: "Account", href: "/my-account" },
   { title: "About", href: "/", hash: "#about-section" },
+  { title: "Blog", href: "/blog" },
 ];
 
 export const Header = (): JSX.Element => {

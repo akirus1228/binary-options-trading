@@ -18,13 +18,15 @@ import { RootState } from "./store";
 import { BorrowPage } from "./pages/borrow-page/borrow-page";
 import { LendPage } from "./pages/lend-page/lend-page";
 import { MyAccountPage } from "./pages/my-account-page/my-account-page";
-import { setCheckedConnection } from "./store/reducers/app-slice";
+import { loadAppDetails, setCheckedConnection } from "./store/reducers/app-slice";
 import { authorizeAccount, logout } from "./store/reducers/backend-slice";
 import Typography from "@mui/material/Typography";
 import { AssetDetailsPage } from "./pages/asset-details-page/asset-details-page";
 import { TestHelper } from "./pages/test-helper/test-helper";
 import Growl from "./components/growl/growl";
 import { desiredNetworkId } from "./constants/network";
+import BlogPage from "./pages/blog/blog-page";
+import BlogPostPage from "./pages/blog/blog-post-page";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -126,6 +128,10 @@ export const App = (): JSX.Element => {
       }
     }
   }, [provider, address, connected]);
+  useEffect(() => {
+    // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
+    dispatch(loadAppDetails());
+  }, []);
 
   const handleAgree = () => {
     setPromptTerms(false);
@@ -209,6 +215,8 @@ export const App = (): JSX.Element => {
             />
             <Route path="/my-account" element={<MyAccountPage />} />
             <Route path="/account/:walletAddress" element={<MyAccountPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogPostPage />} />
             <Route
               path="/th"
               element={
