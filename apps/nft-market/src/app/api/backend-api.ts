@@ -288,6 +288,21 @@ export const backendApi = createApi({
       },
       invalidatesTags: ["Listing", "Asset", "Terms"],
     }),
+    updateListing: builder.mutation<Listing, Partial<Listing> & Pick<Listing, "id">>({
+      query: ({ id, ...patch }) => ({
+        url: `asset-listing/${id}`,
+        method: "PUT",
+        body: { ...patch, id },
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data }: { data: Listing } = await queryFulfilled;
+        if (data && data.id) {
+          dispatch(updateListing(data));
+        }
+      },
+      transformResponse: (response: Listing, meta, arg) => response,
+      invalidatesTags: ["Terms", "Listing", "Offer"],
+    }),
     // Terms
     getTerms: builder.query<Terms[], Partial<BackendStandardQuery>>({
       query: (queryParams) => ({
@@ -499,6 +514,7 @@ export const {
   useGetListingsQuery,
   useGetListingQuery,
   useDeleteListingMutation,
+  useUpdateListingMutation,
   useGetLoansQuery,
   useGetLoanQuery,
   useCreateLoanMutation,
