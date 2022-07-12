@@ -93,7 +93,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           props?.listing?.term.duration,
           calcDurationType(props?.listing?.term.duration)
         )
-      : ""
+      : "30"
   );
   const [durationType, setDurationType] = useState(
     props?.listing?.term.duration

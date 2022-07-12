@@ -294,6 +294,12 @@ export const backendApi = createApi({
         method: "PUT",
         body: { ...patch, id },
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data }: { data: Listing } = await queryFulfilled;
+        if (data && data.id) {
+          dispatch(updateListing(data));
+        }
+      },
       transformResponse: (response: Listing, meta, arg) => response,
       invalidatesTags: ["Terms", "Listing", "Offer"],
     }),
