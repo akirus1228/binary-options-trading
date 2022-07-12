@@ -288,6 +288,15 @@ export const backendApi = createApi({
       },
       invalidatesTags: ["Listing", "Asset", "Terms"],
     }),
+    updateListing: builder.mutation<Listing, Partial<Listing> & Pick<Listing, "id">>({
+      query: ({ id, ...patch }) => ({
+        url: `asset-listing/${id}`,
+        method: "PUT",
+        body: { ...patch, id },
+      }),
+      transformResponse: (response: Listing, meta, arg) => response,
+      invalidatesTags: ["Terms", "Listing", "Offer"],
+    }),
     // Terms
     getTerms: builder.query<Terms[], Partial<BackendStandardQuery>>({
       query: (queryParams) => ({
@@ -499,6 +508,7 @@ export const {
   useGetListingsQuery,
   useGetListingQuery,
   useDeleteListingMutation,
+  useUpdateListingMutation,
   useGetLoansQuery,
   useGetLoanQuery,
   useCreateLoanMutation,

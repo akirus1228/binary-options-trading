@@ -10,14 +10,14 @@ import {
   Typography,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { AssetStatus, Listing } from "../../types/backend-types";
+import { AssetStatus, Listing, ListingStatus } from "../../types/backend-types";
 import { useDeleteListingMutation } from "../../api/backend-api";
 import { AppDispatch, RootState } from "../../store";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { addAlert } from "../../store/reducers/app-slice";
 import { updateAsset } from "../../store/reducers/asset-slice";
 import style from "./cancel-listing.module.scss";
-import { deleteListing } from "../../store/reducers/listing-slice";
+import { updateListing } from "../../store/reducers/listing-slice";
 
 export interface CancelListingProps {
   listing: Listing;
@@ -86,6 +86,7 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
     if (!provider || !chainId || !props.listing) return;
     // send listing data to backend
     setPending(true);
+
     deleteListingApi(props.listing);
     dispatch(addAlert({ message: "Listing has been cancelled." }));
     return;
@@ -98,7 +99,11 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
       props.listing
     ) {
       dispatch(updateAsset({ ...props.listing.asset, status: AssetStatus.New }));
-      dispatch(deleteListing(props.listing));
+      const cancelledListing: Listing = {
+        ...props.listing,
+        status: ListingStatus.Cancelled,
+      };
+      updateListing(cancelledListing);
     }
     if (!isDeleteListingLoading && deleteListingResponse) {
       deleteListingReset();
