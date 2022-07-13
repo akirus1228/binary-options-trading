@@ -126,9 +126,11 @@ export const LoanConfirmation = ({
       typeof currency === undefined
     )
       return {} as CalculatedTermData;
-    const amountGwei = ethers.utils
-      .parseUnits(listing.term.amount.toString(), currency?.decimals)
-      .mul(10000);
+    const amountGwei = ethers.utils.parseUnits(
+      listing.term.amount.toString(),
+      currency?.decimals
+    );
+
     const platformFeeAmtGwei: BigNumber = BigNumber.from(
       platformFees[listing.term.currencyAddress]
     )
@@ -298,7 +300,7 @@ export const LoanConfirmation = ({
     currencyBalance.lt(amountGwei.add(platformFeeAmtGwei));
   return (
     <>
-      <Button variant="outlined" onClick={handleClickLend}>
+      <Button variant="outlined" onClick={handleClickLend} disabled={!hasEnoughBalance}>
         Lend {currency?.symbol}
       </Button>
       <Dialog onClose={handleClose} open={open} fullScreen={isSmall}>

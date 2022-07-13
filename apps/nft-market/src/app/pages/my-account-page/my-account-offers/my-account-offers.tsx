@@ -70,7 +70,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
     OffersListFields.ASSET,
     OffersListFields.NAME,
     OffersListFields.REPAYMENT_TOTAL,
-    OffersListFields.REPAYMENT_AMOUNT,
+    OffersListFields.TOTAL_INTEREST,
     OffersListFields.APR,
     OffersListFields.DURATION,
     OffersListFields.EXPIRATION,
