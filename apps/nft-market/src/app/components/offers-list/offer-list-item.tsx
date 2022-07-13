@@ -244,7 +244,32 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             </Tooltip>
           </Box>
         );
-      case OffersListFields.REPAYMENT_AMOUNT:
+      case OffersListFields.PRINCIPAL:
+        return (
+          <Box>
+            <Tooltip
+              title={`~ ${formatCurrency(
+                offer.term.amount * currency?.lastPrice || 0,
+                2
+              )}`}
+            >
+              <span>{offer.term.amount.toFixed(4)} </span>
+            </Tooltip>
+            <Tooltip title={currency?.name || ""}>
+              <img
+                src={currency?.icon || ""}
+                alt={currency?.symbol || ""}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  marginLeft: "5px",
+                  marginBottom: "4px",
+                }}
+              />
+            </Tooltip>
+          </Box>
+        );
+      case OffersListFields.TOTAL_INTEREST:
         return (
           <Box>
             <Tooltip
