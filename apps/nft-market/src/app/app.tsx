@@ -205,41 +205,43 @@ export const App = (): JSX.Element => {
         <Box paddingTop={5} paddingBottom={12} sx={{ height: "100vh" }}>
           <Header />
           <Growl />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/borrow" element={<BorrowPage />} />
-            <Route path="/lend" element={<LendPage />} />
-            <Route
-              path="/asset/:contractAddress/:tokenId"
-              element={<AssetDetailsPage />}
-            />
-            <Route path="/my-account" element={<MyAccountPage />} />
-            <Route path="/account/:walletAddress" element={<MyAccountPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:id" element={<BlogPostPage />} />
-            <Route
-              path="/th"
-              element={
-                isDev() ? (
-                  <TestHelper />
-                ) : (
+          <Box sx={{ minHeight: "calc(100% - 194px)" }}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/borrow" element={<BorrowPage />} />
+              <Route path="/lend" element={<LendPage />} />
+              <Route
+                path="/asset/:contractAddress/:tokenId"
+                element={<AssetDetailsPage />}
+              />
+              <Route path="/my-account" element={<MyAccountPage />} />
+              <Route path="/account/:walletAddress" element={<MyAccountPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:id" element={<BlogPostPage />} />
+              <Route
+                path="/th"
+                element={
+                  isDev() ? (
+                    <TestHelper />
+                  ) : (
+                    <main style={{ padding: "1rem" }}>
+                      <h1>404</h1>
+                      <p>There's nothing here!</p>
+                    </main>
+                  )
+                }
+              />
+              <Route
+                path="*"
+                element={
                   <main style={{ padding: "1rem" }}>
                     <h1>404</h1>
                     <p>There's nothing here!</p>
                   </main>
-                )
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <main style={{ padding: "1rem" }}>
-                  <h1>404</h1>
-                  <p>There's nothing here!</p>
-                </main>
-              }
-            />
-          </Routes>
+                }
+              />
+            </Routes>
+          </Box>
           <Footer />
         </Box>
       )}

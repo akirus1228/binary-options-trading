@@ -10,14 +10,14 @@ import {
   Typography,
 } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { AssetStatus, Listing } from "../../types/backend-types";
-import { useDeleteListingMutation } from "../../api/backend-api";
+import { AssetStatus, Listing, ListingStatus } from "../../types/backend-types";
+import { useUpdateListingMutation } from "../../api/backend-api";
 import { AppDispatch, RootState } from "../../store";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { addAlert } from "../../store/reducers/app-slice";
 import { updateAsset } from "../../store/reducers/asset-slice";
 import style from "./cancel-listing.module.scss";
-import { deleteListing } from "../../store/reducers/listing-slice";
+import { updateListing } from "../../store/reducers/listing-slice";
 
 export interface CancelListingProps {
   listing: Listing;
@@ -32,13 +32,13 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
   const { address, chainId, provider } = useWeb3Context();
   // update term backend api call
   const [
-    deleteListingApi,
+    updateListingApi,
     {
       isLoading: isDeleteListingLoading,
-      data: deleteListingResponse,
-      reset: deleteListingReset,
+      data: updateListingResponse,
+      reset: updateListingReset,
     },
-  ] = useDeleteListingMutation();
+  ] = useUpdateListingMutation();
   // primary form pending state
   const [pending, setPending] = useState(false);
 
@@ -86,25 +86,20 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
     if (!provider || !chainId || !props.listing) return;
     // send listing data to backend
     setPending(true);
-    deleteListingApi(props.listing);
+    const cancelledListing = {
+      ...props.listing,
+      asset: { ...props.listing.asset, status: AssetStatus.Ready },
+      status: ListingStatus.Cancelled,
+    };
+
+    updateListingApi(cancelledListing).then(() => {
+      updateListingReset();
+      props.onClose(true);
+      setPending(false);
+    });
     dispatch(addAlert({ message: "Listing has been cancelled." }));
     return;
   };
-
-  useEffect(() => {
-    if (
-      !isDeleteListingLoading &&
-      typeof deleteListingResponse !== "undefined" &&
-      props.listing
-    ) {
-      dispatch(updateAsset({ ...props.listing.asset, status: AssetStatus.New }));
-      dispatch(deleteListing(props.listing));
-    }
-    if (!isDeleteListingLoading && deleteListingResponse) {
-      deleteListingReset();
-      props.onClose(true);
-    }
-  }, [isDeleteListingLoading, deleteListingResponse, props.listing]);
 
   return (
     <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>

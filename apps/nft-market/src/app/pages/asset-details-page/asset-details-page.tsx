@@ -117,8 +117,9 @@ export const AssetDetailsPage = (): JSX.Element => {
 
   const offersFields = [
     OffersListFields.LENDER_PROFILE,
+    OffersListFields.PRINCIPAL,
+    OffersListFields.TOTAL_INTEREST,
     OffersListFields.REPAYMENT_TOTAL,
-    OffersListFields.REPAYMENT_AMOUNT,
     OffersListFields.APR,
     OffersListFields.DURATION,
     OffersListFields.EXPIRATION,

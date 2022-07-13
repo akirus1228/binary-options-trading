@@ -144,11 +144,13 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
             </Box>
           </Box>
           <Box className="flex fc">
-            {loanDetails.endTime < Date.now() / 1000 && !isPending && (
-              <Button variant="contained" onClick={handleForecloseLoan}>
-                Claim NFT
-              </Button>
-            )}
+            {loanDetails.endTime < Date.now() / 1000 &&
+              !isPending &&
+              loanDetails.lender === user.address && (
+                <Button variant="contained" onClick={handleForecloseLoan}>
+                  Claim NFT
+                </Button>
+              )}
             {isPending && (
               <Button variant="contained">
                 <CircularProgress color="inherit" />
