@@ -98,11 +98,11 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
           </Button>
         </Box>
         <Box className="flex fc">
-          <Typography>
+          <Typography className="flex">
             Overview
             {OwnerInfoTooltip("The total value borrowed/lent by this user.")}
           </Typography>
-          <Box className="flex fr fj-sb" sx={{ mt: "2em" }}>
+          <Box className="flex fr fj-sb" sx={{ mt: "1em" }}>
             <Box className="flex fc" sx={{ mr: "2em" }}>
               <span style={{ color: "#8991A2" }}>Total borrowed</span>
               <span>{formatCurrency(ownerInfo?.totalBorrowed || 0)}</span>
@@ -119,13 +119,13 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
           <Box className="flex fr fw ai-c" sx={{ mr: "2em" }}>
             <CircleGraph progress={defaultRate} sx={{ mr: "2em" }} />
             <Box className="flex fc">
-              <span>
+              <Typography className="flex">
                 Default rate
                 {OwnerInfoTooltip(
                   "The ratio to which this user has repaid versus defaulted on loans borrowed."
                 )}
-              </span>
-              <Box className="flex fr">
+              </Typography>
+              <Box className="flex fr" sx={{ mt: "1em" }}>
                 <Box className="flex fc" sx={{ mr: "2em" }}>
                   <ColorLabel color="#1B9385" label="Loans repaid" />
                   <span>{ownerInfo?.loansRepaid}</span>
@@ -144,13 +144,13 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
           <Box className="flex fr fw ai-c" sx={{ mr: "2em" }}>
             <CircleGraph progress={lendToBorrowRatio} sx={{ mr: "2em" }} />
             <Box className="flex fc">
-              <span>
+              <Typography className="flex">
                 Loan Activity
                 {OwnerInfoTooltip(
                   "The number of times this user has borrowed versus lent money."
                 )}
-              </span>
-              <Box className="flex fr">
+              </Typography>
+              <Box className="flex fr" sx={{ mt: "1em" }}>
                 <Box className="flex fc" sx={{ mr: "2em" }}>
                   <ColorLabel color="#1B9385" label="Loans borrowed" />
                   <span>{ownerInfo?.loansBorrowed}</span>
