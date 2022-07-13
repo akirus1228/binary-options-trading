@@ -50,8 +50,11 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
       >
         <Grid
           container
+          className={style["imgDiv"]}
           sx={{ width: { xs: "100%", md: "100%" }, height: "100%", paddingRight: "20px" }}
           md={6}
+          xs={12}
+          sm={12}
           columnSpacing={2}
           direction="row"
         >
@@ -61,10 +64,10 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
             className={style["daiIcon"]}
           />
         </Grid>
-        <Grid md={6}>
+        <Grid md={6} xs={12} sm={12} className={style["FeaturedDiv"]}>
           <Grid
             item
-            className="email-div"
+            className={style["email-div"]}
             order={{ lg: 1 }}
             style={{
               width: "100%",

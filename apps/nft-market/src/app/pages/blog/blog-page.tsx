@@ -191,7 +191,12 @@ export const BlogPage = (): JSX.Element => {
             md={12}
             order={{ lg: 1 }}
             style={{ width: "100%" }}
-            sx={{ display: { xs: "none", md: "flex" }, justifyContent: "space-between" }}
+            sx={{
+              display: { md: "flex" },
+              justifyContent: "space-between",
+              marginBottom: "40px",
+            }}
+            className={style["classifyDiv"]}
           >
             <FormControl>
               <RadioGroup
@@ -230,7 +235,7 @@ export const BlogPage = (): JSX.Element => {
                 />
               </RadioGroup>
             </FormControl>
-            <Search>
+            <Search className={style["searchDiv"]}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -301,6 +306,7 @@ export const BlogPage = (): JSX.Element => {
                       fontFamily: "monument extended",
                       marginBottom: "10px",
                     }}
+                    className={style["NewsLetterTitle"]}
                   >
                     Join the Liqd newsletter
                   </Typography>
@@ -311,6 +317,7 @@ export const BlogPage = (): JSX.Element => {
                       color: "#8994a2",
                       marginBottom: "10px",
                     }}
+                    className={style["NewsLetterDesc"]}
                   >
                     Join the Liqd newsletter to stay update on the NFT space
                   </Typography>
@@ -328,9 +335,11 @@ export const BlogPage = (): JSX.Element => {
                       paddingTop: "10px",
                       paddingBottom: "10px",
                     }}
+                    className={style["EmailBackDiv"]}
                   >
                     <Grid
                       item
+                      xs={8}
                       sm={12}
                       md={8}
                       order={{ lg: 1 }}
@@ -348,6 +357,7 @@ export const BlogPage = (): JSX.Element => {
                     </Grid>
                     <Grid
                       item
+                      xs={4}
                       sm={12}
                       md={4}
                       order={{ lg: 1 }}
@@ -369,8 +379,9 @@ export const BlogPage = (): JSX.Element => {
                       fontSize: "14px",
                       fontFamily: "inter",
                       color: "#8994a2",
-                      paddingTop: "20px"
+                      paddingTop: "20px",
                     }}
+                    className={style["spamDiv"]}
                   >
                     No spam. Never shared. Opt out at any time.
                   </Typography>

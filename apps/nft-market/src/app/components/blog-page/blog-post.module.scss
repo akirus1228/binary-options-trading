@@ -10,8 +10,6 @@
   border-radius: 25px;
   top: -36px;
   @media (max-width: 600px) {
-    height: 100px !important;
-    width: 165px !important;
   }
 }
 
@@ -26,6 +24,7 @@
   }
   @media (max-width: 600px) {
     font-size: 10px;
+    width: 125px !important;
   }
 }
 .categoryDisplay {
@@ -45,10 +44,9 @@
   font-size: 20px;
   height: 80px;
   max-lines: 2;
-  width: 85%;
+  width: 80%;
   @media (max-width: 600px) {
-    font-size: 12px !important;
-    width: 210px !important;
+    font-size: 15px !important;
   }
 }
 .email-div {
@@ -58,16 +56,26 @@
 }
 .twitterLogoDiv {
   color: grey;
+  @media (max-width: 600px) {
+    padding-top: 0px !important;
+    h2 {
+      font-size: 11px !important;
+    }
+    span {
+      font-size: 20px !important;
+    }
+  }
 }
 .cardWrapper {
   box-shadow: 0.5em 0.5em 1em #e9f1e9 !important;
   color: black !important;
   background-color: white !important;
 }
+
 body[class="darkTheme"] {
   .cardWrapper {
     box-shadow: 0.5em 0.5em 1em #161916bd !important;
-    background-color: #0D0E0F !important;
+    background-color: #0d0e0f !important;
     color: white !important;
   }
   .twitterLogoDiv {
