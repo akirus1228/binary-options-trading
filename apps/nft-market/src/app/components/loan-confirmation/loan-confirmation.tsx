@@ -472,7 +472,7 @@ export const LoanConfirmation = ({
           )}
           {notEnoughBalance && (
             <Button variant="contained" disabled={true}>
-              Insufficiant funds
+              Insufficient funds
             </Button>
           )}
           {isPending && (
