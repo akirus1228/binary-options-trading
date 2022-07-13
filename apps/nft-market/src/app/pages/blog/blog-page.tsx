@@ -7,6 +7,7 @@ import {
   FormLabel,
   Grid,
   Icon,
+  InputBase,
   OutlinedInput,
   Paper,
   Radio,
@@ -23,6 +24,11 @@ import { useEffect, useState } from "react";
 import { BlogPostDTO } from "../../types/backend-types";
 import BlogFeaturedPost from "../../components/blog-featured-page/blog-featured-post";
 import BlogPost from "../../components/blog-page/blog-post";
+import { AboutDivider } from "@fantohm/shared/images";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+import TextField from "@mui/material/TextField";
+import { alpha, styled } from "@material-ui/core";
 
 export const BlogPage = (): JSX.Element => {
   const [email, setEmail] = useState("");
@@ -90,6 +96,41 @@ export const BlogPage = (): JSX.Element => {
   const handleChange = (value: string) => {
     setSortValue(value);
   };
+
+  const Search = styled("div")(({ theme }) => ({
+    display: "flex",
+    position: "relative",
+    border: "1px solid grey",
+    paddingLeft: "15px",
+    borderRadius: "19px",
+    marginLeft: 0,
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(1),
+      width: "auto",
+    },
+  }));
+
+  const SearchIconWrapper = styled("div")(({ theme }) => ({
+    // padding: theme.spacing(0, 2),
+    height: "100%",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }));
+
+  const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: "inherit",
+    "& .MuiInputBase-input": {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: "10px",
+      fontSize: "18px",
+      transition: theme.transitions.create("width"),
+      width: "100%",
+    },
+  }));
   console.log("blogposts:", blogPosts);
   return (
     <Container
@@ -119,20 +160,30 @@ export const BlogPage = (): JSX.Element => {
             item
             md={12}
             order={{ lg: 1 }}
-            sx={{ width: { xs: "100%", md: "100%" }, marginBottom: "64px" }}
+            sx={{ width: { xs: "100%", md: "100%" } }}
             className={style["blogPostsDivF"]}
           >
-            <Grid container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}>
-              {blogPosts &&
-                blogPosts
-                  .filter((post: BlogPostDTO) => post.isFeatured)
-                  .map((post: BlogPostDTO) => (
-                    <Grid item xs={12} sm={12} md={4} order={{ lg: 1 }}>
-                      <BlogFeaturedPost post={post} className={style["blogPost"]}>
-                        <h2 className={style["daiAPR"]}>{post.blogTitle}</h2>
-                      </BlogFeaturedPost>
-                    </Grid>
-                  ))}
+            <Grid md={12}>
+              {blogPosts && (
+                <Grid item xs={12} sm={12} md={12} order={{ lg: 1 }}>
+                  <BlogFeaturedPost post={blogPosts[0]} className={style["blogPost"]}>
+                    <h2 className={style["daiAPR"]}>{blogPosts[0]?.blogTitle}</h2>
+                  </BlogFeaturedPost>
+                </Grid>
+              )}
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingTop: "70px",
+              }}
+            >
+              <img src={AboutDivider as string} alt="divider" style={{ width: "100%" }} />
             </Grid>
           </Grid>
           <Grid
@@ -140,12 +191,12 @@ export const BlogPage = (): JSX.Element => {
             md={12}
             order={{ lg: 1 }}
             style={{ width: "100%" }}
-            sx={{ display: { xs: "none", md: "flex" } }}
+            sx={{ display: { xs: "none", md: "flex" }, justifyContent: "space-between" }}
           >
             <FormControl>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="all"
+                defaultValue="tutorials"
                 name="radio-buttons-group"
                 sx={{ display: "flex", flexDirection: "row" }}
                 onChange={(e) => {
@@ -153,23 +204,41 @@ export const BlogPage = (): JSX.Element => {
                   console.log(e.target.value); // will be called this time
                 }}
               >
-                <FormControlLabel value="all" control={<Radio />} label="All" />
                 <FormControlLabel
+                  className={style["radiobutton"]}
+                  value="tutorials"
+                  control={<Radio />}
+                  label="Tutorials"
+                />
+                <FormControlLabel
+                  className={style["radiobutton"]}
                   value="announcements"
                   control={<Radio />}
                   label="Announcements"
                 />
-                <FormControlLabel value="products" control={<Radio />} label="Products" />
                 <FormControlLabel
-                  value="partnerships"
+                  className={style["radiobutton"]}
+                  value="competitions"
                   control={<Radio />}
-                  label="Partnerships"
+                  label="Competitions"
                 />
-                <FormControlLabel value="events" control={<Radio />} label="Events" />
-                <FormControlLabel value="usdb" control={<Radio />} label="USDB" />
-                <FormControlLabel value="fhm" control={<Radio />} label="FHM" />
+                <FormControlLabel
+                  className={style["radiobutton"]}
+                  value="news"
+                  control={<Radio />}
+                  label="News"
+                />
               </RadioGroup>
             </FormControl>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
           </Grid>
           <Grid
             item
@@ -208,7 +277,7 @@ export const BlogPage = (): JSX.Element => {
             >
               <Grid
                 container
-                style={{ width: "100%", height: "100%" }}
+                style={{ width: "100%", height: "100%", display: "block" }}
                 columnSpacing={2}
                 rowSpacing={{ sm: 0, md: 4 }}
               >
@@ -218,19 +287,46 @@ export const BlogPage = (): JSX.Element => {
                   lg={6}
                   order={{ lg: 1 }}
                   className={style["iconsElement"]}
+                  sx={{
+                    maxWidth: "100% !important",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
-                  <Typography style={{ fontSize: "20px", color: "#000000" }}>
-                    Receive email updates
+                  <Typography
+                    style={{
+                      fontSize: "35px",
+                      fontFamily: "monument extended",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Join the Liqd newsletter
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "22px",
+                      fontFamily: "inter",
+                      color: "#8994a2",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Join the Liqd newsletter to stay update on the NFT space
                   </Typography>
                   <Grid
                     container
-                    style={{ width: "100%", height: "100%" }}
+                    style={{
+                      width: "50%",
+                      marginLeft: "55px",
+                    }}
                     sx={{
                       display: "flex",
                       flexDirection: "row",
                       justifyContent: "start",
                       alignItems: "start",
                       paddingTop: "10px",
+                      paddingBottom: "10px",
                     }}
                   >
                     <Grid
@@ -268,7 +364,14 @@ export const BlogPage = (): JSX.Element => {
                       </Button>
                     </Grid>
                   </Grid>
-                  <Typography style={{ color: "#000000" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "inter",
+                      color: "#8994a2",
+                      paddingTop: "20px"
+                    }}
+                  >
                     No spam. Never shared. Opt out at any time.
                   </Typography>
                 </Grid>

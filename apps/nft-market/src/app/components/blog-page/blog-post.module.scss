@@ -7,8 +7,7 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 135px !important;
-  width: 210px !important;
+  border-radius: 25px;
   top: -36px;
   @media (max-width: 600px) {
     height: 100px !important;
@@ -43,10 +42,10 @@
   }
 }
 .blogTitle {
-  font-size: 16px;
-  height: 32px;
+  font-size: 20px;
+  height: 80px;
   max-lines: 2;
-  width: 70%;
+  width: 85%;
   @media (max-width: 600px) {
     font-size: 12px !important;
     width: 210px !important;
@@ -57,11 +56,21 @@
     margin-left: 10px !important;
   }
 }
-.cardWrapper {
-  box-shadow: 0.5em 0.5em 1em #e9f1e9  !important;
+.twitterLogoDiv {
+  color: grey;
 }
-body[class=darkTheme] {
+.cardWrapper {
+  box-shadow: 0.5em 0.5em 1em #e9f1e9 !important;
+  color: black !important;
+  background-color: white !important;
+}
+body[class="darkTheme"] {
   .cardWrapper {
-    box-shadow: 0.5em 0.5em 1em #161916bd  !important;
+    box-shadow: 0.5em 0.5em 1em #161916bd !important;
+    background-color: #0D0E0F !important;
+    color: white !important;
+  }
+  .twitterLogoDiv {
+    color: #8991a2;
   }
 }

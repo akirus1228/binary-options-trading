@@ -40,7 +40,9 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
         sx={{
           marginTop: "47px",
           padding: "0px",
-          borderRadius: "25px",
+          background: "none",
+          display: "flex",
+          borderRadius: "0px",
           ...props.sx,
         }}
         className={`daiCard ${style["cardWrapper"]} ${props.className} flexCenterCol`}
@@ -48,35 +50,37 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
       >
         <Grid
           container
-          sx={{ width: { xs: "100%", md: "100%" }, height: "100%" }}
+          sx={{ width: { xs: "100%", md: "100%" }, height: "100%", paddingRight: "20px" }}
+          md={6}
           columnSpacing={2}
-          rowSpacing={{ xs: 4, md: 0 }}
           direction="row"
         >
+          <img
+            src={props.post && props.post.image ? props.post.image : BalanceHeroImage}
+            alt="DAI token"
+            className={style["daiIcon"]}
+          />
+        </Grid>
+        <Grid md={6}>
           <Grid
             item
             className="email-div"
-            md={12}
             order={{ lg: 1 }}
             style={{
               width: "100%",
               overflow: "hidden",
-              backgroundColor: "#f4f4f4",
-              height: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              padding: "0px",
+              height: "40px",
+              marginBottom: "5px",
             }}
           >
-            <img
-              src={props.post && props.post.image ? props.post.image : BalanceHeroImage}
-              alt="DAI token"
-              className={style["daiIcon"]}
-            />
             <Box
               className={style["titleWrapper"]}
               style={{
-                height: "30px",
+                height: "40px",
                 justifyContent: "center",
                 alignItems: "center",
                 textAlign: "center",
@@ -87,14 +91,12 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
               </h3>
             </Box>
           </Grid>
-
           <Grid
             item
             className={style["emaildiv"]}
             md={12}
             order={{ lg: 1 }}
             style={{
-              height: "10%",
               overflow: "hidden",
               width: "100%",
               paddingTop: "0px",
@@ -107,16 +109,20 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
           </Grid>
           <Grid
             item
-            className={style["twitterLogoDiv"]}
-            md={2}
+            className={style["emaildiv"]}
+            md={12}
             order={{ lg: 1 }}
-            sx={{ justifyContent: "center", marginTop: { xs: "8px" } }}
+            style={{
+              overflow: "hidden",
+              width: "100%",
+              paddingTop: "0px",
+              marginTop: "-10px",
+            }}
           >
-            <img
-              alt="Balance Twitter logo"
-              style={{ width: "40px" }}
-              className={style["TwitterLogo"]}
-            />
+            <h3 className={style["blogDescription"]}>
+              Aenean congue sodales magna non sodales. Maecenas tristique vestibulum
+              tellus, sit amet mattis diam ultrices non.
+            </h3>
           </Grid>
           <Grid
             item
@@ -124,19 +130,41 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
             md={8}
             order={{ lg: 1 }}
             sx={{
-              height: "100%",
               overflow: "hidden",
               marginLeft: { xs: "5px" },
               paddingLeft: "0px !important",
+              display: "flex",
             }}
           >
-            <h2 style={{ fontSize: "15px", marginLeft: "10px", marginBottom: "0px" }}>
-              The Balance Blog
-            </h2>
-            <h2 style={{ fontSize: "15px", marginLeft: "10px", marginTop: "0px" }}>
+            <h2
+              style={{
+                fontSize: "16px",
+                fontWeight: "normal",
+                fontFamily: "inter",
+              }}
+            >
               {props.post && props.post.date
                 ? new Date(props.post.date.slice(0, 10)).toDateString().slice(4)
                 : ""}
+            </h2>
+            <span
+              style={{
+                lineHeight: "28px",
+                fontSize: "37px",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+              }}
+            >
+              .
+            </span>
+            <h2
+              style={{
+                fontSize: "16px",
+                fontWeight: "normal",
+                fontFamily: "inter",
+              }}
+            >
+              5 min read
             </h2>
           </Grid>
         </Grid>

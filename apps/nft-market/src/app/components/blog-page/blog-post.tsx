@@ -58,7 +58,7 @@ export const BlogPost = (props: BlogPostProps): JSX.Element => {
             className="email-div"
             md={12}
             order={{ lg: 1 }}
-            style={{ width: "100%", overflow: "hidden", backgroundColor: "#f4f4f4" }}
+            style={{ width: "100%", overflow: "hidden", padding: 0 }}
           >
             <img
               src={props.post && props.post.image ? props.post.image : BalanceHeroImage}
@@ -99,32 +99,44 @@ export const BlogPost = (props: BlogPostProps): JSX.Element => {
           </Grid>
           <Grid
             item
-            className="email-div"
-            md={2}
-            order={{ lg: 1 }}
-            sx={{ justifyContent: "center", marginTop: { xs: "8px" } }}
-          >
-            <img alt="Balance Twitter logo" style={{ width: "40px" }} />
-          </Grid>
-          <Grid
-            item
-            className="email-div"
+            className={style["twitterLogoDiv"]}
             md={8}
             order={{ lg: 1 }}
             sx={{
-              height: "100%",
               overflow: "hidden",
               marginLeft: { xs: "5px" },
-              paddingLeft: "0px !important",
+              display: "flex",
             }}
           >
-            <h2 style={{ fontSize: "12px", marginLeft: "10px", marginBottom: "0px" }}>
-              The Balance Blog
-            </h2>
-            <h2 style={{ fontSize: "12px", marginLeft: "10px", marginTop: "0px" }}>
+            <h2
+              style={{
+                fontSize: "16px",
+                fontWeight: "normal",
+                fontFamily: "inter",
+              }}
+            >
               {props.post && props.post.date
                 ? new Date(props.post.date.slice(0, 10)).toDateString().slice(4)
                 : ""}
+            </h2>
+            <span
+              style={{
+                lineHeight: "28px",
+                fontSize: "37px",
+                paddingLeft: "5px",
+                paddingRight: "5px",
+              }}
+            >
+              .
+            </span>
+            <h2
+              style={{
+                fontSize: "16px",
+                fontWeight: "normal",
+                fontFamily: "inter",
+              }}
+            >
+              5 min read
             </h2>
           </Grid>
         </Grid>
