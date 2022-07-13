@@ -353,8 +353,7 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {platformFeeAmt}
-                    {currency?.symbol}{" "}
+                    {platformFeeAmt} {currency?.symbol}{" "}
                     <span className="subtle" style={{ marginLeft: "1em" }}>
                       (platform fee)
                     </span>
