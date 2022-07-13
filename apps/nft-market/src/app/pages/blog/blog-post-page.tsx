@@ -23,7 +23,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { USDBLight, USDBDark } from "@fantohm/shared-ui-themes";
 import { RootState } from "../../store";
 import style from "./blog-post-page.module.scss";
-import { BalanceHeroImage, BalanceLogoDark } from "@fantohm/shared/images";
+import {
+  AboutDivider,
+  BalanceHeroImage,
+  BalanceLogoDark,
+  emailIcon,
+  linkedinIcon,
+  liqidIcon,
+  twitterIcon,
+} from "@fantohm/shared/images";
 import { withDeps } from "@nrwl/workspace/src/core/project-graph";
 import { useLocation, useParams } from "react-router-dom";
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
@@ -161,7 +169,7 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
   };
   return (
     <ThemeProvider theme={theme}>
-      <div style={{ width: "100%" }} className="change">
+      <div style={{ width: "100%", marginTop: "50px" }} className={style["changeDiv"]}>
         <Box
           className={style["titleWrapper"]}
           sx={{
@@ -176,8 +184,8 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
         >
           <h3
             style={{
-              paddingTop: "8px",
-              fontSize: "12px",
+              paddingTop: "5px",
+              fontSize: "14px",
             }}
           >
             {post ? post.blogCategory : ""}
@@ -227,28 +235,114 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
             <Grid
               item
               className="email-div"
-              md={1}
+              md={12}
               order={{ lg: 1 }}
-              style={{ width: "60px", justifyContent: "center" }}
+              style={{ width: "100%", display: "flex", paddingRight: "16px" }}
             >
-              <img alt="Balance Twitter logo" style={{ width: "60px" }} />
+              <Grid md={7} xs={12} style={{ display: "flex" }}>
+                <img alt="Liqd logo" src={liqidIcon} style={{ height: "63px" }} />
+                <Grid sx={{ marginLeft: "10px" }}>
+                  <Typography
+                    sx={{ fontSize: "18px", fontFamily: "Inter", marginTop: "5px" }}
+                    className={style["liqdBlogDiv"]}
+                  >
+                    Liqd Blog
+                  </Typography>
+                  <Grid
+                    item
+                    className={style["twitterLogoDiv"]}
+                    md={12}
+                    order={{ lg: 1 }}
+                    sx={{
+                      overflow: "hidden",
+                      paddingLeft: "0px !important",
+                      display: "flex",
+                    }}
+                  >
+                    <h2
+                      style={{
+                        fontSize: "16px",
+                        fontWeight: "normal",
+                        fontFamily: "inter",
+                      }}
+                    >
+                      {post && post.date
+                        ? new Date(post.date.slice(0, 10)).toDateString().slice(4)
+                        : ""}
+                    </h2>
+                    <span
+                      style={{
+                        lineHeight: "28px",
+                        fontSize: "37px",
+                        paddingLeft: "5px",
+                        paddingRight: "5px",
+                      }}
+                    >
+                      .
+                    </span>
+                    <h2
+                      style={{
+                        fontSize: "16px",
+                        fontWeight: "normal",
+                        fontFamily: "inter",
+                      }}
+                    >
+                      5 min read
+                    </h2>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                md={5}
+                order={{ lg: 1 }}
+                style={{ display: "flex", alignItems: "center" }}
+                className={style["socialDiv"]}
+              >
+                <Typography
+                  sx={{ fontSize: "16px", fontFamily: "inter", color: "#6b737c" }}
+                >
+                  shared this post:
+                </Typography>
+                <Box className={style["logoDiv"]}>
+                  <img
+                    alt="TwitterLogo"
+                    src={twitterIcon}
+                    style={{ width: "25px", height: "21px" }}
+                  />
+                </Box>
+                <Box className={style["logoDiv"]}>
+                  <img
+                    alt="LinkedinLogo"
+                    src={linkedinIcon}
+                    style={{ width: "25px", height: "21px" }}
+                  />
+                </Box>
+                <Box className={style["logoDiv"]}>
+                  <img
+                    alt="EmailLogo"
+                    src={emailIcon}
+                    style={{ width: "25px", height: "21px" }}
+                  />
+                </Box>
+              </Grid>
             </Grid>
             <Grid
               item
-              className="email-div"
-              md={6}
+              className={style["blogTitleDiv"]}
+              md={12}
               order={{ lg: 1 }}
-              style={{ height: "100%", overflow: "hidden", textAlign: "start" }}
+              style={{
+                height: "100%",
+                overflow: "hidden",
+                textAlign: "start",
+                maxWidth: "90%",
+              }}
             >
-              <h2 style={{ fontSize: "12px", marginLeft: "10px" }}>
+              <h2 style={{ fontSize: "25px" }}>
                 {blogPosts && blogPosts.blogPosts
                   ? blogPosts.blogPosts.find((post: BlogPostDTO) => post.id === id)
                       .blogTitle
-                  : ""}
-              </h2>
-              <h2 style={{ fontSize: "12px", marginLeft: "10px" }}>
-                {post && post.date
-                  ? new Date(post.date.slice(0, 10)).toDateString().slice(4)
                   : ""}
               </h2>
             </Grid>
@@ -283,14 +377,68 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
                 : ""}
             </Grid>
           </Grid>
+          <Grid item xs={12} order={{ lg: 1 }} className={style["socialDiv1"]}>
+            <img
+              alt="divider"
+              src={AboutDivider}
+              style={{ maxWidth: "100%", marginTop: "60px", marginBottom: "20px" }}
+            />
+            <Grid
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{ fontSize: "16px", fontFamily: "inter", color: "#6b737c" }}
+              >
+                shared this post:
+              </Typography>
+              <Grid sx={{ display: "flex" }}>
+                <Box className={style["logoDiv1"]}>
+                  <img
+                    alt="TwitterLogo"
+                    src={twitterIcon}
+                    style={{ width: "17px", height: "14px" }}
+                  />
+                </Box>
+                <Box className={style["logoDiv1"]}>
+                  <img
+                    alt="LinkedinLogo"
+                    src={linkedinIcon}
+                    style={{ width: "17px", height: "14px" }}
+                  />
+                </Box>
+                <Box className={style["logoDiv1"]}>
+                  <img
+                    alt="EmailLogo"
+                    src={emailIcon}
+                    style={{ width: "17px", height: "14px" }}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+            <img
+              alt="divider"
+              src={AboutDivider}
+              style={{ maxWidth: "100%", marginTop: "22px", marginBottom: "60px" }}
+            />
+          </Grid>
           <Grid
             item
             md={12}
             order={{ lg: 1 }}
-            className={style["iconsElement"]}
-            style={{ textAlign: "center", maxWidth: "90%", marginTop: "100px" }}
+            className={style["iconsElement1"]}
+            style={{
+              maxWidth: "90%",
+              marginTop: "100px",
+              marginLeft: "5%",
+            }}
           >
-            <h1>More from the balance blog</h1>
+            <h1 style={{ fontSize: "32px", fontFamily: "inter" }}>
+              More from the balance blog
+            </h1>
           </Grid>
           <Grid
             item
@@ -374,22 +522,21 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
           </Grid>
           <Grid
             item
-            className="email-div"
+            className={style["email-div"]}
             md={12}
             order={{ lg: 1 }}
-            style={{ marginBottom: "100px", marginTop: "100px" }}
-            sx={{
-              width: { xs: "90%", md: "90%" },
-              marginLeft: { xs: "5%", md: "5%" },
-              marginRight: { xs: "5%", md: "5%" },
-              marginBottom: "20px",
+            style={{
+              marginTop: "150px",
+              marginBottom: "100px",
+              maxWidth: "90%",
+              marginLeft: "5%",
+              marginRight: "5%",
             }}
           >
             <Paper
               style={{
                 width: "100%",
                 borderRadius: "80px",
-                backgroundImage: `url(${BalanceHeroImage})`,
                 backgroundSize: "100% auto",
                 backgroundPosition: "center right",
                 backgroundRepeat: "no-repeat",
@@ -398,7 +545,7 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
             >
               <Grid
                 container
-                style={{ width: "100%", height: "100%" }}
+                style={{ width: "100%", height: "100%", display: "block" }}
                 columnSpacing={2}
                 rowSpacing={{ sm: 0, md: 4 }}
               >
@@ -408,23 +555,54 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
                   lg={6}
                   order={{ lg: 1 }}
                   className={style["iconsElement"]}
+                  sx={{
+                    maxWidth: "100% !important",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
-                  <Typography style={{ fontSize: "20px", color: "#000000" }}>
-                    Receive email updates
+                  <Typography
+                    style={{
+                      fontSize: "35px",
+                      fontFamily: "monument extended",
+                      marginBottom: "10px",
+                    }}
+                    className={style["NewsLetterTitle"]}
+                  >
+                    Join the Liqd newsletter
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "22px",
+                      fontFamily: "inter",
+                      color: "#8994a2",
+                      marginBottom: "10px",
+                    }}
+                    className={style["NewsLetterDesc"]}
+                  >
+                    Join the Liqd newsletter to stay update on the NFT space
                   </Typography>
                   <Grid
                     container
-                    style={{ width: "100%", height: "100%" }}
+                    style={{
+                      width: "50%",
+                      marginLeft: "55px",
+                    }}
                     sx={{
                       display: "flex",
                       flexDirection: "row",
                       justifyContent: "start",
                       alignItems: "start",
                       paddingTop: "10px",
+                      paddingBottom: "10px",
                     }}
+                    className={style["EmailBackDiv"]}
                   >
                     <Grid
                       item
+                      xs={8}
                       sm={12}
                       md={8}
                       order={{ lg: 1 }}
@@ -442,6 +620,7 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
                     </Grid>
                     <Grid
                       item
+                      xs={4}
                       sm={12}
                       md={4}
                       order={{ lg: 1 }}
@@ -458,7 +637,15 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
                       </Button>
                     </Grid>
                   </Grid>
-                  <Typography style={{ color: "#000000" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "inter",
+                      color: "#8994a2",
+                      paddingTop: "20px",
+                    }}
+                    className={style["spamDiv"]}
+                  >
                     No spam. Never shared. Opt out at any time.
                   </Typography>
                 </Grid>
