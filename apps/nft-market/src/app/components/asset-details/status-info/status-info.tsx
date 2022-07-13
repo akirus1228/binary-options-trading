@@ -37,7 +37,7 @@ const ListedInfo = ({
       </Icon>
       <Box className={style["textContainer"]}>
         <span className={style["strong"]}>{listing.asset.name} </span>
-        <span>is currently listed seeking a loan amount &nbsp;</span>
+        <span>is currently listed seeking a loan amount </span>
         <span className={style["strong"]}>
           of {formatCurrency(listing.term.amount * currency?.lastPrice)} in{" "}
           {currency?.symbol}.{" "}
