@@ -21,6 +21,7 @@ import {
 import { ListingQueryParam, ListingSort } from "../../../store/reducers/interfaces";
 import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
+import { useGetCollectionsQuery } from "../../../api/backend-api";
 import style from "./lender-asset-filter.module.scss";
 
 export interface LenderAssetFilterProps {
@@ -36,6 +37,7 @@ export const LenderAssetFilter = ({
   query,
   setQuery,
 }: LenderAssetFilterProps): JSX.Element => {
+  const { data: collections } = useGetCollectionsQuery({});
   const [priceRange, setPriceRange] = useState<number[]>(initialPriceRange);
   const [aprRange, setAprRange] = useState<number[]>(initialAprRange);
   const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);
@@ -344,7 +346,11 @@ export const LenderAssetFilter = ({
         <span style={{ fontSize: "10px" }}>{durationRange[0]} days</span>
         <span style={{ fontSize: "10px" }}>{durationRange[1]} days</span>
       </Box>
-      <CollectionsFilter collection={collection} setCollection={setCollection} />
+      <CollectionsFilter
+        collections={collections}
+        collection={collection}
+        setCollection={setCollection}
+      />
 
       <Box
         className="flex fr ai-c"

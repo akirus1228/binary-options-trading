@@ -1,18 +1,18 @@
 import { Avatar, List, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback } from "react";
-import { useGetCollectionsQuery } from "../../api/backend-api";
 import { Collection } from "../../types/backend-types";
 
 export interface CollectionsFilterProps {
+  collections?: Collection[];
   collection: Collection;
   setCollection: Dispatch<SetStateAction<Collection>>;
 }
 
 export const CollectionsFilter = ({
+  collections,
   collection,
   setCollection,
 }: CollectionsFilterProps): JSX.Element => {
-  const { data: collections } = useGetCollectionsQuery({});
   const handleCollectionClick = useCallback(
     (newCollection: Collection) => {
       if (collection.slug === newCollection.slug) {
