@@ -36,6 +36,7 @@ export const MakeOffer = (props: MakeOfferProps): JSX.Element => {
       >
         <TermsForm
           key={`make-offer-${props.listing.id}`}
+          type="offer"
           asset={props.listing.asset}
           listing={props.listing}
           onClose={onClose}
