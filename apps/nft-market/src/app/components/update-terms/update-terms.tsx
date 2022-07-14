@@ -36,6 +36,7 @@ export const UpdateTerms = (props: UpdateTermsProps): JSX.Element => {
       >
         <TermsForm
           key={`update-terms-${props.listing.id}`}
+          type="borrow"
           asset={props.listing.asset}
           listing={props.listing}
           onClose={onClose}

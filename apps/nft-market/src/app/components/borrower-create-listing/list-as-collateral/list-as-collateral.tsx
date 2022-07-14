@@ -89,6 +89,7 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
             asset={props.asset}
             onClose={onClose}
             key={`list-terms-${props.asset.openseaId}`}
+            type="borrow"
           />
         )}
       </Box>

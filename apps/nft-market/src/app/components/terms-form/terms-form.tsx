@@ -43,6 +43,7 @@ import { loadCurrencyFromId } from "../../store/reducers/currency-slice";
 import ConfirmDialog from "../confirm-modal/confirm-dialog";
 
 export interface TermsFormProps {
+  type: "offer" | "borrow";
   asset: Asset;
   listing?: Listing;
   onClose: (value: boolean) => void;
@@ -72,10 +73,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   ] = useUpdateTermsMutation();
 
   const calcDurationType = (totaldays: number) => {
-    if (totaldays == 0) return "days";
-    if (totaldays % 7 == 0) {
+    if (totaldays === 0) return "days";
+    if (totaldays % 7 === 0) {
       return "weeks";
-    } else if (totaldays % 30 == 0) {
+    } else if (totaldays % 30 === 0) {
       return "months";
     }
     return "days";
@@ -432,7 +433,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     <Box className="flex fc" sx={{ padding: "1em" }}>
       <Box className="flex fc">
         <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
-          How much would you like to borrow?
+          How much would you like to {props.type || "borrow"}?
         </Typography>
         <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>
