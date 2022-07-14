@@ -93,6 +93,7 @@ export const BorrowPage = (): JSX.Element => {
           .filter((asset) => asset.status === AssetStatus.Locked)
       : myAssets;
 
+  const isWalletConnected = address && authSignature;
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
@@ -108,30 +109,34 @@ export const BorrowPage = (): JSX.Element => {
             <BorrowerAssetFilter query={feQuery} setQuery={setFeQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {assetsLoading || isAssetLoading || isLoansLoaing ? (
-              <Box className="flex fr fj-c">
-                <CircularProgress />
-              </Box>
-            ) : (
-              assetsToShow.length === 0 && (
-                <Box
-                  className="flex fr fj-c"
-                  sx={{
-                    mt: "5rem",
-                    fontWeight: "400",
-                    fontSize: "1.5rem",
-                  }}
-                >
-                  No assets have been found in your wallet
-                </Box>
-              )
-            )}
-            {(!address || !authSignature) && (
+            {!isWalletConnected && (
               <Box className="flex fr fj-c">
                 <h1>Please connect your wallet.</h1>
               </Box>
             )}
-            <AssetList assets={assetsToShow} type="borrow" />
+            {isWalletConnected && (
+              <>
+                {assetsLoading || isAssetLoading || isLoansLoaing ? (
+                  <Box className="flex fr fj-c">
+                    <CircularProgress />
+                  </Box>
+                ) : (
+                  assetsToShow.length === 0 && (
+                    <Box
+                      className="flex fr fj-c"
+                      sx={{
+                        mt: "5rem",
+                        fontWeight: "400",
+                        fontSize: "1.5rem",
+                      }}
+                    >
+                      No assets have been found in your wallet
+                    </Box>
+                  )
+                )}
+                <AssetList assets={assetsToShow} type="borrow" />
+              </>
+            )}
           </Grid>
         </Grid>
       </Box>

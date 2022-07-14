@@ -15,6 +15,11 @@ import {
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import CollectionsFilter from "../../collections-filter/collections-filter";
 import style from "./borrower-asset-filter.module.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { useGetCollectionsQuery } from "../../../api/backend-api";
+import { selectAssetsByQuery } from "../../../store/selectors/asset-selectors";
+import { useWeb3Context } from "@fantohm/shared-web3";
 
 export interface BorrowerAssetFilterProps {
   query: FrontendAssetFilterQuery;
@@ -25,6 +30,15 @@ export const BorrowerAssetFilter = ({
   query,
   setQuery,
 }: BorrowerAssetFilterProps): JSX.Element => {
+  const { address } = useWeb3Context();
+  const { authSignature } = useSelector((state: RootState) => state.backend);
+  const { data: collections } = useGetCollectionsQuery({});
+  const myAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      status: AssetStatus.Ready,
+      wallet: address,
+    })
+  );
   const [status, setStatus] = useState<string>("All");
   const [collection, setCollection] = useState<Collection>({} as Collection);
 
@@ -70,6 +84,7 @@ export const BorrowerAssetFilter = ({
     handleStatusChange({ target: { value: "All" } } as SelectChangeEvent<string>);
     setCollection({} as Collection);
   };
+  const isWalletConnected = address && authSignature;
 
   return (
     <Box sx={{ ml: "auto" }}>
@@ -93,24 +108,36 @@ export const BorrowerAssetFilter = ({
         <MenuItem value="Unlisted">Unlisted</MenuItem>
         <MenuItem value="In Escrow">In Escrow</MenuItem>
       </Select>
-      <Box
-        className="flex fr ai-c"
-        sx={{
-          cursor: "pointer",
-          margin: "20px 0 0 0",
-          padding: "20px 0 0 0",
-          borderTop: "1px solid rgba(0,0,0,0.1)",
-        }}
-        onClick={handleResetFilters}
-      >
-        <Icon sx={{ opacity: "0.4" }}>
-          <CancelOutlinedIcon />
-        </Icon>
-        <Typography sx={{ opacity: "0.4", margin: "5px 0 0 15px" }}>
-          Reset filter
-        </Typography>
-      </Box>
-      <CollectionsFilter collection={collection} setCollection={setCollection} />
+      {isWalletConnected && (
+        <>
+          <Box
+            className="flex fr ai-c"
+            sx={{
+              cursor: "pointer",
+              margin: "20px 0 0 0",
+              padding: "20px 0 0 0",
+              borderTop: "1px solid rgba(0,0,0,0.1)",
+            }}
+            onClick={handleResetFilters}
+          >
+            <Icon sx={{ opacity: "0.4" }}>
+              <CancelOutlinedIcon />
+            </Icon>
+            <Typography sx={{ opacity: "0.4", margin: "5px 0 0 15px" }}>
+              Reset filter
+            </Typography>
+          </Box>
+          <CollectionsFilter
+            collections={collections?.filter((collection) =>
+              myAssets.find(
+                (asset) => asset.assetContractAddress === collection.contractAddress
+              )
+            )}
+            collection={collection}
+            setCollection={setCollection}
+          />
+        </>
+      )}
     </Box>
   );
 };
