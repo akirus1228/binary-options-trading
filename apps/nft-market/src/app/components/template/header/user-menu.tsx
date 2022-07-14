@@ -262,7 +262,7 @@ export const UserMenu = (): JSX.Element => {
                       currencyInfo.decimals || 18
                     );
 
-                    if (value === 0 && currencyInfo.symbol !== "USDB") {
+                    if (value === 0) {
                       return null;
                     }
 

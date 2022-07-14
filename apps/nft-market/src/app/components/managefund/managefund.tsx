@@ -3,6 +3,7 @@ import {
   Button,
   CircularProgress,
   Dialog,
+  Icon,
   IconButton,
   MenuItem,
   Select,
@@ -10,6 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import style from "./managefund.module.scss";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +29,7 @@ import {
 } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
+import { addAlert } from "../../store/reducers/app-slice";
 export interface ManageFundProps {
   onClose: (value: boolean) => void;
   open: boolean;
@@ -91,10 +94,10 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     checkErc20AllowanceStatus,
   ]);
   // request allowance necessary to create loan with these term
-  const handleRequestAllowance = useCallback(() => {
+  const handleRequestAllowance = useCallback(async () => {
     if (provider && address) {
       setPending(true);
-      dispatch(
+      const result = await dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
           provider,
@@ -102,7 +105,15 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
           assetAddress: currency?.currentAddress,
           amount: ethers.utils.parseUnits(amount, currency.decimals),
         })
-      );
+      ).unwrap();
+      if (result) {
+        await dispatch(
+          addAlert({
+            message: `Allownace for ${currency?.symbol} has been updated!`,
+          })
+        );
+        handleClose();
+      }
     }
   }, [chainId, address, amount, provider, currency]);
 
@@ -145,7 +156,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   return (
     <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
       <Box className="flex fr fj-c">
-        <h1 style={{ margin: "0 0 0.5em 0" }}>Manage Funds</h1>
+        <h1 style={{ margin: "0 0 0.5em 0" }}>Manage Allowances</h1>
       </Box>
       <Box
         className={`flex fr fj-fe ${style["header"]}`}
@@ -171,7 +182,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
             <Tab value="Deposit" label="Deposit" />
             <Tab value="Withdraw" label="Withdraw" />
           </Tabs> */}
-          <TabPanel value="Deposit" sx={{ height: "350px" }}>
+          <TabPanel value="Deposit" sx={{ height: "400px" }}>
             <Box className="flx">
               <Box className="flex fc">
                 <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
@@ -214,9 +225,22 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                 </Box>
               </Box>
               <Box className="flex fc">
-                <Typography sx={{ color: "#aaa", mb: "1em", mt: "1em" }}>
+                <Typography sx={{ color: "#aaa", mt: "1em", mb: "0.5em" }}>
                   Allowance
                 </Typography>
+                <Box
+                  className={`flex fr ai-c ${style["leftSide"]}`}
+                  sx={{ color: "#aaa", mb: "0.5em" }}
+                >
+                  <Icon sx={{ mb: "5px" }} color="inherit">
+                    <InfoOutlinedIcon />
+                  </Icon>
+                  <Typography>
+                    Your current allowance is{" "}
+                    {ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals)}{" "}
+                    {currency.symbol}
+                  </Typography>
+                </Box>
                 <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
                   <Box className={`flex fr ai-c ${style["leftSide"]}`}>
                     <img
@@ -248,7 +272,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                         variant="text"
                         onClick={setMax}
                         color="primary"
-                        sx={{ padding: "none" }}
+                        sx={{ padding: "0px" }}
                       >
                         Max
                       </Button>
