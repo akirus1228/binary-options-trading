@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, IconButton, Typography } from "@mui/material";
+import { Box, Button, Dialog, IconButton } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import style from "./list-as-collateral.module.scss";
 import { useState } from "react";

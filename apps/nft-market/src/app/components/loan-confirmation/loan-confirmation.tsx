@@ -7,7 +7,6 @@ import {
   Dialog,
   IconButton,
   Paper,
-  Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -36,7 +35,11 @@ import { selectCurrencyByAddress } from "../../store/selectors/currency-selector
 import { desiredNetworkId } from "../../constants/network";
 import { BigNumber, ethers } from "ethers";
 import { contractCreateLoan } from "../../store/reducers/loan-slice";
-import { useCreateLoanMutation, useGetCollectionsQuery } from "../../api/backend-api";
+import {
+  useCreateLoanMutation,
+  useUpdateLoanMutation,
+  useGetCollectionsQuery,
+} from "../../api/backend-api";
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
@@ -112,6 +115,8 @@ export const LoanConfirmation = ({
   // createloan backend api call
   const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
+  const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
+    useUpdateLoanMutation();
 
   const {
     platformFeeAmt,
@@ -178,22 +183,37 @@ export const LoanConfirmation = ({
       provider,
       networkId: desiredNetworkId,
     };
-    const createLoanResult = await dispatch(
+
+    const createLoanResult = await createLoan(createLoanRequest).unwrap();
+    console.log(createLoanResult);
+
+    const createLoanContractResult = await dispatch(
       contractCreateLoan(createLoanParams)
     ).unwrap();
-    if (createLoanResult) {
-      createLoanRequest.contractLoanId = createLoanResult;
-      createLoan(createLoanRequest).then(() => {
-        resetCreateLoan();
-        dispatch(
-          addAlert({
-            message:
-              "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
-          })
-        );
-        handleClose();
-      });
+    console.log(createLoanContractResult);
+
+    if (typeof createLoanContractResult !== "number") {
+      dispatch(
+        addAlert({
+          message: "There was an error. Please try again.",
+        })
+      );
+      resetCreateLoan();
+      return;
     }
+    createLoanRequest.contractLoanId = createLoanContractResult;
+    createLoanRequest.id = createLoanResult.id;
+    const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
+    console.log(updateLoanResult);
+
+    resetUpdateLoan();
+    dispatch(
+      addAlert({
+        message:
+          "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
+      })
+    );
+    handleClose();
   }, [listing, provider, listing.asset, allowance, user.address, platformFees]);
 
   // request allowance necessary to complete txn
@@ -253,6 +273,7 @@ export const LoanConfirmation = ({
   const isPending = useMemo(() => {
     if (
       isCreating ||
+      isUpdating ||
       checkErc20AllowanceStatus === BackendLoadingStatus.loading ||
       requestErc20AllowanceStatus === BackendLoadingStatus.loading ||
       loanCreationStatus === BackendLoadingStatus.loading
@@ -261,6 +282,7 @@ export const LoanConfirmation = ({
     return false;
   }, [
     isCreating,
+    isUpdating,
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
     loanCreationStatus,

@@ -12,7 +12,11 @@ import {
   Offer,
   OfferStatus,
 } from "../../types/backend-types";
-import { useCreateLoanMutation, useUpdateOfferMutation } from "../../api/backend-api";
+import {
+  useCreateLoanMutation,
+  useUpdateLoanMutation,
+  useUpdateOfferMutation,
+} from "../../api/backend-api";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../store";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
@@ -30,6 +34,7 @@ import ArrowUpRight from "../../../assets/icons/arrow-right-up.svg";
 import { desiredNetworkId } from "../../constants/network";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
+import { addAlert } from "../../store/reducers/app-slice";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -55,7 +60,10 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   }, [offer]);
 
   // createloan backend api call
-  const [createLoan, { isLoading: isCreating }] = useCreateLoanMutation();
+  const [createLoan, { data: loanData, isLoading: isCreating, reset: resetCreateLoan }] =
+    useCreateLoanMutation();
+  const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
+    useUpdateLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
 
@@ -77,17 +85,17 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
 
   useEffect(() => {
     if (
-      (isUpdatingOffer ||
-        isCreating ||
-        requestPermStatus === "loading" ||
-        loanCreationStatus === "loading") &&
-      isPending
+      isUpdatingOffer ||
+      isCreating ||
+      isUpdating ||
+      requestPermStatus === "loading" ||
+      loanCreationStatus === "loading"
     ) {
       setIsPending(true);
     } else {
       setIsPending(false);
     }
-  }, [isUpdatingOffer, isCreating, requestPermStatus, loanCreationStatus, isPending]);
+  }, [isUpdatingOffer, isCreating, requestPermStatus, loanCreationStatus, isUpdating]);
 
   // check the contract to see if we have perms already
   useEffect(() => {
@@ -155,14 +163,35 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       currencyAddress: offer.term.currencyAddress,
     };
 
-    const createLoanResult = await dispatch(
+    const createLoanResult = await createLoan(createLoanRequest).unwrap();
+    console.log(createLoanResult);
+
+    const createLoanContractResult = await dispatch(
       contractCreateLoan(createLoanParams)
     ).unwrap();
+    console.log(createLoanContractResult);
 
-    if (createLoanResult) {
-      createLoanRequest.contractLoanId = createLoanResult;
-      createLoan(createLoanRequest);
+    if (typeof createLoanContractResult !== "number") {
+      dispatch(
+        addAlert({
+          message: "There was an error. Please try again.",
+        })
+      );
+      resetCreateLoan();
+      return;
     }
+    createLoanRequest.contractLoanId = createLoanContractResult;
+    createLoanRequest.id = createLoanResult.id;
+    const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
+    console.log(updateLoanResult);
+
+    resetUpdateLoan();
+    dispatch(
+      addAlert({
+        message:
+          "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
+      })
+    );
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
 
   const offerExpires = useMemo(() => {
