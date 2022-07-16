@@ -85,17 +85,17 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
 
   useEffect(() => {
     if (
-      (isUpdatingOffer ||
-        isCreating ||
-        requestPermStatus === "loading" ||
-        loanCreationStatus === "loading") &&
-      isPending
+      isUpdatingOffer ||
+      isCreating ||
+      isUpdating ||
+      requestPermStatus === "loading" ||
+      loanCreationStatus === "loading"
     ) {
       setIsPending(true);
     } else {
       setIsPending(false);
     }
-  }, [isUpdatingOffer, isCreating, requestPermStatus, loanCreationStatus, isPending]);
+  }, [isUpdatingOffer, isCreating, requestPermStatus, loanCreationStatus, isUpdating]);
 
   // check the contract to see if we have perms already
   useEffect(() => {

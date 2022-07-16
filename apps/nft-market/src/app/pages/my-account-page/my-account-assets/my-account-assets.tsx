@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Grid } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetListingsQuery, useGetLoansQuery } from "../../../api/backend-api";
@@ -55,10 +55,10 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
     skip: !osQuery.owner,
   });
-  const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {});
+  const { data: loans } = useGetLoansQuery(loansQuery, {});
 
   // using the opensea assets, crosscheck with backend api for correlated data
-  const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
+  useGetListingsQuery(beQuery, {
     skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
   });
 
