@@ -7,7 +7,6 @@ import {
   Dialog,
   IconButton,
   Paper,
-  Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -114,7 +113,7 @@ export const LoanConfirmation = ({
   );
 
   // createloan backend api call
-  const [createLoan, { data: loanData, isLoading: isCreating, reset: resetCreateLoan }] =
+  const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
     useUpdateLoanMutation();
