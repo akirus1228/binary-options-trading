@@ -381,7 +381,7 @@ export const backendApi = createApi({
           body: loanRequest,
         };
       },
-      invalidatesTags: ["Loan", "Asset", "Listing", "Terms"],
+      invalidatesTags: ["Loan", "Terms"],
     }),
     updateLoan: builder.mutation<Loan, Partial<Loan> & Pick<Loan, "id">>({
       query: ({ id, ...patch }) => ({
