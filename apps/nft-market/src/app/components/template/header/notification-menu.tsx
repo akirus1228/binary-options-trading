@@ -35,10 +35,13 @@ export const NotificationMenu = (): JSX.Element => {
   // user data
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const { data: unreadNotifications, isLoading: isUnreadNotificationsLoading } =
-    useGetUserNotificationsQuery({
-      userAddress: user.address,
-      status: NotificationStatus.Unread,
-    });
+    useGetUserNotificationsQuery(
+      {
+        userAddress: user.address,
+        status: NotificationStatus.Unread,
+      },
+      { skip: !authSignature }
+    );
 
   const { data: notifications, isLoading } = useGetUserNotificationsQuery(
     {
