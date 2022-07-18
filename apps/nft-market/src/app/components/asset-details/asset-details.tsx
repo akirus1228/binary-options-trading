@@ -8,7 +8,9 @@ import {
   SxProps,
   Theme,
   Typography,
+  Link,
 } from "@mui/material";
+import { useWeb3Context, chains } from "@fantohm/shared-web3";
 import { useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
@@ -32,8 +34,8 @@ export const AssetDetails = ({
   tokenId,
   listing,
   sx,
-  ...props
 }: AssetDetailsProps): JSX.Element => {
+  const { chainId } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const asset = useWalletAsset(contractAddress, tokenId);
   const { data: loan } = useGetLoansQuery(
@@ -43,7 +45,7 @@ export const AssetDetails = ({
       assetId: asset !== null ? asset.id : "",
     },
     {
-      skip: !asset || asset === null || !asset.id || !listing || !authSignature,
+      skip: !asset || false || !asset.id || !listing || !authSignature,
     }
   );
 
@@ -54,7 +56,15 @@ export const AssetDetails = ({
         <Grid container columnSpacing={5}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={asset.imageUrl} alt={asset.name || "unknown"} />
+              <Link
+                key="etherscan-link"
+                href={`${
+                  chains[chainId || 1].blockExplorerUrls[0]
+                }token/${contractAddress}?a=${tokenId}`}
+                target="_blank"
+              >
+                <img src={asset.imageUrl} alt={asset.name || "unknown"} />
+              </Link>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
