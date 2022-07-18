@@ -74,13 +74,13 @@ const NewLoanBorrower = ({
   const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address, 3)} has funded your loan on{" "}
+      {addressEllipsis(asset.owner.address)} has funded your loan on{" "}
       {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on{" "}
+      {addressEllipsis(asset.owner.address)} has repaid their loan on{" "}
       {getBlueText(asset.name)}.{formatCurrency(repaymentTotal, 2)} has been transferred
       to your wallet.
     </span>
@@ -147,13 +147,13 @@ const RepaymentLender = ({
   const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on{" "}
+      {addressEllipsis(asset.owner.address)} has repaid their loan on{" "}
       {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      {addressEllipsis(asset.owner.address, 3)} has repaid their loan on{" "}
+      {addressEllipsis(asset.owner.address)} has repaid their loan on{" "}
       {getBlueText(asset.name)}.{formatCurrency(repaymentTotal, 2)} has been transferred
       to your wallet.
     </span>
@@ -243,13 +243,13 @@ const OfferAcceptedLender = ({
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address, 3)} has accepted your offer on{" "}
+      {addressEllipsis(asset.owner.address)} has accepted your offer on{" "}
       {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      {addressEllipsis(asset.owner.address, 3)} has accepted your offer on{" "}
+      {addressEllipsis(asset.owner.address)} has accepted your offer on{" "}
       {getBlueText(asset.name)} for {formatCurrency(terms?.amount || 0, 2)} over{" "}
       {terms?.duration} days, with a repayment of{" "}
       {formatCurrency(repaymentAmount || 0, 2)}.

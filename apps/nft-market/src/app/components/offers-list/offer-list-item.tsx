@@ -219,7 +219,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
               "You"
             ) : (
               <Box>
-                {addressEllipsis(offer.lender.address, 3)}{" "}
+                {addressEllipsis(offer.lender.address)}{" "}
                 <img
                   src={ArrowUpRight}
                   alt="arrow pointing up and to the right"
@@ -239,7 +239,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
               "You"
             ) : (
               <Box>
-                {addressEllipsis(offer.assetListing.asset?.owner.address, 3)}{" "}
+                {addressEllipsis(offer.assetListing.asset?.owner.address)}{" "}
                 <img
                   src={ArrowUpRight}
                   alt="arrow pointing up and to the right"
