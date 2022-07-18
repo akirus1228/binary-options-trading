@@ -32,11 +32,12 @@ import { alpha, styled } from "@material-ui/core";
 
 export const BlogPage = (): JSX.Element => {
   const [email, setEmail] = useState("");
-  const [sortValue, setSortValue] = useState("all");
+  const [sortValue, setSortValue] = useState("tutorials");
   const allBlogPosts = useSelector((state: RootState) => state.app.blogPosts);
   const [blogPosts, setBlogPosts] = useState<BlogPostDTO[]>();
   const themeType = useSelector((state: RootState) => state.app.theme);
   const dispatch = useDispatch();
+  const DisplayBlogPosts = allBlogPosts?.blogPosts[0];
 
   const onSubmitEmail = async () => {
     if (!email.includes("@") && !email.includes(".")) {
@@ -82,8 +83,9 @@ export const BlogPage = (): JSX.Element => {
   };
   useEffect(() => {
     if (allBlogPosts && allBlogPosts.blogPosts) {
-      if (sortValue === "all") setBlogPosts(allBlogPosts.blogPosts);
-      else
+      if (sortValue === "tutorials") {
+        setBlogPosts(allBlogPosts.blogPosts);
+      } else
         setBlogPosts(
           allBlogPosts.blogPosts.filter(
             (posts: { blogCategory: string }) =>
@@ -166,7 +168,7 @@ export const BlogPage = (): JSX.Element => {
             <Grid md={12}>
               {blogPosts && (
                 <Grid item xs={12} sm={12} md={12} order={{ lg: 1 }}>
-                  <BlogFeaturedPost post={blogPosts[0]} className={style["blogPost"]}>
+                  <BlogFeaturedPost post={DisplayBlogPosts} className={style["blogPost"]}>
                     <h2 className={style["daiAPR"]}>{blogPosts[0]?.blogTitle}</h2>
                   </BlogFeaturedPost>
                 </Grid>
