@@ -93,34 +93,40 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
             </TableRow>
           </PaperTableHead>
           <TableBody>
-            {loans.map((loan: Loan, index: number) => (
-              <PaperTableRow key={`ma-invests-table-${index}`} id={`invests-${index}`}>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {addressEllipsis(loan.lender.id || "", 3)}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {addressEllipsis(loan.borrower.id || "", 3)}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {formatCurrency(loan.term.amount, 2)}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  repayment amount
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {loan.term.apr}%
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {new Date(
-                    Date.parse(loan.createdAt || "yesterday")
-                  ).toLocaleDateString()}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {loan.term.duration} days
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>{loan.status}</PaperTableCell>
-              </PaperTableRow>
-            ))}
+            {loans
+              .sort(
+                (a, b) =>
+                  new Date(Date.parse(b.createdAt || "yesterday")).getTime() -
+                  new Date(Date.parse(a.createdAt || "yesterday")).getTime()
+              )
+              .map((loan: Loan, index: number) => (
+                <PaperTableRow key={`ma-invests-table-${index}`} id={`invests-${index}`}>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                    {addressEllipsis(loan.lender.address || "")}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                    {addressEllipsis(loan.borrower.address || "")}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                    {formatCurrency(loan.term.amount, 2)}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                    repayment amount
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                    {loan.term.apr}%
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                    {new Date(
+                      Date.parse(loan.createdAt || "yesterday")
+                    ).toLocaleDateString()}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                    {loan.term.duration} days
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "16px" }}>{loan.status}</PaperTableCell>
+                </PaperTableRow>
+              ))}
           </TableBody>
         </PaperTable>
       </TableContainer>

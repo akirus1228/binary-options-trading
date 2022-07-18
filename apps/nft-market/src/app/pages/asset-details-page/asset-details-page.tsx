@@ -180,24 +180,29 @@ export const AssetDetailsPage = (): JSX.Element => {
         )}
       {isValidNFT !== false &&
         isOwner &&
+        authSignature &&
         [AssetStatus.Ready, AssetStatus.New].includes(asset?.status) && (
           <BorrowerCreateListing asset={asset} sx={{ mt: "3em" }} />
         )}
-      {isValidNFT !== false && isOwner && asset?.status === AssetStatus.Listed && (
-        <BorrowerListingDetails asset={asset} sx={{ mt: "3em" }} />
-      )}
       {isValidNFT !== false &&
         isOwner &&
+        authSignature &&
+        asset?.status === AssetStatus.Listed && (
+          <BorrowerListingDetails asset={asset} sx={{ mt: "3em" }} />
+        )}
+      {isValidNFT !== false &&
+        isOwner &&
+        authSignature &&
         asset?.status === AssetStatus.Locked &&
         activeLoan && (
           <BorrowerLoanDetails asset={asset} loan={activeLoan} sx={{ mt: "3em" }} />
         )}
-      {asset.id && (
+      {asset.id && authSignature && (
         <OffersList
           offers={offers}
           isLoading={isOffersLoading}
           fields={offersFields}
-          title="Offers receved"
+          title="Offers received"
         />
       )}
       <Container maxWidth="xl" sx={{ mt: "5em" }}>

@@ -126,12 +126,12 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
       <PaperTableCell>
         {loan.borrower.address === user.address
           ? "You"
-          : addressEllipsis(loan.borrower.address, 4)}
+          : addressEllipsis(loan.borrower.address)}
       </PaperTableCell>
       <PaperTableCell>
         {loan.lender.address === user.address
           ? "You"
-          : addressEllipsis(loan.lender.address, 4)}
+          : addressEllipsis(loan.lender.address)}
       </PaperTableCell>
       <PaperTableCell>
         {loan.status === LoanStatus.Active && <Chip label="Escrow" />}
