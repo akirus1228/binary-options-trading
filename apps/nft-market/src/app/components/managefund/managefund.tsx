@@ -8,7 +8,10 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  styled,
+  Switch,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -30,6 +33,30 @@ import {
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
 import { addAlert } from "../../store/reducers/app-slice";
+import infiniteIcon from "../../../assets/images/infinite.png";
+
+export const ValueMaxSwitch = styled(Switch)(({ theme }) => ({
+  padding: 8,
+  "& .MuiSwitch-track": {
+    borderRadius: 22 / 2,
+    background: "#CCC",
+  },
+  "& .Mui-checked+.MuiSwitch-track": {
+    backgroundColor: "blue",
+    opacity: 0.7,
+  },
+  "& .MuiSwitch-thumb": {
+    boxShadow: "none",
+    width: 12,
+    height: 12,
+    margin: 4,
+    backgroundColor: "blue",
+  },
+  "& .Mui-checked .MuiSwitch-thumb": {
+    backgroundColor: "white",
+  },
+}));
+
 export interface ManageFundProps {
   onClose: (value: boolean) => void;
   open: boolean;
@@ -49,6 +76,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   };
 
   const [amount, setAmount] = useState("0");
+  const [isMax, setIsMax] = useState(false);
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
     let value = event.target.value.replace(/-/g, "") || "0";
@@ -142,15 +170,20 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     }
   }, [provider, currency]);
 
+  const setToDefault = () => {
+    setIsMax(false);
+    setAmount(ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals));
+  };
+
   useEffect(() => {
     if (currencyAllowance && currency) {
-      setAmount(ethers.utils.formatUnits(currencyAllowance, currency.decimals));
+      setToDefault();
     }
   }, [currencyAllowance, currency]);
 
   const handleClose = () => {
     onClose(false);
-    setAmount(ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals));
+    setToDefault();
   };
 
   return (
@@ -195,50 +228,91 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                     sx={{
                       background: "transparent",
                       width: "100%",
-                      paddingLeft: "10px",
                       borderRadius: "1.2em",
                       height: "60px",
                     }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: { marginTop: "-12px" },
+                      },
+                    }}
                   >
-                    {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
-                      <MenuItem
-                        value={currencyDetails.symbol}
-                        key={`currency-option-item-${tokenId}`}
-                        sx={{
-                          paddingTop: "2px",
-                          paddingBottom: "2px",
-                        }}
-                      >
-                        <Box className="flex fr ai-c">
-                          <img
-                            style={{ height: "30px", width: "30px", marginRight: "5px" }}
-                            src={currencyDetails.icon}
-                            alt={`${currencyDetails.symbol} Token Icon`}
-                          />
-                          <p style={{ fontSize: "16px" }}>
-                            {currencyDetails.symbol} - {currencyDetails.name}
-                          </p>
-                        </Box>
-                      </MenuItem>
-                    ))}
+                    {Object.entries(currencyInfo).map(
+                      ([tokenId, currencyDetails], index) => (
+                        <MenuItem
+                          value={currencyDetails.symbol}
+                          key={`currency-option-item-${tokenId}`}
+                          sx={{
+                            paddingTop: "2px",
+                            paddingBottom: "2px",
+                            borderTop: index === 0 ? "" : "1px solid #CCC",
+                          }}
+                        >
+                          <Box className="flex fr ai-c">
+                            <img
+                              style={{
+                                height: "30px",
+                                width: "30px",
+                                marginRight: "5px",
+                              }}
+                              src={currencyDetails.icon}
+                              alt={`${currencyDetails.symbol} Token Icon`}
+                            />
+                            <p style={{ fontSize: "16px" }}>
+                              {currencyDetails.symbol} - {currencyDetails.name}
+                            </p>
+                          </Box>
+                        </MenuItem>
+                      )
+                    )}
                   </Select>
                 </Box>
               </Box>
               <Box className="flex fc">
-                <Typography sx={{ color: "#aaa", mt: "1em", mb: "0.5em" }}>
-                  Allowance
-                </Typography>
-                <Box
-                  className={`flex fr ai-c ${style["leftSide"]}`}
-                  sx={{ color: "#aaa", mb: "0.5em" }}
-                >
-                  <Icon sx={{ mb: "5px" }} color="inherit">
-                    <InfoOutlinedIcon />
-                  </Icon>
-                  <Typography>
-                    Your current allowance is{" "}
-                    {ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals)}{" "}
-                    {currency.symbol}
+                <Box className="flex fr" sx={{ placeContent: "space-between" }}>
+                  <Typography sx={{ color: "#aaa", mt: "1em", mb: "0.5em" }}>
+                    Allowance
+                    <Tooltip
+                      sx={{ marginLeft: "5px" }}
+                      arrow
+                      title={`Your current allowance is ${ethers.utils.formatUnits(
+                        currencyAllowance || 0,
+                        currency.decimals
+                      )} ${currency.symbol}`}
+                      componentsProps={{
+                        arrow: {
+                          style: {
+                            color: "black",
+                          },
+                        },
+                        tooltip: {
+                          style: {
+                            backgroundColor: "black",
+                            padding: "10px",
+                            borderRadius: "10px",
+                          },
+                        },
+                      }}
+                    >
+                      <Icon sx={{ mb: "-5px" }} color="inherit">
+                        <InfoOutlinedIcon />
+                      </Icon>
+                    </Tooltip>
+                  </Typography>
+                  <Typography sx={{ color: "#aaa", mt: "1em", mb: "0.5em" }}>
+                    Value
+                    <ValueMaxSwitch
+                      value={isMax}
+                      onChange={() => {
+                        if (isMax === false) {
+                          setMax();
+                        } else {
+                          setToDefault();
+                        }
+                        setIsMax(!isMax);
+                      }}
+                    />
+                    Max
                   </Typography>
                 </Box>
                 <Box className={`flex fr ai-c ${style["valueContainer"]}`}>
@@ -255,28 +329,26 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                     </p>
                   </Box>
                   <Box className={`flex fr ai-c ${style["rightSide"]}`}>
-                    <TextField
-                      type="number"
-                      value={amount}
-                      onChange={handleAmountChange}
-                      variant="standard"
-                      InputProps={{
-                        disableUnderline: true,
-                      }}
-                      sx={{
-                        width: "85%",
-                      }}
-                    />
-                    <Typography sx={{ color: "#aaaaaa" }}>
-                      <Button
-                        variant="text"
-                        onClick={setMax}
-                        color="primary"
-                        sx={{ padding: "0px" }}
-                      >
-                        Max
-                      </Button>
-                    </Typography>
+                    {isMax ? (
+                      <img
+                        src={infiniteIcon}
+                        alt="Infinite"
+                        style={{ width: "40px", height: "20px" }}
+                      />
+                    ) : (
+                      <TextField
+                        type="number"
+                        value={amount}
+                        onChange={handleAmountChange}
+                        variant="standard"
+                        InputProps={{
+                          disableUnderline: true,
+                        }}
+                        sx={{
+                          width: "100%",
+                        }}
+                      />
+                    )}
                   </Box>
                 </Box>
               </Box>
