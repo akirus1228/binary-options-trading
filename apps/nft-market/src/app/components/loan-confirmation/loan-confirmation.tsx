@@ -187,24 +187,30 @@ export const LoanConfirmation = ({
     const createLoanResult = await createLoan(createLoanRequest).unwrap();
     console.log(createLoanResult);
 
-    const createLoanContractResult = await dispatch(
-      contractCreateLoan(createLoanParams)
-    ).unwrap();
-    console.log(createLoanContractResult);
+    try {
+      const createLoanContractResult = await dispatch(
+        contractCreateLoan(createLoanParams)
+      ).unwrap();
+      console.log(createLoanContractResult);
 
-    if (typeof createLoanContractResult !== "number") {
-      dispatch(
-        addAlert({
-          message: "There was an error. Please try again.",
-        })
-      );
-      resetCreateLoan();
+      if (typeof createLoanContractResult !== "number") {
+        dispatch(
+          addAlert({
+            message: "There was an error. Please try again.",
+          })
+        );
+        resetCreateLoan();
+        return;
+      }
+
+      createLoanRequest.contractLoanId = createLoanContractResult;
+      createLoanRequest.id = createLoanResult.id;
+      const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
+      console.log(updateLoanResult);
+    } catch (e) {
+      console.log(e);
       return;
     }
-    createLoanRequest.contractLoanId = createLoanContractResult;
-    createLoanRequest.id = createLoanResult.id;
-    const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
-    console.log(updateLoanResult);
 
     resetUpdateLoan();
     dispatch(
