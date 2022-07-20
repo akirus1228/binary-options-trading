@@ -49,6 +49,7 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
   );
 
   const loans: Loan[] = useMemo(() => {
+    if (asset.id === undefined) return [];
     if (isDefaultedLoading || isCompleteLoansLoading) return [];
     if (typeof defaultedLoans === "undefined" || typeof completeLoans === "undefined")
       return [];
