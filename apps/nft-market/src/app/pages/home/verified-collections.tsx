@@ -44,9 +44,9 @@ export const VerifiedCollections = (): JSX.Element => {
               <Typography variant="h4">Verified Collections</Typography>
             </Box>
             <Typography variant="subtitle2">
-              To minimize risk and ensure we are providing a secure service, we are
-              starting with some of the most recognizable blue-chip NFT collections – with
-              more sets to be added soon.
+              We`re partnering with some of the top NFT collections in the space to ensure
+              a secure service for lenders — with more bluechip collections to be added
+              soon.
             </Typography>
             <Box
               sx={{

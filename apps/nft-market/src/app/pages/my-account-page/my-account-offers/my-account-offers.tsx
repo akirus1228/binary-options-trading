@@ -118,7 +118,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
             activeOffersAsLender.length === 0 &&
             historicalOffersAsBorrower.length === 0 &&
             historicalOffersAsLender.length === 0 &&
-            "There is not any offer."}
+            "You don`t currently have any offers"}
         </Typography>
       </Box>
     </Box>
