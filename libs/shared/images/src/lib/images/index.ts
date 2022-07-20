@@ -81,7 +81,7 @@ import FailIcon from "./fail_icon.png";
 import emailIcon from "./email.svg";
 import linkedinIcon from "./linkedin.svg";
 import twitterIcon from "./Twitter.svg";
-import liqidIcon from "./liqidlogo.png"
+import liqidIcon from "./liqidlogo.png";
 
 export {
   NFTsIcon,

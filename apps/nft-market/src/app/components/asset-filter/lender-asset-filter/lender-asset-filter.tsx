@@ -23,6 +23,8 @@ import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
 import { useGetCollectionsQuery } from "../../../api/backend-api";
 import style from "./lender-asset-filter.module.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 export interface LenderAssetFilterProps {
   query: ListingQueryParam;
@@ -43,6 +45,11 @@ export const LenderAssetFilter = ({
   const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);
   const [collection, setCollection] = useState<Collection>({} as Collection);
   const [sort, setSort] = useState<string>(ListingSort.Recently);
+  const collectionAddresses = useSelector((state: RootState) =>
+    Object.values(state.listings.listings).map(
+      (listing) => listing.asset.assetContractAddress
+    )
+  );
 
   const valuetext = (value: number) => {
     return `$${value}`;
@@ -347,7 +354,9 @@ export const LenderAssetFilter = ({
         <span style={{ fontSize: "10px" }}>{durationRange[1]} days</span>
       </Box>
       <CollectionsFilter
-        collections={collections}
+        collections={collections?.filter((collection) =>
+          collectionAddresses?.includes(collection.contractAddress)
+        )}
         collection={collection}
         setCollection={setCollection}
       />
