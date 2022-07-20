@@ -1,73 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Liqd - unlock the value of your NFTs</title>
-    <meta name="keywords" content="NFT lending, NFT, NFT liquidity, Borrow, Lend, lending Eth, lending Ethereum, Marketplace, Passive Income, Liquidity, Crypto, Blockchain, ETH">
-    <meta name="description" content="Liqd is an NFT marketplace built to enable the lending and borrowing NFTs. The platform enables individuals who hold NFT assets to unlock liquidity by borrowing against the value of their asset(s) and crypto holding individuals to earn interest on their capital, backed by the value of the underlying NFT asset.">
+<head>
+  <meta charset="utf-8"/>
+  <title>Liqd - unlock the value of your NFTs</title>
+  <meta content="NFT lending, NFT, NFT liquidity, Borrow, Lend, lending Eth, lending Ethereum, Marketplace, Passive Income, Liquidity, Crypto, Blockchain, ETH"
+        name="keywords">
+  <meta content="Liqd is an NFT marketplace built to enable the lending and borrowing NFTs. The platform enables individuals who hold NFT assets to unlock liquidity by borrowing against the value of their asset(s) and crypto holding individuals to earn interest on their capital, backed by the value of the underlying NFT asset."
+        name="description">
 
-    <!-- facebook -->
-    <meta property="og:title" content="Liqd - unlock the value of your NFTs">
-    <meta property="og:description" content="Liqd is an NFT marketplace built to enable the lending and borrowing NFTs. The platform enables individuals who hold NFT assets to unlock liquidity by borrowing against the value of their asset(s) and crypto holding individuals to earn interest on their capital, backed by the value of the underlying NFT asset.">
-    <meta property="og:image" content="https://liqdnft.com/favicon-32x32.png">
-    <meta property="og:url" content="https://liqdnft.com">
+  <!-- facebook -->
+  <meta content="Liqd - unlock the value of your NFTs" property="og:title">
+  <meta content="Liqd is an NFT marketplace built to enable the lending and borrowing NFTs. The platform enables individuals who hold NFT assets to unlock liquidity by borrowing against the value of their asset(s) and crypto holding individuals to earn interest on their capital, backed by the value of the underlying NFT asset."
+        property="og:description">
+  <meta content="https://liqdnft.com/favicon-32x32.png" property="og:image">
+  <meta content="https://liqdnft.com" property="og:url">
 
-    <!-- twitter -->
-    <meta name="twitter:title" content="Liqd - unlock the value of your NFTs">
-    <meta name="twitter:description" content="Liqd is an NFT marketplace built to enable the lending and borrowing NFTs. The platform enables individuals who hold NFT assets to unlock liquidity by borrowing against the value of their asset(s) and crypto holding individuals to earn interest on their capital, backed by the value of the underlying NFT asset.">
-    <meta name="twitter:url" content="https://liqdnft.com/favicon-32x32.png">
-    <meta name="twitter:card" content="summary">
+  <!-- twitter -->
+  <meta content="Liqd - unlock the value of your NFTs" name="twitter:title">
+  <meta content="Liqd is an NFT marketplace built to enable the lending and borrowing NFTs. The platform enables individuals who hold NFT assets to unlock liquidity by borrowing against the value of their asset(s) and crypto holding individuals to earn interest on their capital, backed by the value of the underlying NFT asset."
+        name="twitter:description">
+  <meta content="https://liqdnft.com/favicon-32x32.png" name="twitter:url">
+  <meta content="summary" name="twitter:card">
 
-    <base href="/" />
+  <base href="/"/>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
 
-    <!-- favicons -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+  <!-- favicons -->
+  <link href="favicon.ico" rel="icon" type="image/x-icon"/>
+  <link href="apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+  <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+  <link href="favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+  <link href="site.webmanifest" rel="manifest">
+  <link color="#5bbad5" href="safari-pinned-tab.svg" rel="mask-icon">
+  <meta content="#da532c" name="msapplication-TileColor">
+  <meta content="#ffffff" name="theme-color">
 
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-MBQMNSQ');</script>
-    <!-- End Google Tag Manager -->
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({
+      'gtm.start':
+        new Date().getTime(), event: 'gtm.js'
+    });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+    j.async = true;
+    j.src =
+      'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'dataLayer', 'GTM-MBQMNSQ');</script>
+  <!-- End Google Tag Manager -->
 
-    <!-- Meta Pixel Code -->
-    <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1096415291146672');
-      fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-                   src="https://www.facebook.com/tr?id=1096415291146672&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
-  </head>
-  <body>
-    <script>
-      global = globalThis //<- this should be enough
-    </script>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+  <!-- Meta Pixel Code -->
+  <script>
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return;
+      n = f.fbq = function () {
+        n.callMethod ?
+          n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      };
+      if (!f._fbq) f._fbq = n;
+      n.push = n;
+      n.loaded = !0;
+      n.version = '2.0';
+      n.queue = [];
+      t = b.createElement(e);
+      t.async = !0;
+      t.src = v;
+      s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s)
+    }(window, document, 'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1096415291146672');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" src="https://www.facebook.com/tr?id=1096415291146672&ev=PageView&noscript=1" style="display:none"
+                 width="1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  <style>
+    .web3modal-modal-lightbox {
+      z-index: 10000 !important;
+    }
+  </style>
+</head>
+<body>
+<script>
+  global = globalThis //<- this should be enough
+</script>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="root"></div>
 
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MBQMNSQ"
-                      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-  </body>
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe height="0"
+          src="https://www.googletagmanager.com/ns.html?id=GTM-MBQMNSQ" style="display:none;visibility:hidden" width="0"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+</body>
 </html>
