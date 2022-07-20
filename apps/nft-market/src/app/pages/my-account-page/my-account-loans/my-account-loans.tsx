@@ -84,7 +84,7 @@ export function MyAccountLoans(props: MyAccountLoansProps) {
               historicalBorrowerLoans?.length === 0) &&
             (historicalLenderLoans === undefined ||
               historicalLenderLoans?.length === 0) &&
-            "There is not any loan."}
+            "You don`t currently have any loans."}
         </Typography>
       </Box>
     </Container>
