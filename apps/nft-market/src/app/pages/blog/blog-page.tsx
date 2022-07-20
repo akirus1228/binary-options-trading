@@ -133,7 +133,7 @@ export const BlogPage = (): JSX.Element => {
       width: "100%",
     },
   }));
-  console.log("blogposts:", blogPosts);
+
   return (
     <Container
       maxWidth="xl"
@@ -157,7 +157,7 @@ export const BlogPage = (): JSX.Element => {
         }}
         className={style["hero"]}
       >
-        <Grid container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}>
+        <Grid item container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}>
           <Grid
             item
             md={12}
@@ -165,7 +165,7 @@ export const BlogPage = (): JSX.Element => {
             sx={{ width: { xs: "100%", md: "100%" } }}
             className={style["blogPostsDivF"]}
           >
-            <Grid md={12}>
+            <Grid item md={12}>
               {blogPosts && (
                 <Grid item xs={12} sm={12} md={12} order={{ lg: 1 }}>
                   <BlogFeaturedPost post={DisplayBlogPosts} className={style["blogPost"]}>
@@ -208,7 +208,6 @@ export const BlogPage = (): JSX.Element => {
                 sx={{ display: "flex", flexDirection: "row" }}
                 onChange={(e) => {
                   handleChange(e.target.value);
-                  console.log(e.target.value); // will be called this time
                 }}
               >
                 <FormControlLabel
@@ -237,7 +236,7 @@ export const BlogPage = (): JSX.Element => {
                 />
               </RadioGroup>
             </FormControl>
-            <Search className={style["searchDiv"]}>
+            {/* <Search className={style["searchDiv"]}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -245,7 +244,7 @@ export const BlogPage = (): JSX.Element => {
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
               />
-            </Search>
+            </Search> */}
           </Grid>
           <Grid
             item
@@ -254,10 +253,10 @@ export const BlogPage = (): JSX.Element => {
             sx={{ width: { xs: "100%", md: "100%" }, paddingBottom: "32px" }}
             className={style["blogPostsDiv"]}
           >
-            <Grid container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}>
+            <Grid item container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}>
               {blogPosts &&
-                blogPosts.map((post: BlogPostDTO) => (
-                  <Grid item xs={12} sm={12} md={4} order={{ lg: 1 }}>
+                blogPosts.map((post: BlogPostDTO, index) => (
+                  <Grid item xs={12} sm={12} md={4} order={{ lg: 1 }} key={index}>
                     <BlogPost post={post} className={style["blogPost"]}>
                       <h2 className={style["daiAPR"]}>{post.blogTitle}</h2>
                     </BlogPost>
@@ -283,6 +282,7 @@ export const BlogPage = (): JSX.Element => {
               className={style["emailBox"]}
             >
               <Grid
+                item
                 container
                 style={{ width: "100%", height: "100%", display: "block" }}
                 columnSpacing={2}

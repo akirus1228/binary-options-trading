@@ -36,8 +36,6 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async () =>
         } catch (e) {
           category = "";
         }
-        console.log(entryResult.fields.getInTouch.fields.content);
-        console.log("entryResult", entryResult);
         posts.push({
           id: entryResult.fields.slug,
           date: entryResult.sys.createdAt,

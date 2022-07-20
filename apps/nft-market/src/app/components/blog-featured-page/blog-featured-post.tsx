@@ -49,6 +49,7 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
         onClick={openPost}
       >
         <Grid
+          item
           container
           className={style["imgDiv"]}
           sx={{ width: { xs: "100%", md: "100%" }, height: "100%", paddingRight: "20px" }}
@@ -64,7 +65,7 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
             className={style["daiIcon"]}
           />
         </Grid>
-        <Grid md={6} xs={12} sm={12} className={style["FeaturedDiv"]}>
+        <Grid item md={6} xs={12} sm={12} className={style["FeaturedDiv"]}>
           <Grid
             item
             className={style["email-div"]}
