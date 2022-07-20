@@ -1,20 +1,31 @@
-import { Box, Chip, IconButton, Paper, Tooltip } from "@mui/material";
+import {
+  Box,
+  Chip,
+  IconButton,
+  Paper,
+  Popover,
+  Tooltip,
+  Typography,
+  Link,
+} from "@mui/material";
 import { useWalletAsset } from "../../../hooks/use-wallet-asset";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
-// import style from "./lender-asset.module.scss";
-import { Link } from "react-router-dom";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { capitalizeFirstLetter } from "@fantohm/shared-helpers";
 import { AssetStatus } from "../../../types/backend-types";
 import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { useTermDetails } from "../../../hooks/use-term-details";
-import { formatCurrency } from "@fantohm/shared-web3";
+import { chains, formatCurrency, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
+import search from "../../../../assets/icons/search.svg";
+import etherScan from "../../../../assets/icons/etherscan.svg";
+import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
+import openSea from "../../../../assets/icons/opensea-icon.svg";
 
 export interface LenderAssetProps {
   contractAddress: string;
@@ -22,12 +33,14 @@ export interface LenderAssetProps {
 }
 
 export function LenderAsset(props: LenderAssetProps) {
+  const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
   const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
   );
+  const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -44,6 +57,43 @@ export function LenderAsset(props: LenderAssetProps) {
         return;
     }
   }, [asset]);
+
+  const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setFlagMoreDropDown(event.currentTarget);
+  };
+
+  const viewLinks = [
+    {
+      startIcon: search,
+      alt: "Search",
+      title: "View Listing",
+      url: `/asset/${props.contractAddress}/${props.tokenId}`,
+      endIcon: null,
+      isSelfTab: true,
+    },
+    {
+      startIcon: etherScan,
+      alt: "EtherScan",
+      title: "View on Etherscan",
+      url: `${chains[chainId || 1].blockExplorerUrls[0]}token/${
+        props?.contractAddress
+      }?a=${props?.tokenId}`,
+      endIcon: grayArrowRightUp,
+      isSelfTab: false,
+    },
+    {
+      startIcon: openSea,
+      alt: "OpenSea",
+      title: "View on OpenSea",
+      url: `${
+        chainId === NetworkIds.Ethereum
+          ? "https://opensea.io/assets/ethereum/"
+          : "https://testnets.opensea.io/assets/rinkeby/"
+      }${props.contractAddress}/${props.tokenId}`,
+      endIcon: grayArrowRightUp,
+      isSelfTab: false,
+    },
+  ];
 
   useEffect(() => {
     dispatch(loadCurrencyFromAddress(listing?.term?.currencyAddress));
@@ -64,32 +114,81 @@ export function LenderAsset(props: LenderAssetProps) {
       }}
       className={style["assetBox"]}
     >
-      <Box sx={{ position: "absolute" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          position: "absolute",
+          width: "100%",
+          zIndex: 10,
+          mt: "20px",
+          px: "10px",
+        }}
+      >
         <Chip
-          sx={{
-            position: "relative",
-            top: "15px",
-            left: "20px",
-            zIndex: 10,
-          }}
           label={capitalizeFirstLetter(asset?.status.toLowerCase()) || "Unlisted"}
           className={chipColor}
         />
-      </Box>
-      <Box sx={{ position: "absolute", right: "20px" }}>
         <IconButton
           sx={{
             position: "relative",
-            top: "10px",
             zIndex: 10,
           }}
           className={style["moreButton"]}
+          aria-haspopup="true"
+          aria-expanded={flagMoreDropDown ? "true" : undefined}
+          onClick={openMoreDropDown}
         >
           <MoreHorizOutlinedIcon />
         </IconButton>
+        <Popover
+          id="moreDropDown"
+          open={Boolean(flagMoreDropDown)}
+          anchorEl={flagMoreDropDown}
+          onClose={() => setFlagMoreDropDown(null)}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          {viewLinks.map((link, index) => (
+            <Link
+              key={link.title}
+              href={link.url}
+              style={{ textDecoration: "none" }}
+              target={`${link.isSelfTab ? "_self" : "_blank"}`}
+              onClick={() => setFlagMoreDropDown(null)}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: `${index === viewLinks.length - 1 ? "0" : "15px"}`,
+                }}
+              >
+                <Box sx={{ display: "flex" }}>
+                  <img
+                    src={link.startIcon}
+                    style={{ width: "24px", marginRight: "15px" }}
+                    alt={link.alt}
+                  />
+                  <Typography variant="h6" style={{ fontWeight: "normal" }}>
+                    {link.title}
+                  </Typography>
+                </Box>
+                {link?.endIcon && (
+                  <Box sx={{ ml: "15px", mt: "5px" }}>
+                    <img src={link.endIcon} style={{ width: "15px" }} alt={link.alt} />
+                  </Box>
+                )}
+              </Box>
+            </Link>
+          ))}
+        </Popover>
       </Box>
       {asset.imageUrl && asset.openseaId && (
-        <Link to={`/asset/${props.contractAddress}/${props.tokenId}`}>
+        <Link href={`/asset/${props.contractAddress}/${props.tokenId}`}>
           <PreviewImage
             url={asset.imageUrl}
             name={asset.name || "placeholder name"}
