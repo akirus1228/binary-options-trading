@@ -52,7 +52,7 @@ const NewLoanLender = ({
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      Congratulations! You have a new loan on {getBlueText(asset.name)}. for{" "}
+      Congratulations! You have a new loan on {getBlueText(asset.name)} for{" "}
       {formatCurrency(terms?.amount || 0, 2)} over {terms?.duration} days, with a
       repayment of {formatCurrency(repaymentAmount || 0, 2)}.
     </span>
