@@ -293,7 +293,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                     <Tooltip
                       sx={{ marginLeft: "5px" }}
                       arrow
-                      open
                       title={
                         <Box className="flex fr ai-c">
                           Your current allowance is&nbsp;
