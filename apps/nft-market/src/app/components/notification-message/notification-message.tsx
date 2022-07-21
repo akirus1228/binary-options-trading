@@ -33,18 +33,15 @@ export type MessageProp = {
   asset: Asset;
   short: boolean;
   terms?: Terms;
+  borrower?: User;
+  lender?: User;
 };
 
 const getBlueText = (text: any) => {
   return <span style={{ color: "#374fff" }}>{text}</span>;
 };
 
-const NewLoanLender = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const NewLoanLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
 
   const shortMsg = (
@@ -65,24 +62,19 @@ const NewLoanLender = ({
   );
 };
 
-const NewLoanBorrower = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const NewLoanBorrower = ({ asset, short, terms, lender }: MessageProp): JSX.Element => {
   const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address)} has funded your loan on{" "}
+      {addressEllipsis(lender?.address || "")} has funded your loan on{" "}
       {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      {addressEllipsis(asset.owner.address)} has repaid their loan on{" "}
-      {getBlueText(asset.name)}.{formatCurrency(repaymentTotal, 2)} has been transferred
-      to your wallet.
+      {addressEllipsis(lender?.address || "")} has paid their loan on{" "}
+      {getBlueText(asset.name)}. You should repay {formatCurrency(repaymentTotal, 2)} to{" "}
+      {addressEllipsis(lender?.address || "")}.
     </span>
   );
   return (
@@ -93,12 +85,7 @@ const NewLoanBorrower = ({
   );
 };
 
-const LiquidationLender = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const LiquidationLender = ({ asset, short }: MessageProp): JSX.Element => {
   const shortMsg = (
     <span>The loan on {getBlueText(asset.name)} has been liquidated.</span>
   );
@@ -116,11 +103,7 @@ const LiquidationLender = ({
   );
 };
 
-const LiquidationBorrower = ({
-  notification,
-  asset,
-  short,
-}: MessageProp): JSX.Element => {
+const LiquidationBorrower = ({ asset, short }: MessageProp): JSX.Element => {
   const shortMsg = (
     <span>The loan on {getBlueText(asset.name)} has been liquidated.</span>
   );
@@ -138,12 +121,7 @@ const LiquidationBorrower = ({
   );
 };
 
-const RepaymentLender = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const RepaymentLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = (
     <span>
@@ -166,18 +144,13 @@ const RepaymentLender = ({
   );
 };
 
-const RepaymentBorrower = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const RepaymentBorrower = ({ asset, short }: MessageProp): JSX.Element => {
   //  const { repaymentTotal } = useTermDetails(terms);
   const shortMsg = <span>You have repaid your loan on {getBlueText(asset.name)}</span>;
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      Your loan has repaid their loan on and {getBlueText(asset.name)} has been
-      transferred back to your wallet.
+      Your loan has been repaid and {getBlueText(asset.name)} has been transferred back to
+      your wallet.
     </span>
   );
   return (
@@ -188,12 +161,7 @@ const RepaymentBorrower = ({
   );
 };
 
-const NewOfferLender = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const NewOfferLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = <span>You gave new offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
@@ -211,12 +179,7 @@ const NewOfferLender = ({
   );
 };
 
-const NewOfferBorrower = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const NewOfferBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = <span>You have a new offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
@@ -234,12 +197,7 @@ const NewOfferBorrower = ({
   );
 };
 
-const OfferAcceptedLender = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const OfferAcceptedLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = (
     <span>
@@ -263,12 +221,7 @@ const OfferAcceptedLender = ({
   );
 };
 
-const OfferAcceptedBorrower = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const OfferAcceptedBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = <span>You have accepted an offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
@@ -286,12 +239,7 @@ const OfferAcceptedBorrower = ({
   );
 };
 
-const ListingCancelledLender = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const ListingCancelledLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = <span>Your listing on {getBlueText(asset.name)} is cancelled</span>;
   const longMsg = (
@@ -309,12 +257,7 @@ const ListingCancelledLender = ({
   );
 };
 
-const ListingCancelledBorrower = ({
-  notification,
-  asset,
-  short,
-  terms,
-}: MessageProp): JSX.Element => {
+const ListingCancelledBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
   const { repaymentAmount } = useTermDetails(terms);
   const shortMsg = <span>The listing on {getBlueText(asset.name)} is cancelled</span>;
   const longMsg = (
@@ -395,7 +338,6 @@ export const NotificationMessage = ({
         return loan && loan.assetListing.asset.imageUrl
           ? loan.assetListing.asset.imageUrl
           : avatarPlaceholder;
-        break;
       case "listing":
         setAsset(listing?.asset);
         setTerms(listing?.term);
@@ -404,7 +346,6 @@ export const NotificationMessage = ({
         return listing && listing.asset.imageUrl
           ? listing.asset.imageUrl
           : avatarPlaceholder;
-        break;
       case "offer":
         setAsset(offer?.assetListing?.asset);
         setTerms(offer?.term);
@@ -413,7 +354,6 @@ export const NotificationMessage = ({
         return offer && offer.assetListing?.asset.imageUrl
           ? offer.assetListing?.asset.imageUrl
           : avatarPlaceholder;
-        break;
       default:
         return avatarPlaceholder;
     }
