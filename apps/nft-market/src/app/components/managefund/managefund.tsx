@@ -79,20 +79,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const [amount, setAmount] = useState("0");
   const [isMax, setIsMax] = useState(false);
 
-  const handleAmountChange = (event: BaseSyntheticEvent) => {
-    let value = event.target.value.replace(/-/g, "") || "0";
-    const [wholeNumber, fractional] = value.split(".");
-    if ((fractional || "").length > currency.decimals) {
-      value = wholeNumber + "." + fractional.slice(0, currency.decimals);
-    }
-
-    const newAmount = ethers.utils.parseUnits(value, currency.decimals);
-    if (newAmount.gt(ethers.utils.parseUnits(MAX_AMOUNT, currency.decimals))) {
-      setMax();
-    } else {
-      setAmount(value);
-    }
-  };
   const { address, chainId, provider } = useWeb3Context();
   // primary form pending state
   const [pending, setPending] = useState(false);
@@ -154,11 +140,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     });
   });
 
-  const setMax = () => {
-    setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
-    setIsMax(true);
-  };
-
   useEffect(() => {
     if (provider && currency) {
       dispatch(
@@ -172,9 +153,44 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     }
   }, [provider, currency]);
 
-  const setToDefault = () => {
-    setAmount(ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals));
+  const handleAmountChange = (event: BaseSyntheticEvent) => {
+    let value = event.target.value.replace(/-/g, "") || "0";
+    const [wholeNumber, fractional] = value.split(".");
+    if ((fractional || "").length > currency.decimals) {
+      value = wholeNumber + "." + fractional.slice(0, currency.decimals);
+    }
+
+    updateAmount(value);
+  };
+
+  const updateAmount = (value: string) => {
+    const newAmount = ethers.utils.parseUnits(value, currency.decimals);
+    if (newAmount.gt(ethers.utils.parseUnits(MAX_AMOUNT, currency.decimals))) {
+      setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
+      setIsMax(true);
+    } else {
+      setAmount(value);
+      setIsMax(false);
+    }
+  };
+
+  const enableMax = () => {
+    setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
+    setIsMax(true);
+  };
+
+  const disableMax = () => {
+    if (currencyAllowance?.gt(ethers.utils.parseUnits(MAX_AMOUNT, currency.decimals))) {
+      setAmount("0");
+    } else {
+      setToDefault();
+    }
+
     setIsMax(false);
+  };
+
+  const setToDefault = () => {
+    updateAmount(ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals));
   };
 
   useEffect(() => {
@@ -277,10 +293,24 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                     <Tooltip
                       sx={{ marginLeft: "5px" }}
                       arrow
-                      title={`Your current allowance is ${ethers.utils.formatUnits(
-                        currencyAllowance || 0,
-                        currency.decimals
-                      )} ${currency.symbol}`}
+                      open
+                      title={
+                        <Box className="flex fr ai-c">
+                          Your current allowance is&nbsp;
+                          {currencyAllowance?.gt(
+                            ethers.utils.parseUnits(MAX_AMOUNT, currency.decimals)
+                          ) ? (
+                            <span style={{ fontSize: "20px" }}>&infin;</span>
+                          ) : (
+                            ethers.utils.formatUnits(
+                              currencyAllowance || 0,
+                              currency.decimals
+                            )
+                          )}
+                          &nbsp;
+                          {currency.symbol}
+                        </Box>
+                      }
                       componentsProps={{
                         arrow: {
                           style: {
@@ -307,9 +337,9 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                       checked={isMax}
                       onChange={() => {
                         if (isMax === false) {
-                          setMax();
+                          enableMax();
                         } else {
-                          setToDefault();
+                          disableMax();
                         }
                       }}
                     />
