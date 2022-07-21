@@ -401,6 +401,14 @@ export const backendApi = createApi({
       },
       invalidatesTags: ["Loan", "Asset", "Listing", "Terms"],
     }),
+    resetPartialLoan: builder.query<Loan, string | undefined>({
+      query: (id) => ({
+        url: `loan/reset-status/${id}`,
+      }),
+      providesTags: (result, error, queryParams) => [
+        { type: "Loan" as const, id: result?.id || "" },
+      ],
+    }),
     // Offers
     getOffers: builder.query<Offer[], Partial<BackendOfferQueryParams>>({
       query: (queryParams) => ({
