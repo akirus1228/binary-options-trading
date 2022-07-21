@@ -33,7 +33,6 @@ import {
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
 import { addAlert } from "../../store/reducers/app-slice";
-import infiniteIcon from "../../../assets/images/infinite.png";
 
 export const ValueMaxSwitch = styled(Switch)(({ theme }) => ({
   padding: 8,
@@ -56,6 +55,8 @@ export const ValueMaxSwitch = styled(Switch)(({ theme }) => ({
     backgroundColor: "white",
   },
 }));
+
+const MAX_AMOUNT = "1000000000"; // 1B
 
 export interface ManageFundProps {
   onClose: (value: boolean) => void;
@@ -86,7 +87,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     }
 
     const newAmount = ethers.utils.parseUnits(value, currency.decimals);
-    if (newAmount.gt(ethers.constants.MaxUint256)) {
+    if (newAmount.gt(ethers.utils.parseUnits(MAX_AMOUNT, currency.decimals))) {
       setMax();
     } else {
       setAmount(value);
@@ -155,6 +156,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
 
   const setMax = () => {
     setAmount(ethers.utils.formatUnits(ethers.constants.MaxUint256, currency.decimals));
+    setIsMax(true);
   };
 
   useEffect(() => {
@@ -171,8 +173,8 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   }, [provider, currency]);
 
   const setToDefault = () => {
-    setIsMax(false);
     setAmount(ethers.utils.formatUnits(currencyAllowance || 0, currency.decimals));
+    setIsMax(false);
   };
 
   useEffect(() => {
@@ -302,14 +304,13 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                   <Typography sx={{ color: "#aaa", mt: "1em", mb: "0.5em" }}>
                     Value
                     <ValueMaxSwitch
-                      value={isMax}
+                      checked={isMax}
                       onChange={() => {
                         if (isMax === false) {
                           setMax();
                         } else {
                           setToDefault();
                         }
-                        setIsMax(!isMax);
                       }}
                     />
                     Max
@@ -330,11 +331,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                   </Box>
                   <Box className={`flex fr ai-c ${style["rightSide"]}`}>
                     {isMax ? (
-                      <img
-                        src={infiniteIcon}
-                        alt="Infinite"
-                        style={{ width: "40px", height: "20px" }}
-                      />
+                      <span style={{ fontSize: "30px" }}>&infin;</span>
                     ) : (
                       <TextField
                         type="number"
