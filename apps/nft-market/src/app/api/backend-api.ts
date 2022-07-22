@@ -348,6 +348,13 @@ export const backendApi = createApi({
       }),
       transformResponse: (response: { count: number; data: Loan[] }, meta, arg) =>
         response.data,
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data }: { data: Loan[] } = await queryFulfilled;
+        const assetListings = data.map((loan: Loan) => loan.assetListing);
+        const assets = data.map((loan: Loan) => loan.assetListing.asset);
+        dispatch(updateListings(listingAryToListings(assetListings)));
+        dispatch(updateAssetsFromListings(assetAryToAssets(assets))); // could this potentially update with old listing data?
+      },
       providesTags: (result, error, queryParams) =>
         result
           ? [...result.map(({ id }) => ({ type: "Loan" as const, id })), "Loan"]
