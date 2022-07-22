@@ -9,6 +9,7 @@ import {
   SxProps,
   Theme,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -29,11 +30,12 @@ type Page = {
   params?: PageParams;
   href?: string;
   hash?: string;
+  tooltip?: string;
 };
 
 const pages: Page[] = [
-  { title: "Lend", href: "/lend" },
-  { title: "Borrow", href: "/borrow" },
+  { title: "Lend", href: "/lend", tooltip: "Get liquidity" },
+  { title: "Borrow", href: "/borrow", tooltip: "Earn interest" },
   { title: "Account", href: "/my-account" },
   { title: "About", href: "/", hash: "#about-section" },
   { title: "Blog", href: "/blog" },
@@ -121,7 +123,13 @@ export const Header = (): JSX.Element => {
                     textAlign="center"
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
-                    <Button style={{ width: "100%" }}>{page.title}</Button>
+                    {page.tooltip ? (
+                      <Tooltip title={page.tooltip} placement="right">
+                        <Button style={{ width: "100%" }}>{page.title}</Button>
+                      </Tooltip>
+                    ) : (
+                      <Button style={{ width: "100%" }}>{page.title}</Button>
+                    )}
                   </Typography>
                 </Link>
               ))}
@@ -154,7 +162,13 @@ export const Header = (): JSX.Element => {
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
                     <Link to={{ pathname: page.href || "#", hash: page.hash }}>
-                      <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
+                      {page.tooltip ? (
+                        <Tooltip title={page.tooltip}>
+                          <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
+                        </Tooltip>
+                      ) : (
+                        <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
+                      )}
                     </Link>
                   </Typography>
                 );
