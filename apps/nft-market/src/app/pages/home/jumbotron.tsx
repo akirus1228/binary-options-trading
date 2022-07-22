@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import { Box, Button, Container, Grid, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import BackgroundImage from "../../../assets/images/homepage-bg.png";
@@ -42,12 +42,16 @@ export const Jumbotron = (): JSX.Element => {
               }}
             >
               <Link to="/borrow">
-                <Button variant="contained" sx={{ mr: "10px" }}>
-                  Borrow
-                </Button>
+                <Tooltip title="Get liquidity">
+                  <Button variant="contained" sx={{ mr: "10px" }}>
+                    Borrow
+                  </Button>
+                </Tooltip>
               </Link>
               <Link to="/lend">
-                <Button variant="outlined">Lend</Button>
+                <Tooltip title="Earn interest">
+                  <Button variant="outlined">Lend</Button>
+                </Tooltip>
               </Link>
             </Box>
             <Box
