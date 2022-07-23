@@ -39,6 +39,7 @@ import {
   useCreateLoanMutation,
   useUpdateLoanMutation,
   useGetCollectionsQuery,
+  useResetPartialLoanMutation,
 } from "../../api/backend-api";
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
@@ -117,6 +118,8 @@ export const LoanConfirmation = ({
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
     useUpdateLoanMutation();
+  const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
+    useResetPartialLoanMutation();
 
   const {
     platformFeeAmt,
@@ -199,6 +202,7 @@ export const LoanConfirmation = ({
             message: "There was an error. Please try again.",
           })
         );
+        resetPartialLoan(createLoanResult.id || "");
         resetCreateLoan();
         return;
       }
