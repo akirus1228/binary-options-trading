@@ -39,6 +39,7 @@ import {
   useCreateLoanMutation,
   useUpdateLoanMutation,
   useGetCollectionsQuery,
+  useResetPartialLoanMutation,
 } from "../../api/backend-api";
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
@@ -117,6 +118,8 @@ export const LoanConfirmation = ({
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
     useUpdateLoanMutation();
+  const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
+    useResetPartialLoanMutation();
 
   const {
     platformFeeAmt,
@@ -187,24 +190,31 @@ export const LoanConfirmation = ({
     const createLoanResult = await createLoan(createLoanRequest).unwrap();
     console.log(createLoanResult);
 
-    const createLoanContractResult = await dispatch(
-      contractCreateLoan(createLoanParams)
-    ).unwrap();
-    console.log(createLoanContractResult);
+    try {
+      const createLoanContractResult = await dispatch(
+        contractCreateLoan(createLoanParams)
+      ).unwrap();
+      console.log(createLoanContractResult);
 
-    if (typeof createLoanContractResult !== "number") {
-      dispatch(
-        addAlert({
-          message: "There was an error. Please try again.",
-        })
-      );
-      resetCreateLoan();
+      if (typeof createLoanContractResult !== "number") {
+        dispatch(
+          addAlert({
+            message: "There was an error. Please try again.",
+          })
+        );
+        resetPartialLoan(createLoanResult.id || "");
+        resetCreateLoan();
+        return;
+      }
+
+      createLoanRequest.contractLoanId = createLoanContractResult;
+      createLoanRequest.id = createLoanResult.id;
+      const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
+      console.log(updateLoanResult);
+    } catch (e) {
+      console.log(e);
       return;
     }
-    createLoanRequest.contractLoanId = createLoanContractResult;
-    createLoanRequest.id = createLoanResult.id;
-    const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
-    console.log(updateLoanResult);
 
     resetUpdateLoan();
     dispatch(
