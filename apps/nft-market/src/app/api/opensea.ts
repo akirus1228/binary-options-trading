@@ -179,7 +179,9 @@ const staggeredBaseQuery = retry(
       },
     })(args, api, extraOptions);
     if (result.error) {
-      alert("Fetching metadata, please wait...");
+      //alert("Fetching metadata, please wait...");
+      //console.log("error being thrown");
+      //console.log(result.error);
     }
     return result;
   },
