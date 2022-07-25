@@ -2,6 +2,7 @@ import { Box, Container, Toolbar, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { FooterBar } from "@fantohm/shared-ui-themes";
 import style from "./footer.module.scss";
+import { discordIcon, instagramIcon, twitterIcon } from "@fantohm/shared/images";
 
 type Page = {
   title: string;
@@ -62,10 +63,13 @@ export const Footer = (): JSX.Element => {
               );
             })}
           </Box>
-          <Box sx={{ mt: { xs: "20px", md: "0" } }}>
+          <Box sx={{ mt: { xs: "20px", md: "0", display: "flex" } }}>
             <Typography textAlign="center" variant="body2" color="white">
-              Copyright &copy; 2022 Balance Capital. All rights reserved.
+              Copyright &copy; 2022. All rights reserved.
             </Typography>
+            <img src={discordIcon} alt="discordIcon" className={style["socialDiv"]} />
+            <img src={twitterIcon} alt="twitterIcon" className={style["socialDiv"]} />
+            <img src={instagramIcon} alt="instagramIcon" className={style["socialDiv"]} />
           </Box>
         </Toolbar>
       </Container>

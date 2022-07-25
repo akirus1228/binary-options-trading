@@ -82,6 +82,8 @@ import emailIcon from "./email.svg";
 import linkedinIcon from "./linkedin.svg";
 import twitterIcon from "./Twitter.svg";
 import liqidIcon from "./liqidlogo.png";
+import instagramIcon from "./instagram.svg";
+import discordIcon from "./discord.svg";
 
 export {
   NFTsIcon,
@@ -168,4 +170,6 @@ export {
   twitterIcon,
   linkedinIcon,
   liqidIcon,
+  instagramIcon,
+  discordIcon,
 };
