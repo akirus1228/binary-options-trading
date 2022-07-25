@@ -134,7 +134,7 @@ const globalTheme: ThemeOptions = {
     },
   },
   typography: {
-    fontFamily: ["Sora", "Roboto", "sans-serif"].join(","),
+    fontFamily: ["Inter", "Roboto", "sans-serif"].join(","),
   },
   components: {
     MuiAppBar: {
