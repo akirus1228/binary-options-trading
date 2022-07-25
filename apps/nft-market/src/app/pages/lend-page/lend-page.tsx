@@ -30,10 +30,15 @@ export const LendPage = (): JSX.Element => {
       listings
         .filter(
           (listing: Listing) =>
-            listing.asset.owner.address !== user.address &&
             new Date(listing.term.expirationAt).getTime() >= new Date().getTime()
         )
         .sort((a, b) => {
+          if (a.asset.owner.address === user.address) {
+            return 1;
+          } else if (b.asset.owner.address === user.address) {
+            return -1;
+          }
+
           if (query.sort === ListingSort.Recently) {
             return (
               new Date(b.createdAt || "0").getTime() -
