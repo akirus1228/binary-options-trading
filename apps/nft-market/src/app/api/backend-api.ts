@@ -408,6 +408,14 @@ export const backendApi = createApi({
       },
       invalidatesTags: ["Loan", "Asset", "Listing", "Terms"],
     }),
+    resetPartialLoan: builder.mutation<Loan, string | undefined>({
+      query: (id) => ({
+        url: `loan/reset-status/${id}`,
+      }),
+      invalidatesTags: (result, error, queryParams) => [
+        { type: "Loan" as const, id: result?.id || "" },
+      ],
+    }),
     // Offers
     getOffers: builder.query<Offer[], Partial<BackendOfferQueryParams>>({
       query: (queryParams) => ({
@@ -527,6 +535,7 @@ export const {
   useCreateLoanMutation,
   useUpdateLoanMutation,
   useDeleteLoanMutation,
+  useResetPartialLoanMutation,
   useCreateListingMutation,
   useGetTermsQuery,
   useUpdateTermsMutation,

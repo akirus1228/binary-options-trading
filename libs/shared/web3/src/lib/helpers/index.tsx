@@ -220,7 +220,7 @@ export function prettifySeconds(seconds: number, resolution?: string) {
 
   if (seconds <= 0) result = "Instant";
 
-  if (result === "") result = `${seconds} sec`;
+  if (result === "") result = `${Math.floor(seconds)} sec`;
 
   return result;
 }
