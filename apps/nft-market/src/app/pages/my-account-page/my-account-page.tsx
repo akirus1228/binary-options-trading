@@ -90,14 +90,31 @@ export const MyAccountPage = (): JSX.Element => {
       <Container>
         <AccountProfile address={address} />
       </Container>
-      <Box sx={{ borderBottom: 2, borderColor: "divider" }}>
+      <Box sx={{ borderBottom: 2, borderColor: "rgba(126, 154, 169, 0.20)", mb: "5em" }}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
           {tabs
             .filter(
               (tab: TabContent) => tab.isGlobal || (!!user && !params["walletAddress"])
             )
             .map((tab: TabContent, tabIndex: number) => (
-              <Tab label={tab.title} {...a11yProps(tabIndex)} key={`tab-${tabIndex}`} />
+              <Tab
+                label={
+                  <div
+                    style={{
+                      fontFamily: "Inter,Roboto,sans-serif",
+                      fontWeight: "500",
+                      fontSize: "1em",
+                      color: tabIndex === activeTab ? "black" : "#8991A2",
+                      padding: "8px 0px",
+                      minWidth: "120px",
+                    }}
+                  >
+                    {tab.title}
+                  </div>
+                }
+                {...a11yProps(tabIndex)}
+                key={`tab-${tabIndex}`}
+              />
             ))}
         </Tabs>
       </Box>
