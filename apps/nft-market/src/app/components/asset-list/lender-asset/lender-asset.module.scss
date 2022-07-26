@@ -4,7 +4,10 @@
     @media (max-width:1200px) {
         width:calc(50% - 2em)
     }
-
+    @media (max-width:600px) {
+        margin:5px;
+        width:calc(50% - 10px)
+    }
     
 
     & > a {
@@ -15,6 +18,17 @@
         height:auto !important;
         padding-top:100%;
         position:relative;
+        &:before {
+            
+            position:absolute;
+            bottom:0;
+            left:0;
+            right:0;
+            height:60%;
+            background-image:linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            content: '';
+            z-index:20;
+        }
         img {
             width:100%;
             max-width:100%;
@@ -22,61 +36,117 @@
             position:absolute;
             top:0;
             left:0;
+            z-index:10;
+        }
+        
+    }
+
+    .loanHeading {
+        font-size:12px;
+        displaY:block !important;
+        width:100%;
+        @media(max-width:1400px) {
+            font-size:10px;
         }
     }
     .assetPrice {
-        font-weight:700;
-        font-size:24px;
-        @media(max-width:900px) {
-            font-size:20px;
+        font-weight:400;
+        font-size:20px;
+        @media(max-width:1400px) {
+            font-size:16px;
         }
         @media (max-width:600px) {
-            font-size:17px;
+            font-size:16px;
         }
-
+        @media (max-width:480px) {
+            font-size:12px;
+        }
+    }
+    .loanIcon {
+        @media(max-width:1400px) {
+            
+                height:15px !important;
+                width:15px !important;
+            
+        }
+    }
+    .interestElem {
+        text-align:right;
     }
     .assetPriceStable {
-        font-size:12px;
-        @media(max-width:900px) {
-            font-size:10px;
+        font-weight:400;
+        font-size:20px;
+        @media(max-width:1400px) {
+            font-size:16px;
+            img {
+                height:15px !important;
+                width:15px !important;
+            }
         }
         @media (max-width:600px) {
-            font-size:10px;
+            font-size:16px;
         }
-
+        @media (max-width:480px) {
+            font-size:12px;
+        }
     }
     .assetPriceStableFiat {
         font-size:12px;
+        @media(max-width:1400px) {
+            font-size:10px;
+        }
         @media(max-width:900px) {
             font-size:10px;
         }
         @media (max-width:600px) {
             font-size:10px;
-        }
-        @media (max-width:480px) {
-            display:none !important;
         }
 
     }
+    .assetSpecs {
+
+    position:relative;
+    margin-top:-80px;
+    z-index:100;
+    padding:0 30px;
+
+    @media(max-width:1535px) {
+        padding:0 20px;
+        margin-top:-70px;
+        margin-bottom:0px;
+    }
+    @media(max-width:600px) {
+        padding:0 20px;
+        margin-top:-60px;
+        margin-bottom:0px;
+    }
     .termHeading {
-        font-size:13px;
+        font-size:12px;
+        @media(max-width:1400px) {
+            font-size:10px;
+        }
         @media(max-width:900px) {
-            font-size:12px;
+            font-size:10px;
         }
         @media (max-width:600px) {
-            font-size:11px;
+            font-size:10px;
         }
 
     }
     .termValue {
-        font-weight:700;
-        font-size:18px;
-        @media(max-width:900px) {
+        font-weight:400;
+        font-size:16px;
+        color:#fff;
+        @media(max-width:1400px) {
             font-size:15px;
         }
-        @media (max-width:600px) {
+        @media(max-width:900px) {
             font-size:13px;
         }
+        @media (max-width:600px) {
+            font-size:12px;
+        }
+    }
     }
     .moreButton {
         color:#000;
@@ -86,7 +156,8 @@
             svg {
                 width:20px;
                 height:20px;
-        }}
+            }
+        }
     }
 }
 body[class*=darkTheme] {
