@@ -7,7 +7,7 @@ export type MyAccountDetailsParams = {
 
 export function MyAccountDetails({ address }: MyAccountDetailsParams) {
   return (
-    <Container maxWidth="lg">
+    <Container sx={{ mt: "30px" }} maxWidth="lg">
       <OwnerInfo address={address} />
     </Container>
   );
