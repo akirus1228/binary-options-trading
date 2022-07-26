@@ -80,6 +80,8 @@ const getInitialCurrencyState = (): CurrencyData => {
         ...currencyState,
         ...{ [tokenId]: BackendLoadingStatus.succeeded },
       };
+      console.log(network);
+      console.log(tokenId);
       currencies = {
         ...currencies,
         ...{ [tokenId]: new erc20Currency(tokenId) },

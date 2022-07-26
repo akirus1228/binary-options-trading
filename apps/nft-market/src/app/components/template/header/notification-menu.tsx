@@ -70,6 +70,10 @@ export const NotificationMenu = (): JSX.Element => {
         <CircularProgress />
       </Box>
     );
+
+  if (!authSignature) {
+    return <div></div>;
+  }
   return (
     <>
       <IconButton

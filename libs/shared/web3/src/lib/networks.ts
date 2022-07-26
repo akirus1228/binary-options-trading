@@ -350,6 +350,7 @@ export const networks: INetworks = {
       WBTC_ADDRESS: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
       USDC_ADDRESS: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       CRYPTOPUNKS_ADDRESS: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
+      USDB_LENDING_ADDRESS: "0x388753E39938De4dc37594B2d77Ed2DeB9E36208",
       XFHM_ADDRESS: "",
       MASTERCHEF_ADDRESS: "",
     },

@@ -13,7 +13,7 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
 import { useEffect, useMemo, useState } from "react";
 import { capitalizeFirstLetter } from "@fantohm/shared-helpers";
-import { AssetStatus } from "../../../types/backend-types";
+import { Asset, AssetStatus } from "../../../types/backend-types";
 import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,15 +27,14 @@ import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 
-export interface LenderAssetProps {
-  contractAddress: string;
-  tokenId: string;
-}
+export type LenderAssetProps = {
+  asset: Asset;
+};
 
-export function LenderAsset(props: LenderAssetProps) {
+export function LenderAsset({ asset }: LenderAssetProps) {
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
-  const asset = useWalletAsset(props.contractAddress, props.tokenId);
+  //const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
@@ -67,7 +66,7 @@ export function LenderAsset(props: LenderAssetProps) {
       startIcon: search,
       alt: "Search",
       title: "View Listing",
-      url: `/asset/${props.contractAddress}/${props.tokenId}`,
+      url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: null,
       isSelfTab: true,
     },
@@ -76,8 +75,8 @@ export function LenderAsset(props: LenderAssetProps) {
       alt: "EtherScan",
       title: "View on Etherscan",
       url: `${chains[chainId || 1].blockExplorerUrls[0]}token/${
-        props?.contractAddress
-      }?a=${props?.tokenId}`,
+        asset?.assetContractAddress
+      }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,
     },
@@ -89,7 +88,7 @@ export function LenderAsset(props: LenderAssetProps) {
         chainId === NetworkIds.Ethereum
           ? "https://opensea.io/assets/ethereum/"
           : "https://testnets.opensea.io/assets/rinkeby/"
-      }${props.contractAddress}/${props.tokenId}`,
+      }${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,
     },
@@ -188,7 +187,7 @@ export function LenderAsset(props: LenderAssetProps) {
         </Popover>
       </Box>
       {asset.imageUrl && asset.openseaId && (
-        <Link href={`/asset/${props.contractAddress}/${props.tokenId}`}>
+        <Link href={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
             url={asset.imageUrl}
             name={asset.name || "placeholder name"}
