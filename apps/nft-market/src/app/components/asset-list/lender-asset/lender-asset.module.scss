@@ -4,7 +4,10 @@
     @media (max-width:1200px) {
         width:calc(50% - 2em)
     }
-
+    @media (max-width:600px) {
+        margin:5px;
+        width:calc(50% - 10px)
+    }
     
 
     & > a {
@@ -42,17 +45,30 @@
         font-size:12px;
         displaY:block !important;
         width:100%;
+        @media(max-width:1400px) {
+            font-size:10px;
+        }
     }
     .assetPrice {
         font-weight:400;
         font-size:20px;
-        @media(max-width:1480px) {
-            font-size:18px;
+        @media(max-width:1400px) {
+            font-size:16px;
         }
         @media (max-width:600px) {
-            font-size:17px;
+            font-size:16px;
         }
-
+        @media (max-width:480px) {
+            font-size:12px;
+        }
+    }
+    .loanIcon {
+        @media(max-width:1400px) {
+            
+                height:15px !important;
+                width:15px !important;
+            
+        }
     }
     .interestElem {
         text-align:right;
@@ -60,27 +76,30 @@
     .assetPriceStable {
         font-weight:400;
         font-size:20px;
-        @media(max-width:1480px) {
-            font-size:18px;
+        @media(max-width:1400px) {
+            font-size:16px;
             img {
-                height:18px;
-                width:18px;
+                height:15px !important;
+                width:15px !important;
             }
         }
         @media (max-width:600px) {
-            font-size:17px;
+            font-size:16px;
+        }
+        @media (max-width:480px) {
+            font-size:12px;
         }
     }
     .assetPriceStableFiat {
         font-size:12px;
+        @media(max-width:1400px) {
+            font-size:10px;
+        }
         @media(max-width:900px) {
             font-size:10px;
         }
         @media (max-width:600px) {
             font-size:10px;
-        }
-        @media (max-width:480px) {
-            display:none !important;
         }
 
     }
@@ -90,10 +109,24 @@
     margin-top:-80px;
     z-index:100;
     padding:0 30px;
+
+    @media(max-width:1535px) {
+        padding:0 20px;
+        margin-top:-70px;
+        margin-bottom:0px;
+    }
+    @media(max-width:600px) {
+        padding:0 20px;
+        margin-top:-60px;
+        margin-bottom:0px;
+    }
     .termHeading {
         font-size:12px;
+        @media(max-width:1400px) {
+            font-size:10px;
+        }
         @media(max-width:900px) {
-            font-size:11px;
+            font-size:10px;
         }
         @media (max-width:600px) {
             font-size:10px;
@@ -104,6 +137,9 @@
         font-weight:400;
         font-size:16px;
         color:#fff;
+        @media(max-width:1400px) {
+            font-size:15px;
+        }
         @media(max-width:900px) {
             font-size:13px;
         }
@@ -111,7 +147,7 @@
             font-size:12px;
         }
     }
-}
+    }
     .moreButton {
         color:#000;
         background:rgba(0,0,0,0.4);
@@ -120,7 +156,8 @@
             svg {
                 width:20px;
                 height:20px;
-        }}
+            }
+        }
     }
 }
 body[class*=darkTheme] {

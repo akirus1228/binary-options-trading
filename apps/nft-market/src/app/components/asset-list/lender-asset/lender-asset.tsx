@@ -250,9 +250,11 @@ export function LenderAsset(props: LenderAssetProps) {
           className="flex fc fj-c ai-c w100"
           sx={{
             p: {
-              xs: "1em",
-              sm: "1.5em",
-              md: "2em",
+              xs: "20px",
+              sm: "20px",
+              md: "20px",
+              lg: "20px",
+              xl: "30px",
             },
           }}
         >
