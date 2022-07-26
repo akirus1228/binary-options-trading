@@ -42,7 +42,10 @@ const OwnerInfoTooltip = (title: string) => {
         },
       }}
     >
-      <Icon component={InfoOutlinedIcon} />
+      <Icon
+        component={InfoOutlinedIcon}
+        style={{ width: "0.8em", height: "0.8em", marginTop: "3px", marginLeft: "3px" }}
+      />
     </Tooltip>
   );
 };
