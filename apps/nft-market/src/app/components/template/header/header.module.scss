@@ -223,11 +223,6 @@ body {
   }
 }
 body[class*="darkTheme"] {
-  .mainLogo {
-    img {
-      filter: invert(1);
-    }
-  }
   .addressSvg {
     color: #fff;
   }
