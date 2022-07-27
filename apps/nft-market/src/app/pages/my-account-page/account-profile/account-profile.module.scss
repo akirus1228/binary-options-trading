@@ -1,8 +1,8 @@
 .profileImageContainer {
   border-radius: 50%;
   border: 7px solid white;
-  height: 225px;
-  width: 225px;
+  height: 115px;
+  width: 115px;
 }
 
 .iconWrapper {
@@ -30,9 +30,17 @@
 }
 @media (max-width: 600px) {
   .profileImageContainer {
-    height: 225px;
-    width: 225px;
+    height: 115px;
+    width: 115px;
   }
 }
 @media (max-width: 360px) {
+}
+
+.left button,
+.right button,
+.right > a {
+  box-shadow: 0px 25px 50px #7e9aa92b;
+  font-size: 0.8rem;
+  font-family: Inter, Roboto, sans-serif;
 }

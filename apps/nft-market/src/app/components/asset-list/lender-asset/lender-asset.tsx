@@ -197,6 +197,26 @@ export function LenderAsset(props: LenderAssetProps) {
           />
         </Link>
       )}
+      <Box className={style["assetSpecs"]}>
+        <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
+          <span
+            style={{ color: "rgba(255,255,255,0.7)" }}
+            className={style["termHeading"]}
+          >
+            Duration
+          </span>
+          <span
+            style={{ color: "rgba(255,255,255,0.7)" }}
+            className={style["termHeading"]}
+          >
+            APY
+          </span>
+        </Box>
+        <Box className="flex fr fj-sb ai-c w100">
+          <span className={style["termValue"]}>{listing.term.duration} days</span>
+          <span className={style["termValue"]}>{listing.term.apr}%</span>
+        </Box>
+      </Box>
       <Box
         className="flex fc fj-fs ai-c"
         sx={{
@@ -230,82 +250,79 @@ export function LenderAsset(props: LenderAssetProps) {
           className="flex fc fj-c ai-c w100"
           sx={{
             p: {
-              xs: "1em",
-              sm: "1.5em",
-              md: "2em",
+              xs: "20px",
+              sm: "20px",
+              md: "20px",
+              lg: "20px",
+              xl: "30px",
             },
           }}
         >
           <Box
-            className="flex fr fj-sb ai-c w100"
+            className="flex fr fj-sb w100"
             sx={{
+              alignItems: "top",
               flexFlow: {
                 xs: "wrap",
-              },
-              margin: {
-                xs: "0 0 10px 0",
               },
             }}
           >
             <Box
-              className="flex fr ai-c"
               sx={{
-                width: {
-                  xs: "100%",
-                  sm: "auto",
-                },
+                width: "50%",
+                flexFlow: "wrap",
+                alignItems: "center",
+                alignContent: "center",
               }}
             >
-              <span className={style["assetPrice"]}>{listing.term.amount}</span>
+              <span style={{ color: "rgba(0,0,0,0.7)" }} className={style["loanHeading"]}>
+                Loan amount
+              </span>
               <Tooltip title={currency?.name || ""}>
                 <img
+                  className={style["loanIcon"]}
                   src={currency?.icon}
                   alt={currency?.name}
-                  style={{ marginLeft: "5px", height: "22px", width: "22px" }}
+                  style={{
+                    marginRight: "5px",
+                    height: "22px",
+                    width: "22px",
+                    transform: "translateY(3px)",
+                  }}
                 />
               </Tooltip>
+              <Tooltip
+                title={formatCurrency(listing.term.amount * currency?.lastPrice, 2)}
+              >
+                <span className={style["assetPrice"]}>{listing.term.amount}</span>
+              </Tooltip>
             </Box>
-            <span
-              style={{
-                borderRadius: "1em",
-                color: "#1b9385",
-                backgroundColor: "#1b938517",
-                padding: "0.25em 1em",
-                fontWeight: "600",
+            <Box
+              className={style["interestElem"]}
+              sx={{
+                width: "50%",
+                flexFlow: "wrap",
               }}
-              className={style["assetPriceStable"]}
             >
-              {repaymentAmount.toFixed(4)} {currency?.symbol}
-            </span>
-          </Box>
-          <Box className="flex fr fj-sb ai-c w100">
-            <span style={{ fontWeight: "400", fontSize: "12px", color: "#8991A2" }}>
-              ~{formatCurrency(listing.term.amount * currency?.lastPrice, 2)}
-            </span>
-            <span
-              style={{
-                borderRadius: "1em",
-                color: "#1b9385",
-                backgroundColor: "#1b938517",
-                padding: "0.25em 1em",
-                fontWeight: "600",
-              }}
-              className={style["assetPriceStableFiat"]}
-            >
-              ~{formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
-            </span>
-          </Box>
-          <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
-            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>
-              Duration
-            </span>
-            <span style={{ color: "#8991A2" }} className={style["termHeading"]}>
-              APY
-            </span>
-          </Box>
-          <Box className="flex fr fj-sb ai-c w100">
-            <span className={style["termValue"]}>{listing.term.duration} days</span>
-            <span className={style["termValue"]}>{listing.term.apr}%</span>
+              <span style={{ color: "rgba(0,0,0,0.7)" }} className={style["loanHeading"]}>
+                Interest
+              </span>
+              <Tooltip title={formatCurrency(repaymentAmount * currency?.lastPrice, 2)}>
+                <span className={style["assetPriceStable"]}>
+                  <img
+                    src={currency?.icon}
+                    alt={currency?.name}
+                    style={{
+                      marginRight: "5px",
+                      height: "22px",
+                      width: "22px",
+                      transform: "translateY(3px)",
+                    }}
+                  />
+                  {repaymentAmount.toFixed(2)}
+                </span>
+              </Tooltip>
+            </Box>
           </Box>
         </Box>
       </Box>
