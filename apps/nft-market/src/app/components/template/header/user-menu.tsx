@@ -87,7 +87,7 @@ export const UserMenu = (): JSX.Element => {
   }, [address]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
-    connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+    connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
   };
 
   const onClickDisconnect = () => {

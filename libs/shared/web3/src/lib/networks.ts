@@ -7,6 +7,7 @@ import {
   BscIcon,
   MoonBaseAlphaIcon,
 } from "@fantohm/shared-ui-themes";
+import { isDev } from "./helpers";
 
 export type NetworkId = number;
 
@@ -262,7 +263,7 @@ export const networks: INetworks = {
   [NetworkIds.Rinkeby]: {
     name: "Rinkeby Testnet",
     logo: RinkebyIcon,
-    isEnabled: DebugHelper.isActive("enable-testnet"),
+    isEnabled: DebugHelper.isActive("enable-testnet") || isDev,
     isTestNet: true,
     blocktime: 15.01,
     epochBlock: 10112184,

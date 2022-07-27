@@ -72,7 +72,7 @@ const getInitialCurrencyState = (): CurrencyData => {
   let currencies = {} as CurrencyList;
   let currencyState = {} as CurrencyState;
 
-  const network = isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
+  const network = isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
 
   Object.entries(currencyInfo).forEach(([tokenId, info]) => {
     if (info.addresses[network]) {
@@ -80,8 +80,6 @@ const getInitialCurrencyState = (): CurrencyData => {
         ...currencyState,
         ...{ [tokenId]: BackendLoadingStatus.succeeded },
       };
-      console.log(network);
-      console.log(tokenId);
       currencies = {
         ...currencies,
         ...{ [tokenId]: new erc20Currency(tokenId) },

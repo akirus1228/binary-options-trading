@@ -64,7 +64,7 @@ const previousState = loadState("listings");
 const initialState: ListingState = {
   listings: [],
   ...previousState, // overwrite assets and currencies from cache if recent
-  isDev: isDev(),
+  isDev: isDev,
   loadListingStatus: [],
   listingsLoadStatus: BackendLoadingStatus.idle,
   createListingStatus: BackendLoadingStatus.idle,

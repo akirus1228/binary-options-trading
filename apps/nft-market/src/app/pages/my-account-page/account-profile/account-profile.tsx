@@ -31,7 +31,7 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
   };
 
   const handleShareLink = () => {
-    const baseUrl = isDev() ? "https://mvp.liqdnft.com" : "https://liqdnft.com";
+    const baseUrl = isDev ? "https://mvp.liqdnft.com" : "https://liqdnft.com";
     const copyString = `${baseUrl}/account/${address}`;
     copyToClipboard(copyString);
     const notification: Partial<GrowlNotification> = {

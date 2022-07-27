@@ -74,6 +74,7 @@ export const NotificationMenu = (): JSX.Element => {
   if (!authSignature) {
     return <div></div>;
   }
+
   return (
     <>
       <IconButton

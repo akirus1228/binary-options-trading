@@ -299,7 +299,7 @@ const previousState = loadState("loans");
 const initialState: LoansState = {
   loans: [],
   ...previousState, // overwrite assets and currencies from cache if recent
-  isDev: isDev(),
+  isDev: isDev,
   loanCreationStatus: BackendLoadingStatus.idle,
   loanReadStatus: BackendLoadingStatus.idle,
   repayLoanStatus: BackendLoadingStatus.idle,

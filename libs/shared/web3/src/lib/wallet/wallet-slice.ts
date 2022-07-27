@@ -259,7 +259,7 @@ export const checkErc20Allowance = createAsyncThunk(
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum }],
+          params: [{ chainId: isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum }],
         });
       } catch (err: any) {
         console.warn(err);
