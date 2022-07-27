@@ -103,7 +103,7 @@ export const MyAccountPage = (): JSX.Element => {
                     style={{
                       fontFamily: "Inter,Roboto,sans-serif",
                       fontWeight: "500",
-                      fontSize: "1em",
+                      fontSize: "1.2em",
                       color: tabIndex === activeTab ? "black" : "#8991A2",
                       padding: "8px 0px",
                       minWidth: "120px",
