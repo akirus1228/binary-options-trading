@@ -16,9 +16,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { enabledNetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import styles from "./header.module.scss";
 import UserMenu from "./user-menu";
+import { RootState } from "../../../store";
 import NotificationMenu from "./notification-menu";
-import logo from "../../../../assets/images/logo.svg";
+import logoDarkMode from "../../../../assets/images/logo-darkmode.svg";
+import logoLightMode from "../../../../assets/images/logo-lightmode.svg";
 import { HashLink as Link } from "react-router-hash-link";
+import { useSelector } from "react-redux";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -45,6 +48,7 @@ export const Header = (): JSX.Element => {
   const { connected, chainId } = useWeb3Context();
   const allowedChain = chainId && enabledNetworkIds.includes(chainId);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -71,7 +75,11 @@ export const Header = (): JSX.Element => {
             className={styles["mainLogo"]}
           >
             <Link to="/">
-              <img src={logo} alt="liqd logo" style={{ height: "1.5em" }} />
+              <img
+                src={themeType === "light" ? logoLightMode : logoDarkMode}
+                alt="liqd logo"
+                style={{ height: "1.5em" }}
+              />
             </Link>
           </Typography>
 
@@ -141,7 +149,11 @@ export const Header = (): JSX.Element => {
             className={styles["mainLogo"]}
           >
             <Link to="/">
-              <img src={logo} alt="liqd logo" style={{ height: "1.5em" }} />
+              <img
+                src={themeType === "light" ? logoLightMode : logoDarkMode}
+                alt="liqd logo"
+                style={{ height: "1.5em" }}
+              />
             </Link>
           </Typography>
           <Box
