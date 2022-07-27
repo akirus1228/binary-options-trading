@@ -3,6 +3,7 @@ import {
   Select,
   CircularProgress,
   MenuItem,
+  Container,
   SelectChangeEvent,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
@@ -133,7 +134,7 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
       {assetsLoading ? (
         <CircularProgress />
       ) : (
-        <Box className="flex fc">
+        <Container sx={{ mt: "30px" }} maxWidth="lg">
           <Box className="flex fr fj-fe">
             <Select
               labelId="asset-sort-by"
@@ -157,7 +158,7 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
             </Select>
           </Box>
           <AssetList assets={assetsToShow} type="borrow" />
-        </Box>
+        </Container>
       )}
     </Box>
   );
