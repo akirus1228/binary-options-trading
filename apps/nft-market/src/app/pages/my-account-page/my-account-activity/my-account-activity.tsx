@@ -21,7 +21,7 @@ export const MyAccountActivity = (): JSX.Element => {
     });
 
   return (
-    <Container maxWidth="lg">
+    <Container sx={{ mt: "50px" }} maxWidth="lg">
       {(isUnreadNotificationsLoading || isReadNotificationsLoading) && (
         <Box className="flex fr fj-c ai-c">
           <CircularProgress />

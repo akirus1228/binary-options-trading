@@ -79,7 +79,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
   ];
 
   return (
-    <Box className={`flex fc fj-c ai-c ${style["responsive_table"]}`}>
+    <Box className={`flex fc fj-c ai-c ${style["responsive_table"]}`} sx={{ mt: "50px" }}>
       <Box>
         <OffersList
           offers={activeOffersAsBorrower}

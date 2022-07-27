@@ -19,6 +19,7 @@ export enum OffersListFields {
   NAME = "Name",
   STATUS = "Status",
 }
+
 export interface OffersListProps {
   offers: Offer[] | undefined;
   fields: OffersListFields[];
@@ -34,7 +35,7 @@ export const OffersList = ({
 }: OffersListProps): JSX.Element => {
   if (isLoading) {
     return (
-      <Box className="flex fr fj-c">
+      <Box className="flex fr fj-c" sx={{ mb: "30px" }}>
         <CircularProgress />
       </Box>
     );
@@ -44,7 +45,7 @@ export const OffersList = ({
     return <></>;
   }
   return (
-    <Container sx={{ pt: "4em", mt: "5em" }} maxWidth="xl">
+    <Container maxWidth="xl">
       <h2 className={style["title"]}>
         {title || "Offers"} ({!!offers && offers.length})
       </h2>

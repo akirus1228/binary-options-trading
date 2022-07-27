@@ -8,7 +8,8 @@ import MyAccountActiveLoansTable from "../my-account-active-loans-table";
 import style from "./my-account-loans.module.scss";
 
 /* eslint-disable-next-line */
-export interface MyAccountLoansProps {}
+export interface MyAccountLoansProps {
+}
 
 export function MyAccountLoans(props: MyAccountLoansProps) {
   const { address } = useWeb3Context();
@@ -51,7 +52,7 @@ export function MyAccountLoans(props: MyAccountLoansProps) {
     { skip: !address || !authSignature }
   );
   return (
-    <Container className={style["myAccountContainer"]} maxWidth="xl">
+    <Container className={style["myAccountContainer"]} sx={{ mt: "50px" }} maxWidth="xl">
       {activeBorrowerLoans?.length ? (
         <>
           <h2>Active loans as borrower({activeBorrowerLoans?.length})</h2>
