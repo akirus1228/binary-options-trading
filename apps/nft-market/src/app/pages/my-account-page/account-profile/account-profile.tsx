@@ -48,11 +48,17 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
           <Box className={`${style["profileImageContainer"]} flex fr ai-c`}>
             <img
               src={profileImagePlaceholder}
-              style={{ width: "100px", height: "100px" }}
+              style={{
+                width: "175px",
+                height: "175px",
+                border: "10px solid white",
+                boxShadow: "0 25px 50px #7e9aa92b",
+                borderRadius: "100%",
+              }}
               alt="User's profile avatar"
             />
           </Box>
-          <Box className="flex fc" sx={{ ml: "2em" }}>
+          <Box className="flex fc" sx={{ ml: "6em" }}>
             <h1 style={{ margin: "0.4em 0em" }}>
               {addressEllipsis(address)}
               <img
@@ -127,9 +133,11 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
             />
             Share
           </Button>
-          <IconButton className="lowContrast" sx={{ ml: "7px" }}>
-            <Icon component={MoreHorizOutlinedIcon} />
-          </IconButton>
+          <span>
+            <IconButton className="lowContrast" sx={{ ml: "7px" }}>
+              <Icon component={MoreHorizOutlinedIcon} />
+            </IconButton>
+          </span>
         </Box>
       </Box>
     </Box>
