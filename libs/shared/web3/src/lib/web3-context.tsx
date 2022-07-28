@@ -129,7 +129,6 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
         saveNetworkId(otherChainID);
         return true;
       }
-      console.warn("Network not supported");
       return false;
     }
     return true;
