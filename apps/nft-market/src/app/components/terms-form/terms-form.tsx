@@ -89,7 +89,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [pending, setPending] = useState(false);
   // primary term variables
   const [duration, setDuration] = useState(
-    props?.listing?.term.duration
+    props?.listing?.term.duration != null
       ? calcDuration(
           props?.listing?.term.duration,
           calcDurationType(props?.listing?.term.duration)
@@ -101,8 +101,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       ? calcDurationType(props?.listing?.term.duration)
       : "days"
   );
-  const [apr, setApr] = useState(props?.listing?.term.apr || 25);
-  const [amount, setAmount] = useState(props?.listing?.term.amount || 10000);
+  const [apr, setApr] = useState(
+    props?.listing?.term.apr != null ? props?.listing?.term.apr.toString() : "25"
+  );
+  const [amount, setAmount] = useState(props?.listing?.term.amount.toString() || "10000");
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
   const [selectedCurrency, setSelectedCurrency] = useState(
     props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "USDB"
@@ -246,15 +248,16 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     // const message =
     //   "Please sign this transaction to post your NFT as collateral. This won't incur a gas fee.";
+    console.log("duration: ", duration);
     const term: Terms = {
-      amount,
-      apr,
-      duration: termTypes[durationType] * +duration,
+      amount: Number(amount),
+      apr: Number(apr),
+      duration: termTypes[durationType] * Number(duration),
       expirationAt: expirationAt.toJSON(),
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
-    const termSignature = await signTerms(
+    term.signature = await signTerms(
       provider,
       asset.owner?.address || "",
       chainId,
@@ -264,7 +267,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currency,
       dispatch
     );
-    term.signature = termSignature;
     if (term.signature) {
       dispatch(createListing({ term, asset })).then(() => {
         dispatch(addAlert({ message: "Listing created" }));
@@ -289,14 +291,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     const term: Terms = {
       ...props?.listing?.term,
-      amount,
-      apr,
-      duration: termTypes[durationType] * +duration,
+      amount: Number(amount),
+      apr: Number(apr),
+      duration: termTypes[durationType] * Number(duration),
       expirationAt: expirationAt.toJSON(),
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
-    const termSignature = await signTerms(
+    term.signature = await signTerms(
       provider,
       asset.owner?.address || "",
       chainId,
@@ -306,7 +308,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currency,
       dispatch
     );
-    term.signature = termSignature;
     updateTerms(term);
     dispatch(addAlert({ message: "Terms have been updated." }));
     return;
@@ -327,8 +328,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    const value = Math.floor(+event.target.value);
-    setDuration(value);
+    setDuration(event.target.value);
   };
 
   const handleDurationTypeChange = (event: SelectChangeEvent) => {
@@ -340,20 +340,19 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   const handleAprChange = (event: BaseSyntheticEvent) => {
-    const apr = +event.target.value;
-    setApr(apr);
+    setApr(event.target.value);
   };
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
-    const amount = +event.target.value;
-    setAmount(amount);
+    setAmount(event.target.value);
   };
 
   // calculate repayment totals
   useEffect(() => {
-    const wholePercent = ((termTypes[durationType] * +duration) / 365) * apr;
+    const wholePercent =
+      ((termTypes[durationType] * Number(duration)) / 365) * Number(apr);
     const realPercent = wholePercent / 100;
-    const _repaymentAmount = amount * realPercent;
+    const _repaymentAmount = Number(amount) * realPercent;
     setRepaymentAmount(_repaymentAmount);
     //setRepaymentTotal(_repaymentAmount + amount);
   }, [durationType, duration, amount, apr]);
@@ -365,9 +364,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const { id, ...listingTerm } = props.listing.term;
     const preSigTerm: Terms = {
       ...listingTerm,
-      amount: amount,
-      duration: termTypes[durationType] * +duration,
-      apr: apr,
+      amount: Number(amount),
+      duration: termTypes[durationType] * Number(duration),
+      apr: Number(apr),
       expirationAt: expirationAt.toJSON(),
       signature: "",
       currencyAddress: currency?.currentAddress,
@@ -418,7 +417,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           walletAddress: address,
           assetAddress: currency?.currentAddress,
           amount: ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency?.currentAddress])).toString()
+            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
           ),
         })
       );
@@ -472,7 +471,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               }}
             />
             <Typography sx={{ color: "#aaaaaa" }}>
-              {!!currency && formatCurrency(amount * currency?.lastPrice, 2)}
+              {!!currency && formatCurrency(Number(amount) * currency?.lastPrice, 2)}
             </Typography>
           </Box>
         </Box>
@@ -543,17 +542,29 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         </Box>
       </Box>
       {isOwner && !hasPermission && !pending && (
-        <Button variant="contained" onClick={handlePermissionRequest}>
+        <Button
+          variant="contained"
+          onClick={handlePermissionRequest}
+          disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
+        >
           Allow Liqd to Access your NFT
         </Button>
       )}
       {isOwner && hasPermission && !pending && !props.listing && (
-        <Button variant="contained" onClick={handleCreateListing}>
+        <Button
+          variant="contained"
+          onClick={handleCreateListing}
+          disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
+        >
           Get liquidity
         </Button>
       )}
       {isOwner && hasPermission && !pending && props.listing && (
-        <Button variant="contained" onClick={handleUpdateTerms}>
+        <Button
+          variant="contained"
+          onClick={handleUpdateTerms}
+          disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
+        >
           Update Terms (no cost)
         </Button>
       )}
@@ -564,10 +575,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
         erc20Allowance.gte(
           ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency?.currentAddress])).toString()
+            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
           )
         ) && (
-          <Button variant="contained" onClick={() => setConfirmOpen(true)}>
+          <Button
+            variant="contained"
+            onClick={() => setConfirmOpen(true)}
+            disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
+          >
             Make Offer
           </Button>
         )}
@@ -578,10 +593,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !!erc20Allowance &&
         erc20Allowance.lt(
           ethers.utils.parseEther(
-            (amount * (1 + platformFees[currency?.currentAddress])).toString()
+            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
           )
         ) && (
-          <Button variant="contained" onClick={handleRequestAllowance}>
+          <Button
+            variant="contained"
+            onClick={handleRequestAllowance}
+            disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
+          >
             Allow Liqd to Access your {currency?.symbol}
           </Button>
         )}
@@ -593,8 +612,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       <ConfirmDialog
         title="Confirm Accept Offer"
         open={confirmOpen}
-        principal={amount}
-        platformfee={(platformFees[currency?.currentAddress] / 10000) * amount}
+        principal={Number(amount)}
+        platformfee={(platformFees[currency?.currentAddress] / 10000) * Number(amount)}
         currencySymbol={currency?.symbol}
         interest={repaymentAmount}
         duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
