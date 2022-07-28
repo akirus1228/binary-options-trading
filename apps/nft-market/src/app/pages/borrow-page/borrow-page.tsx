@@ -31,7 +31,7 @@ export const BorrowPage = (): JSX.Element => {
 
   // query to use on frontend to filter cached results and ultimately display
   const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
-    status: AssetStatus.Ready,
+    status: "All",
     wallet: address,
   });
 
@@ -49,7 +49,6 @@ export const BorrowPage = (): JSX.Element => {
     status: LoanStatus.Active,
   });
 
-  const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
@@ -64,6 +63,8 @@ export const BorrowPage = (): JSX.Element => {
   const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
     skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
   });
+
+  const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
 
   useEffect(() => {
     const newQuery = {
@@ -88,14 +89,21 @@ export const BorrowPage = (): JSX.Element => {
     });
   }, [address]);
 
+  const assetsInEscrow =
+    loans
+      ?.map((loan) => loan.assetListing.asset)
+      .filter((asset) => asset.status === AssetStatus.Locked) || [];
   const assetsToShow: Asset[] =
     feQuery.status === AssetStatus.Locked && loans
-      ? loans
-          ?.map((loan) => loan.assetListing.asset)
-          .filter((asset) => asset.status === AssetStatus.Locked)
+      ? assetsInEscrow
+      : feQuery.status === "All"
+      ? [
+          ...myAssets,
+          ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
+        ]
       : myAssets;
-
   const isWalletConnected = address && authSignature;
+
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
