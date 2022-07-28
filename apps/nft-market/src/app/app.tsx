@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Backdrop, Box, Button, CssBaseline, Fade, Paper } from "@mui/material";
@@ -27,9 +27,25 @@ import Growl from "./components/growl/growl";
 import { desiredNetworkId } from "./constants/network";
 import BlogPage from "./pages/blog/blog-page";
 import BlogPostPage from "./pages/blog/blog-post-page";
+import { DebugHelper } from "@fantohm/shared-helpers";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
+
+  // if we're on dev but testnets aren't enabled, do it.
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    if (!DebugHelper.isActive("enable-testnet") && isDev) {
+      navigate(
+        `${location.pathname}${
+          location.search ? location.search + "&" : "?"
+        }enable-testnets=true${location.hash}`,
+        { replace: true }
+      );
+      window.location.reload();
+    }
+  }, []);
 
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const { user, authorizedAccount, accountStatus } = useSelector(

@@ -224,7 +224,6 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
       }
 
       if (!validNetwork || isTradfiPage()) {
-        console.log("switch chain to " + networkId);
         const switched = await switchEthereumChain(networkId, true);
         if (!switched) {
           web3Modal.clearCachedProvider();
@@ -234,7 +233,6 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
         }
       }
       if (!validNetwork) {
-        console.log("yet not valid network");
         return;
       }
       // Save everything after we've validated the right network.
