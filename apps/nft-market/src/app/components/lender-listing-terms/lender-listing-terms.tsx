@@ -55,9 +55,16 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
             <Typography className={style["label"]}>Loan amount</Typography>
-            <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {props.listing.term.amount.toFixed(4)} {currency?.symbol}
-            </Typography>
+            <Box sx={{ display: "flex" }}>
+              <img
+                src={currency?.icon}
+                alt={currency?.symbol}
+                style={{ width: "20px" }}
+              />
+              <Typography className={`${style["data"]} ${style["primary"]}`}>
+                {props.listing.term.amount.toFixed(4)}
+              </Typography>
+            </Box>
             <span className={`${style["data"]} ${style["secondary"]}`}>
               (
               {!!currency &&
@@ -75,9 +82,16 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Repayment</Typography>
-            <Typography className={`${style["data"]}`}>
-              {repaymentAmount.toFixed(4)} {currency?.symbol}
-            </Typography>
+            <Box sx={{ display: "flex" }}>
+              <img
+                src={currency?.icon}
+                alt={currency?.symbol}
+                style={{ width: "20px" }}
+              />
+              <Typography className={`${style["data"]}`}>
+                {repaymentAmount.toFixed(4)}
+              </Typography>
+            </Box>
             <span className="subtle">
               (
               {!!currency &&
@@ -103,7 +117,11 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Button variant="contained" onClick={handleMakeOffer}>
+            <Button
+              variant="contained"
+              onClick={handleMakeOffer}
+              sx={{ backgroundColor: "#374FFF" }}
+            >
               Make Offer
             </Button>
           </Box>

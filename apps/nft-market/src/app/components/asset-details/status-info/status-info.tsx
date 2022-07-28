@@ -37,11 +37,11 @@ const ListedInfo = ({
       </Icon>
       <Box className={style["textContainer"]}>
         <span className={style["strong"]}>{listing.asset.name} </span>
-        <span>is currently listed seeking a loan amount </span>
+        <span>is currently listed seeking a loan amount of </span>
         <span className={style["strong"]}>
-          of {formatCurrency(listing.term.amount * currency?.lastPrice)} in{" "}
-          {currency?.symbol}.{" "}
+          {formatCurrency(listing.term.amount * currency?.lastPrice)}{" "}
         </span>
+        <span> in {currency?.symbol}. </span>
         <span>Listing expires </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
       </Box>
@@ -74,10 +74,8 @@ const LockedInfo = ({
           is currently being held in escrow in a smart contract and will be released back
           to its borrower if a repayment amount&nbsp;
         </span>
-        <span className={style["strong"]}>
-          of {formatCurrency(repaymentTotal)} in {currency?.symbol}{" "}
-        </span>
-        <span>is made before </span>
+        <span className={style["strong"]}>of {formatCurrency(repaymentTotal)}</span>
+        <span> in {currency?.symbol} is made before </span>
         <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
       </Box>
     </Box>
