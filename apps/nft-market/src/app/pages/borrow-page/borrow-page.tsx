@@ -56,7 +56,9 @@ export const BorrowPage = (): JSX.Element => {
   const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
     skip: !osQuery.owner,
   });
-  const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {});
+  const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {
+    skip: !address,
+  });
 
   // using the opensea assets, crosscheck with backend api for correlated data
   const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {

@@ -72,7 +72,7 @@ const getInitialCurrencyState = (): CurrencyData => {
   let currencies = {} as CurrencyList;
   let currencyState = {} as CurrencyState;
 
-  const network = isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
+  const network = isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
 
   Object.entries(currencyInfo).forEach(([tokenId, info]) => {
     if (info.addresses[network]) {

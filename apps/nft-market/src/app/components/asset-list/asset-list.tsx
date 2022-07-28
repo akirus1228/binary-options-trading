@@ -18,11 +18,7 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
     <Box className="flex fr fw">
       {props.assets &&
         props.assets.map((asset: Asset, index: number) => (
-          <AssetThumb
-            key={`asset-${index}`}
-            contractAddress={asset.assetContractAddress}
-            tokenId={asset.tokenId}
-          />
+          <AssetThumb key={`asset-${index}`} asset={asset} />
         ))}
     </Box>
   );

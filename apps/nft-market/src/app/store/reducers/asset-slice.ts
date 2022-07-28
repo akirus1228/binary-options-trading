@@ -13,9 +13,9 @@ const OPENSEA_API_KEY = "6f2462b6e7174e9bbe807169db342ec4";
 
 const openSeaConfig = (): FetchNFTClientProps => {
   const openSeaConfig: any = {
-    apiKey: isDev() ? "5bec8ae0372044cab1bef0d866c98618" : OPENSEA_API_KEY,
+    apiKey: isDev ? "5bec8ae0372044cab1bef0d866c98618" : OPENSEA_API_KEY,
   };
-  if (isDev()) {
+  if (isDev) {
     openSeaConfig.apiEndpoint = "https://testnets-api.opensea.io/api/v1";
   }
 
@@ -65,7 +65,7 @@ export const updateAssetsFromOpensea = createAsyncThunk(
 const previousState = loadState("asset");
 const initialState: AssetState = {
   assets: [],
-  isDev: isDev(),
+  isDev: isDev,
   ...previousState, // overwrite assets and currencies from cache if recent
   assetStatus: "idle",
   nextOpenseaLoad: 0,

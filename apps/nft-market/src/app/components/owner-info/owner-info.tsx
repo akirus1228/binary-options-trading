@@ -87,9 +87,7 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
             className="slim lowContrast"
             variant="contained"
             sx={{ fontSize: "10px", mt: "1em" }}
-            href={`https://${
-              isDev() ? "rinkeby" : "www"
-            }.etherscan.io/address/${address}`}
+            href={`https://${isDev ? "rinkeby" : "www"}.etherscan.io/address/${address}`}
             target="_blank"
           >
             View on Etherscan

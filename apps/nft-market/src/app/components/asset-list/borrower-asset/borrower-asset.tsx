@@ -4,7 +4,7 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import style from "./borrower-asset.module.scss";
 import { useWalletAsset } from "../../../hooks/use-wallet-asset";
 import PreviewImage from "../preview-image/preview-image";
-import { AssetStatus } from "../../../types/backend-types";
+import { Asset, AssetStatus } from "../../../types/backend-types";
 import { useMemo, useState } from "react";
 import { chains, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
@@ -13,13 +13,12 @@ import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 
 export interface BorrowerAssetProps {
-  contractAddress: string;
-  tokenId: string;
+  asset: Asset;
 }
 
-export const BorrowerAsset = (props: BorrowerAssetProps): JSX.Element => {
+export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   const { chainId } = useWeb3Context();
-  const asset = useWalletAsset(props.contractAddress, props.tokenId);
+  // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
 
   const chipColor = useMemo(() => {
@@ -46,7 +45,7 @@ export const BorrowerAsset = (props: BorrowerAssetProps): JSX.Element => {
       startIcon: search,
       alt: "Search",
       title: "View Listing",
-      url: `/asset/${props.contractAddress}/${props.tokenId}`,
+      url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: null,
       isSelfTab: true,
     },
@@ -55,8 +54,8 @@ export const BorrowerAsset = (props: BorrowerAssetProps): JSX.Element => {
       alt: "EtherScan",
       title: "View on Etherscan",
       url: `${chains[chainId || 1].blockExplorerUrls[0]}token/${
-        props?.contractAddress
-      }?a=${props?.tokenId}`,
+        asset?.assetContractAddress
+      }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,
     },
@@ -68,7 +67,7 @@ export const BorrowerAsset = (props: BorrowerAssetProps): JSX.Element => {
         chainId === NetworkIds.Ethereum
           ? "https://opensea.io/assets/ethereum/"
           : "https://testnets.opensea.io/assets/rinkeby/"
-      }${props.contractAddress}/${props.tokenId}`,
+      }${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,
     },
@@ -175,7 +174,7 @@ export const BorrowerAsset = (props: BorrowerAssetProps): JSX.Element => {
         </Popover>
       </Box>
       {asset.imageUrl && asset.openseaId && (
-        <Link href={`/asset/${props.contractAddress}/${props.tokenId}`}>
+        <Link href={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
             url={asset.imageUrl}
             name={asset.name || "placeholder name"}

@@ -169,7 +169,7 @@ export class erc20Currency implements Erc20Currency {
     const tokenAddresses: Erc20CurrencyAddress = {};
     activeNetworks.forEach(
       (networkId: number) =>
-        (tokenAddresses[networkId] = addresses[networkId][this.tokenId])
+        (tokenAddresses[networkId] = networks[networkId].addresses[this.tokenId])
     );
     return tokenAddresses;
   }

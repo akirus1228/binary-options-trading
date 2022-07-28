@@ -156,13 +156,13 @@ export type GqlGetEventResponse = {
 
 const openseaConfig = (): OpenseaConfig => {
   const openSeaConfig: any = {
-    apiKey: isDev()
+    apiKey: isDev
       ? "5bec8ae0372044cab1bef0d866c98618"
       : "6f2462b6e7174e9bbe807169db342ec4",
     apiEndpoint: "https://testnets-api.opensea.io/api/v1",
   };
 
-  // apiEndpoint: isDev()
+  // apiEndpoint: isDev
   // ? "https://testnets-api.opensea.io/api/v1"
   // : "https://api.opensea.io/api/v1",
 
