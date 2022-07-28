@@ -423,7 +423,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         })
       );
     }
-  }, [chainId, address, amount, provider, currency]);
+  }, [chainId, address, amount, provider, currency, platformFees]);
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     setSelectedCurrency(event.target.value);
