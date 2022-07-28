@@ -349,35 +349,44 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         </PaperTableCell>
       ))}
       <PaperTableCell sx={{ display: "flex" }}>
-        {isOwner &&
-          !hasPermission &&
-          !isPending &&
-          offer.status === OfferStatus.Ready &&
-          Date.parse(offer.term.expirationAt) > Date.now() && (
+        <Box className="flex fr ai-c">
+          {isOwner &&
+            !hasPermission &&
+            !isPending &&
+            offer.status === OfferStatus.Ready &&
+            Date.parse(offer.term.expirationAt) > Date.now() && (
+              <Button
+                variant="contained"
+                className="offer slim"
+                onClick={handleRequestPermission}
+              >
+                Accept
+              </Button>
+            )}
+          {isOwner && hasPermission && !isPending && offer.status === OfferStatus.Ready && (
             <Button
               variant="contained"
               className="offer slim"
-              onClick={handleRequestPermission}
+              onClick={handleAcceptOffer}
             >
               Accept
             </Button>
           )}
-        {isOwner && hasPermission && !isPending && offer.status === OfferStatus.Ready && (
-          <Button variant="contained" className="offer slim" onClick={handleAcceptOffer}>
-            Accept
-          </Button>
-        )}
-        {isPending && (
-          <Button variant="contained" className="offer slim">
-            <CircularProgress />
-          </Button>
-        )}
-        {!isOwner && (
-          <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
-        )}
-        {(!isOwner || offer.status !== OfferStatus.Ready) && (
-          <Chip label={offer.status} sx={{ fontSize: "17px", marginRight: "2em" }}></Chip>
-        )}
+          {isPending && (
+            <Button variant="contained" className="offer slim">
+              <CircularProgress />
+            </Button>
+          )}
+          {!isOwner && (
+            <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
+          )}
+          {(!isOwner || offer.status !== OfferStatus.Ready) && (
+            <Chip
+              label={offer.status}
+              sx={{ fontSize: "17px", marginRight: "2em" }}
+            ></Chip>
+          )}
+        </Box>
       </PaperTableCell>
     </PaperTableRow>
   );

@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useWeb3Context, chains, NetworkIds } from "@fantohm/shared-web3";
 import { useSelector } from "react-redux";
-import { useGetLoansQuery } from "../../api/backend-api";
+import { useGetCollectionsQuery, useGetLoansQuery } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { RootState } from "../../store";
 import { Listing } from "../../types/backend-types";
@@ -46,6 +46,8 @@ export const AssetDetails = ({
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const asset = useWalletAsset(contractAddress, tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
+  const { data: collections } = useGetCollectionsQuery({});
+
   const { data: loan } = useGetLoansQuery(
     {
       skip: 0,
@@ -83,10 +85,9 @@ export const AssetDetails = ({
       endIcon: grayArrowRightUp,
     },
   ];
-
   return (
     <Container sx={sx}>
-      <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} />
+      {/* <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} /> */}
       {asset && asset.imageUrl ? (
         <Grid container columnSpacing={5}>
           <Grid item xs={12} md={6}>
@@ -96,7 +97,14 @@ export const AssetDetails = ({
           </Grid>
           <Grid item xs={12} md={6}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography>{asset.collection?.name || ""}</Typography>
+              {collections
+                ?.filter(
+                  (collection) =>
+                    collection.contractAddress === asset?.assetContractAddress
+                )
+                .map((collection) => (
+                  <Typography sx={{ color: "#374FFF" }}>{collection.slug}</Typography>
+                ))}
               <Box sx={{ display: "flex", my: "20px", alignItems: "center" }}>
                 <Box>
                   <h1 style={{ margin: "0" }}>{asset.name}</h1>
@@ -172,7 +180,11 @@ export const AssetDetails = ({
                 pb: "3em",
               }}
             >
-              <Chip label={asset.status || "Unlisted"} className="dark" />
+              <Chip
+                label={asset.status || "Unlisted"}
+                sx={{ backgroundColor: "#374FFF !important" }}
+                className="dark"
+              />
               <Typography sx={{ mx: "10px" }}>.</Typography>
               <Chip label={asset.mediaType || "Art"} className="light" />
             </Box>

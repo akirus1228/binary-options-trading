@@ -45,7 +45,7 @@ export const OffersList = ({
     return <></>;
   }
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ mt: "3em" }}>
       <h2 className={style["title"]}>
         {title || "Offers"} ({!!offers && offers.length})
       </h2>
