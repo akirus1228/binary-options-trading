@@ -74,6 +74,7 @@ export const UserMenu = (): JSX.Element => {
 
   const currencies = useSelector((state: RootState) => selectCurrencies(state));
   const erc20Balances = useSelector((state: RootState) => selectErc20Balance(state));
+  const { authSignature } = useSelector((state: RootState) => state.backend);
 
   useEffect(() => {
     if (!address) return;
@@ -142,7 +143,8 @@ export const UserMenu = (): JSX.Element => {
     }
   }, [currencies]);
 
-  return connected ? (
+  const isWalletConnected = address && authSignature;
+  return isWalletConnected ? (
     <>
       <Button
         id="user-menu-button"
