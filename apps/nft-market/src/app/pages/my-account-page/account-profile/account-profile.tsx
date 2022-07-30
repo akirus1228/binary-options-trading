@@ -133,11 +133,11 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
             />
             Share
           </Button>
-          <span>
+          {/* <span>
             <IconButton className="lowContrast" sx={{ ml: "7px" }}>
               <Icon component={MoreHorizOutlinedIcon} />
             </IconButton>
-          </span>
+          </span> */}
         </Box>
       </Box>
     </Box>
