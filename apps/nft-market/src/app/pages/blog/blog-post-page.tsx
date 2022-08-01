@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Container,
   Grid,
   OutlinedInput,
   Paper,
@@ -11,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  Key,
   ReactChild,
   ReactFragment,
   ReactPortal,
@@ -26,23 +24,19 @@ import style from "./blog-post-page.module.scss";
 import {
   AboutDivider,
   BalanceHeroImage,
-  BalanceLogoDark,
   emailIcon,
   linkedinIcon,
   liqidIcon,
   twitterIcon,
 } from "@fantohm/shared/images";
-import { withDeps } from "@nrwl/workspace/src/core/project-graph";
 import { useLocation, useParams } from "react-router-dom";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
+import { BlogPostDTO } from "../../types/backend-types";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { INLINES, Block, Inline, BLOCKS } from "@contentful/rich-text-types";
 import { error, info } from "@fantohm/shared-web3";
 import BlogPost from "../../components/blog-page/blog-post";
 import { Helmet } from "react-helmet";
 
-/* eslint-disable-next-line */
 export interface BlogPostProps {
   className?: string;
   invertTheme?: boolean;

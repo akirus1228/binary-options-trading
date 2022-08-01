@@ -1,11 +1,10 @@
-import { Box, Button, Icon, IconButton } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import profileImagePlaceholder from "../../../../assets/images/profile-placeholder.svg";
 import style from "./account-profile.module.scss";
 import { addressEllipsis, copyToClipboard } from "@fantohm/shared-helpers";
 import contentCopyIcon from "../../../../assets/icons/content-copy.svg";
 import openInNewIcon from "../../../../assets/icons/open-in-new.svg";
 import shareIcon from "../../../../assets/icons/share.svg";
-import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import bluechip from "../../../../assets/icons/blue-chip.svg";
 import openseaIcon from "../../../../assets/icons/opensea-icon.svg";
 import raribleIcon from "../../../../assets/icons/rarible-icon.svg";
