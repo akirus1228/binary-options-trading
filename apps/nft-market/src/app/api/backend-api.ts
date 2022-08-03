@@ -47,7 +47,7 @@ export const WEB3_SIGN_MESSAGE =
   "This application uses this cryptographic signature, verifying that you are the owner of this address.";
 // TODO: use production env to determine correct endpoint
 export const NFT_MARKETPLACE_API_URL = isDev
-  ? "https://staging-nft-lending.herokuapp.com/api"
+  ? "https://usdb-nft-lending-backend.herokuapp.com/api"
   : "https://nft-lending-backend.herokuapp.com/api";
 
 export const doLogin = (address: string): Promise<LoginResponse> => {
