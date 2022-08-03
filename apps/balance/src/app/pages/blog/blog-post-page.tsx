@@ -194,11 +194,11 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
         <meta property="og:description" content={post?.seoDescription} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:image" content={post?.image} />
-        <meta property="twitter:card" content="summary" />
-        <meta property="twitter:title" content={post?.blogTitle} />
-        <meta property="twitter:description" content={post?.seoDescription} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={post?.blogTitle} />
+        <meta name="twitter:description" content={post?.seoDescription} />
         <meta property="twitter:url" content={window.location.href} />
-        <meta property="twitter:image" content={post?.image} />
+        <meta name="twitter:image" content={post?.image} />
       </Helmet>
       <ThemeProvider theme={theme}>
         <div style={{ width: "100%" }} className="change">
