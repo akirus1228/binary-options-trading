@@ -219,7 +219,7 @@ export const BorrowerLoanDetails = ({
           <Box className="flex fc">
             <Typography className={style["label"]}>Total repayment</Typography>
             <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {loanDetails.amountDue.toLocaleString("en-US", {
+              {(loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}
@@ -228,7 +228,7 @@ export const BorrowerLoanDetails = ({
           <Box className="flex fc">
             <Typography className={style["label"]}>Loan amount</Typography>
             <Typography className={`${style["data"]}`}>
-              {loan.term.amount.toLocaleString("en-US", {
+              {(loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}

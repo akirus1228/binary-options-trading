@@ -102,8 +102,13 @@ export const AssetDetails = ({
                   (collection) =>
                     collection.contractAddress === asset?.assetContractAddress
                 )
-                .map((collection) => (
-                  <Typography sx={{ color: "#374FFF" }}>{collection.slug}</Typography>
+                .map((collection, index) => (
+                  <Typography
+                    sx={{ color: "#374FFF" }}
+                    key={`${collection.slug}_${index}`}
+                  >
+                    {collection.slug}
+                  </Typography>
                 ))}
               <Box sx={{ display: "flex", my: "20px", alignItems: "center" }}>
                 <Box>

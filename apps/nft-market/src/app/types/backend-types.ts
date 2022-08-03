@@ -243,6 +243,8 @@ export type Loan = {
   term: Terms;
   status: LoanStatus;
   contractLoanId?: number;
+  currencyPrice?: number;
+  amountDue?: number;
 } & StandardBackendObject;
 
 export type Updatable = {

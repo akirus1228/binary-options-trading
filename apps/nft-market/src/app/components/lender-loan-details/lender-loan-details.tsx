@@ -104,7 +104,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
               {loanDetails.amountDue.toFixed(4)} {currency?.symbol}
             </Typography>
             <Typography className={`${style["data"]} ${style["secondary"]}`}>
-              {loanDetails.amountDue.toLocaleString("en-US", {
+              {(loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}
@@ -116,7 +116,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
               {loan.term.amount.toFixed(4)} {currency?.symbol}
             </Typography>
             <Typography className={`${style["data"]} ${style["secondary"]}`}>
-              {loan.term.amount.toLocaleString("en-US", {
+              {(loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
               })}

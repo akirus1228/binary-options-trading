@@ -149,7 +149,7 @@ export class erc20Currency implements Erc20Currency {
   readonly currentAddress: string; // address on current network
   readonly coingeckoStub: string;
   currentPromise: Promise<number>;
-  public lastPrice = 0;
+  public lastPrice = 1;
   public lastPriceLoadedAt = 0;
   public decimals: number;
 
