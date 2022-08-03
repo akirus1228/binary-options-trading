@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import {
   PaperTable,
@@ -15,11 +15,18 @@ import {
   TableRow,
   Theme,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useWeb3Context } from "@fantohm/shared-web3";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../api/backend-api";
-import { RootState } from "../../store";
+import store, { RootState } from "../../store";
 import { Asset, Loan, LoanStatus } from "../../types/backend-types";
-//import style from "./previous-loans.module.scss";
+import { Erc20Currency } from "../../helpers/erc20Currency";
+import { selectCurrencies } from "../../store/selectors/currency-selectors";
+import { getLoanDetailsFromContract } from "../../store/reducers/loan-slice";
+import { desiredNetworkId } from "../../constants/network";
+import { LoanDetailsAsyncThunk } from "../../store/reducers/interfaces";
+
+type AppDispatch = typeof store.dispatch;
 
 export interface PreviousLoansProps {
   asset: Asset;
@@ -27,6 +34,9 @@ export interface PreviousLoansProps {
 }
 
 export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element => {
+  const { provider } = useWeb3Context();
+  const dispatch: AppDispatch = useDispatch();
+  const [loans, setLoans] = useState<Loan[]>([]);
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const { data: completeLoans, isLoading: isCompleteLoansLoading } = useGetLoansQuery(
     {
@@ -48,13 +58,64 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
     { skip: !asset || !authSignature }
   );
 
-  const loans: Loan[] = useMemo(() => {
-    if (asset.id === undefined) return [];
-    if (isDefaultedLoading || isCompleteLoansLoading) return [];
-    if (typeof defaultedLoans === "undefined" || typeof completeLoans === "undefined")
-      return [];
-    return [...completeLoans, ...defaultedLoans];
-  }, [completeLoans, defaultedLoans]);
+  const currencies = useSelector((state: RootState) => selectCurrencies(state));
+
+  useEffect(() => {
+    let active = true;
+    loadLoans().then();
+    return () => {
+      active = false;
+    };
+
+    async function loadLoans() {
+      if (!active) {
+        setLoans([]);
+        return;
+      }
+      if (!currencies) {
+        setLoans([]);
+        return;
+      }
+      if (asset.id === undefined) {
+        setLoans([]);
+        return;
+      }
+      if (isDefaultedLoading || isCompleteLoansLoading) {
+        setLoans([]);
+        return;
+      }
+      if (typeof defaultedLoans === "undefined" || typeof completeLoans === "undefined") {
+        setLoans([]);
+        return;
+      }
+      const allLoans = [...completeLoans, ...defaultedLoans];
+      const coveredLoans = await Promise.all(
+        allLoans.map(async (loan) => {
+          const match: [string, Erc20Currency] | undefined = Object.entries(
+            currencies
+          ).find(
+            ([, entryCurrency]) =>
+              entryCurrency.currentAddress.toLowerCase() ===
+              loan.term.currencyAddress.toLowerCase()
+          );
+          const loanDetail = await dispatch(
+            getLoanDetailsFromContract({
+              loanId: loan.contractLoanId,
+              networkId: desiredNetworkId,
+              provider,
+            } as LoanDetailsAsyncThunk)
+          ).unwrap();
+          const currencyPrice = match ? match[1]?.lastPrice : 1;
+          return {
+            ...loan,
+            currencyPrice,
+            amountDue: loanDetail?.amountDue,
+          };
+        })
+      );
+      setLoans(coveredLoans);
+    }
+  }, [completeLoans, defaultedLoans, currencies]);
 
   if (
     !asset ||
@@ -109,10 +170,13 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
                     {addressEllipsis(loan.borrower.address || "")}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "16px" }}>
-                    {formatCurrency(loan.term.amount, 2)}
+                    {formatCurrency(loan.term.amount * (loan?.currencyPrice || 1), 2)}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "16px" }}>
-                    repayment amount
+                    {formatCurrency(
+                      (loan?.amountDue || 1) * (loan?.currencyPrice || 1),
+                      2
+                    )}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "16px" }}>
                     {loan.term.apr}%
