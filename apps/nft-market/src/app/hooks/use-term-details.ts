@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Terms } from "../types/backend-types";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+import { selectCurrencyByAddress } from "../store/selectors/currency-selectors";
 
 export type TermDetails = {
   repaymentAmount: number;
@@ -8,6 +11,7 @@ export type TermDetails = {
   apr: number;
   duration: number;
   estRepaymentDate: Date;
+  currencyPrice?: number;
 };
 
 export const useTermDetails = (term: Terms | undefined): TermDetails => {
@@ -17,6 +21,10 @@ export const useTermDetails = (term: Terms | undefined): TermDetails => {
   const [amount, setAmount] = useState(0);
   const [apr, setApr] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [currencyPrice, setCurrencyPrice] = useState(0);
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, term?.currencyAddress || "")
+  );
 
   // calculate repayment totals
   useEffect(() => {
@@ -24,6 +32,7 @@ export const useTermDetails = (term: Terms | undefined): TermDetails => {
       const wholePercent = (duration / 365) * apr;
       const realPercent = wholePercent / 100;
       const _repaymentAmount = amount * realPercent;
+      setCurrencyPrice(currency?.lastPrice || 1);
       setRepaymentAmount(_repaymentAmount);
       setRepaymentTotal(_repaymentAmount + amount);
       setEstRepaymentDate(new Date(Date.now() + duration * 86400 * 1000));
@@ -46,9 +55,18 @@ export const useTermDetails = (term: Terms | undefined): TermDetails => {
     } else {
       setRepaymentAmount(0);
       setRepaymentTotal(0);
+      setCurrencyPrice(1);
       setEstRepaymentDate(new Date(Date.now() + duration * 86400 * 1000));
     }
   }, [JSON.stringify(term)]);
 
-  return { repaymentAmount, repaymentTotal, amount, apr, duration, estRepaymentDate };
+  return {
+    repaymentAmount,
+    repaymentTotal,
+    amount,
+    apr,
+    duration,
+    estRepaymentDate,
+    currencyPrice,
+  };
 };
