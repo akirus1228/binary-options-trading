@@ -14,12 +14,15 @@ import {
 } from "@mui/material";
 import { useWeb3Context, chains, NetworkIds } from "@fantohm/shared-web3";
 import { useSelector } from "react-redux";
-import { useGetCollectionsQuery, useGetLoansQuery } from "../../api/backend-api";
+import {
+  useGetCollectionsQuery,
+  useGetLoansQuery,
+  useGetNftPriceQuery,
+} from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { RootState } from "../../store";
 import { Listing } from "../../types/backend-types";
 import AssetOwnerTag from "../asset-owner-tag/asset-owner-tag";
-import HeaderBlurryImage from "../header-blurry-image/header-blurry-image";
 import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
@@ -28,6 +31,7 @@ import { useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
+import PriceInfo from "./price-info/price-info";
 
 export interface AssetDetailsProps {
   contractAddress: string;
@@ -47,7 +51,10 @@ export const AssetDetails = ({
   const asset = useWalletAsset(contractAddress, tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const { data: collections } = useGetCollectionsQuery({});
-
+  const { data: nftPrice } = useGetNftPriceQuery({
+    collection: contractAddress,
+    tokenId,
+  });
   const { data: loan } = useGetLoansQuery(
     {
       skip: 0,
@@ -224,6 +231,19 @@ export const AssetDetails = ({
                   </Box>
                   <QuickStatus listing={listing} />
                 </Paper>
+                {nftPrice && (
+                  <Paper
+                    sx={{
+                      marginTop: "20px",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                    }}
+                  >
+                    <PriceInfo price={nftPrice} />
+                  </Paper>
+                )}
               </Box>
             </Box>
             {!!listing && (

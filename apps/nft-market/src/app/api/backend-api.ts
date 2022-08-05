@@ -26,6 +26,7 @@ import {
   Collection,
   BackendCollectionQuery,
   User,
+  NftPrice,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -519,6 +520,14 @@ export const backendApi = createApi({
       }),
       providesTags: ["PlatformWalletInfo"],
     }),
+    // User
+    getNftPrice: builder.query<NftPrice, { collection: string; tokenId: string }>({
+      query: ({ collection, tokenId }) => ({
+        url: `nft/price/${collection}/${tokenId}`,
+        params: { collection, tokenId },
+      }),
+      providesTags: ["Asset"],
+    }),
   }),
 });
 
@@ -551,4 +560,5 @@ export const {
   useGetUserNotificationsQuery,
   useGetUserQuery,
   useUpdateUserNotificationMutation,
+  useGetNftPriceQuery,
 } = backendApi;

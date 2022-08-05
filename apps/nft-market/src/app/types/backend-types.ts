@@ -357,3 +357,13 @@ export type BlogPostDTO = {
   seoKeywords?: string;
   getInTouch?: string;
 };
+
+export type NftPrice = {
+  id: string;
+  chain: Chain;
+  collection: string;
+  tokenId: string;
+  priceInEth: string;
+  priceInUsd: string;
+  originalProviderResponse: string;
+};
