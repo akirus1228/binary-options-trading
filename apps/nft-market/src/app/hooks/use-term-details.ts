@@ -3,6 +3,7 @@ import { Terms } from "../types/backend-types";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { selectCurrencyByAddress } from "../store/selectors/currency-selectors";
+import { Erc20Currency } from "../helpers/erc20Currency";
 
 export type TermDetails = {
   repaymentAmount: number;
@@ -12,6 +13,7 @@ export type TermDetails = {
   duration: number;
   estRepaymentDate: Date;
   currencyPrice?: number;
+  currency: Erc20Currency;
 };
 
 export const useTermDetails = (term: Terms | undefined): TermDetails => {
@@ -68,5 +70,6 @@ export const useTermDetails = (term: Terms | undefined): TermDetails => {
     duration,
     estRepaymentDate,
     currencyPrice,
+    currency,
   };
 };
