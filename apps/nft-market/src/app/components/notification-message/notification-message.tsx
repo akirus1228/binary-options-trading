@@ -42,17 +42,15 @@ const getBlueText = (text: any) => {
 };
 
 const NewLoanLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentAmount, currencyPrice } = useTermDetails(terms);
+  const { repaymentAmount, currency } = useTermDetails(terms);
 
-  const shortMsg = (
-    <span>Congratulations! You have a new loan on {getBlueText(asset.name)}.</span>
-  );
+  const shortMsg = <span>You have funded a new loan on {getBlueText(asset.name)}.</span>;
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      Congratulations! You have a new loan on {getBlueText(asset.name)} for{" "}
-      {formatCurrency((terms?.amount || 0) * (currencyPrice || 1) || 0, 2)} over{" "}
-      {terms?.duration} days, with a repayment of{" "}
-      {formatCurrency(repaymentAmount * (currencyPrice || 1) || 0, 2)}.
+      You have funded a new loan on {getBlueText(asset.name)} for{" "}
+      {formatCurrency(terms?.amount || 0, 2)} {currency.symbol} over {terms?.duration}{" "}
+      days, with a total repayment of {formatCurrency(repaymentAmount || 0, 2)}{" "}
+      {currency.symbol}.
     </span>
   );
   return (
@@ -64,7 +62,7 @@ const NewLoanLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
 };
 
 const NewLoanBorrower = ({ asset, short, terms, lender }: MessageProp): JSX.Element => {
-  const { repaymentTotal, currencyPrice } = useTermDetails(terms);
+  const { amount, repaymentTotal, currency } = useTermDetails(terms);
   const shortMsg = (
     <span>
       {addressEllipsis(lender?.address || "")} has funded your loan on{" "}
@@ -73,10 +71,11 @@ const NewLoanBorrower = ({ asset, short, terms, lender }: MessageProp): JSX.Elem
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      {addressEllipsis(lender?.address || "")} has paid their loan on{" "}
-      {getBlueText(asset.name)}. You should repay{" "}
-      {formatCurrency(repaymentTotal * (currencyPrice || 1) || 0, 2)} to{" "}
-      {addressEllipsis(lender?.address || "")}.
+      {addressEllipsis(lender?.address || "")} has funded your loan on{" "}
+      {getBlueText(asset.name)}, and {formatCurrency(amount || 0, 2)} {currency.symbol}{" "}
+      has been released to your wallet. You will need to repay{" "}
+      {formatCurrency(repaymentTotal || 0, 2)} {currency.symbol} to{" "}
+      {addressEllipsis(lender?.address || "")} to retrieve your NFT.
     </span>
   );
   return (
@@ -89,11 +88,11 @@ const NewLoanBorrower = ({ asset, short, terms, lender }: MessageProp): JSX.Elem
 
 const LiquidationLender = ({ asset, short }: MessageProp): JSX.Element => {
   const shortMsg = (
-    <span>The loan on {getBlueText(asset.name)} has been liquidated.</span>
+    <span>You have liquidated the loan on {getBlueText(asset.name)}.</span>
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      You liquidated the loan on {getBlueText(asset.name)} and the token has been
+      You liquidated the loan on {getBlueText(asset.name)} and the NFT has been
       transferred to your wallet.
     </span>
   );
@@ -111,8 +110,8 @@ const LiquidationBorrower = ({ asset, short }: MessageProp): JSX.Element => {
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      The loan on {getBlueText(asset.name)} has expired without payment and the lender has
-      claimed the collateral.
+      The loan on {getBlueText(asset.name)} has expired without repayment and the lender
+      has claimed the NFT.
     </span>
   );
   return (
@@ -124,19 +123,18 @@ const LiquidationBorrower = ({ asset, short }: MessageProp): JSX.Element => {
 };
 
 const RepaymentLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentTotal, currencyPrice } = useTermDetails(terms);
+  const { repaymentTotal, currency } = useTermDetails(terms);
   const shortMsg = (
     <span>
-      {addressEllipsis(asset.owner.address)} has repaid their loan on{" "}
+      {addressEllipsis(asset.owner.address)} has successfully repaid their loan on{" "}
       {getBlueText(asset.name)}
     </span>
   );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
       {addressEllipsis(asset.owner.address)} has repaid their loan on{" "}
-      {getBlueText(asset.name)}.
-      {formatCurrency(repaymentTotal * (currencyPrice || 1) || 0, 2)} has been transferred
-      to your wallet.
+      {getBlueText(asset.name)}. {formatCurrency(repaymentTotal || 0, 2)}{" "}
+      {currency.symbol} has been transferred to your wallet.
     </span>
   );
   return (
@@ -165,14 +163,14 @@ const RepaymentBorrower = ({ asset, short }: MessageProp): JSX.Element => {
 };
 
 const NewOfferLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentAmount, currencyPrice } = useTermDetails(terms);
-  const shortMsg = <span>You gave new offer on {getBlueText(asset.name)}</span>;
+  const { repaymentAmount, currency } = useTermDetails(terms);
+  const shortMsg = <span>You sent an offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      You have given a new offer on {getBlueText(asset.name)} for{" "}
-      {formatCurrency((terms?.amount || 0) * (currencyPrice || 1), 2)} over{" "}
-      {terms?.duration} days, with a repayment of{" "}
-      {formatCurrency(repaymentAmount * (currencyPrice || 1) || 0, 2)}.
+      You have sent an offer on {getBlueText(asset.name)} for{" "}
+      {formatCurrency(terms?.amount || 0, 2)} {currency.symbol} over {terms?.duration}{" "}
+      days, with a total repayment of {formatCurrency(repaymentAmount || 0, 2)}{" "}
+      {currency.symbol}.
     </span>
   );
   return (
@@ -184,14 +182,14 @@ const NewOfferLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
 };
 
 const NewOfferBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentAmount, currencyPrice } = useTermDetails(terms);
+  const { repaymentAmount, currency } = useTermDetails(terms);
   const shortMsg = <span>You have a new offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
       You have received an offer on {getBlueText(asset.name)} for{" "}
-      {formatCurrency((terms?.amount || 0) * (currencyPrice || 1) || 0, 2)} over{" "}
-      {terms?.duration} days, with a repayment of{" "}
-      {formatCurrency(repaymentAmount * (currencyPrice || 1) || 0, 2)}.
+      {formatCurrency(terms?.amount || 0, 2)} {currency.symbol} over {terms?.duration}{" "}
+      days, with a total repayment of {formatCurrency(repaymentAmount || 0, 2)}{" "}
+      {currency.symbol}.
     </span>
   );
   return (
@@ -203,7 +201,7 @@ const NewOfferBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => 
 };
 
 const OfferAcceptedLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentAmount, currencyPrice } = useTermDetails(terms);
+  const { repaymentAmount, currency } = useTermDetails(terms);
   const shortMsg = (
     <span>
       {addressEllipsis(asset.owner.address)} has accepted your offer on{" "}
@@ -213,10 +211,9 @@ const OfferAcceptedLender = ({ asset, short, terms }: MessageProp): JSX.Element 
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
       {addressEllipsis(asset.owner.address)} has accepted your offer on{" "}
-      {getBlueText(asset.name)} for{" "}
-      {formatCurrency((terms?.amount || 0) * (currencyPrice || 1) || 0, 2)} over{" "}
-      {terms?.duration} days, with a repayment of{" "}
-      {formatCurrency(repaymentAmount * (currencyPrice || 1) || 0, 2)}.
+      {getBlueText(asset.name)} for {formatCurrency(terms?.amount || 0, 2)}{" "}
+      {currency.symbol} over {terms?.duration} days, with a total repayment of{" "}
+      {formatCurrency(repaymentAmount || 0, 2)} {currency.symbol}.
     </span>
   );
   return (
@@ -228,14 +225,14 @@ const OfferAcceptedLender = ({ asset, short, terms }: MessageProp): JSX.Element 
 };
 
 const OfferAcceptedBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentAmount, currencyPrice } = useTermDetails(terms);
+  const { repaymentAmount, currency } = useTermDetails(terms);
   const shortMsg = <span>You have accepted an offer on {getBlueText(asset.name)}</span>;
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
       You have accepted an offer on {getBlueText(asset.name)}
-      for {formatCurrency((terms?.amount || 0) * (currencyPrice || 1) || 0, 2)} over{" "}
-      {terms?.duration} days, with a repayment of{" "}
-      {formatCurrency(repaymentAmount * (currencyPrice || 1) || 0, 2)}.
+      for {formatCurrency(terms?.amount || 0, 2)} {currency.symbol} over {terms?.duration}{" "}
+      days, with a repayment of {formatCurrency(repaymentAmount || 0, 2)}{" "}
+      {currency.symbol}.
     </span>
   );
   return (
@@ -247,14 +244,12 @@ const OfferAcceptedBorrower = ({ asset, short, terms }: MessageProp): JSX.Elemen
 };
 
 const ListingCancelledLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentAmount, currencyPrice } = useTermDetails(terms);
-  const shortMsg = <span>Your listing on {getBlueText(asset.name)} is cancelled</span>;
+  // const { repaymentAmount, currencyPrice } = useTermDetails(terms);
+  const shortMsg = <span>The listing for {getBlueText(asset.name)} was cancelled</span>;
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      Your listing on {getBlueText(asset.name)} for{" "}
-      {formatCurrency((terms?.amount || 0) * (currencyPrice || 1) || 0, 2)} over{" "}
-      {terms?.duration} days, with a repayment of{" "}
-      {formatCurrency(repaymentAmount * (currencyPrice || 1) || 0, 2)} is cancelled.
+      The listing on {getBlueText(asset.name)} was cancelled. Your offer is no longer
+      active.
     </span>
   );
   return (
@@ -266,14 +261,13 @@ const ListingCancelledLender = ({ asset, short, terms }: MessageProp): JSX.Eleme
 };
 
 const ListingCancelledBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
-  const { repaymentAmount, currencyPrice } = useTermDetails(terms);
-  const shortMsg = <span>The listing on {getBlueText(asset.name)} is cancelled</span>;
+  //const { repaymentAmount, currencyPrice } = useTermDetails(terms);
+  const shortMsg = (
+    <span>The listing on {getBlueText(asset.name)} has been cancelled</span>
+  );
   const longMsg = (
     <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
-      The listing on {getBlueText(asset.name)} for{" "}
-      {formatCurrency((terms?.amount || 0) * (currencyPrice || 1) || 0, 2)} over{" "}
-      {terms?.duration} days, with a repayment of{" "}
-      {formatCurrency(repaymentAmount * (currencyPrice || 1) || 0, 2)} is cancelled.
+      The listing on {getBlueText(asset.name)} has been cancelled.
     </span>
   );
   return (
