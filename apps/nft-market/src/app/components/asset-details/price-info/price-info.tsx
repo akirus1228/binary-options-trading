@@ -1,12 +1,7 @@
-import { prettifySeconds } from "@fantohm/shared-web3";
-import { formatAmount } from "@fantohm/shared-helpers";
 import { Box, Typography } from "@mui/material";
-import { useMemo } from "react";
-import { Listing, NftPrice } from "../../../types/backend-types";
-import style from "./price-info.module.scss";
+import { NftPrice } from "../../../types/backend-types";
 import NabuLogoImage from "../../../../assets/images/nabu-logo.png";
 import InfoImage from "../../../../assets/images/info.png";
-import { ethers } from "ethers";
 
 export interface PriceInfoProps {
   price: NftPrice;

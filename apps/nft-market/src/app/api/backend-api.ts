@@ -524,7 +524,6 @@ export const backendApi = createApi({
     getNftPrice: builder.query<NftPrice, { collection: string; tokenId: string }>({
       query: ({ collection, tokenId }) => ({
         url: `nft/price/${collection}/${tokenId}`,
-        params: { collection, tokenId },
       }),
       providesTags: ["Asset"],
     }),
