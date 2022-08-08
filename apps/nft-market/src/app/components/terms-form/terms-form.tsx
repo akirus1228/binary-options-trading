@@ -104,11 +104,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [apr, setApr] = useState(
     props?.listing?.term.apr != null ? props?.listing?.term.apr.toString() : "25"
   );
-  const [amount, setAmount] = useState(props?.listing?.term.amount.toString() || "10000");
+  const [amount, setAmount] = useState("1");
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
-  const [selectedCurrency, setSelectedCurrency] = useState(
-    props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "USDB"
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState("wETH");
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   // currency info

@@ -44,6 +44,16 @@ export type CurrencyInfo = {
 };
 
 export const currencyInfo: CurrencyInfo = {
+  WETH_ADDRESS: {
+    symbol: "wETH",
+    name: "Wrapped Ethereum",
+    icon: EthToken,
+    addresses: {
+      [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["WETH_ADDRESS"],
+      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["WETH_ADDRESS"],
+    },
+    coingeckoStub: "weth",
+  },
   USDB_ADDRESS: {
     symbol: "USDB",
     name: "USDBalance",
@@ -63,16 +73,6 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["DAI_ADDRESS"],
     },
     coingeckoStub: "dai",
-  },
-  WETH_ADDRESS: {
-    symbol: "wETH",
-    name: "Wrapped Ethereum",
-    icon: EthToken,
-    addresses: {
-      [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["WETH_ADDRESS"],
-      [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["WETH_ADDRESS"],
-    },
-    coingeckoStub: "weth",
   },
   WBTC_ADDRESS: {
     symbol: "wBTC",
