@@ -104,9 +104,11 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [apr, setApr] = useState(
     props?.listing?.term.apr != null ? props?.listing?.term.apr.toString() : "25"
   );
-  const [amount, setAmount] = useState("1");
+  const [amount, setAmount] = useState(props?.listing?.term.amount.toString() || "1");
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
-  const [selectedCurrency, setSelectedCurrency] = useState("wETH");
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "wETH"
+  );
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   // currency info
@@ -342,7 +344,17 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
-    setAmount(event.target.value);
+    const newAmount: string = event.target.value;
+    const [integerPart, decimalPart] = newAmount.split(".");
+    if (
+      currency?.decimals &&
+      decimalPart?.length &&
+      decimalPart?.length > currency?.decimals
+    ) {
+      setAmount(integerPart + "." + decimalPart.substring(0, currency?.decimals));
+    } else {
+      setAmount(newAmount);
+    }
   };
 
   // calculate repayment totals
