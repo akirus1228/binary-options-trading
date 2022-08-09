@@ -341,7 +341,7 @@ export const BalancePassPage = (): JSX.Element => {
         container
         columnSpacing={2}
         rowSpacing={{ xs: 4, md: 0 }}
-        sx={{ mt: "150px !important" }}
+        sx={{ mt: { md: "150px !important", xs: "50px !important" } }}
       >
         <Grid item md={3.5} sx={{ display: { xs: "none", md: "flex" } }}>
           <img
