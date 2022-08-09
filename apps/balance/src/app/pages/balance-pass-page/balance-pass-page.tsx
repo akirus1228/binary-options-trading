@@ -1,5 +1,13 @@
-import { BalancePassBanner } from "@fantohm/shared/images";
+import {
+  BalanceLiqdLogo,
+  BalancePassBanner,
+  GenesisNFTPass,
+  GoldNFTPass,
+  PlatinumNFTPass,
+} from "@fantohm/shared/images";
 import { Box, Button, Grid, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+import Logo from "../../components/logo/logo";
 import style from "./balance-pass-page.module.scss";
 
 export const BalancePassPage = (): JSX.Element => {
@@ -179,11 +187,151 @@ export const BalancePassPage = (): JSX.Element => {
           </Box>
         </Grid>
       </Grid>
-      <Box>
-        <Box>
-          <Box></Box>
-        </Box>
+      <Box className={style["nftPassSection"]}>
+        <Link to="/">
+          <img
+            src={BalanceLiqdLogo}
+            alt="Balance Liqd Logo"
+            className={style["balanceLiqdLogoDiv"]}
+          />
+        </Link>
+        <Typography
+          sx={{
+            width: "42%",
+            textAlign: "center",
+            fontFamily: "sora",
+            fontSize: "20px",
+            color: "#8a99a8",
+            mt: "50px",
+          }}
+          className={style["balanceLiqdDes"]}
+        >
+          Liqdnft.com is one of the most innovative NFT lending and borrowing platforms,
+          by the Balance team. By holding Balance Alpha NFTs, investors can save on
+          Transactions and systems fees. These perks are broken down below:
+        </Typography>
+        <Grid
+          container
+          sx={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mt: "80px",
+          }}
+          className={style["nftPassTotal"]}
+        >
+          <Grid
+            xs={12}
+            md={2}
+            sx={{
+              width: "20%",
+              display: "flex",
+              flexDirection: "column",
+              ml: "100px",
+              alignItems: "center",
+            }}
+            className={style["nftPassInfoSection"]}
+          >
+            <img src={GenesisNFTPass} alt="GenesisNFT" />
+            <Typography
+              sx={{
+                fontFamily: "MonumentExtendedRegular",
+                fontSize: "22px",
+                mt: "27px",
+                color: "#dee9ff",
+              }}
+            >
+              ‘Genesis’ NFT Pass
+            </Typography>
+            <Typography
+              sx={{
+                fontfamily: "sora",
+                fontSize: "16px",
+                mt: "27px",
+                color: "#8a99a8",
+                width: "75%",
+                textAlign: "center",
+              }}
+            >
+              25% off fees when using the Liqdnft platform
+            </Typography>
+          </Grid>
+          <Grid
+            xs={12}
+            md={2}
+            sx={{
+              width: "20%",
+              display: "flex",
+              flexDirection: "column",
+              ml: "100px",
+              alignItems: "center",
+            }}
+            className={style["nftPassInfoSection"]}
+          >
+            <img src={GoldNFTPass} alt="GenesisNFT" />
+            <Typography
+              sx={{
+                fontFamily: "MonumentExtendedRegular",
+                fontSize: "22px",
+                mt: "27px",
+                color: "#dee9ff",
+              }}
+            >
+              ‘Gold’ NFT Pass
+            </Typography>
+            <Typography
+              sx={{
+                fontfamily: "sora",
+                fontSize: "16px",
+                mt: "27px",
+                color: "#8a99a8",
+                width: "75%",
+                textAlign: "center",
+              }}
+            >
+              50% off fees when using the Liqdnft platform
+            </Typography>
+          </Grid>
+          <Grid
+            xs={12}
+            md={2}
+            sx={{
+              width: "20%",
+              display: "flex",
+              flexDirection: "column",
+              ml: "100px",
+              alignItems: "center",
+            }}
+            className={style["nftPassInfoSection"]}
+          >
+            <img src={PlatinumNFTPass} alt="GenesisNFT" />
+            <Typography
+              sx={{
+                fontFamily: "MonumentExtendedRegular",
+                fontSize: "22px",
+                mt: "27px",
+                color: "#dee9ff",
+              }}
+            >
+              ‘Platinum’ NFT Pass
+            </Typography>
+            <Typography
+              sx={{
+                fontfamily: "sora",
+                fontSize: "16px",
+                mt: "27px",
+                color: "#8a99a8",
+                width: "75%",
+                textAlign: "center",
+              }}
+            >
+              0.0% off fees when using the Liqdnft platform
+            </Typography>
+          </Grid>
+        </Grid>
       </Box>
+      <Grid container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}></Grid>
     </Box>
   );
 };
