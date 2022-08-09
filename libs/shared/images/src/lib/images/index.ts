@@ -84,6 +84,8 @@ import BalanceLiqdLogo from "./Balance x Liqd Logo.png";
 import GenesisNFTPass from "./Genesis NFT Pass.png";
 import GoldNFTPass from "./Gold NFT Pass.png";
 import PlatinumNFTPass from "./Platinum NFT Pass.png";
+import BalancePassFooter1 from "./footer1.png";
+import BalancePassFooter2 from "./footer2.png";
 
 export {
   NFTsIcon,
@@ -172,4 +174,6 @@ export {
   GenesisNFTPass,
   GoldNFTPass,
   PlatinumNFTPass,
+  BalancePassFooter1,
+  BalancePassFooter2,
 };

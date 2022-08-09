@@ -1,6 +1,9 @@
 import {
+  AboutDivider,
   BalanceLiqdLogo,
   BalancePassBanner,
+  BalancePassFooter1,
+  BalancePassFooter2,
   GenesisNFTPass,
   GoldNFTPass,
   PlatinumNFTPass,
@@ -222,6 +225,7 @@ export const BalancePassPage = (): JSX.Element => {
           className={style["nftPassTotal"]}
         >
           <Grid
+            item
             xs={12}
             md={2}
             sx={{
@@ -250,7 +254,7 @@ export const BalancePassPage = (): JSX.Element => {
                 fontSize: "16px",
                 mt: "27px",
                 color: "#8a99a8",
-                width: "75%",
+                width: { md: "75%", xs: "70%" },
                 textAlign: "center",
               }}
             >
@@ -258,6 +262,7 @@ export const BalancePassPage = (): JSX.Element => {
             </Typography>
           </Grid>
           <Grid
+            item
             xs={12}
             md={2}
             sx={{
@@ -286,7 +291,7 @@ export const BalancePassPage = (): JSX.Element => {
                 fontSize: "16px",
                 mt: "27px",
                 color: "#8a99a8",
-                width: "75%",
+                width: { md: "75%", xs: "70%" },
                 textAlign: "center",
               }}
             >
@@ -294,6 +299,7 @@ export const BalancePassPage = (): JSX.Element => {
             </Typography>
           </Grid>
           <Grid
+            item
             xs={12}
             md={2}
             sx={{
@@ -322,7 +328,7 @@ export const BalancePassPage = (): JSX.Element => {
                 fontSize: "16px",
                 mt: "27px",
                 color: "#8a99a8",
-                width: "75%",
+                width: { md: "75%", xs: "70%" },
                 textAlign: "center",
               }}
             >
@@ -331,7 +337,90 @@ export const BalancePassPage = (): JSX.Element => {
           </Grid>
         </Grid>
       </Box>
-      <Grid container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}></Grid>
+      <Grid
+        container
+        columnSpacing={2}
+        rowSpacing={{ xs: 4, md: 0 }}
+        sx={{ mt: "150px !important" }}
+      >
+        <Grid item md={3.5} sx={{ display: { xs: "none", md: "flex" } }}>
+          <img
+            src={BalancePassFooter1}
+            alt="BalancePassFooter1"
+            style={{ width: "100%" }}
+          ></img>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          md={5}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "32px",
+              fontFamily: "sora",
+              color: "#8A99A8",
+              display: { sm: "22px" },
+            }}
+            className={style["FooterTitle"]}
+          >
+            These NFTs are scarce, unique, and
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "32px",
+              fontFamily: "sora",
+              color: "#DEE9FF",
+            }}
+            className={style["FooterTitle"]}
+          >
+            offer tremendous value to their holders.
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: "sora",
+              fontSize: { md: "20px", sm: "12px", xs: "12px" },
+              color: "#8a99a8",
+              textAlign: "center",
+              width: "82%",
+              mt: "20px",
+            }}
+          >
+            For the Balance ecosystem, the passes will also open doors for more
+            collaboration, and industry-wide exposure.
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{
+              display: { md: "flex", width: "35%" },
+              fontSize: "19px",
+              backgroundColor: "#3744E6",
+              color: "white",
+              fontFamily: "sora",
+              mt: "40px",
+            }}
+            className={style["footerLink"]}
+          >
+            Join The Waitlist
+          </Button>
+        </Grid>
+        <Grid item md={3.5} sx={{ display: { xs: "none", md: "flex" } }}>
+          <img
+            src={BalancePassFooter2}
+            alt="BalancePassFooter2"
+            style={{ width: "100%" }}
+          ></img>
+        </Grid>
+      </Grid>
+      <Box sx={{ mt: { xs: "50px", sm: "75px", md: "100px" } }}>
+        <img src={AboutDivider} alt="Divider"></img>
+      </Box>
     </Box>
   );
 };
