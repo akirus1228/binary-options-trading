@@ -79,6 +79,7 @@ import AtomicSwap from "./multisig/AtomicSwap.png";
 import BalanceTwitter from "./Balance_Twitter.png";
 import BlogBanner from "./Blog_Banner.png";
 import WaringIcon from "./warning.png";
+import BalancePassBanner from "./BalancePass banner image.png";
 
 export {
   NFTsIcon,
@@ -162,4 +163,5 @@ export {
   BalanceTwitter,
   BlogBanner,
   WaringIcon,
+  BalancePassBanner,
 };

@@ -23,6 +23,7 @@ import { Header, Footer } from "./components/template";
 import { ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
 import { Messages } from "./components/messages/messages";
 import { BalanceHomePage } from "./pages/home/balance-home-page";
+import { BalancePassPage } from "./pages/balance-pass-page/balance-pass-page";
 import { RootState } from "./store";
 import { loadAppDetails, setTheme } from "./store/reducers/app-slice";
 import BalanceAboutPage from "./pages/balance-about-page/balance-about-page";
@@ -106,6 +107,7 @@ export const App = (): JSX.Element => {
           <Route path="/about" element={<BalanceAboutPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:id" element={<BlogPostPage />} />
+          <Route path="/balancepass" element={<BalancePassPage />} />
 
           <Route
             path="*"
