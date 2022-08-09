@@ -9,23 +9,20 @@ export interface PriceInfoProps {
 
 export const PriceInfo = ({ price }: PriceInfoProps): JSX.Element => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        padding: "0px 20px",
-        alignItems: "center",
-      }}
-    >
+    <>
       <Box
         sx={{
-          width: "50%",
           display: "flex",
           flexDirection: "row",
+          alignItems: "center",
         }}
       >
-        <img src={NabuLogoImage} alt="Nabu Logo" style={{ height: "fit-content" }} />
-        <Box sx={{ display: "flex", flexDirection: "column", marginLeft: "10px" }}>
+        <img
+          src={NabuLogoImage}
+          alt="Nabu Logo"
+          style={{ height: "fit-content", margin: "5px" }}
+        />
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography
             style={{
               fontSize: "16px",
@@ -45,7 +42,7 @@ export const PriceInfo = ({ price }: PriceInfoProps): JSX.Element => {
       </Box>
       <Box
         sx={{
-          width: "50%",
+          maxWidth: "45%",
           display: "flex",
           flexDirection: "row",
         }}
@@ -65,7 +62,7 @@ export const PriceInfo = ({ price }: PriceInfoProps): JSX.Element => {
           Data provided by Nabu is for informational purposes only
         </Typography>
       </Box>
-    </Box>
+    </>
   );
 };
 

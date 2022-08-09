@@ -67,7 +67,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const { onClose, open } = props;
   const [value] = React.useState("Deposit");
 
-  const [selectedCurrency, setSelectedCurrency] = useState("USDB");
+  const [selectedCurrency, setSelectedCurrency] = useState("wETH");
   // currency info
   const currency = useSelector((state: RootState) =>
     selectCurrencyById(state, `${selectedCurrency.toUpperCase()}_ADDRESS`)

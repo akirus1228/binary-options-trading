@@ -215,8 +215,10 @@ export const AssetDetails = ({
                   sx={{
                     display: "flex",
                     flexDirection: "row",
-                    justifyContent: "space-around",
+                    justifyContent: "space-between",
                     alignItems: "center",
+                    paddingLeft: "10%",
+                    paddingRight: "10%",
                   }}
                 >
                   <Box
@@ -237,8 +239,10 @@ export const AssetDetails = ({
                       marginTop: "20px",
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "space-around",
+                      justifyContent: "space-between",
                       alignItems: "center",
+                      paddingLeft: "10%",
+                      paddingRight: "10%",
                     }}
                   >
                     <PriceInfo price={nftPrice} />
