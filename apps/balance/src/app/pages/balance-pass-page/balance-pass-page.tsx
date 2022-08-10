@@ -84,7 +84,7 @@ export const BalancePassPage = (): JSX.Element => {
                 fontFamily: "sora",
                 color: "#8a99a8",
                 textAlign: "center",
-                fontSize: "20px",
+                fontSize: { md: "16px", xs: "12px" },
                 mt: "30px",
                 width: "70%",
               }}
@@ -95,6 +95,7 @@ export const BalancePassPage = (): JSX.Element => {
             </Typography>
             <Button
               variant="contained"
+              href="https://www.premint.xyz/balance-pass/"
               sx={{
                 display: { md: "flex", width: "35%" },
                 fontSize: "19px",
@@ -158,6 +159,7 @@ export const BalancePassPage = (): JSX.Element => {
               sx={{
                 mt: { xl: "68px", md: "40px", sm: "30px", xs: "20px" },
                 textAlign: { xs: "center", sm: "center", md: "left", xl: "left" },
+                fontSize: { md: "16px", xs: "12px" },
               }}
               className={style["nftHolderDes"]}
             >
@@ -170,6 +172,7 @@ export const BalancePassPage = (): JSX.Element => {
               sx={{
                 mt: "30px",
                 textAlign: { xs: "center", sm: "center", md: "left", xl: "left" },
+                fontSize: { md: "16px", xs: "12px" },
               }}
               className={style["nftHolderDes"]}
             >
@@ -181,6 +184,7 @@ export const BalancePassPage = (): JSX.Element => {
               sx={{
                 mt: "30px",
                 textAlign: { xs: "center", sm: "center", md: "left", xl: "left" },
+                fontSize: { md: "16px", xs: "12px" },
               }}
               className={style["nftHolderDes"]}
             >
@@ -205,7 +209,7 @@ export const BalancePassPage = (): JSX.Element => {
             width: "42%",
             textAlign: "center",
             fontFamily: "sora",
-            fontSize: "20px",
+            fontSize: { md: "16px", xs: "12px" },
             color: "#8a99a8",
             mt: "50px",
           }}
@@ -254,7 +258,7 @@ export const BalancePassPage = (): JSX.Element => {
             <Typography
               sx={{
                 fontfamily: "sora",
-                fontSize: "16px",
+                fontSize: { md: "16px", xs: "12px" },
                 mt: "27px",
                 color: "#8a99a8",
                 width: { md: "75%", xs: "70%" },
@@ -292,7 +296,7 @@ export const BalancePassPage = (): JSX.Element => {
             <Typography
               sx={{
                 fontfamily: "sora",
-                fontSize: "16px",
+                fontSize: { md: "16px", xs: "12px" },
                 mt: "27px",
                 color: "#8a99a8",
                 width: { md: "75%", xs: "70%" },
@@ -330,7 +334,7 @@ export const BalancePassPage = (): JSX.Element => {
             <Typography
               sx={{
                 fontfamily: "sora",
-                fontSize: "16px",
+                fontSize: { md: "16px", xs: "12px" },
                 mt: "27px",
                 color: "#8a99a8",
                 width: { md: "75%", xs: "70%" },
@@ -394,7 +398,7 @@ export const BalancePassPage = (): JSX.Element => {
           <Typography
             sx={{
               fontFamily: "sora",
-              fontSize: { md: "20px", sm: "12px", xs: "12px" },
+              fontSize: { md: "16px", sm: "12px", xs: "12px" },
               color: "#8a99a8",
               textAlign: "center",
               width: "82%",
@@ -406,6 +410,7 @@ export const BalancePassPage = (): JSX.Element => {
           </Typography>
           <Button
             variant="contained"
+            href="https://www.premint.xyz/balance-pass/"
             sx={{
               display: { md: "flex", width: "42%" },
               fontSize: "19px",

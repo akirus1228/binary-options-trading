@@ -37,11 +37,7 @@
   }
 }
 .heroDescription {
-  @media (max-width: 1240px) {
-    font-size: 15px !important;
-  }
   @media (max-width: 600px) {
-    font-size: 12px !important;
     width: 92% !important;
   }
 }
@@ -80,14 +76,10 @@
   }
 }
 .nftHolderDes {
-  font-size: 20px !important;
   font-family: "sora" !important;
   color: #8a99a8;
-  @media (max-width: 1360px) {
-    font-size: 15px !important;
-  }
+
   @media (max-width: 600px) {
-    font-size: 12px !important;
     width: 92% !important;
   }
 }
@@ -111,7 +103,6 @@
 }
 .balanceLiqdDes {
   @media (max-width: 600px) {
-    font-size: 12px !important;
     width: 355px !important;
   }
 }
