@@ -28,6 +28,7 @@ import { desiredNetworkId } from "./constants/network";
 import BlogPage from "./pages/blog/blog-page";
 import BlogPostPage from "./pages/blog/blog-post-page";
 import { DebugHelper } from "@fantohm/shared-helpers";
+import PrivacyPage from "./components/Privacy/privacy";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -234,6 +235,7 @@ export const App = (): JSX.Element => {
               <Route path="/account/:walletAddress" element={<MyAccountPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogPostPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
               <Route
                 path="/th"
                 element={
