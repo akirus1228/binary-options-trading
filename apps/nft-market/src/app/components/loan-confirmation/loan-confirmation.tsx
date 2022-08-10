@@ -332,7 +332,11 @@ export const LoanConfirmation = ({
     currencyBalance.lt(amountGwei.add(platformFeeAmtGwei));
   return (
     <>
-      <Button variant="outlined" onClick={handleClickLend}>
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: "#374FFF", width: "100%", padding: "0.7rem 0" }}
+        onClick={handleClickLend}
+      >
         Lend {currency?.symbol}
       </Button>
       <Dialog onClose={handleClose} open={open} fullScreen={isSmall}>

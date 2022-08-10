@@ -1,4 +1,13 @@
-import { Box, Button, Container, Paper, SxProps, Theme, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  SxProps,
+  Theme,
+  Typography,
+  Tooltip,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetAssetQuery } from "../../api/backend-api";
@@ -49,17 +58,22 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
   };
 
   return (
-    <Container sx={props.sx}>
+    <Container sx={props.sx} className={style["assetRow"]}>
       <MakeOffer onClose={onListDialogClose} open={dialogOpen} listing={props.listing} />
       <Paper>
-        <Box className="flex fr fj-sa fw">
-          <Box className="flex fc">
-            <Typography className={style["label"]}>Loan amount</Typography>
+        <Box className="flex fr fw" sx={{ padding: "1.5em 1.5em 1em 1.5em" }}>
+          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              Loan amount
+            </Typography>
             <Box sx={{ display: "flex" }}>
               <img
                 src={currency?.icon}
                 alt={currency?.symbol}
-                style={{ width: "20px" }}
+                style={{ width: "20px", marginRight: "7px" }}
               />
               <Typography className={`${style["data"]} ${style["primary"]}`}>
                 {props.listing.term.amount.toFixed(4)}
@@ -80,13 +94,18 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               {currency?.lastPrice === 0 && "Unable to load estimated USD value"})
             </span>
           </Box>
-          <Box className="flex fc">
-            <Typography className={style["label"]}>Repayment</Typography>
+          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              Repayment
+            </Typography>
             <Box sx={{ display: "flex" }}>
               <img
                 src={currency?.icon}
                 alt={currency?.symbol}
-                style={{ width: "20px" }}
+                style={{ width: "20px", marginRight: "7px" }}
               />
               <Typography className={`${style["data"]}`}>
                 {repaymentAmount.toFixed(4)}
@@ -104,29 +123,39 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               )
             </span>
           </Box>
-          <Box className="flex fc">
-            <Typography className={style["label"]}>Duration</Typography>
+          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              Duration
+            </Typography>
             <Typography className={`${style["data"]}`}>
               {props.listing.term.duration} days
             </Typography>
           </Box>
-          <Box className="flex fc">
-            <Typography className={style["label"]}>APY</Typography>
+          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              APY
+            </Typography>
             <Typography className={`${style["data"]}`}>
               {props.listing.term.apr}%
             </Typography>
           </Box>
-          <Box className="flex fc">
+          <Box className="flex fc" sx={{ flex: "0 0 18%", marginLeft: "auto" }}>
+            <LoanConfirmation listing={props.listing} />
+          </Box>
+          <Box className="flex fc" sx={{ flex: "0 0 18%", marginLeft: "10px" }}>
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={handleMakeOffer}
-              sx={{ backgroundColor: "#374FFF" }}
+              sx={{ width: "100%", padding: "0.7rem 0" }}
             >
               Make Offer
             </Button>
-          </Box>
-          <Box className="flex fc">
-            <LoanConfirmation listing={props.listing} />
           </Box>
         </Box>
       </Paper>

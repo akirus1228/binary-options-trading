@@ -19,8 +19,15 @@ export const QuickStatus = ({ listing }: QuickStatusProps): JSX.Element => {
     <>
       {listing && listing?.createdAt && (
         <Box>
-          <Typography className={style["label"]}>Listed</Typography>
-          <Typography className={style["name"]}>{createdDate} ago</Typography>
+          <Typography
+            className={style["label"]}
+            sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+          >
+            Listed
+          </Typography>
+          <Typography className={style["name"]} sx={{ fontSize: "1rem" }}>
+            {createdDate} ago
+          </Typography>
         </Box>
       )}
       {!listing && (

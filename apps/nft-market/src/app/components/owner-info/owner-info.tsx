@@ -86,7 +86,7 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
           <Button
             className="slim lowContrast"
             variant="contained"
-            sx={{ fontSize: "10px", mt: "1em" }}
+            sx={{ fontSize: "10px", mt: "1em", padding: "0.8em 2em !important" }}
             href={`https://${isDev ? "rinkeby" : "www"}.etherscan.io/address/${address}`}
             target="_blank"
           >
@@ -105,11 +105,13 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
           </Typography>
           <Box className="flex fr fj-sb" sx={{ mt: "1em" }}>
             <Box className="flex fc" sx={{ mr: "2em" }}>
-              <span style={{ color: "#8991A2" }}>Total borrowed</span>
+              <span style={{ color: "#8991A2", fontSize: "0.875em" }}>
+                Total borrowed
+              </span>
               <span>{formatCurrency(ownerInfo?.totalBorrowed || 0)}</span>
             </Box>
             <Box className="flex fc">
-              <span style={{ color: "#8991A2" }}>Total lent</span>
+              <span style={{ color: "#8991A2", fontSize: "0.875em" }}>Total lent</span>
               <span>{formatCurrency(ownerInfo?.totalLent || 0)}</span>
             </Box>
           </Box>
@@ -127,13 +129,13 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
                 )}
               </Typography>
               <Box className="flex fr" sx={{ mt: "1em" }}>
-                <Box className="flex fc" sx={{ mr: "2em" }}>
+                <Box className="flex fc" sx={{ mr: "2em", fontSize: "0.875em" }}>
                   <ColorLabel color="#1B9385" label="Loans repaid" />
-                  <span>{ownerInfo?.loansRepaid}</span>
+                  <span style={{ fontSize: "1.2em" }}>{ownerInfo?.loansRepaid}</span>
                 </Box>
-                <Box className="flex fc">
+                <Box className="flex fc" sx={{ fontSize: "0.875em" }}>
                   <ColorLabel color="#5731C3" label="Loans defaulted" />
-                  <span>{ownerInfo?.loansDefaulted}</span>
+                  <span style={{ fontSize: "1.2em" }}>{ownerInfo?.loansDefaulted}</span>
                 </Box>
               </Box>
             </Box>
@@ -152,13 +154,13 @@ export const OwnerInfo = ({ address, sx }: OwnerInfoProps): JSX.Element => {
                 )}
               </Typography>
               <Box className="flex fr" sx={{ mt: "1em" }}>
-                <Box className="flex fc" sx={{ mr: "2em" }}>
+                <Box className="flex fc" sx={{ mr: "2em", fontSize: "0.875em" }}>
                   <ColorLabel color="#1B9385" label="Loans borrowed" />
-                  <span>{ownerInfo?.loansBorrowed}</span>
+                  <span style={{ fontSize: "1.2em" }}>{ownerInfo?.loansBorrowed}</span>
                 </Box>
-                <Box className="flex fc">
+                <Box className="flex fc" sx={{ fontSize: "0.875em" }}>
                   <ColorLabel color="#5731C3" label="Loans given" />
-                  <span>{ownerInfo?.loansGiven}</span>
+                  <span style={{ fontSize: "1.2em" }}>{ownerInfo?.loansGiven}</span>
                 </Box>
               </Box>
             </Box>

@@ -2,9 +2,14 @@ html,
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  @media (min-width: 900px) {
-    padding: 0 50px;
-  }
+
+
+}
+
+.mainContent {
+  
+  padding:0 100px !important;
+
 }
 
 a {
@@ -107,6 +112,15 @@ input[type="number"] {
   font-weight: 300;
   color: #8991a2;
   font-size: 80%;
+}
+
+
+body[class*=darkTheme] {
+
+    .progress-ring {
+      fill: #fff;
+    }
+
 }
 
 /* experimental animated gradient background

@@ -253,12 +253,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         return <SimpleProfile address={offer.lender.address} />;
       case OffersListFields.REPAYMENT_TOTAL:
         return (
-          <Box>
-            <Tooltip
-              title={`~ ${formatCurrency(repaymentTotal * currency?.lastPrice || 0, 2)}`}
-            >
-              <span>{repaymentTotal.toFixed(4)} </span>
-            </Tooltip>
+          <Box sx={{ display: "flex" }}>
             <Tooltip title={currency?.name || ""}>
               <img
                 src={currency?.icon || ""}
@@ -266,16 +261,33 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 style={{
                   height: "20px",
                   width: "20px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
                   marginBottom: "4px",
                 }}
               />
+            </Tooltip>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentTotal * currency?.lastPrice || 0, 2)}`}
+            >
+              <span>{repaymentTotal.toFixed(4)} </span>
             </Tooltip>
           </Box>
         );
       case OffersListFields.PRINCIPAL:
         return (
-          <Box>
+          <Box sx={{ display: "flex" }}>
+            <Tooltip title={currency?.name || ""}>
+              <img
+                src={currency?.icon || ""}
+                alt={currency?.symbol || ""}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  marginRight: "5px",
+                  marginBottom: "4px",
+                }}
+              />
+            </Tooltip>
             <Tooltip
               title={`~ ${formatCurrency(
                 offer.term.amount * currency?.lastPrice || 0,
@@ -284,28 +296,11 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             >
               <span>{offer.term.amount.toFixed(4)} </span>
             </Tooltip>
-            <Tooltip title={currency?.name || ""}>
-              <img
-                src={currency?.icon || ""}
-                alt={currency?.symbol || ""}
-                style={{
-                  height: "20px",
-                  width: "20px",
-                  marginLeft: "5px",
-                  marginBottom: "4px",
-                }}
-              />
-            </Tooltip>
           </Box>
         );
       case OffersListFields.TOTAL_INTEREST:
         return (
-          <Box>
-            <Tooltip
-              title={`~ ${formatCurrency(repaymentAmount * currency?.lastPrice || 0, 2)}`}
-            >
-              <span>{repaymentAmount?.toFixed(4)}</span>
-            </Tooltip>
+          <Box sx={{ display: "flex" }}>
             <Tooltip title={currency?.name || ""}>
               <img
                 src={currency?.icon || ""}
@@ -313,10 +308,15 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 style={{
                   height: "20px",
                   width: "20px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
                   marginBottom: "4px",
                 }}
               />
+            </Tooltip>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentAmount * currency?.lastPrice || 0, 2)}`}
+            >
+              <span>{repaymentAmount?.toFixed(4)}</span>
             </Tooltip>
           </Box>
         );
@@ -344,11 +344,11 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   return (
     <PaperTableRow className={style["row"]}>
       {fields?.map((field: OffersListFields, index: number) => (
-        <PaperTableCell key={`offer-list-row-${index}`}>
+        <PaperTableCell key={`offer-list-row-${index}`} className={style["offerElem"]}>
           <Box className="flex fr ai-c">{getFieldData(field)}</Box>
         </PaperTableCell>
       ))}
-      <PaperTableCell sx={{ display: "flex" }}>
+      <PaperTableCell sx={{ display: "flex", fontSize: "1rem", alignItems: "middle" }}>
         <Box className="flex fr ai-c">
           {isOwner &&
             !hasPermission &&
@@ -383,7 +383,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           {(!isOwner || offer.status !== OfferStatus.Ready) && (
             <Chip
               label={offer.status}
-              sx={{ fontSize: "17px", marginRight: "2em" }}
+              sx={{
+                fontSize: "0.875em",
+                marginRight: "2em",
+                backgroundColor: "#374FFF",
+                color: "#fff",
+              }}
             ></Chip>
           )}
         </Box>

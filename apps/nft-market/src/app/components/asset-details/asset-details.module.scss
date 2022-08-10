@@ -1,3 +1,6 @@
+h1 {
+  font-weight:500;
+}
 .imgContainer {
   border-radius: 30px;
   overflow: hidden;
@@ -14,9 +17,13 @@
   }
 }
 
+.assetRow {
+  margin-top:50px;
+}
 .moreButton {
   color: #000 !important;
-  background: rgba(0, 0, 0, 0.4) !important;
+  background: #fff !important;
+  box-shadow: 0 15px 30px #7e9aa92b;
   @media (max-width: 480px) {
     margin-right: -10px !important;
     svg {
@@ -28,7 +35,7 @@
 
 body[class*=darkTheme] {
   .moreButton {
-    color: #fff;
-    background: #000;
+    color: #fff !important;
+    background: #000 !important;
   }
 }
