@@ -52,9 +52,7 @@ export const App = (): JSX.Element => {
     (state: RootState) => state.backend
   );
 
-  const [promptTerms, setPromptTerms] = useState<boolean>(
-    localStorage.getItem("termsAgreedUsdb") !== "true"
-  );
+  const [promptTerms, setPromptTerms] = useState<boolean>(true);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [theme, setTheme] = useState(NftLight);
   const {
@@ -114,13 +112,18 @@ export const App = (): JSX.Element => {
 
   // when a user connects their wallet login to the backend api
   useEffect(() => {
+    const curStorage: string = localStorage.getItem("termsAgreedUsdb") + "";
+    if (promptTerms && !curStorage?.includes(address)) {
+      setPromptTerms(false);
+    }
     if (
       provider &&
       connected &&
       address &&
       (!authorizedAccount || address.toLowerCase() !== authorizedAccount.toLowerCase()) &&
       accountStatus !== "pending" &&
-      typeof user.address == "undefined"
+      typeof user.address == "undefined" &&
+      promptTerms
     ) {
       dispatch(
         authorizeAccount({
@@ -134,7 +137,7 @@ export const App = (): JSX.Element => {
         })
       );
     }
-  }, [provider, address, connected, authorizedAccount, accountStatus, user]);
+  }, [provider, address, connected, authorizedAccount, accountStatus, user, promptTerms]);
 
   // when a user connects their wallet login to the backend api
   useEffect(() => {
@@ -150,8 +153,12 @@ export const App = (): JSX.Element => {
   }, []);
 
   const handleAgree = () => {
-    setPromptTerms(false);
-    localStorage.setItem("termsAgreedUsdb", "true");
+    setPromptTerms(true);
+    let curStorage: string = localStorage.getItem("termsAgreedUsdb") ?? "";
+    if (!curStorage?.includes(address)) {
+      curStorage = curStorage?.concat(" ", address);
+    }
+    localStorage.setItem("termsAgreedUsdb", curStorage);
   };
   const handleCheck = () => {
     setIsChecked(!isChecked);
@@ -162,7 +169,7 @@ export const App = (): JSX.Element => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {promptTerms ? (
+      {!promptTerms ? (
         <Box paddingTop={5} paddingBottom={12} sx={{ height: "100vh" }}>
           <Fade in={true} mountOnEnter unmountOnExit>
             <Backdrop open={true} className={` ${"backdropElement"}`}>

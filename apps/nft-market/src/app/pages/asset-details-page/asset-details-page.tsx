@@ -167,7 +167,11 @@ export const AssetDetailsPage = (): JSX.Element => {
         activeListing &&
         activeListing.asset &&
         activeListing.asset?.status === AssetStatus.Listed && (
-          <LenderListingTerms listing={activeListing} sx={{ mt: "3em" }} />
+          <LenderListingTerms
+            listing={activeListing}
+            sx={{ mt: "3em" }}
+            key={`llt-${activeListing.id}`}
+          />
         )}
       {isValidNFT !== false &&
         asset &&
