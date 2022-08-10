@@ -79,13 +79,13 @@ import AtomicSwap from "./multisig/AtomicSwap.png";
 import BalanceTwitter from "./Balance_Twitter.png";
 import BlogBanner from "./Blog_Banner.png";
 import WaringIcon from "./warning.png";
-import BalancePassBanner from "./BalancePass banner image.png";
+import BalancePassBanner from "./BalancePass banner image.webp";
 import BalanceLiqdLogo from "./Balance x Liqd Logo.png";
-import GenesisNFTPass from "./Genesis NFT Pass.png";
-import GoldNFTPass from "./Gold NFT Pass.png";
-import PlatinumNFTPass from "./Platinum NFT Pass.png";
-import BalancePassFooter1 from "./footer1.png";
-import BalancePassFooter2 from "./footer2.png";
+import GenesisNFTPass from "./Gensis NFT Pass.webp";
+import GoldNFTPass from "./Gold NFT Pass.webp";
+import PlatinumNFTPass from "./Platinum NFT Pass.webp";
+import BalancePassFooter1 from "./footer1.webp";
+import BalancePassFooter2 from "./footer2.webp";
 
 export {
   NFTsIcon,

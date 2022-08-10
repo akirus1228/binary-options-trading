@@ -184,8 +184,10 @@ export const BalancePassPage = (): JSX.Element => {
               }}
               className={style["nftHolderDes"]}
             >
-              With our new partnership with Triton, we will bring Alpha signals, exposure,
-              and other valuable information to the holders of Balance Alpha NFT passes.
+              Through our strategic partnerships with Alpha groups (announcing soon), will
+              bring Alpha, exposure, and other valuable information to the holders of
+              Balance NFT passes. This is the start of the journey with more utility to be
+              announced in coming weeks as the balance ecosystem grows.
             </Typography>
           </Box>
         </Grid>
@@ -237,13 +239,14 @@ export const BalancePassPage = (): JSX.Element => {
             }}
             className={style["nftPassInfoSection"]}
           >
-            <img src={GenesisNFTPass} alt="GenesisNFT" />
+            <img src={GenesisNFTPass} alt="GenesisNFT" style={{ width: "100%" }} />
             <Typography
               sx={{
                 fontFamily: "MonumentExtendedRegular",
                 fontSize: "22px",
                 mt: "27px",
                 color: "#dee9ff",
+                textAlign: "center",
               }}
             >
               ‘Genesis’ NFT Pass
@@ -274,13 +277,14 @@ export const BalancePassPage = (): JSX.Element => {
             }}
             className={style["nftPassInfoSection"]}
           >
-            <img src={GoldNFTPass} alt="GenesisNFT" />
+            <img src={GoldNFTPass} alt="GenesisNFT" style={{ width: "100%" }} />
             <Typography
               sx={{
                 fontFamily: "MonumentExtendedRegular",
                 fontSize: "22px",
                 mt: "27px",
                 color: "#dee9ff",
+                textAlign: "center",
               }}
             >
               ‘Gold’ NFT Pass
@@ -311,13 +315,14 @@ export const BalancePassPage = (): JSX.Element => {
             }}
             className={style["nftPassInfoSection"]}
           >
-            <img src={PlatinumNFTPass} alt="GenesisNFT" />
+            <img src={PlatinumNFTPass} alt="GenesisNFT" style={{ width: "100%" }} />
             <Typography
               sx={{
                 fontFamily: "MonumentExtendedRegular",
                 fontSize: "22px",
                 mt: "27px",
                 color: "#dee9ff",
+                textAlign: "center",
               }}
             >
               ‘Platinum’ NFT Pass
@@ -332,7 +337,7 @@ export const BalancePassPage = (): JSX.Element => {
                 textAlign: "center",
               }}
             >
-              0.0% off fees when using the Liqdnft platform
+              100% off fees when using the Liqdnft platform
             </Typography>
           </Grid>
         </Grid>
@@ -361,27 +366,31 @@ export const BalancePassPage = (): JSX.Element => {
             justifyContent: "center",
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "32px",
-              fontFamily: "sora",
-              color: "#8A99A8",
-              display: { sm: "22px" },
-            }}
-            className={style["FooterTitle"]}
-          >
-            These NFTs are scarce, unique, and
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "32px",
-              fontFamily: "sora",
-              color: "#DEE9FF",
-            }}
-            className={style["FooterTitle"]}
-          >
-            offer tremendous value to their holders.
-          </Typography>
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "32px",
+                fontFamily: "sora",
+                color: "#8A99A8",
+                display: { sm: "22px" },
+                textAlign: "center",
+              }}
+              className={style["FooterTitle"]}
+            >
+              These NFTs are scarce, unique, and
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "32px",
+                fontFamily: "sora",
+                color: "#DEE9FF",
+                textAlign: "center",
+              }}
+              className={style["FooterTitle"]}
+            >
+              offer tremendous value to their holders.
+            </Typography>
+          </Box>
           <Typography
             sx={{
               fontFamily: "sora",
@@ -398,7 +407,7 @@ export const BalancePassPage = (): JSX.Element => {
           <Button
             variant="contained"
             sx={{
-              display: { md: "flex", width: "35%" },
+              display: { md: "flex", width: "42%" },
               fontSize: "19px",
               backgroundColor: "#3744E6",
               color: "white",
