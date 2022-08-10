@@ -141,17 +141,33 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
     <Box className="flex fc fj-fs" sx={{ mb: "5em", ...sx }}>
       <h2 style={{ marginBottom: "0" }}>Previous Loans</h2>
       <TableContainer>
-        <PaperTable aria-label="Active investments">
+        <PaperTable aria-label="Active investments" sx={{ borderSpacing: "0" }}>
           <PaperTableHead>
             <TableRow>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Lender</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Borrower</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Value</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Repayment</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>APR</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Start Date</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Duration</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Status</PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Lender
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Borrower
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Value
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Repayment
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                APR
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Start Date
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Duration
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Status
+              </PaperTableCell>
             </TableRow>
           </PaperTableHead>
           <TableBody>
@@ -163,33 +179,35 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
               )
               .map((loan: Loan, index: number) => (
                 <PaperTableRow key={`ma-invests-table-${index}`} id={`invests-${index}`}>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {addressEllipsis(loan.lender.address || "")}
                   </PaperTableCell>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {addressEllipsis(loan.borrower.address || "")}
                   </PaperTableCell>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {formatCurrency(loan.term.amount * (loan?.currencyPrice || 1), 2)}
                   </PaperTableCell>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {formatCurrency(
                       (loan?.amountDue || 1) * (loan?.currencyPrice || 1),
                       2
                     )}
                   </PaperTableCell>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {loan.term.apr}%
                   </PaperTableCell>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {new Date(
                       Date.parse(loan.createdAt || "yesterday")
                     ).toLocaleDateString()}
                   </PaperTableCell>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {loan.term.duration} days
                   </PaperTableCell>
-                  <PaperTableCell sx={{ fontSize: "16px" }}>{loan.status}</PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {loan.status}
+                  </PaperTableCell>
                 </PaperTableRow>
               ))}
           </TableBody>

@@ -93,10 +93,10 @@ export const AssetDetails = ({
     },
   ];
   return (
-    <Container sx={sx}>
+    <Container sx={sx} className={style["assetRow"]}>
       {/* <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} /> */}
       {asset && asset.imageUrl ? (
-        <Grid container columnSpacing={5}>
+        <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
               <img src={asset.imageUrl} alt={asset.name || "unknown"} />
@@ -148,7 +148,7 @@ export const AssetDetails = ({
                     <Link
                       key={link.title}
                       href={link.url}
-                      style={{ textDecoration: "none" }}
+                      style={{ textDecoration: "none", fontSize: "1em" }}
                       target="_blank"
                       onClick={() => setFlagMoreDropDown(null)}
                     >
@@ -166,14 +166,20 @@ export const AssetDetails = ({
                             style={{ width: "24px", marginRight: "15px" }}
                             alt={link.alt}
                           />
-                          <Typography variant="h6" style={{ fontWeight: "normal" }}>
+                          <Typography
+                            variant="h6"
+                            style={{
+                              fontWeight: "normal",
+                              fontSize: "1em",
+                            }}
+                          >
                             {link.title}
                           </Typography>
                         </Box>
-                        <Box sx={{ ml: "15px", mt: "5px" }}>
+                        <Box sx={{ ml: "10px", mt: "0px" }}>
                           <img
                             src={link.endIcon}
-                            style={{ width: "20px" }}
+                            style={{ width: "9px" }}
                             alt={link.alt}
                           />
                         </Box>
@@ -194,7 +200,7 @@ export const AssetDetails = ({
             >
               <Chip
                 label={asset.status || "Unlisted"}
-                sx={{ backgroundColor: "#374FFF !important" }}
+                sx={{ backgroundColor: "#374FFF !important", textTransform: "none" }}
                 className="dark"
               />
               <Typography sx={{ mx: "10px" }}>.</Typography>
@@ -207,15 +213,15 @@ export const AssetDetails = ({
                   flexDirection: "column",
                   background: "#FFF",
                   borderRadius: "30px",
-                  py: "1em",
                   width: "100%",
                 }}
               >
                 <Paper
                   sx={{
                     display: "flex",
+                    padding: "1.5rem",
                     flexDirection: "row",
-                    justifyContent: "space-between",
+                    justifyContent: "flex-start",
                     alignItems: "center",
                     paddingLeft: "10%",
                     paddingRight: "10%",
@@ -225,8 +231,10 @@ export const AssetDetails = ({
                     sx={{
                       display: "flex",
                       flexDirection: "row",
-                      justifyContent: "space-around",
+                      justifyContent: "flex-start",
                       alignItems: "center",
+                      flex: "0 0 50%",
+                      marginRight: "20px",
                     }}
                   >
                     <AssetOwnerTag asset={asset} />

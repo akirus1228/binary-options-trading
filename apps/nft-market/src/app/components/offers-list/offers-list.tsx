@@ -45,7 +45,7 @@ export const OffersList = ({
     return <></>;
   }
   return (
-    <Container maxWidth="xl" sx={{ mt: "3em" }}>
+    <Container maxWidth="xl" className={style["offerContainer"]}>
       <h2 className={style["title"]}>
         {title || "Offers"} ({!!offers && offers.length})
       </h2>
@@ -53,7 +53,12 @@ export const OffersList = ({
         <PaperTableHead>
           <TableRow>
             {fields.map((field: OffersListFields, index: number) => (
-              <PaperTableCell key={`offer-table-header-${index}`}>{field}</PaperTableCell>
+              <PaperTableCell
+                key={`offer-table-header-${index}`}
+                className={style["offersHead"]}
+              >
+                {field}
+              </PaperTableCell>
             ))}
             <PaperTableCell></PaperTableCell>
           </TableRow>

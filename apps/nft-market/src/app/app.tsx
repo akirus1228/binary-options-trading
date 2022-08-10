@@ -228,7 +228,7 @@ export const App = (): JSX.Element => {
         <Box paddingTop={5} paddingBottom={12} sx={{ height: "100vh" }}>
           <Header />
           <Growl />
-          <Box sx={{ minHeight: "calc(100% - 194px)" }}>
+          <Box sx={{ minHeight: "calc(100% - 194px)" }} className={"mainContent"}>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/borrow" element={<BorrowPage />} />
