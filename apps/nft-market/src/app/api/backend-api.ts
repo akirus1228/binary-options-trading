@@ -47,12 +47,8 @@ import { isDev } from "@fantohm/shared-web3";
 export const WEB3_SIGN_MESSAGE =
   "This application uses this cryptographic signature, verifying that you are the owner of this address.";
 // TODO: use production env to determine correct endpoint
-// export const NFT_MARKETPLACE_API_URL = isDev
-//   ? "https://liqd-nft-lending-test.herokuapp.com/api"
-//   : "https://liqd-nft-lending-production.herokuapp.com/api";
-
 export const NFT_MARKETPLACE_API_URL = isDev
-  ? "http://localhost:3000/api"
+  ? "https://liqd-nft-lending-test.herokuapp.com/api"
   : "https://liqd-nft-lending-production.herokuapp.com/api";
 
 export const doLogin = (address: string): Promise<LoginResponse> => {
