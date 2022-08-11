@@ -17,6 +17,10 @@ export interface BorrowerAssetProps {
 }
 
 export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
+  if (asset && asset.name && asset.name?.search("Munko") > -1) {
+    console.log(asset.name);
+    console.log(asset.thumbUrl || asset.imageUrl);
+  }
   const { chainId } = useWeb3Context();
   // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
@@ -173,10 +177,10 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           ))}
         </Popover>
       </Box>
-      {asset.imageUrl && asset.openseaId && (
+      {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
         <Link href={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
-            url={asset.imageUrl}
+            url={asset.thumbUrl || asset.imageUrl || ""}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}

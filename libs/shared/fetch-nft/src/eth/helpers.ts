@@ -131,20 +131,20 @@ export const assetToCollectible = async (
       mediaType = "GIF";
       // frame url for the gif is computed later in the collectibles page
       frameUrl = null;
-      gifUrl = imageUrls.find((url) => url?.endsWith(".gif"))!;
+      gifUrl = imageUrls.find((url) => url?.endsWith(".gif"));
     } else if (isAssetThreeDAndIncludesImage(asset)) {
       mediaType = "THREE_D";
       threeDUrl = [animation_url, animation_original_url, ...imageUrls].find(
         (url) => url && SUPPORTED_3D_EXTENSIONS.some((ext) => url.endsWith(ext))
-      )!;
+      );
       frameUrl = imageUrls.find(
         (url) => url && NON_IMAGE_EXTENSIONS.every((ext) => !url.endsWith(ext))
-      )!;
+      );
       // image urls may not end in known extensions
       // just because the don't end with the NON_IMAGE_EXTENSIONS above does not mean they are images
       // they may be gifs
       // example: https://lh3.googleusercontent.com/rOopRU-wH9mqMurfvJ2INLIGBKTtF8BN_XC7KZxTh8PPHt5STSNJ-i8EQit8ZTwE3Mi8LK4on_4YazdC3Cl-HdaxbnKJ23P8kocvJHQ
-      const res = await fetch(frameUrl, { method: "HEAD" });
+      const res = await fetch(frameUrl || "", { method: "HEAD" });
       const hasGifFrame = res.headers.get("Content-Type")?.includes("gif");
       if (hasGifFrame) {
         gifUrl = frameUrl;
@@ -173,11 +173,11 @@ export const assetToCollectible = async (
 
       videoUrl = [animation_url, animation_original_url, ...imageUrls].find(
         (url) => url && SUPPORTED_VIDEO_EXTENSIONS.some((ext) => url.endsWith(ext))
-      )!;
+      );
     } else {
       mediaType = "IMAGE";
-      frameUrl = imageUrls.find((url) => !!url)!;
-      const res = await fetch(frameUrl, { method: "HEAD" });
+      frameUrl = imageUrls.find((url) => !!url);
+      const res = await fetch(frameUrl || "", { method: "HEAD" });
       const isGif = res.headers.get("Content-Type")?.includes("gif");
       const isVideo = res.headers.get("Content-Type")?.includes("video");
       if (isGif) {
@@ -188,15 +188,15 @@ export const assetToCollectible = async (
       } else if (isVideo) {
         mediaType = "VIDEO";
         frameUrl = null;
-        videoUrl = imageUrls.find((url) => !!url)!;
+        videoUrl = imageUrls.find((url) => !!url);
       } else {
-        imageUrl = imageUrls.find((url) => !!url)!;
+        imageUrl = imageUrls.find((url) => !!url);
       }
     }
   } catch (e) {
     console.error("Error processing collectible", e);
     mediaType = "IMAGE";
-    frameUrl = imageUrls.find((url) => !!url)!;
+    frameUrl = imageUrls.find((url) => !!url);
     imageUrl = frameUrl;
   }
 
@@ -207,11 +207,12 @@ export const assetToCollectible = async (
     name: (asset.name || asset?.asset_contract?.name) ?? "",
     description: asset.description,
     mediaType,
-    frameUrl,
-    imageUrl,
-    videoUrl,
-    threeDUrl,
-    gifUrl,
+    frameUrl: frameUrl || "",
+    imageUrl: imageUrl || "",
+    videoUrl: videoUrl || "",
+    threeDUrl: threeDUrl || "",
+    gifUrl: gifUrl || "",
+    thumbUrl: asset.image_thumbnail_url || "",
     isOwned: true,
     owner: { address: asset.owner?.address || "" },
     dateCreated: null,
