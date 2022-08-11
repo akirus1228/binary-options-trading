@@ -219,12 +219,10 @@ export const AssetDetails = ({
                 <Paper
                   sx={{
                     display: "flex",
-                    padding: "1.5rem",
+                    padding: "1.5em",
                     flexDirection: "row",
                     justifyContent: "flex-start",
                     alignItems: "center",
-                    paddingLeft: "10%",
-                    paddingRight: "10%",
                   }}
                 >
                   <Box

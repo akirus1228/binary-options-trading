@@ -4,3 +4,11 @@
       margin-bottom: 0px;
     }
   }
+
+.tabElem {
+  &[class*=selected] {
+    div {
+    color:#fff !important;
+  }
+}
+}

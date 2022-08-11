@@ -439,7 +439,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   return (
-    <Box className="flex fc" sx={{ padding: "1em" }}>
+    <Box className={`flex fc ${style["makeOfferForm"]}`} sx={{ padding: "1em" }}>
       <Box className="flex fc">
         <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
           How much would you like to {props.type || "borrow"}?
@@ -480,7 +480,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
                 disableUnderline: true,
               }}
             />
-            <Typography sx={{ color: "#aaaaaa" }}>
+            <Typography className={style["amountField"]}>
               {!!currency && formatCurrency(Number(amount) * currency?.lastPrice, 2)}
             </Typography>
           </Box>
@@ -518,9 +518,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       <Box className="flex fc" sx={{ mt: "1em", mb: "2em" }}>
         <Box className="flex fj-sb" sx={{ color: "#aaaaaa", mb: "0.5em" }}>
           <Typography>Set repayment APR</Typography>
-          <Typography sx={{ fontSize: "smaller", color: "#000" }}>
-            Repayment Amount:
-          </Typography>
+          <Typography className={style["inputHelper"]}>Repayment Amount:</Typography>
         </Box>
         <Box className={`flex fr ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>APR</Box>
@@ -537,13 +535,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               />
             </Box>
             <Box
-              className="flex ai-c"
+              className={`flex ai-c ${style["amountField"]}`}
               sx={{
                 textOverflow: "ellipsis",
                 overflow: "hidden",
                 color: "#aaaaaa",
                 width: "150px",
                 paddingLeft: "10px",
+                marginRight: "auto",
               }}
             >
               {formatCurrency(repaymentAmount * currency?.lastPrice, 2)}

@@ -185,6 +185,12 @@ export const LenderAssetFilter = ({
   const scaleValues = (valueArray: any) => {
     return [scale(valueArray[0]), scale(valueArray[1])];
   };
+  const scaleValuesMax = (valueArray: any) => {
+    return scale(valueArray[1]);
+  };
+  const scaleValuesMin = (valueArray: any) => {
+    return scale(valueArray[0]);
+  };
   const scale = (value: any) => {
     const previousMarkIndex = Math.floor(value / 25);
     const previousMark = followersMarks[previousMarkIndex];
@@ -274,7 +280,15 @@ export const LenderAssetFilter = ({
           }}
         />
         <Box className="flex fj-sb" sx={{ paddingTop: "10px" }}>
-          <Typography>Values: {JSON.stringify(scaleValues(priceRange))} USD</Typography>
+          <Typography sx={{ display: "none" }}>
+            Values: {JSON.stringify(scaleValues(priceRange))} USD
+          </Typography>
+          <Typography className={style["minValueField"]}>
+            <span>{JSON.stringify(scaleValuesMin(priceRange))} USD</span>
+          </Typography>
+          <Typography className={style["maxValueField"]}>
+            <span>{JSON.stringify(scaleValuesMax(priceRange))} USD</span>
+          </Typography>
         </Box>
       </Box>
       <Box
