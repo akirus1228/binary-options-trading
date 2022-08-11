@@ -16,14 +16,6 @@ export const Footer = (): JSX.Element => {
       href: "/help",
     },
     {
-      title: "Cookies",
-      href: "/cookies",
-    },
-    {
-      title: "Disclaimer",
-      href: "/disclaimer",
-    },
-    {
       title: "Terms",
       href: "/term",
     },
