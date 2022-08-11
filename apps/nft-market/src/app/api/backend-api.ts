@@ -47,8 +47,12 @@ import { isDev } from "@fantohm/shared-web3";
 export const WEB3_SIGN_MESSAGE =
   "This application uses this cryptographic signature, verifying that you are the owner of this address.";
 // TODO: use production env to determine correct endpoint
+// export const NFT_MARKETPLACE_API_URL = isDev
+//   ? "https://liqd-nft-lending-test.herokuapp.com/api"
+//   : "https://liqd-nft-lending-production.herokuapp.com/api";
+
 export const NFT_MARKETPLACE_API_URL = isDev
-  ? "https://liqd-nft-lending-test.herokuapp.com/api"
+  ? "http://localhost:3000/api"
   : "https://liqd-nft-lending-production.herokuapp.com/api";
 
 export const doLogin = (address: string): Promise<LoginResponse> => {
@@ -96,25 +100,34 @@ export const getListingByOpenseaIds = (
     });
 };
 
-export const createListing = (
+export const createListing = async (
   signature: string,
   asset: Asset,
   term: Terms
-): Promise<Listing | boolean> => {
+): Promise<Listing | string> => {
   const url = `${NFT_MARKETPLACE_API_URL}/asset-listing`;
   const listingParams = listingToCreateListingRequest(asset, term);
-  // post
+  // try {
+  //   const resp = await axios.post(url, listingParams, {
+  //     headers: {
+  //       Authorization: `Bearer ${signature}`,
+  //     },
+  //   });
+  //   return createListingResponseToListing(resp.data);
+  // } catch (error: any) {
+  //   throw error.response.data.error;
+  // }
   return axios
     .post(url, listingParams, {
       headers: {
         Authorization: `Bearer ${signature}`,
       },
     })
-    .then((resp: AxiosResponse<CreateListingResponse>) => {
+    .then(async (resp: AxiosResponse<CreateListingResponse>) => {
       return createListingResponseToListing(resp.data);
     })
-    .catch((err: AxiosResponse) => {
-      return false;
+    .catch((error) => {
+      return error.response.data.message;
     });
 };
 
