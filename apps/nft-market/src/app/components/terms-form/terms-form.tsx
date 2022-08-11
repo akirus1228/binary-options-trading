@@ -267,25 +267,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       dispatch
     );
     if (term.signature) {
-      // dispatch(createListing({ term, asset })).then(
-      //   () => {
-      //     dispatch(addAlert({ message: "Listing created" }));
-      //     props.onClose(true);
-      //     setPending(false);
-      //   },
-      //   (e) => {
-      //     console.log(e);
-      //     dispatch(
-      //       addAlert({
-      //         severity: "error",
-      //         title: "Failed to create listing",
-      //         message: e as string,
-      //       })
-      //     );
-      //     props.onClose(true);
-      //     setPending(false);
-      //   }
-      // );
       try {
         await dispatch(createListing({ term, asset })).unwrap();
         await dispatch(addAlert({ message: "Listing created" }));
