@@ -29,6 +29,7 @@ import BlogPage from "./pages/blog/blog-page";
 import BlogPostPage from "./pages/blog/blog-post-page";
 import { DebugHelper } from "@fantohm/shared-helpers";
 import PrivacyPage from "./components/Privacy/privacy";
+import TermsPage from "./components/Terms-Condition/terms";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -236,6 +237,7 @@ export const App = (): JSX.Element => {
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogPostPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/term" element={<TermsPage />} />
               <Route
                 path="/th"
                 element={
