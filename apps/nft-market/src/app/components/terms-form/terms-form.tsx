@@ -46,6 +46,7 @@ export interface TermsFormProps {
   type: "offer" | "borrow";
   asset: Asset;
   listing?: Listing;
+  offerTerm?: Terms | null;
   onClose: (value: boolean) => void;
 }
 
@@ -62,6 +63,7 @@ export const termTypes: TermTypes = {
 export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { address, chainId, provider } = useWeb3Context();
+  const currentTerm = props?.offerTerm ? props?.offerTerm : props?.listing?.term;
   // update term backend api call
   const [
     updateTerms,
@@ -89,22 +91,17 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [pending, setPending] = useState(false);
   // primary term variables
   const [duration, setDuration] = useState(
-    props?.listing?.term.duration != null
-      ? calcDuration(
-          props?.listing?.term.duration,
-          calcDurationType(props?.listing?.term.duration)
-        )
+    currentTerm?.duration != null
+      ? calcDuration(currentTerm?.duration, calcDurationType(currentTerm?.duration))
       : "30"
   );
   const [durationType, setDurationType] = useState(
-    props?.listing?.term.duration
-      ? calcDurationType(props?.listing?.term.duration)
-      : "days"
+    currentTerm?.duration ? calcDurationType(currentTerm?.duration) : "days"
   );
   const [apr, setApr] = useState(
-    props?.listing?.term.apr != null ? props?.listing?.term.apr.toString() : "25"
+    currentTerm?.apr != null ? currentTerm?.apr.toString() : "25"
   );
-  const [amount, setAmount] = useState(props?.listing?.term.amount.toString() || "1");
+  const [amount, setAmount] = useState(currentTerm?.amount.toString() || "1");
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
   const [selectedCurrency, setSelectedCurrency] = useState(
     props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "wETH"
@@ -299,7 +296,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     }
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     const term: Terms = {
-      ...props?.listing?.term,
+      ...currentTerm,
       amount: Number(amount),
       apr: Number(apr),
       duration: termTypes[durationType] * Number(duration),
@@ -601,7 +598,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             onClick={() => setConfirmOpen(true)}
             disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
           >
-            Make Offer
+            {props?.offerTerm ? "Edit" : "Make"} Offer
           </Button>
         )}
       {!isOwner &&
@@ -636,7 +633,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         interest={repaymentAmount}
         duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
         setOpen={setConfirmOpen}
-        onConfirm={handleMakeOffer}
+        onConfirm={props?.offerTerm ? handleUpdateTerms : handleMakeOffer}
       ></ConfirmDialog>
     </Box>
   );

@@ -237,6 +237,9 @@ const globalTheme: ThemeOptions = {
           padding: "1em 3em",
           fontSize: "1em",
           borderWidth: "1px",
+          "&.slim": {
+            padding: "0.25em 2em",
+          },
         },
         contained: {
           borderRadius: "36px",
