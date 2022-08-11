@@ -9,6 +9,10 @@ export interface PreviewImageProps {
 }
 
 export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
+  // if (props.name && props.name?.search("Munko") > -1) {
+  //   console.log(props.name);
+  //   console.log(props.url);
+  // }
   return (
     <Box
       sx={{ height: "300px", width: "300px", borderRadius: "28px", overflow: "hidden" }}

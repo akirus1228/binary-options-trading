@@ -104,6 +104,11 @@ export const BorrowPage = (): JSX.Element => {
       : myAssets;
   const isWalletConnected = address && authSignature;
 
+  const fetchMoreData = () => {
+    console.log("fetching more os data");
+    setOsQuery({ ...osQuery, cursor: "LXBrPTU5NzYwOTQx" });
+  };
+
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
@@ -144,7 +149,11 @@ export const BorrowPage = (): JSX.Element => {
                     </Box>
                   )
                 )}
-                <AssetList assets={assetsToShow} type="borrow" />
+                <AssetList
+                  assets={assetsToShow}
+                  type="borrow"
+                  fetchData={fetchMoreData}
+                />
               </>
             )}
           </Grid>

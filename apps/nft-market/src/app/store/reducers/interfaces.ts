@@ -93,6 +93,7 @@ export type OpenseaAssetQueryParam = {
   asset_contract_address?: string;
   asset_contract_addresses?: string;
   limit?: number;
+  cursor?: string;
 };
 
 export interface OpenseaAssetQueryAsyncThunk {
