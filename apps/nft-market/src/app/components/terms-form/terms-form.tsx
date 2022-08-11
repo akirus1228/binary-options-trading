@@ -248,7 +248,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     // const message =
     //   "Please sign this transaction to post your NFT as collateral. This won't incur a gas fee.";
-    console.log("duration: ", duration);
     const term: Terms = {
       amount: Number(amount),
       apr: Number(apr),
@@ -268,10 +267,20 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       dispatch
     );
     if (term.signature) {
-      dispatch(createListing({ term, asset })).then(() => {
-        dispatch(addAlert({ message: "Listing created" }));
+      try {
+        await dispatch(createListing({ term, asset })).unwrap();
+        await dispatch(addAlert({ message: "Listing created" }));
+      } catch (e) {
+        await dispatch(
+          addAlert({
+            severity: "error",
+            title: "Failed to create listing",
+            message: e as string,
+          })
+        );
+      } finally {
         props.onClose(true);
-      });
+      }
     } else {
       setPending(false);
     }

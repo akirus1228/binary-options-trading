@@ -106,6 +106,7 @@ const appSlice = createSlice({
         message: action.payload.message || "",
         severity: action.payload.severity || "success",
         startSeconds: Date.now(),
+        title: action.payload.title || "",
         open: true,
       } as GrowlNotification;
       state.growlNotifications = [...state.growlNotifications, alert];
