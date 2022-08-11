@@ -2,7 +2,6 @@ import { Box, Chip, IconButton, Paper, Popover, Typography, Link } from "@mui/ma
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 
 import style from "./borrower-asset.module.scss";
-import { useWalletAsset } from "../../../hooks/use-wallet-asset";
 import PreviewImage from "../preview-image/preview-image";
 import { Asset, AssetStatus } from "../../../types/backend-types";
 import { useMemo, useState } from "react";
@@ -17,10 +16,6 @@ export interface BorrowerAssetProps {
 }
 
 export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
-  if (asset && asset.name && asset.name?.search("Munko") > -1) {
-    console.log(asset.name);
-    console.log(asset.thumbUrl || asset.imageUrl);
-  }
   const { chainId } = useWeb3Context();
   // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
