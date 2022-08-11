@@ -323,7 +323,7 @@ export const UserMenu = (): JSX.Element => {
                       backgroundColor: "#e6edfd",
                     }}
                   >
-                    Manage Allownace
+                    Manage Allowance
                   </Button>
                 </Box>
               </Paper>

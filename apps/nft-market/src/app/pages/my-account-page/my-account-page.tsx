@@ -10,6 +10,7 @@ import MyAccountOffers from "./my-account-offers/my-account-offers";
 import MyAccountAssets from "./my-account-assets/my-account-assets";
 import MyAccountActivity from "./my-account-activity/my-account-activity";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import style from "./my-account-page.module.scss";
 
 export function shorten(str: string) {
   if (str.length < 10) return str;
@@ -114,6 +115,7 @@ export const MyAccountPage = (): JSX.Element => {
                 }
                 {...a11yProps(tabIndex)}
                 key={`tab-${tabIndex}`}
+                className={style["tabElem"]}
               />
             ))}
         </Tabs>

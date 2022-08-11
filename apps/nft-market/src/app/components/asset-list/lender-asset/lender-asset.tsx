@@ -169,16 +169,19 @@ export function LenderAsset({ asset }: LenderAssetProps) {
                 <Box sx={{ display: "flex" }}>
                   <img
                     src={link.startIcon}
-                    style={{ width: "24px", marginRight: "15px" }}
+                    style={{ width: "20px", marginRight: "10px" }}
                     alt={link.alt}
                   />
-                  <Typography variant="h6" style={{ fontWeight: "normal" }}>
+                  <Typography
+                    variant="h6"
+                    style={{ fontWeight: "normal", fontSize: "1em" }}
+                  >
                     {link.title}
                   </Typography>
                 </Box>
                 {link?.endIcon && (
-                  <Box sx={{ ml: "15px", mt: "5px" }}>
-                    <img src={link.endIcon} style={{ width: "15px" }} alt={link.alt} />
+                  <Box sx={{ ml: "7px", mt: "2px" }}>
+                    <img src={link.endIcon} style={{ width: "9px" }} alt={link.alt} />
                   </Box>
                 )}
               </Box>
