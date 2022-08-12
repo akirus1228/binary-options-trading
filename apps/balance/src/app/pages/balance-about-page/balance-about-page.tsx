@@ -263,7 +263,7 @@ export const BalanceAboutPage = (): JSX.Element => {
       <BalanceAboutTile
         icon={AboutNFTMarketplace}
         itemid="marketplace"
-        title="NFT Marketplace"
+        title="LiqdNFTs"
         text="Liqd is an non-fungible token (NFT) marketplace built to enable the lending and borrowing of blue chip NFTs. The platform enables individuals who hold blue chip NFT assets to unlock liquidity by borrowing against the value of their asset(s).
         In turn, Liqd unlocks a peer-to-peer lending opportunity for crypto holding individuals to lend capital for a set interest rate, backed by the value of the underlying NFT asset."
       />

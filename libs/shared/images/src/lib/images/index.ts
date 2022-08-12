@@ -45,7 +45,7 @@ import AboutLiquidity from "./about_page/About_Liquidity.webp";
 import AboutFinancialNFT from "./about_page/About_Financial_NFT.webp";
 import AboutUSDB from "./about_page/About_USDB.webp";
 import AboutUSDBBank from "./about_page/About_USDB_Bank.webp";
-import AboutNFTMarketplace from "./about_page/About_NFT_Marketplace.webp";
+import AboutNFTMarketplace from "./about_page/About_NFT_Marketplace.jpg";
 import AboutBalanceEcosystem from "./about_page/About_Balance_ecosystem.webp";
 import BeetsIconDark from "./partners/BeetsDark.png";
 import CIconDark from "./partners/CDark.png";
