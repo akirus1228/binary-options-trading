@@ -129,7 +129,6 @@ export const BorrowPage = (): JSX.Element => {
   const isWalletConnected = address && authSignature;
 
   const fetchMoreData = () => {
-    console.log("fetching more os data");
     setOsQuery({ ...osQuery, cursor: osNext });
   };
 
