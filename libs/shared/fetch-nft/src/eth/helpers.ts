@@ -212,7 +212,7 @@ export const assetToCollectible = async (
     videoUrl: videoUrl || "",
     threeDUrl: threeDUrl || "",
     gifUrl: gifUrl || "",
-    thumbUrl: asset.image_thumbnail_url || "",
+    thumbUrl: asset.image_thumbnail_url ?? "",
     isOwned: true,
     owner: { address: asset.owner?.address || "" },
     dateCreated: null,

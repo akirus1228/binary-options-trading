@@ -1,4 +1,4 @@
-import { Box, SxProps, Theme } from "@mui/material";
+import { Box, CircularProgress, SxProps, Theme } from "@mui/material";
 // import style from "./asset-list.module.scss";
 import BorrowerAsset from "./borrower-asset/borrower-asset";
 import { Asset } from "../../types/backend-types";
@@ -27,7 +27,12 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
         dataLength={props.assets.length} //This is important field to render the next data
         next={props.fetchData || defaultFn}
         hasMore={props.hasMore || false}
-        loader={<h4>Loading...</h4>}
+        loader={
+          <h4>
+            Loading
+            <CircularProgress size={16} sx={{ ml: 1 }} />
+          </h4>
+        }
         className="flex fr fw"
         endMessage={
           <p style={{ textAlign: "center" }}>

@@ -1,6 +1,6 @@
 import { useWeb3Context } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetListingsQuery, useGetLoansQuery } from "../../api/backend-api";
 import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
@@ -25,11 +25,12 @@ export const BorrowPage = (): JSX.Element => {
   const { user } = useSelector((state: RootState) => state.backend);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
-    limit: 3,
+    limit: 9,
     owner: user.address,
   });
 
   const [osNext, setOsNext] = useState("");
+  const [hasNext, setHasNext] = useState(true);
 
   // query to use on frontend to filter cached results and ultimately display
   const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
@@ -78,7 +79,13 @@ export const BorrowPage = (): JSX.Element => {
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
-    setOsNext(osResponse?.next || "");
+    console.log(osResponse);
+    if (osResponse && osResponse.next) {
+      setOsNext(osResponse?.next || "");
+    } else if (osResponse && osResponse.next === null) {
+      console.log("hasNext false");
+      setHasNext(false);
+    }
   }, [osResponse]);
 
   useEffect(() => {
@@ -101,19 +108,23 @@ export const BorrowPage = (): JSX.Element => {
       ?.map((loan) => loan.assetListing.asset)
       .filter((asset) => asset.status === AssetStatus.Locked) || [];
 
-  const assetsToShow: Asset[] = (
-    feQuery.status === AssetStatus.Locked && loans
-      ? assetsInEscrow
-      : feQuery.status === "All"
-      ? [
-          ...myAssets,
-          ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
-        ]
-      : myAssets
-  ).sort((assetA: Asset, assetB: Asset) =>
-    // always sort escrow to top to avoid infinite scroll injecting in the middle
-    assetA.status === AssetStatus.Locked && assetB.status !== AssetStatus.Locked ? -1 : 1
-  );
+  const assetsToShow: Asset[] = useMemo(() => {
+    return (
+      feQuery.status === AssetStatus.Locked && loans
+        ? assetsInEscrow
+        : feQuery.status === "All"
+        ? [
+            ...myAssets,
+            ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
+          ]
+        : myAssets
+    ).sort((assetA: Asset, assetB: Asset) =>
+      // always sort escrow to top to avoid infinite scroll injecting in the middle
+      assetA.status === AssetStatus.Locked && assetB.status !== AssetStatus.Locked
+        ? -1
+        : 1
+    );
+  }, [assetsInEscrow, feQuery.status, myAssets]);
 
   const isWalletConnected = address && authSignature;
 
@@ -166,7 +177,7 @@ export const BorrowPage = (): JSX.Element => {
                   assets={assetsToShow}
                   type="borrow"
                   fetchData={fetchMoreData}
-                  hasMore={true}
+                  hasMore={hasNext}
                 />
               </>
             )}
