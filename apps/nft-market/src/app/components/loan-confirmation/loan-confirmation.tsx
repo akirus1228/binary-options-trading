@@ -339,7 +339,12 @@ export const LoanConfirmation = ({
       >
         Lend {currency?.symbol}
       </Button>
-      <Dialog onClose={handleClose} open={open} fullScreen={isSmall}>
+      <Dialog
+        onClose={handleClose}
+        open={open}
+        fullScreen={isSmall}
+        className={style["dialogContainer"]}
+      >
         <Box className="flex fr fj-c">
           <h1 style={{ margin: "0 0 0.5em 0" }}>Loan Details</h1>
         </Box>
@@ -355,7 +360,9 @@ export const LoanConfirmation = ({
           <Paper>
             <Box className="flex fc fj-sb">
               <Box className="flex fc" sx={{ mr: "1em" }}>
-                <span className="strong">You are about to lend</span>
+                <span className="strong" style={{ fontSize: "0.875em", color: "#aaa" }}>
+                  You are about to lend
+                </span>
                 <Box className="flex fr fj-sb ai-c">
                   <span className="flex fr ai-c">
                     <img
@@ -396,7 +403,10 @@ export const LoanConfirmation = ({
                   </span>
                   <span className="subtle">~{formatCurrency(platformFeeAmt, 2)}</span>
                 </Box>
-                <span className="strong" style={{ marginTop: "1em" }}>
+                <span
+                  className="strong"
+                  style={{ marginTop: "1em", fontSize: "0.875em", color: "#aaa" }}
+                >
                   Total
                 </span>
                 <Box className="flex fr fj-sb ai-c">
@@ -421,7 +431,9 @@ export const LoanConfirmation = ({
                   className="flex fc"
                   sx={{ borderTop: "1px solid lightgrey", mt: "1em", pt: "1em" }}
                 >
-                  <span className="strong">My wallet balance</span>
+                  <span className="strong" style={{ fontSize: "0.875em", color: "#aaa" }}>
+                    My wallet balance
+                  </span>
                   <span className="flex fr ai-c">
                     <img
                       src={currency?.icon}
@@ -446,7 +458,9 @@ export const LoanConfirmation = ({
           </Paper>
           <Paper sx={{ my: "1em" }}>
             <Box className="flex fc" sx={{ mr: "1em" }}>
-              <span className="strong">You will recieve repayment of</span>
+              <span className="strong" style={{ fontSize: "0.875em", color: "#aaa" }}>
+                You will recieve repayment of
+              </span>
               <Box className="flex fr fj-sb ai-c">
                 <span className="flex fr ai-c">
                   <img
@@ -469,14 +483,18 @@ export const LoanConfirmation = ({
           </Paper>
 
           <Paper>
-            <span className="strong">
-              If the loan is not repaid by {estRepaymentDate.toLocaleString()} you are
-              entitled to:
+            <span className="strong" style={{ color: "#aaa" }}>
+              If the loan is not repaid by
+              <strong className={style["repayDate"]}>
+                {estRepaymentDate.toLocaleString()}
+              </strong>
+              you are entitled to:
             </span>
             <Box className="flex fc" sx={{ mt: "1em" }}>
               <Box className="flex fr ai-c">
                 <Link
                   className="flex fr ai-c"
+                  style={{ color: "#374FFF" }}
                   to={`/asset/${listing.asset.assetContractAddress}/${listing.asset.tokenId}`}
                 >
                   <Avatar src={listing.asset.imageUrl || ""} sx={{ mr: "1em" }} />

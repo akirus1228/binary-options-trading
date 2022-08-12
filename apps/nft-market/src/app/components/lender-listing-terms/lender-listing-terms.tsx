@@ -75,24 +75,25 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                 alt={currency?.symbol}
                 style={{ width: "20px", marginRight: "7px" }}
               />
-              <Typography className={`${style["data"]} ${style["primary"]}`}>
-                {props.listing.term.amount.toFixed(4)}
-              </Typography>
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (props.listing.term.amount * currency?.lastPrice).toLocaleString(
+                    "en-US",
+                    {
+                      style: "currency",
+                      currency: "USD",
+                    }
+                  )
+                }
+              >
+                <Typography className={`${style["data"]} ${style["primary"]}`}>
+                  {props.listing.term.amount.toFixed(4)}
+                </Typography>
+              </Tooltip>
             </Box>
-            <span className={`${style["data"]} ${style["secondary"]}`}>
-              (
-              {!!currency &&
-                currency?.lastPrice &&
-                "~" &&
-                (props.listing.term.amount * currency?.lastPrice).toLocaleString(
-                  "en-US",
-                  {
-                    style: "currency",
-                    currency: "USD",
-                  }
-                )}
-              {currency?.lastPrice === 0 && "Unable to load estimated USD value"})
-            </span>
           </Box>
           <Box className="flex fc" sx={{ marginRight: "80px" }}>
             <Typography
@@ -107,21 +108,22 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                 alt={currency?.symbol}
                 style={{ width: "20px", marginRight: "7px" }}
               />
-              <Typography className={`${style["data"]}`}>
-                {repaymentAmount.toFixed(4)}
-              </Typography>
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (repaymentAmount * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography className={`${style["data"]}`}>
+                  {repaymentAmount.toFixed(4)}
+                </Typography>
+              </Tooltip>
             </Box>
-            <span className="subtle">
-              (
-              {!!currency &&
-                currency?.lastPrice &&
-                "~" &&
-                (repaymentAmount * currency?.lastPrice).toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              )
-            </span>
           </Box>
           <Box className="flex fc" sx={{ marginRight: "80px" }}>
             <Typography
