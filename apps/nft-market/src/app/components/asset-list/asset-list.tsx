@@ -4,6 +4,7 @@ import BorrowerAsset from "./borrower-asset/borrower-asset";
 import { Asset } from "../../types/backend-types";
 import LenderAsset from "./lender-asset/lender-asset";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useCallback } from "react";
 
 export interface AssetListProps {
   assets: Asset[];
@@ -16,9 +17,9 @@ export interface AssetListProps {
 
 export const AssetList = (props: AssetListProps): JSX.Element => {
   const AssetThumb = props.type === "lend" ? LenderAsset : BorrowerAsset;
-  const defaultFn = () => {
+  const defaultFn = useCallback(() => {
     console.log("checking for more data");
-  };
+  }, []);
 
   return (
     <Box className="flex">
