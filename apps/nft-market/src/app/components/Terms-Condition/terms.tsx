@@ -1,12 +1,15 @@
 import { Box } from "@mui/material";
-import "./terms.scss";
+import style from "./terms.module.scss";
 
 /* eslint-disable-next-line */
 export interface TermsProps {}
 
 export const TermsPage = (props: TermsProps): JSX.Element => {
   return (
-    <Box sx={{ width: "100%", padding: "0 20px", mt: { xs: "50px", md: "100px" } }}>
+    <Box
+      sx={{ width: "100%", padding: "0 20px", mt: { xs: "50px", md: "100px" } }}
+      className={style["contentDiv"]}
+    >
       <h1 style={{ fontWeight: "bold" }}>Terms and Conditions</h1>
       <h3>
         The following Terms and Conditions ("Terms") govern your ("you") purchase of

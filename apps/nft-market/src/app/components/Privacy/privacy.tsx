@@ -1,12 +1,15 @@
 import { Box } from "@mui/material";
-import "./privacy.scss";
+import style from "./privacy.module.scss";
 
 /* eslint-disable-next-line */
 export interface PrivacyProps {}
 
 export const PrivacyPage = (props: PrivacyProps): JSX.Element => {
   return (
-    <Box sx={{ width: "100%", padding: "0 20px", mt: { xs: "50px", md: "100px" } }}>
+    <Box
+      sx={{ width: "100%", padding: "0 20px", mt: { xs: "50px", md: "100px" } }}
+      className={style["contentDiv"]}
+    >
       <h1 style={{ fontWeight: "bold" }}>PRIVACY NOTICE</h1>
       <h3>Last updated June 28, 2022</h3>
       <h3>
