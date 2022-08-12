@@ -22,6 +22,7 @@ import LoanConfirmation from "../loan-confirmation/loan-confirmation";
 import { useWeb3Context } from "@fantohm/shared-web3";
 import OfferConfirmDialog from "../offer-confirm-modal/offer-confirm-dialog";
 import { addAlert } from "../../store/reducers/app-slice";
+import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
 
 export interface LenderListingTermsProps {
   offers: Offer[];
@@ -33,6 +34,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
   const dispatch: AppDispatch = useDispatch();
   const { address } = useWeb3Context();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [removeOfferConfirmDialogOpen, setRemoveOfferConfirmDialogOpen] = useState(false);
   const [deleteOffer] = useDeleteOfferMutation();
   // logged in user
   const { authSignature } = useSelector((state: RootState) => state.backend);
@@ -109,11 +111,16 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
           offerTerm={myOffer.term}
         />
       )}
+      <RemoveOfferConfirmDialog
+        open={removeOfferConfirmDialogOpen}
+        setOpen={setRemoveOfferConfirmDialogOpen}
+        onRemove={handleDeleteOffer}
+      />
       <OfferConfirmDialog
         open={confirmOpen}
         setOpen={setConfirmOpen}
         onEdit={onEditOfferDialogOpen}
-        onRemove={handleDeleteOffer}
+        onRemove={() => setRemoveOfferConfirmDialogOpen(true)}
       ></OfferConfirmDialog>
       <Paper>
         <Box className="flex fr fw" sx={{ padding: "1.5em 1.5em 1em 1.5em" }}>
