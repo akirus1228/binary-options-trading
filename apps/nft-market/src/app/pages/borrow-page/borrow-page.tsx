@@ -77,8 +77,8 @@ export const BorrowPage = (): JSX.Element => {
       openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
     };
     setBeQuery(newQuery);
+    // store the next page cursor ID
     setOsNext(osResponse?.next || "");
-    console.log(`osNext set to ${osResponse?.next}`);
   }, [osResponse]);
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export const BorrowPage = (): JSX.Element => {
       ?.map((loan) => loan.assetListing.asset)
       .filter((asset) => asset.status === AssetStatus.Locked) || [];
 
-  const assetsToShow: Asset[] =
+  const assetsToShow: Asset[] = (
     feQuery.status === AssetStatus.Locked && loans
       ? assetsInEscrow
       : feQuery.status === "All"
@@ -109,7 +109,11 @@ export const BorrowPage = (): JSX.Element => {
           ...myAssets,
           ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
         ]
-      : myAssets;
+      : myAssets
+  ).sort((assetA: Asset, assetB: Asset) =>
+    // always sort escrow to top to avoid infinite scroll injecting in the middle
+    assetA.status === AssetStatus.Locked && assetB.status !== AssetStatus.Locked ? -1 : 1
+  );
 
   const isWalletConnected = address && authSignature;
 
