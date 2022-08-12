@@ -37,6 +37,7 @@ import { selectCurrencyByAddress } from "../../store/selectors/currency-selector
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import { addAlert } from "../../store/reducers/app-slice";
 import MakeOffer from "../make-offer/make-offer";
+import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -61,7 +62,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     dispatch(loadCurrencyFromAddress(offer.term.currencyAddress));
   }, [offer]);
 
-  // createloan backend api call
+  // create loan backend api call
   const [createLoan, { data: loanData, isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
@@ -92,14 +93,15 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   }, [user]);
 
   // update offer dialog
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [makeOfferDialogOpen, setMakeOfferDialogOpen] = useState(false);
+  const [removeOfferConfirmDialogOpen, setRemoveOfferConfirmDialogOpen] = useState(false);
 
   const handleUpdateOffer = () => {
-    setDialogOpen(true);
+    setMakeOfferDialogOpen(true);
   };
 
-  const onDialogClose = (accepted: boolean) => {
-    setDialogOpen(false);
+  const onDialogClose = () => {
+    setMakeOfferDialogOpen(false);
   };
 
   useEffect(() => {
@@ -377,10 +379,15 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     <>
       <MakeOffer
         onClose={onDialogClose}
-        open={dialogOpen}
+        open={makeOfferDialogOpen}
         listing={offer?.assetListing}
         isEdit={true}
         offerTerm={offer?.term}
+      />
+      <RemoveOfferConfirmDialog
+        open={removeOfferConfirmDialogOpen}
+        setOpen={setRemoveOfferConfirmDialogOpen}
+        onRemove={handleDeleteOffer}
       />
       <PaperTableRow className={style["row"]}>
         {fields?.map((field: OffersListFields, index: number) => (
@@ -448,7 +455,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                   variant="outlined"
                   className="offer slim"
                   sx={{ my: "10px", width: "100px" }}
-                  onClick={handleDeleteOffer}
+                  onClick={() => setRemoveOfferConfirmDialogOpen(true)}
                 >
                   Remove
                 </Button>
