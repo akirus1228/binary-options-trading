@@ -86,6 +86,11 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     return user.address.toLowerCase() === asset?.owner?.address.toLowerCase();
   }, [asset, user]);
 
+  const isMyOffer = useMemo(() => {
+    if (!user.address) return false;
+    return user.address.toLowerCase() === offer?.lender?.address.toLowerCase();
+  }, [user]);
+
   // update offer dialog
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -429,7 +434,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 }}
               ></Chip>
             )}
-            {!isOwner && offer.status === OfferStatus.Ready && (
+            {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
               <Box>
                 <Button
                   variant="contained"
