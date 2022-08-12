@@ -1,29 +1,33 @@
-import { Button, Dialog } from "@mui/material";
+import { Button, Dialog, Typography } from "@mui/material";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Dispatch, SetStateAction } from "react";
+import DialogContent from "@material-ui/core/DialogContent";
 
-export type OfferConfirmDialogProps = {
+export type RemoveConfirmDialogProps = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  onEdit: () => void;
   onRemove: () => void;
 };
 
-const OfferConfirmDialog = (props: OfferConfirmDialogProps): JSX.Element => {
-  const { open, setOpen, onEdit, onRemove } = props;
+const RemoveOfferConfirmDialog = (props: RemoveConfirmDialogProps): JSX.Element => {
+  const { open, setOpen, onRemove } = props;
   return (
     <Dialog open={open} onClose={() => setOpen(false)} aria-labelledby="confirm-dialog">
-      <DialogTitle id="confirm-dialog">You have already active offer.</DialogTitle>
+      <DialogTitle id="confirm-dialog">Are you sure?</DialogTitle>
+      <DialogContent>
+        <Typography>
+          Do you really want to remove this offer? This process cannot be undone.
+        </Typography>
+      </DialogContent>
       <DialogActions>
         <Button
           variant="contained"
           onClick={() => {
             setOpen(false);
-            onEdit();
           }}
         >
-          Edit
+          Cancel
         </Button>
         <Button
           variant="contained"
@@ -38,4 +42,4 @@ const OfferConfirmDialog = (props: OfferConfirmDialogProps): JSX.Element => {
     </Dialog>
   );
 };
-export default OfferConfirmDialog;
+export default RemoveOfferConfirmDialog;
