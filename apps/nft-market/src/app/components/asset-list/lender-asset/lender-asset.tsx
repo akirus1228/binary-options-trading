@@ -6,8 +6,9 @@ import {
   Popover,
   Tooltip,
   Typography,
+  Link,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
 import { useEffect, useMemo, useState } from "react";
@@ -155,7 +156,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           {viewLinks.map((link, index) => (
             <Link
               key={link.title}
-              to={link.url}
+              href={link.url}
               style={{ textDecoration: "none" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
               onClick={(e) => {
@@ -198,14 +199,14 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         </Popover>
       </Box>
       {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
-        <Link to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+        <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
             url={asset.thumbUrl || asset.imageUrl || ""}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
           />
-        </Link>
+        </RouterLink>
       )}
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
