@@ -1,7 +1,8 @@
+import { scrollTo, scrollToTop } from "@fantohm/shared-helpers";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetListingsQuery } from "../../api/backend-api";
+import { useLazyGetListingsQuery } from "../../api/backend-api";
 import LenderAssetFilter from "../../components/asset-filter/lender-asset-filter/lender-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import AssetTypeFilter from "../../components/asset-type-filter/asset-type-filter";
@@ -12,42 +13,39 @@ import { Asset, Listing, ListingStatus } from "../../types/backend-types";
 import style from "./lend-page.module.scss";
 
 export const LendPage = (): JSX.Element => {
-  const [assets, setAssets] = useState<Asset[]>([]);
+  const [displayAssets, setDisplayAssets] = useState<Asset[]>([]);
   const [hasNext, setHasNext] = useState(true);
   const [skip, setSkip] = useState(0);
-  const [take, setTake] = useState(12);
+  const [take, setTake] = useState(3);
   const [query, setQuery] = useState<ListingQueryParam>({
-    skip,
+    skip: 0,
     take,
     status: ListingStatus.Listed,
     sort: ListingSort.Recently,
   });
   const { user } = useSelector((state: RootState) => state.backend);
-  const { data: listings, isLoading, isSuccess } = useGetListingsQuery(query);
+  const [trigger, listingsResult] = useLazyGetListingsQuery();
 
   useEffect(() => {
-    setAssets([]);
-  }, [
-    query.status,
-    query.sort,
-    query.minApr,
-    query.maxApr,
-    query.minPrice,
-    query.maxPrice,
-    query.minDuration,
-    query.maxDuration,
-  ]);
-
-  useEffect(() => {
-    if (!listings) {
-      return;
+    console.log("query updated");
+    // if we're down the page we should go ahead and scroll back to the top of the results
+    if (window.scrollY > 300) {
+      scrollTo(300);
     }
-    console.log(listings.length);
-    // if we got less listings than we tried to take, then we're at the end of the list
+    setSkip(0);
+    trigger({ ...query, skip: 0, take });
+    setDisplayAssets([]);
+  }, [query]);
+
+  useEffect(() => {
+    if (!listingsResult.isSuccess) return;
+    if (!listingsResult.data.length) return;
+    const listings = listingsResult.data;
     if (listings.length < take) {
       console.log(listings);
       setHasNext(false);
     }
+
     const newAssets: Asset[] = listings
       .filter(
         (listing: Listing) =>
@@ -80,18 +78,22 @@ export const LendPage = (): JSX.Element => {
       .map((listing: Listing): Asset => {
         return listing.asset;
       });
-    setAssets([...assets, ...newAssets]);
-  }, [listings, query.sort]);
+    setDisplayAssets([...displayAssets, ...newAssets]);
+  }, [listingsResult.data]);
 
   const fetchMoreData = () => {
-    setQuery({ ...query, skip: skip + 3 });
     setSkip(skip + 3);
+    trigger({ ...query, skip, take });
   };
 
   return (
     <Container className={style["lendPageContainer"]}>
       <HeaderBlurryImage
-        url={listings && listings.length > 0 ? listings[0].asset.imageUrl : undefined}
+        url={
+          displayAssets && displayAssets.length > 0
+            ? displayAssets[0].imageUrl
+            : undefined
+        }
         height="300px"
       />
       <h1>Explore loan requests</h1>
@@ -101,14 +103,14 @@ export const LendPage = (): JSX.Element => {
             <LenderAssetFilter query={query} setQuery={setQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {isLoading && (
+            {listingsResult.isLoading && (
               <Box className="flex fr fj-c">
                 <CircularProgress />
               </Box>
             )}
             <AssetTypeFilter query={query} setQuery={setQuery} />
             <AssetList
-              assets={assets}
+              assets={displayAssets}
               type="lend"
               fetchData={fetchMoreData}
               hasMore={hasNext}

@@ -546,6 +546,7 @@ export const {
   useDeleteAssetMutation,
   useValidateNFTQuery,
   useGetListingsQuery,
+  useLazyGetListingsQuery,
   useGetListingQuery,
   useDeleteListingMutation,
   useUpdateListingMutation,
