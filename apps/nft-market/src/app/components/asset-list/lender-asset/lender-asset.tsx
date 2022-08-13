@@ -42,8 +42,6 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
 
-  console.log("themeType:", themeType);
-
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
     if (!asset) return;
