@@ -1,6 +1,6 @@
-import { Box, Chip, IconButton, Paper, Popover, Typography } from "@mui/material";
+import { Box, Chip, IconButton, Paper, Popover, Typography, Link } from "@mui/material";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 import style from "./borrower-asset.module.scss";
 import PreviewImage from "../preview-image/preview-image";
@@ -143,7 +143,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           {viewLinks.map((link, index) => (
             <Link
               key={link.title}
-              to={link.url}
+              href={link.url}
               style={{ textDecoration: "none" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
               onClick={() => setFlagMoreDropDown(null)}
@@ -184,14 +184,14 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
         </Popover>
       </Box>
       {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
-        <Link to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+        <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
             url={asset.thumbUrl || asset.imageUrl || ""}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
           />
-        </Link>
+        </RouterLink>
       )}
       <Box className="flex fc fj-c ai-c">
         {asset.collection && asset.collection.name && (

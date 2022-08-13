@@ -1,4 +1,4 @@
-import { scrollTo, scrollToTop } from "@fantohm/shared-helpers";
+import { scrollTo } from "@fantohm/shared-helpers";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -27,7 +27,6 @@ export const LendPage = (): JSX.Element => {
   const [trigger, listingsResult] = useLazyGetListingsQuery();
 
   useEffect(() => {
-    console.log("query updated");
     // if we're down the page we should go ahead and scroll back to the top of the results
     if (window.scrollY > 300) {
       scrollTo(300);
@@ -42,7 +41,6 @@ export const LendPage = (): JSX.Element => {
     if (!listingsResult.data.length) return;
     const listings = listingsResult.data;
     if (listings.length < take) {
-      console.log(listings);
       setHasNext(false);
     }
 
