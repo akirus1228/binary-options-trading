@@ -86,6 +86,11 @@ import GoldNFTPass from "./Gold NFT Pass.webp";
 import PlatinumNFTPass from "./Platinum NFT Pass.webp";
 import BalancePassFooter1 from "./footer1.webp";
 import BalancePassFooter2 from "./footer2.webp";
+import preMintImage from "./Alpha Pass Pre-mint Image.png";
+import NumberImage1 from "./Mint1.png";
+import NumberImage2 from "./Mint2.png";
+import NumberImage3 from "./Mint3.png";
+import NumberImage4 from "./Mint4.png";
 
 export {
   NFTsIcon,
@@ -176,4 +181,9 @@ export {
   PlatinumNFTPass,
   BalancePassFooter1,
   BalancePassFooter2,
+  preMintImage,
+  NumberImage1,
+  NumberImage2,
+  NumberImage3,
+  NumberImage4,
 };
