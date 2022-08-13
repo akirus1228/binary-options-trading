@@ -92,7 +92,6 @@ const listingsSlice = createSlice({
           ...listing,
         };
       });
-      console.log(mergedListings);
       state.listings = { ...state.listings, ...mergedListings };
     },
     deleteListing: (state, action: PayloadAction<Listing>) => {

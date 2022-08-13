@@ -95,11 +95,11 @@ export const AssetDetails = ({
   return (
     <Container sx={sx} className={style["assetRow"]}>
       {/* <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} /> */}
-      {asset && (asset.imageUrl || asset.thumbUrl) ? (
+      {asset && (asset.thumbUrl !== "" || asset.imageUrl !== "") ? (
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={asset.imageUrl || asset.thumbUrl} alt={asset.name || "unknown"} />
+              <img src={asset.thumbUrl} alt={asset.name || "unknown"} />
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
