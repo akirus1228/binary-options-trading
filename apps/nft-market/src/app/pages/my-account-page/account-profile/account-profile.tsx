@@ -67,7 +67,7 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
               />
             </h1>
             <Button
-              className="lowContrast slim "
+              className={`lowContrast slim ${style["accountButton"]} ${style["noInvert"]}`}
               variant="contained"
               onClick={handleCopyAddress}
             >
@@ -86,7 +86,7 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
               <img
                 src={openseaIcon}
                 alt="opensea icon"
-                style={{ boxShadow: "0px 25px 50px #7e9aa92b" }}
+                style={{ boxShadow: "0px 25px 50px #7e9aa92b", marginRight: "7px" }}
                 className={style["iconWrapper"]}
               />
             </a>
@@ -99,14 +99,14 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
             >
               <img
                 src={raribleIcon}
-                style={{ boxShadow: "0px 25px 50px #7e9aa92b" }}
+                style={{ boxShadow: "0px 25px 50px #7e9aa92b", marginRight: "7px" }}
                 alt="opensea icon"
                 className={style["iconWrapper"]}
               />
             </a>
           </span>
           <Button
-            className="lowContrast slim"
+            className={`lowContrast slim ${style["accountButton"]}`}
             variant="contained"
             sx={{ ml: "7px" }}
             href={`https://etherscan.io/address/${address}`}
@@ -120,7 +120,7 @@ export const AccountProfile = ({ address }: AccountProfileProps): JSX.Element =>
             View on Etherscan
           </Button>
           <Button
-            className="lowContrast slim"
+            className={`lowContrast slim ${style["accountButton"]}`}
             variant="contained"
             sx={{ ml: "7px" }}
             onClick={handleShareLink}

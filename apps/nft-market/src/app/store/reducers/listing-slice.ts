@@ -45,15 +45,13 @@ export const createListing = createAsyncThunk(
         asset,
         term
       );
-      if (!listing) {
-        rejectWithValue("Failed to create listing");
-      }
-      if (typeof listing !== "boolean") {
+      if (typeof listing !== "string") {
         dispatch(updateAsset({ ...listing.asset, owner: thisState.backend.user }));
+      } else {
+        return rejectWithValue(listing);
       }
       return listing;
     } else {
-      console.warn("no auth");
       return rejectWithValue("No authorization found.");
     }
   }

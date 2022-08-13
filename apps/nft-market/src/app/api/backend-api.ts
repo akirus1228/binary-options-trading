@@ -96,25 +96,34 @@ export const getListingByOpenseaIds = (
     });
 };
 
-export const createListing = (
+export const createListing = async (
   signature: string,
   asset: Asset,
   term: Terms
-): Promise<Listing | boolean> => {
+): Promise<Listing | string> => {
   const url = `${NFT_MARKETPLACE_API_URL}/asset-listing`;
   const listingParams = listingToCreateListingRequest(asset, term);
-  // post
+  // try {
+  //   const resp = await axios.post(url, listingParams, {
+  //     headers: {
+  //       Authorization: `Bearer ${signature}`,
+  //     },
+  //   });
+  //   return createListingResponseToListing(resp.data);
+  // } catch (error: any) {
+  //   throw error.response.data.error;
+  // }
   return axios
     .post(url, listingParams, {
       headers: {
         Authorization: `Bearer ${signature}`,
       },
     })
-    .then((resp: AxiosResponse<CreateListingResponse>) => {
+    .then(async (resp: AxiosResponse<CreateListingResponse>) => {
       return createListingResponseToListing(resp.data);
     })
-    .catch((err: AxiosResponse) => {
-      return false;
+    .catch((error) => {
+      return error.response.data.message;
     });
 };
 

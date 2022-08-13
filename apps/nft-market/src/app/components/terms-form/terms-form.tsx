@@ -46,6 +46,7 @@ export interface TermsFormProps {
   type: "offer" | "borrow";
   asset: Asset;
   listing?: Listing;
+  offerTerm?: Terms | null;
   onClose: (value: boolean) => void;
 }
 
@@ -62,6 +63,7 @@ export const termTypes: TermTypes = {
 export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { address, chainId, provider } = useWeb3Context();
+  const currentTerm = props?.offerTerm ? props?.offerTerm : props?.listing?.term;
   // update term backend api call
   const [
     updateTerms,
@@ -89,22 +91,17 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [pending, setPending] = useState(false);
   // primary term variables
   const [duration, setDuration] = useState(
-    props?.listing?.term.duration != null
-      ? calcDuration(
-          props?.listing?.term.duration,
-          calcDurationType(props?.listing?.term.duration)
-        )
+    currentTerm?.duration != null
+      ? calcDuration(currentTerm?.duration, calcDurationType(currentTerm?.duration))
       : "30"
   );
   const [durationType, setDurationType] = useState(
-    props?.listing?.term.duration
-      ? calcDurationType(props?.listing?.term.duration)
-      : "days"
+    currentTerm?.duration ? calcDurationType(currentTerm?.duration) : "days"
   );
   const [apr, setApr] = useState(
-    props?.listing?.term.apr != null ? props?.listing?.term.apr.toString() : "25"
+    currentTerm?.apr != null ? currentTerm?.apr.toString() : "25"
   );
-  const [amount, setAmount] = useState(props?.listing?.term.amount.toString() || "1");
+  const [amount, setAmount] = useState(currentTerm?.amount.toString() || "1");
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
   const [selectedCurrency, setSelectedCurrency] = useState(
     props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "wETH"
@@ -248,7 +245,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     // const message =
     //   "Please sign this transaction to post your NFT as collateral. This won't incur a gas fee.";
-    console.log("duration: ", duration);
     const term: Terms = {
       amount: Number(amount),
       apr: Number(apr),
@@ -268,10 +264,20 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       dispatch
     );
     if (term.signature) {
-      dispatch(createListing({ term, asset })).then(() => {
-        dispatch(addAlert({ message: "Listing created" }));
+      try {
+        await dispatch(createListing({ term, asset })).unwrap();
+        await dispatch(addAlert({ message: "Listing created" }));
+      } catch (e) {
+        await dispatch(
+          addAlert({
+            severity: "error",
+            title: "Failed to create listing",
+            message: e as string,
+          })
+        );
+      } finally {
         props.onClose(true);
-      });
+      }
     } else {
       setPending(false);
     }
@@ -290,7 +296,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     }
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     const term: Terms = {
-      ...props?.listing?.term,
+      ...currentTerm,
       amount: Number(amount),
       apr: Number(apr),
       duration: termTypes[durationType] * Number(duration),
@@ -439,7 +445,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   return (
-    <Box className="flex fc" sx={{ padding: "1em" }}>
+    <Box className={`flex fc ${style["makeOfferForm"]}`} sx={{ padding: "1em" }}>
       <Box className="flex fc">
         <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
           How much would you like to {props.type || "borrow"}?
@@ -480,7 +486,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
                 disableUnderline: true,
               }}
             />
-            <Typography sx={{ color: "#aaaaaa" }}>
+            <Typography className={style["amountField"]}>
               {!!currency && formatCurrency(Number(amount) * currency?.lastPrice, 2)}
             </Typography>
           </Box>
@@ -518,9 +524,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       <Box className="flex fc" sx={{ mt: "1em", mb: "2em" }}>
         <Box className="flex fj-sb" sx={{ color: "#aaaaaa", mb: "0.5em" }}>
           <Typography>Set repayment APR</Typography>
-          <Typography sx={{ fontSize: "smaller", color: "#000" }}>
-            Repayment Amount:
-          </Typography>
+          <Typography className={style["inputHelper"]}>Repayment Amount:</Typography>
         </Box>
         <Box className={`flex fr ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>APR</Box>
@@ -537,13 +541,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               />
             </Box>
             <Box
-              className="flex ai-c"
+              className={`flex ai-c ${style["amountField"]}`}
               sx={{
                 textOverflow: "ellipsis",
                 overflow: "hidden",
                 color: "#aaaaaa",
                 width: "150px",
                 paddingLeft: "10px",
+                marginRight: "auto",
               }}
             >
               {formatCurrency(repaymentAmount * currency?.lastPrice, 2)}
@@ -593,7 +598,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             onClick={() => setConfirmOpen(true)}
             disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
           >
-            Make Offer
+            {props?.offerTerm ? "Edit" : "Make"} Offer
           </Button>
         )}
       {!isOwner &&
@@ -628,7 +633,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         interest={repaymentAmount}
         duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
         setOpen={setConfirmOpen}
-        onConfirm={handleMakeOffer}
+        onConfirm={props?.offerTerm ? handleUpdateTerms : handleMakeOffer}
       ></ConfirmDialog>
     </Box>
   );

@@ -45,3 +45,12 @@
   font-family: Inter, Roboto, sans-serif;
   padding: 0.8em 2em;
 }
+body[class*=darkTheme] {
+  .accountButton {
+    img {filter:invert(1)}
+    &.noInvert {
+      img {filter:invert(0)}
+    }
+    background:#222;
+  }
+}

@@ -13,3 +13,13 @@
         }
     }
 }
+
+
+body[class*=darkTheme] {
+
+    .textContainer {
+        .strong {
+            color: #fff;
+        }
+    }
+}

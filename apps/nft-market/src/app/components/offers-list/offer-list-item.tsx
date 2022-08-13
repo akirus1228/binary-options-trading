@@ -16,6 +16,7 @@ import {
   useCreateLoanMutation,
   useUpdateLoanMutation,
   useUpdateOfferMutation,
+  useDeleteOfferMutation,
 } from "../../api/backend-api";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../store";
@@ -35,6 +36,8 @@ import { desiredNetworkId } from "../../constants/network";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import { addAlert } from "../../store/reducers/app-slice";
+import MakeOffer from "../make-offer/make-offer";
+import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -59,13 +62,14 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     dispatch(loadCurrencyFromAddress(offer.term.currencyAddress));
   }, [offer]);
 
-  // createloan backend api call
+  // create loan backend api call
   const [createLoan, { data: loanData, isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
     useUpdateLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
+  const [deleteOffer, { isLoading: isDeletingOffer }] = useDeleteOfferMutation();
 
   // nft permission status updates from state
   const { requestPermStatus } = useSelector((state: RootState) => state.wallet);
@@ -83,9 +87,27 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     return user.address.toLowerCase() === asset?.owner?.address.toLowerCase();
   }, [asset, user]);
 
+  const isMyOffer = useMemo(() => {
+    if (!user.address) return false;
+    return user.address.toLowerCase() === offer?.lender?.address.toLowerCase();
+  }, [user]);
+
+  // update offer dialog
+  const [makeOfferDialogOpen, setMakeOfferDialogOpen] = useState(false);
+  const [removeOfferConfirmDialogOpen, setRemoveOfferConfirmDialogOpen] = useState(false);
+
+  const handleUpdateOffer = () => {
+    setMakeOfferDialogOpen(true);
+  };
+
+  const onDialogClose = () => {
+    setMakeOfferDialogOpen(false);
+  };
+
   useEffect(() => {
     if (
       isUpdatingOffer ||
+      isDeletingOffer ||
       isCreating ||
       isUpdating ||
       requestPermStatus === "loading" ||
@@ -95,7 +117,14 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     } else {
       setIsPending(false);
     }
-  }, [isUpdatingOffer, isCreating, requestPermStatus, loanCreationStatus, isUpdating]);
+  }, [
+    isUpdatingOffer,
+    isDeletingOffer,
+    isCreating,
+    requestPermStatus,
+    loanCreationStatus,
+    isUpdating,
+  ]);
 
   // check the contract to see if we have perms already
   useEffect(() => {
@@ -194,6 +223,11 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     );
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
 
+  const handleDeleteOffer = useCallback(async () => {
+    deleteOffer(offer);
+    dispatch(addAlert({ message: "Offer removed" }));
+  }, [offer.id]);
+
   const offerExpires = useMemo(() => {
     const offerDateTime = new Date(offer.term.expirationAt);
     const expiresInSeconds = offerDateTime.getTime() - Date.now();
@@ -202,8 +236,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   }, [offer.term]);
 
   const offerCreatedSecondsAgo = useMemo(() => {
-    if (!offer.term.createdAt) return 0;
-    const offerDateTime = new Date(offer.term.createdAt);
+    if (!offer.createdAt) return 0;
+    const offerDateTime = new Date(offer.createdAt);
     const createdAgo = Date.now() - offerDateTime.getTime();
     return prettifySeconds(createdAgo / 1000);
   }, [offer.term]);
@@ -342,57 +376,94 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   };
 
   return (
-    <PaperTableRow className={style["row"]}>
-      {fields?.map((field: OffersListFields, index: number) => (
-        <PaperTableCell key={`offer-list-row-${index}`} className={style["offerElem"]}>
-          <Box className="flex fr ai-c">{getFieldData(field)}</Box>
-        </PaperTableCell>
-      ))}
-      <PaperTableCell sx={{ display: "flex", fontSize: "1rem", alignItems: "middle" }}>
-        <Box className="flex fr ai-c">
-          {isOwner &&
-            !hasPermission &&
-            !isPending &&
-            offer.status === OfferStatus.Ready &&
-            Date.parse(offer.term.expirationAt) > Date.now() && (
-              <Button
-                variant="contained"
-                className="offer slim"
-                onClick={handleRequestPermission}
-              >
-                Accept
+    <>
+      <MakeOffer
+        onClose={onDialogClose}
+        open={makeOfferDialogOpen}
+        listing={offer?.assetListing}
+        isEdit={true}
+        offerTerm={offer?.term}
+      />
+      <RemoveOfferConfirmDialog
+        open={removeOfferConfirmDialogOpen}
+        setOpen={setRemoveOfferConfirmDialogOpen}
+        onRemove={handleDeleteOffer}
+      />
+      <PaperTableRow className={style["row"]}>
+        {fields?.map((field: OffersListFields, index: number) => (
+          <PaperTableCell key={`offer-list-row-${index}`} className={style["offerElem"]}>
+            <Box className="flex fr ai-c">{getFieldData(field)}</Box>
+          </PaperTableCell>
+        ))}
+        <PaperTableCell sx={{ display: "flex", fontSize: "1rem", alignItems: "middle" }}>
+          <Box className="flex fr ai-c">
+            {isOwner &&
+              !hasPermission &&
+              !isPending &&
+              offer.status === OfferStatus.Ready &&
+              Date.parse(offer.term.expirationAt) > Date.now() && (
+                <Button
+                  variant="contained"
+                  className="offer slim"
+                  onClick={handleRequestPermission}
+                >
+                  Accept
+                </Button>
+              )}
+            {isOwner &&
+              hasPermission &&
+              !isPending &&
+              offer.status === OfferStatus.Ready && (
+                <Button
+                  variant="contained"
+                  className="offer slim"
+                  onClick={handleAcceptOffer}
+                >
+                  Accept
+                </Button>
+              )}
+            {isPending && (
+              <Button variant="contained" className="offer slim">
+                <CircularProgress />
               </Button>
             )}
-          {isOwner && hasPermission && !isPending && offer.status === OfferStatus.Ready && (
-            <Button
-              variant="contained"
-              className="offer slim"
-              onClick={handleAcceptOffer}
-            >
-              Accept
-            </Button>
-          )}
-          {isPending && (
-            <Button variant="contained" className="offer slim">
-              <CircularProgress />
-            </Button>
-          )}
-          {!isOwner && (
-            <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
-          )}
-          {(!isOwner || offer.status !== OfferStatus.Ready) && (
-            <Chip
-              label={offer.status}
-              sx={{
-                fontSize: "0.875em",
-                marginRight: "2em",
-                backgroundColor: "#374FFF",
-                color: "#fff",
-              }}
-            ></Chip>
-          )}
-        </Box>
-      </PaperTableCell>
-    </PaperTableRow>
+            {!isOwner && (
+              <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
+            )}
+            {!isOwner && offer.status !== OfferStatus.Ready && (
+              <Chip
+                label={offer.status}
+                sx={{
+                  fontSize: "0.875em",
+                  marginRight: "2em",
+                  backgroundColor: "#374FFF",
+                  color: "#fff",
+                }}
+              ></Chip>
+            )}
+            {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
+              <Box>
+                <Button
+                  variant="contained"
+                  className="offer slim"
+                  sx={{ my: "10px", mr: "10px", width: "100px" }}
+                  onClick={handleUpdateOffer}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
+                  className="offer slim"
+                  sx={{ my: "10px", width: "100px" }}
+                  onClick={() => setRemoveOfferConfirmDialogOpen(true)}
+                >
+                  Remove
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </PaperTableCell>
+      </PaperTableRow>
+    </>
   );
 };

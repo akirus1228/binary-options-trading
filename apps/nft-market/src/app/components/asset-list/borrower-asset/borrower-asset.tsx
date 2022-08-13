@@ -1,5 +1,6 @@
-import { Box, Chip, IconButton, Paper, Popover, Typography, Link } from "@mui/material";
+import { Box, Chip, IconButton, Paper, Popover, Typography } from "@mui/material";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
+import { Link } from "react-router-dom";
 
 import style from "./borrower-asset.module.scss";
 import PreviewImage from "../preview-image/preview-image";
@@ -10,6 +11,8 @@ import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 export interface BorrowerAssetProps {
   asset: Asset;
@@ -19,6 +22,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   const { chainId } = useWeb3Context();
   // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const chipColor = useMemo(() => {
     if (!asset) return;
@@ -139,7 +143,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           {viewLinks.map((link, index) => (
             <Link
               key={link.title}
-              href={link.url}
+              to={link.url}
               style={{ textDecoration: "none" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
               onClick={() => setFlagMoreDropDown(null)}
@@ -155,16 +159,23 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
                 <Box sx={{ display: "flex" }}>
                   <img
                     src={link.startIcon}
-                    style={{ width: "24px", marginRight: "15px" }}
+                    style={{ width: "20px", marginRight: "10px" }}
                     alt={link.alt}
                   />
-                  <Typography variant="h6" style={{ fontWeight: "normal" }}>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      fontWeight: "normal",
+                      fontSize: "1em",
+                      color: `${themeType === "light" ? "black" : "white"}`,
+                    }}
+                  >
                     {link.title}
                   </Typography>
                 </Box>
                 {link?.endIcon && (
-                  <Box sx={{ ml: "15px", mt: "5px" }}>
-                    <img src={link.endIcon} style={{ width: "15px" }} alt={link.alt} />
+                  <Box sx={{ ml: "7px", mt: "-2px" }}>
+                    <img src={link.endIcon} style={{ width: "9px" }} alt={link.alt} />
                   </Box>
                 )}
               </Box>
@@ -173,7 +184,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
         </Popover>
       </Box>
       {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
-        <Link href={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+        <Link to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
             url={asset.thumbUrl || asset.imageUrl || ""}
             name={asset.name || "placeholder name"}
@@ -185,23 +196,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       <Box className="flex fc fj-c ai-c">
         {asset.collection && asset.collection.name && (
           <Box sx={{ position: "absolute" }}>
-            <span
-              style={{
-                fontWeight: "400",
-                fontSize: "15px",
-                position: "relative",
-                top: "-54px",
-                background: "#FFF",
-                borderRadius: "2em",
-                padding: "1em",
-                width: "80%",
-                alignSelf: "center",
-                textAlign: "center",
-                opacity: "0.90",
-              }}
-            >
-              {asset.collection.name}
-            </span>
+            <span className={style["collectionName"]}>{asset.collection.name}</span>
           </Box>
         )}
         <span style={{ fontWeight: "700", fontSize: "20px", margin: "2em 0" }}>

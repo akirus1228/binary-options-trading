@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { Nullable } from "../../types/backend-types";
+import style from "./header-blurry-image.module.scss";
 
 export interface HeaderBlurryImageProps {
   url: Nullable<string> | undefined;
@@ -17,6 +18,7 @@ export const HeaderBlurryImage = ({
 
   return (
     <Box
+      className={style["blurry"]}
       sx={{
         position: "absolute",
         width: "100vw",
@@ -29,6 +31,7 @@ export const HeaderBlurryImage = ({
       }}
     >
       <Box
+        className={style["blurryContent"]}
         sx={{
           backgroundImage: `url("${url}")`,
           height: "100%",

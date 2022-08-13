@@ -4,3 +4,13 @@
       margin-bottom: 0px;
     }
   }
+
+body[class*=darkTheme] {
+  .tabElem {
+    &[class*=selected] {
+      div {
+        color:#fff !important;
+      }
+    }
+  }
+}

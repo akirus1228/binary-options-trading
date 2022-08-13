@@ -87,13 +87,6 @@ export const AssetDetailsPage = (): JSX.Element => {
     { skip: !authSignature }
   );
 
-  const { data: offers, isLoading: isOffersLoading } = useGetOffersQuery(
-    { assetId: asset?.id || "" },
-    {
-      skip: !authSignature,
-    }
-  );
-
   // is the user the owner of the asset?
   const isValidNFT = useMemo(() => {
     return (
@@ -109,6 +102,11 @@ export const AssetDetailsPage = (): JSX.Element => {
   const activeListing = useMemo(() => {
     return listings.find((listing: Listing) => listing.status === ListingStatus.Listed);
   }, [listings]);
+
+  const { data: offers, isLoading: isOffersLoading } = useGetOffersQuery({
+    assetId: asset?.id || "",
+    assetListingId: activeListing?.id || "",
+  });
 
   const activeLoan = useMemo(() => {
     if (!loans) return {} as Loan;
@@ -168,6 +166,7 @@ export const AssetDetailsPage = (): JSX.Element => {
         activeListing.asset &&
         activeListing.asset?.status === AssetStatus.Listed && (
           <LenderListingTerms
+            offers={offers || []}
             listing={activeListing}
             sx={{ mt: "3em" }}
             key={`llt-${activeListing.id}`}

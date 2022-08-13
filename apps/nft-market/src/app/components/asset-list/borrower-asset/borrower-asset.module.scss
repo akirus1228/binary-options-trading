@@ -36,9 +36,30 @@
         }}
     }
 }
+
+.collectionName {
+        font-weight: 400;
+        font-size:0.875em;
+        position:relative;
+        top:-54px;
+        background:#fff;
+        border-radius:2em;
+        padding:1em;
+        width:80%;
+        align-self:center;
+        text-align:center;
+        opacity:0.9;
+}
+
+
 body[class*=darkTheme] {
     .moreButton {
         color:#fff;
         background:#000;
     }
+    .collectionName {
+        background:#000;
+        color:#fff;
+    }
+
 }
