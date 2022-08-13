@@ -42,10 +42,8 @@ export const LendPage = (): JSX.Element => {
     if (!listings) {
       return;
     }
-    console.log(listings.length);
     // if we got less listings than we tried to take, then we're at the end of the list
     if (listings.length < take) {
-      console.log(listings);
       setHasNext(false);
     }
     const newAssets: Asset[] = listings
