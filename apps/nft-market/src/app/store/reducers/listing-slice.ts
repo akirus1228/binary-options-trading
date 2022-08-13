@@ -76,11 +76,24 @@ const listingsSlice = createSlice({
     updateListing: (state, action: PayloadAction<Listing>) => {
       state.listings = {
         ...state.listings,
-        ...{ [action.payload.id || ""]: action.payload },
+        ...{
+          [action.payload.id || ""]: {
+            ...state.listings[action.payload.id || ""],
+            ...action.payload,
+          },
+        },
       };
     },
     updateListings: (state, action: PayloadAction<Listings>) => {
-      state.listings = { ...state.listings, ...action.payload };
+      const mergedListings: Listings = {};
+      Object.entries(action.payload).forEach(([listingId, listing]) => {
+        mergedListings[listingId] = {
+          ...state.listings[listingId || ""],
+          ...listing,
+        };
+      });
+      console.log(mergedListings);
+      state.listings = { ...state.listings, ...mergedListings };
     },
     deleteListing: (state, action: PayloadAction<Listing>) => {
       delete state.listings[action.payload.id || ""];
