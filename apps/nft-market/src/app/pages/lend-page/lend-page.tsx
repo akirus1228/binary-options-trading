@@ -15,7 +15,7 @@ export const LendPage = (): JSX.Element => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [hasNext, setHasNext] = useState(true);
   const [skip, setSkip] = useState(0);
-  const [take, setTake] = useState(3);
+  const [take, setTake] = useState(12);
   const [query, setQuery] = useState<ListingQueryParam>({
     skip,
     take,
@@ -43,6 +43,7 @@ export const LendPage = (): JSX.Element => {
       return;
     }
     console.log(listings.length);
+    // if we got less listings than we tried to take, then we're at the end of the list
     if (listings.length < take) {
       console.log(listings);
       setHasNext(false);

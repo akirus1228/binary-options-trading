@@ -35,9 +35,9 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
         }
         className="flex fr fw"
         endMessage={
-          <p style={{ textAlign: "center" }}>
-            <b>End</b>
-          </p>
+          <Box className="flex fw fr fj-c ai-c w100">
+            <span>- End -</span>
+          </Box>
         }
       >
         {props.assets &&

@@ -25,7 +25,7 @@ export const BorrowPage = (): JSX.Element => {
   const { user } = useSelector((state: RootState) => state.backend);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
-    limit: 9,
+    limit: 12,
     owner: user.address,
   });
 
