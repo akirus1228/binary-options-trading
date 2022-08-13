@@ -76,6 +76,7 @@ export interface OpenseaOwner {
 
 export type OpenseaGetAssetsResponse = {
   assets: OpenseaAsset[];
+  next: string;
 };
 
 export type OpenseaCollection = {
@@ -192,17 +193,22 @@ const staggeredBaseQuery = retry(
   }
 );
 
+type OpenseaAssetResponse = {
+  assets: OpenseaAsset[];
+  next: string;
+};
+
 export const openseaApi = createApi({
   reducerPath: "openseaApi",
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
-    getOpenseaAssets: builder.query<OpenseaAsset[], OpenseaAssetQueryParam>({
+    getOpenseaAssets: builder.query<OpenseaAssetResponse, OpenseaAssetQueryParam>({
       query: (queryParams) => ({
         url: `assets`,
         params: queryParams,
       }),
       transformResponse: (response: OpenseaGetAssetsResponse, meta, arg) => {
-        return response.assets.map((asset: OpenseaAsset) => {
+        const assets = response.assets.map((asset: OpenseaAsset) => {
           let wallet;
           if (asset.owner && asset.owner.address) {
             wallet = asset.owner.address;
@@ -214,10 +220,14 @@ export const openseaApi = createApi({
             wallet,
           };
         });
+        return {
+          assets,
+          next: response.next,
+        };
       },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        const { data }: { data: OpenseaAsset[] } = await queryFulfilled;
-        dispatch(updateAssetsFromOpensea(data));
+        const { data }: { data: OpenseaAssetResponse } = await queryFulfilled;
+        dispatch(updateAssetsFromOpensea(data.assets));
       },
     }),
   }),

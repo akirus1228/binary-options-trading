@@ -53,7 +53,7 @@ export const AssetDetailsPage = (): JSX.Element => {
   );
 
   // load asset data from opensea
-  const { data: assets, isLoading: isAssetLoading } = useGetOpenseaAssetsQuery(
+  const { data: osResponse, isLoading: isAssetLoading } = useGetOpenseaAssetsQuery(
     {
       asset_contract_address: params["contractAddress"],
       token_ids: [params["tokenId"] || ""],
@@ -67,9 +67,9 @@ export const AssetDetailsPage = (): JSX.Element => {
     {
       skip: 0,
       take: 50,
-      openseaIds: assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
     },
-    { skip: !assets || !authSignature }
+    { skip: !osResponse || !authSignature }
   );
 
   const { error: isValidNFTError, isLoading: isValidating } = useValidateNFTQuery(

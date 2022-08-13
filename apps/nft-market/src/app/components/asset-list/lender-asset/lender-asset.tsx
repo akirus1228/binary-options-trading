@@ -197,10 +197,10 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           ))}
         </Popover>
       </Box>
-      {asset.imageUrl && asset.openseaId && (
+      {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
         <Link to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
-            url={asset.imageUrl}
+            url={asset.thumbUrl || asset.imageUrl || ""}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}

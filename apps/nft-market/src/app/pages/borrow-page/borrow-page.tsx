@@ -1,6 +1,6 @@
 import { useWeb3Context } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetListingsQuery, useGetLoansQuery } from "../../api/backend-api";
 import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
@@ -25,9 +25,12 @@ export const BorrowPage = (): JSX.Element => {
   const { user } = useSelector((state: RootState) => state.backend);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
-    limit: 50,
+    limit: 12,
     owner: user.address,
   });
+
+  const [osNext, setOsNext] = useState("");
+  const [hasNext, setHasNext] = useState(true);
 
   // query to use on frontend to filter cached results and ultimately display
   const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
@@ -38,7 +41,7 @@ export const BorrowPage = (): JSX.Element => {
   // query to use on backend api call, to pull data we have
   const [beQuery, setBeQuery] = useState<BackendAssetQueryParams>({
     skip: 0,
-    take: 50,
+    take: 20,
   });
 
   // query assets in escrow
@@ -52,9 +55,12 @@ export const BorrowPage = (): JSX.Element => {
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
-  const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
-    skip: !osQuery.owner,
-  });
+  const { data: osResponse, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(
+    osQuery,
+    {
+      skip: !osQuery.owner,
+    }
+  );
   const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {
     skip: !address,
   });
@@ -69,10 +75,18 @@ export const BorrowPage = (): JSX.Element => {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
     };
     setBeQuery(newQuery);
-  }, [assets]);
+    // store the next page cursor ID
+    console.log(osResponse);
+    if (osResponse && osResponse.next) {
+      setOsNext(osResponse?.next || "");
+    } else if (osResponse && osResponse.next === null) {
+      console.log("hasNext false");
+      setHasNext(false);
+    }
+  }, [osResponse]);
 
   useEffect(() => {
     setOsQuery({
@@ -93,16 +107,30 @@ export const BorrowPage = (): JSX.Element => {
     loans
       ?.map((loan) => loan.assetListing.asset)
       .filter((asset) => asset.status === AssetStatus.Locked) || [];
-  const assetsToShow: Asset[] =
-    feQuery.status === AssetStatus.Locked && loans
-      ? assetsInEscrow
-      : feQuery.status === "All"
-      ? [
-          ...myAssets,
-          ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
-        ]
-      : myAssets;
+
+  const assetsToShow: Asset[] = useMemo(() => {
+    return (
+      feQuery.status === AssetStatus.Locked && loans
+        ? assetsInEscrow
+        : feQuery.status === "All"
+        ? [
+            ...myAssets,
+            ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
+          ]
+        : myAssets
+    ).sort((assetA: Asset, assetB: Asset) =>
+      // always sort escrow to top to avoid infinite scroll injecting in the middle
+      assetA.status === AssetStatus.Locked && assetB.status !== AssetStatus.Locked
+        ? -1
+        : 1
+    );
+  }, [assetsInEscrow, feQuery.status, myAssets]);
+
   const isWalletConnected = address && authSignature;
+
+  const fetchMoreData = () => {
+    setOsQuery({ ...osQuery, cursor: osNext });
+  };
 
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
@@ -144,7 +172,12 @@ export const BorrowPage = (): JSX.Element => {
                     </Box>
                   )
                 )}
-                <AssetList assets={assetsToShow} type="borrow" />
+                <AssetList
+                  assets={assetsToShow}
+                  type="borrow"
+                  fetchData={fetchMoreData}
+                  hasMore={hasNext}
+                />
               </>
             )}
           </Grid>

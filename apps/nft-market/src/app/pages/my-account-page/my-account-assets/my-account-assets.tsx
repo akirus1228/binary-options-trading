@@ -62,9 +62,12 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
-  const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
-    skip: !osQuery.owner,
-  });
+  const { data: osResponse, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(
+    osQuery,
+    {
+      skip: !osQuery.owner,
+    }
+  );
   const { data: loans } = useGetLoansQuery(loansQuery, {});
 
   // using the opensea assets, crosscheck with backend api for correlated data
@@ -104,10 +107,10 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
     };
     setBeQuery(newQuery);
-  }, [assets]);
+  }, [osResponse]);
 
   useEffect(() => {
     setOsQuery({
