@@ -99,7 +99,7 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={asset.thumbUrl} alt={asset.name || "unknown"} />
+              <img src={asset.imageUrl || asset.thumbUrl} alt={asset.name || "unknown"} />
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
