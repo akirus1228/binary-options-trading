@@ -64,6 +64,7 @@ export const BalanceWhitelistMintPage = (
                 fontFamily: "sequel100black-55",
                 fontSize: "19px",
                 color: "#8fa0c3",
+                letterSpacing: "0.3em",
                 mt: "10%",
               }}
             >
@@ -87,6 +88,7 @@ export const BalanceWhitelistMintPage = (
                     fontFamily: "sequel100black-55",
                     fontSize: "14px",
                     color: "#8fa0c3",
+                    letterSpacing: "0.3em",
                   }}
                 >
                   Days
@@ -120,6 +122,7 @@ export const BalanceWhitelistMintPage = (
                     fontFamily: "sequel100black-55",
                     fontSize: "14px",
                     color: "#8fa0c3",
+                    letterSpacing: "0.3em",
                   }}
                 >
                   Hours
@@ -153,6 +156,7 @@ export const BalanceWhitelistMintPage = (
                     fontFamily: "sequel100black-55",
                     fontSize: "14px",
                     color: "#8fa0c3",
+                    letterSpacing: "0.3em",
                   }}
                 >
                   Minutes
@@ -186,6 +190,7 @@ export const BalanceWhitelistMintPage = (
                     fontFamily: "sequel100black-55",
                     fontSize: "14px",
                     color: "#8fa0c3",
+                    letterSpacing: "0.3em",
                   }}
                 >
                   Seconds
