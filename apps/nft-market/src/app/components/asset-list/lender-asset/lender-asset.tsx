@@ -8,7 +8,7 @@ import {
   Typography,
   Link,
 } from "@mui/material";
-import { useWalletAsset } from "../../../hooks/use-wallet-asset";
+import { Link as RouterLink } from "react-router-dom";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
 import { useEffect, useMemo, useState } from "react";
@@ -34,12 +34,12 @@ export type LenderAssetProps = {
 export function LenderAsset({ asset }: LenderAssetProps) {
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
-  //const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
   );
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -156,7 +156,9 @@ export function LenderAsset({ asset }: LenderAssetProps) {
               href={link.url}
               style={{ textDecoration: "none" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
-              onClick={() => setFlagMoreDropDown(null)}
+              onClick={(e) => {
+                setFlagMoreDropDown(null);
+              }}
             >
               <Box
                 sx={{
@@ -174,13 +176,17 @@ export function LenderAsset({ asset }: LenderAssetProps) {
                   />
                   <Typography
                     variant="h6"
-                    style={{ fontWeight: "normal", fontSize: "1em" }}
+                    style={{
+                      fontWeight: "normal",
+                      fontSize: "1em",
+                      color: `${themeType === "light" ? "black" : "white"}`,
+                    }}
                   >
                     {link.title}
                   </Typography>
                 </Box>
                 {link?.endIcon && (
-                  <Box sx={{ ml: "7px", mt: "2px" }}>
+                  <Box sx={{ ml: "7px", mt: "-2px" }}>
                     <img src={link.endIcon} style={{ width: "9px" }} alt={link.alt} />
                   </Box>
                 )}
@@ -189,15 +195,15 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           ))}
         </Popover>
       </Box>
-      {asset.imageUrl && asset.openseaId && (
-        <Link href={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+      {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
+        <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
-            url={asset.imageUrl}
+            url={asset.thumbUrl || asset.imageUrl || ""}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
           />
-        </Link>
+        </RouterLink>
       )}
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>

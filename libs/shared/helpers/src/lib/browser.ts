@@ -30,3 +30,11 @@ export const copyToClipboard = (content: string) => {
     }
   );
 };
+
+export const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+export const scrollTo = (position: number) => {
+  window.scrollTo({ top: position, behavior: "smooth" });
+};

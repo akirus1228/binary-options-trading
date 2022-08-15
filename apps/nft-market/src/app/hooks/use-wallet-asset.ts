@@ -31,7 +31,7 @@ export const useWalletAsset = (
       skip: 0,
       take: 1,
       openseaIds: osAssets
-        ? osAssets.map((asset: OpenseaAsset) => asset.id.toString())
+        ? osAssets.assets?.map((asset: OpenseaAsset) => asset.id.toString())
         : [],
     },
     { skip: !osAssets || isAssetLoading || !authSignature }

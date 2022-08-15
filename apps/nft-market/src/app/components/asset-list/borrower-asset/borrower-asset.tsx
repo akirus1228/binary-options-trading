@@ -1,8 +1,8 @@
 import { Box, Chip, IconButton, Paper, Popover, Typography, Link } from "@mui/material";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
+import { Link as RouterLink } from "react-router-dom";
 
 import style from "./borrower-asset.module.scss";
-import { useWalletAsset } from "../../../hooks/use-wallet-asset";
 import PreviewImage from "../preview-image/preview-image";
 import { Asset, AssetStatus } from "../../../types/backend-types";
 import { useMemo, useState } from "react";
@@ -11,6 +11,8 @@ import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 export interface BorrowerAssetProps {
   asset: Asset;
@@ -20,6 +22,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   const { chainId } = useWeb3Context();
   // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const chipColor = useMemo(() => {
     if (!asset) return;
@@ -161,13 +164,17 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
                   />
                   <Typography
                     variant="h6"
-                    style={{ fontWeight: "normal", fontSize: "1em" }}
+                    style={{
+                      fontWeight: "normal",
+                      fontSize: "1em",
+                      color: `${themeType === "light" ? "black" : "white"}`,
+                    }}
                   >
                     {link.title}
                   </Typography>
                 </Box>
                 {link?.endIcon && (
-                  <Box sx={{ ml: "7px", mt: "2px" }}>
+                  <Box sx={{ ml: "7px", mt: "-2px" }}>
                     <img src={link.endIcon} style={{ width: "9px" }} alt={link.alt} />
                   </Box>
                 )}
@@ -176,15 +183,15 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           ))}
         </Popover>
       </Box>
-      {asset.imageUrl && asset.openseaId && (
-        <Link href={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+      {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
+        <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
-            url={asset.imageUrl}
+            url={asset.thumbUrl || asset.imageUrl || ""}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
           />
-        </Link>
+        </RouterLink>
       )}
       <Box className="flex fc fj-c ai-c">
         {asset.collection && asset.collection.name && (
