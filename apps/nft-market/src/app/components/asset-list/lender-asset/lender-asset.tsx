@@ -35,6 +35,7 @@ export type LenderAssetProps = {
 };
 
 export function LenderAsset({ asset }: LenderAssetProps) {
+  const imageLoadOrder = [asset.thumbUrl, asset.imageUrl, asset.frameUrl];
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
@@ -63,18 +64,12 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   }, [asset]);
 
   useEffect(() => {
-    if (asset.thumbUrl) {
-      console.log("validating thumb: " + asset.thumbUrl);
-      axios.head(asset.thumbUrl).then(validateImage);
-    } else if (asset.imageUrl) {
-      console.log("validating full image: " + asset.imageUrl);
-      axios.head(asset.imageUrl).then(validateImage);
-    } else if (asset.frameUrl) {
-      console.log("validating frame image: " + asset.frameUrl);
-      axios.head(asset.frameUrl).then(validateImage);
-    } else {
-      setValidImage(previewNotAvailable);
-    }
+    imageLoadOrder.forEach((image) => {
+      if (image) {
+        axios.head(image).then(validateImage);
+        return;
+      }
+    });
   }, [asset]);
 
   const validateImage = (result: AxiosResponse<any, any>) => {
