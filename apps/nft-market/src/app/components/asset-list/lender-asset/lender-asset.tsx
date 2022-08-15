@@ -26,6 +26,9 @@ import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
+import previewNotAvailable from "../../../../assets/images/preview-not-available.png";
+import loadingGradient from "../../../../assets/images/loading.png";
+import axios, { AxiosResponse } from "axios";
 
 export type LenderAssetProps = {
   asset: Asset;
@@ -40,6 +43,8 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   );
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
+
+  const [validImage, setValidImage] = useState(loadingGradient);
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -56,6 +61,30 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         return;
     }
   }, [asset]);
+
+  useEffect(() => {
+    if (asset.thumbUrl) {
+      console.log("validating thumb: " + asset.thumbUrl);
+      axios.head(asset.thumbUrl).then(validateImage);
+    } else if (asset.imageUrl) {
+      console.log("validating full image: " + asset.imageUrl);
+      axios.head(asset.imageUrl).then(validateImage);
+    } else if (asset.frameUrl) {
+      console.log("validating frame image: " + asset.frameUrl);
+      axios.head(asset.frameUrl).then(validateImage);
+    } else {
+      setValidImage(previewNotAvailable);
+    }
+  }, [asset]);
+
+  const validateImage = (result: AxiosResponse<any, any>) => {
+    if (
+      result.status === 200 &&
+      result.headers["content-type"].toLowerCase().includes("image")
+    ) {
+      setValidImage(result.config.url || "");
+    }
+  };
 
   const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagMoreDropDown(event.currentTarget);
@@ -195,16 +224,20 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           ))}
         </Popover>
       </Box>
-      {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
-        <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+      <RouterLink
+        to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
+        className="flex"
+        style={{ flexGrow: "1" }}
+      >
+        {asset.openseaId && (
           <PreviewImage
-            url={asset.thumbUrl || asset.imageUrl || ""}
+            url={validImage || previewNotAvailable}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
           />
-        </RouterLink>
-      )}
+        )}
+      </RouterLink>
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
           <span
