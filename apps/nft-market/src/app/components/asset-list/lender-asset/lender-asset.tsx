@@ -34,7 +34,6 @@ export type LenderAssetProps = {
 export function LenderAsset({ asset }: LenderAssetProps) {
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
-  //const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
