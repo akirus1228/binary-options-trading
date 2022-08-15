@@ -74,7 +74,7 @@ export const LendPage = (): JSX.Element => {
         return listing.asset;
       });
     setDisplayAssets([...displayAssets, ...newAssets]);
-    if (listings.length < take) {
+    if (listingsResult.data.length < take) {
       setHasNext(false);
     }
   }, [listingsResult.data]);
