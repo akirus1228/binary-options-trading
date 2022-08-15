@@ -51,7 +51,7 @@ export const AssetDetails = ({
   const asset = useWalletAsset(contractAddress, tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const { data: collections } = useGetCollectionsQuery({});
-  const { data: nftPrice } = useGetNftPriceQuery({
+  const { data: nftPrices } = useGetNftPriceQuery({
     collection: contractAddress,
     tokenId,
   });
@@ -239,7 +239,7 @@ export const AssetDetails = ({
                   </Box>
                   <QuickStatus listing={listing} />
                 </Paper>
-                {nftPrice && (
+                {nftPrices && (
                   <Paper
                     sx={{
                       marginTop: "20px",
@@ -251,7 +251,7 @@ export const AssetDetails = ({
                       paddingRight: "10%",
                     }}
                   >
-                    <PriceInfo price={nftPrice} />
+                    <PriceInfo prices={nftPrices} />
                   </Paper>
                 )}
               </Box>

@@ -530,7 +530,7 @@ export const backendApi = createApi({
       providesTags: ["PlatformWalletInfo"],
     }),
     // User
-    getNftPrice: builder.query<NftPrice, { collection: string; tokenId: string }>({
+    getNftPrice: builder.query<NftPrice[], { collection: string; tokenId: string }>({
       query: ({ collection, tokenId }) => ({
         url: `nft/price/${collection}/${tokenId}`,
       }),

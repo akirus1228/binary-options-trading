@@ -4,10 +4,10 @@ import NabuLogoImage from "../../../../assets/images/nabu-logo.png";
 import InfoImage from "../../../../assets/images/info.png";
 
 export interface PriceInfoProps {
-  price: NftPrice;
+  prices: NftPrice[];
 }
 
-export const PriceInfo = ({ price }: PriceInfoProps): JSX.Element => {
+export const PriceInfo = ({ prices }: PriceInfoProps): JSX.Element => {
   return (
     <>
       <Box
@@ -36,7 +36,7 @@ export const PriceInfo = ({ price }: PriceInfoProps): JSX.Element => {
               fontSize: "20px",
             }}
           >
-            {parseFloat(price.priceInEth).toFixed(2)} ETH
+            {parseFloat((prices as any).priceInEth).toFixed(2)} ETH
           </Typography>
         </Box>
       </Box>
