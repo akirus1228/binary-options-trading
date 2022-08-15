@@ -16,7 +16,7 @@ export const LendPage = (): JSX.Element => {
   const [displayAssets, setDisplayAssets] = useState<Asset[]>([]);
   const [hasNext, setHasNext] = useState(true);
   const [skip, setSkip] = useState(0);
-  const [take, setTake] = useState(3);
+  const [take, setTake] = useState(6);
   const [query, setQuery] = useState<ListingQueryParam>({
     skip: 0,
     take,
@@ -40,9 +40,6 @@ export const LendPage = (): JSX.Element => {
     if (!listingsResult.isSuccess) return;
     if (!listingsResult.data.length) return;
     const listings = listingsResult.data;
-    if (listings.length < take) {
-      setHasNext(false);
-    }
 
     const newAssets: Asset[] = listings
       .filter(
@@ -77,11 +74,14 @@ export const LendPage = (): JSX.Element => {
         return listing.asset;
       });
     setDisplayAssets([...displayAssets, ...newAssets]);
+    if (listings.length < take) {
+      setHasNext(false);
+    }
   }, [listingsResult.data]);
 
   const fetchMoreData = () => {
-    setSkip(skip + 3);
-    trigger({ ...query, skip, take });
+    setSkip(skip + take);
+    trigger({ ...query, skip: skip + take, take });
   };
 
   return (

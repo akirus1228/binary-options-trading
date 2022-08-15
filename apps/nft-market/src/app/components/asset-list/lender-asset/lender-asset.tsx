@@ -34,7 +34,6 @@ export type LenderAssetProps = {
 export function LenderAsset({ asset }: LenderAssetProps) {
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
-  //const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
@@ -98,6 +97,13 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   useEffect(() => {
     dispatch(loadCurrencyFromAddress(listing?.term?.currencyAddress));
   }, [listing]);
+
+  useEffect(() => {
+    if (asset.name?.includes("Munko")) {
+      console.log("thumb: " + asset.thumbUrl);
+      console.log("image: " + asset.imageUrl);
+    }
+  }, [asset]);
 
   if (asset === null || !asset || !listing) {
     return <h3>Loading...</h3>;
