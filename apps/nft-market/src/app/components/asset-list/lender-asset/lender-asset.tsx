@@ -98,13 +98,6 @@ export function LenderAsset({ asset }: LenderAssetProps) {
     dispatch(loadCurrencyFromAddress(listing?.term?.currencyAddress));
   }, [listing]);
 
-  useEffect(() => {
-    if (asset.name?.includes("Munko")) {
-      console.log("thumb: " + asset.thumbUrl);
-      console.log("image: " + asset.imageUrl);
-    }
-  }, [asset]);
-
   if (asset === null || !asset || !listing) {
     return <h3>Loading...</h3>;
   }
