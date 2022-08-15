@@ -64,13 +64,22 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   }, [asset]);
 
   useEffect(() => {
+    if (validImage === loadingGradient) {
+      findValidImage();
+    }
+  }, [validImage]);
+
+  const findValidImage = () => {
     imageLoadOrder.forEach((image) => {
       if (image) {
         axios.head(image).then(validateImage);
+        imageLoadOrder.shift();
         return;
+      } else {
+        imageLoadOrder.shift();
       }
     });
-  }, [asset]);
+  };
 
   const validateImage = (result: AxiosResponse<any, any>) => {
     if (
@@ -78,6 +87,8 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       result.headers["content-type"].toLowerCase().includes("image")
     ) {
       setValidImage(result.config.url || "");
+    } else {
+      setValidImage(loadingGradient);
     }
   };
 

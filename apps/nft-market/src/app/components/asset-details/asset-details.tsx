@@ -102,13 +102,22 @@ export const AssetDetails = ({
   ];
 
   useEffect(() => {
+    if (validImage === loadingGradient) {
+      findValidImage();
+    }
+  }, [validImage]);
+
+  const findValidImage = () => {
     imageLoadOrder.forEach((image) => {
       if (image) {
         axios.head(image).then(validateImage);
+        imageLoadOrder.shift();
         return;
+      } else {
+        imageLoadOrder.shift();
       }
     });
-  }, [asset]);
+  };
 
   const validateImage = (result: AxiosResponse<any, any>) => {
     if (
@@ -116,6 +125,8 @@ export const AssetDetails = ({
       result.headers["content-type"].toLowerCase().includes("image")
     ) {
       setValidImage(result.config.url || "");
+    } else {
+      setValidImage(loadingGradient);
     }
   };
 
@@ -126,7 +137,7 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={asset.imageUrl || asset.thumbUrl} alt={asset.name || "unknown"} />
+              <img src={validImage} alt={asset.name || "unknown"} />
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
