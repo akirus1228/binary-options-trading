@@ -70,6 +70,75 @@ type ReservoirGetCollectionsResponse = {
   collections: ReservoirCollection[];
 };
 
+type ReservoirTokenDetailsRequest = {
+  collection?: string; // 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63
+  contract?: string; // 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63
+  tokens?: string[]; // Example: tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:97
+  tokenSetId?: string; // token:0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270:129000685
+  attributes?: string; // attributes[Type]=Original
+  source?: string; // opensea.io
+  sortBy?: string; // askFloorPrice, tokenId
+  sortDirection?: string; // asc, desc
+  limit: number;
+  includeTopBid: boolean;
+  continuation: string; // cursor for next page
+};
+
+type ReservoirTokenDetailsResponse = {
+  tokens: ReservoirToken[];
+  continuation?: string;
+};
+
+type ReservoirToken = {
+  contract: string;
+  tokenId: number;
+  name?: string;
+  description?: string;
+  image?: string;
+  media?: string;
+  kind: string; // erc721, etc
+  isFlagged: boolean;
+  lastFlagUpdate?: string;
+  collection: ReservoirCollection;
+  lastBuy: {
+    value?: number;
+    timestamp?: number;
+  };
+  lastSell: {
+    value?: number;
+    timestamp?: number;
+  };
+  owner: string;
+  attributes: ReservoirAttribute[];
+  market?: ReservoirMarket;
+};
+
+type ReservoirAttribute = {
+  key: string;
+  value: string;
+  tokenCount?: number;
+  onSaleCount?: number;
+  floorAskPrice?: number;
+  topBidValue?: number;
+};
+
+type ReservoirMarket = {
+  floorAsk?: {
+    id: string; // address
+    price: number;
+    maker: string; // address
+    validFrom: number; // timestamp
+    validUntil: number; // timestamp
+    source: {
+      id: string; // address
+      domain: string; // e.g. opensea.io
+      name: string; // e.g. OpenSea
+      icon: string;
+      url: string;
+    };
+  };
+};
+
 const reservoirConfig: ReservoirConfig = {
   apiKey: isDev
     ? "54ec25f8-1f80-5ba7-9adb-63dbaf555af2"
@@ -113,7 +182,16 @@ export const reservoirApi = createApi({
         params: queryParams,
       }),
     }),
+    getTokenDetails: builder.query<
+      ReservoirTokenDetailsRequest,
+      ReservoirTokenDetailsResponse
+    >({
+      query: (query) => ({
+        url: `tokens/details/v4`,
+        params: query,
+      }),
+    }),
   }),
 });
 
-export const { useGetCollectionsQuery } = reservoirApi;
+export const { useGetCollectionsQuery, useGetTokenDetailsQuery } = reservoirApi;

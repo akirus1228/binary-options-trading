@@ -26,12 +26,16 @@ import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
+import previewNotAvailable from "../../../../assets/images/preview-not-available.png";
+import loadingGradient from "../../../../assets/images/loading.png";
+import axios, { AxiosResponse } from "axios";
 
 export type LenderAssetProps = {
   asset: Asset;
 };
 
 export function LenderAsset({ asset }: LenderAssetProps) {
+  const imageLoadOrder = [asset.thumbUrl, asset.imageUrl, asset.frameUrl];
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
@@ -40,6 +44,8 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   );
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
+
+  const [validImage, setValidImage] = useState(loadingGradient);
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -56,6 +62,35 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         return;
     }
   }, [asset]);
+
+  useEffect(() => {
+    if (validImage === loadingGradient) {
+      findValidImage();
+    }
+  }, [validImage]);
+
+  const findValidImage = () => {
+    imageLoadOrder.forEach((image) => {
+      if (image) {
+        axios.head(image).then(validateImage);
+        imageLoadOrder.shift();
+        return;
+      } else {
+        imageLoadOrder.shift();
+      }
+    });
+  };
+
+  const validateImage = (result: AxiosResponse<any, any>) => {
+    if (
+      result.status === 200 &&
+      result.headers["content-type"].toLowerCase().includes("image")
+    ) {
+      setValidImage(result.config.url || "");
+    } else {
+      setValidImage(loadingGradient);
+    }
+  };
 
   const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagMoreDropDown(event.currentTarget);
@@ -195,16 +230,20 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           ))}
         </Popover>
       </Box>
-      {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
-        <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+      <RouterLink
+        to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
+        className="flex"
+        style={{ flexGrow: "1" }}
+      >
+        {asset.openseaId && (
           <PreviewImage
-            url={asset.thumbUrl || asset.imageUrl || ""}
+            url={validImage || previewNotAvailable}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
           />
-        </RouterLink>
-      )}
+        )}
+      </RouterLink>
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
           <span

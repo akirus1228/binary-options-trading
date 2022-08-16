@@ -29,7 +29,6 @@ import {
   Loan,
   LoanStatus,
 } from "../../types/backend-types";
-//import style from "./asset-details-page.module.scss";
 
 export const AssetDetailsPage = (): JSX.Element => {
   const params = useParams();
