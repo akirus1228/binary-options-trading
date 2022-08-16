@@ -244,11 +244,10 @@ export const AssetDetails = ({
                     sx={{
                       marginTop: "20px",
                       display: "flex",
-                      flexDirection: "row",
+                      flexDirection: "column",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      paddingLeft: "10%",
-                      paddingRight: "10%",
+                      padding: "24px",
                     }}
                   >
                     <PriceInfo prices={nftPrices} />

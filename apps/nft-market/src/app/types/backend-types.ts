@@ -101,7 +101,7 @@ export type Chain = "eth" | "sol";
 export enum NftPriceProvider {
   Nabu = "NABU",
   Upshot = "UPSHOT",
-  NFTBank = "NFT_BANK",
+  NftBank = "NFT_BANK",
 }
 
 export type BackendAsset = {

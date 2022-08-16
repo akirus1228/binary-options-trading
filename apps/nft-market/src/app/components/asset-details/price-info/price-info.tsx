@@ -1,6 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import { NftPrice } from "../../../types/backend-types";
+import { NftPrice, NftPriceProvider } from "../../../types/backend-types";
 import NabuLogoImage from "../../../../assets/images/nabu-logo.png";
+import UpshotLogoImage from "../../../../assets/images/upshot-logo.png";
+import NftBankLogoImage from "../../../../assets/images/nftbank-logo.png";
 import InfoImage from "../../../../assets/images/info.png";
 
 export interface PriceInfoProps {
@@ -8,19 +10,43 @@ export interface PriceInfoProps {
 }
 
 export const PriceInfo = ({ prices }: PriceInfoProps): JSX.Element => {
-  return (
-    <>
+  const getPriceProvider = (priceProvider: NftPriceProvider) => {
+    switch (priceProvider) {
+      case NftPriceProvider.Nabu:
+        return "Nabu";
+      case NftPriceProvider.Upshot:
+        return "Upshot";
+      case NftPriceProvider.NftBank:
+        return "NFT Bank";
+    }
+  };
+
+  const getPriceProviderLogo = (priceProvider: NftPriceProvider) => {
+    switch (priceProvider) {
+      case NftPriceProvider.Nabu:
+        return NabuLogoImage;
+      case NftPriceProvider.Upshot:
+        return UpshotLogoImage;
+      case NftPriceProvider.NftBank:
+        return NftBankLogoImage;
+    }
+  };
+
+  const getPriceProviderDiv = (price: NftPrice) => {
+    return (
       <Box
+        key={price.priceProvider}
         sx={{
+          width: "100%",
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
         }}
       >
         <img
-          src={NabuLogoImage}
-          alt="Nabu Logo"
-          style={{ height: "fit-content", margin: "5px" }}
+          src={getPriceProviderLogo(price.priceProvider)}
+          alt={price.priceProvider + " Logo"}
+          style={{ height: "fit-content", margin: "5px", marginTop: "-20px" }}
         />
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography
@@ -29,20 +55,36 @@ export const PriceInfo = ({ prices }: PriceInfoProps): JSX.Element => {
               color: "#8991a2",
             }}
           >
-            Nabu Valuation
+            {getPriceProvider(price.priceProvider)} Valuation
           </Typography>
           <Typography
             style={{
               fontSize: "20px",
             }}
           >
-            {parseFloat((prices as any).priceInEth).toFixed(2)} ETH
+            {parseFloat(price.priceInEth).toFixed(2)} ETH
           </Typography>
         </Box>
       </Box>
+    );
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "auto auto",
+        gridColumnGap: "24px",
+        gridRowGap: "24px",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+      }}
+    >
+      {getPriceProviderDiv(prices[0])}
       <Box
         sx={{
-          maxWidth: "45%",
+          width: "100%",
           display: "flex",
           flexDirection: "row",
         }}
@@ -50,7 +92,7 @@ export const PriceInfo = ({ prices }: PriceInfoProps): JSX.Element => {
         <img
           src={InfoImage}
           alt="Info"
-          style={{ height: "fit-content", marginTop: "2px" }}
+          style={{ height: "fit-content", marginTop: "2px", marginLeft: "5px" }}
         />
         <Typography
           style={{
@@ -59,10 +101,11 @@ export const PriceInfo = ({ prices }: PriceInfoProps): JSX.Element => {
             marginLeft: "10px",
           }}
         >
-          Data provided by Nabu is for informational purposes only
+          Data provided is for informational purposes only
         </Typography>
       </Box>
-    </>
+      {prices.slice(1).map((price) => getPriceProviderDiv(price))}
+    </Box>
   );
 };
 
