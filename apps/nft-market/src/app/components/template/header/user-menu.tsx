@@ -42,6 +42,7 @@ import { ethers } from "ethers";
 import { selectCurrencies } from "../../../store/selectors/currency-selectors";
 import ManageFund from "../../managefund/managefund";
 import styles from "./header.module.scss";
+import { useLocation } from "react-router-dom";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -57,6 +58,9 @@ type AccountSubMenu = {
 
 export const UserMenu = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
+
+  const location = useLocation();
+  const isHomepage = () => location.pathname === "/";
   // menu controls
   const [flagAccountDropDown, setFlagAccountDropDown] = useState<null | HTMLElement>(
     null
@@ -156,7 +160,10 @@ export const UserMenu = (): JSX.Element => {
         className={styles["accountButton"]}
       >
         <Box sx={{ display: "block" }} className={styles["accountAvatar"]}>
-          <Avatar sx={{ mr: { sm: "0", md: "1em" } }} src={AvatarPlaceholder}></Avatar>
+          <Avatar
+            sx={{ mr: { sm: "0", md: "1em" }, borderRadius: "2rem" }}
+            src={AvatarPlaceholder}
+          ></Avatar>
         </Box>
         {addressEllipsis(address)}
         <Box
@@ -346,26 +353,30 @@ export const UserMenu = (): JSX.Element => {
               style={{ opacity: dropMenu?.params?.comingSoon ? 0.2 : 1 }}
             >
               {dropMenu.icon === "sun" ? (
-                <Button
-                  style={{
-                    minWidth: "110px",
-                    padding: "0.5em 1em",
-                    width: "100%",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <LightModeOutlinedIcon />
-                    &nbsp;&nbsp;
-                    {dropMenu.title}
-                  </div>
-                  {/* <Switch
+                <>
+                  {!isHomepage() && (
+                    <Button
+                      style={{
+                        minWidth: "110px",
+                        padding: "0.5em 1em",
+                        width: "100%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <LightModeOutlinedIcon />
+                        &nbsp;&nbsp;
+                        {dropMenu.title}
+                      </div>
+                      {/* <Switch
                                   onChange={themeChange}
                                   inputProps={{ 'aria-label': 'controlled' }}
                                 /> */}
-                  {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
-                  <CustomInnerSwitch onClick={toggleTheme} />
-                </Button>
+                      {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
+                      <CustomInnerSwitch onClick={toggleTheme} />
+                    </Button>
+                  )}
+                </>
               ) : (
                 <Link to={dropMenu.href || "#"}>
                   <Button
