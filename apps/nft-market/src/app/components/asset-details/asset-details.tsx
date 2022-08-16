@@ -239,7 +239,7 @@ export const AssetDetails = ({
                   </Box>
                   <QuickStatus listing={listing} />
                 </Paper>
-                {nftPrices && (
+                {nftPrices && nftPrices.length > 0 && (
                   <Paper
                     sx={{
                       marginTop: "20px",
