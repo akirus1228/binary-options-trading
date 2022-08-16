@@ -33,7 +33,11 @@ import {
 import { createListing, updateListing } from "../../store/reducers/listing-slice";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { signTerms } from "../../helpers/signatures";
-import { useCreateOfferMutation, useUpdateTermsMutation } from "../../api/backend-api";
+import {
+  useCreateOfferMutation,
+  useGetNftPriceQuery,
+  useUpdateTermsMutation,
+} from "../../api/backend-api";
 import { ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
 import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
@@ -64,6 +68,16 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { address, chainId, provider } = useWeb3Context();
   const currentTerm = props?.offerTerm ? props?.offerTerm : props?.listing?.term;
+  const { data: nftPrices } = useGetNftPriceQuery({
+    collection: props.asset.assetContractAddress,
+    tokenId: props.asset.tokenId,
+  });
+  const estimatedPrice = nftPrices?.reduce((acc, cur) => {
+    return acc < parseFloat(cur.priceInUsd) ? parseFloat(cur.priceInUsd) : acc;
+  }, 0);
+  const preFillPrice = (estimatedPrice || 0) * 0.9;
+  const maxFillPrice = (estimatedPrice || 0) * 1.5;
+
   // update term backend api call
   const [
     updateTerms,
@@ -234,6 +248,15 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   const handleCreateListing = async () => {
     if (!provider || !chainId) return;
+    if (maxFillPrice && Number(amount) * currency.lastPrice > maxFillPrice) {
+      dispatch(
+        addAlert({
+          message: "Can't set more than 150% of nft price.",
+          severity: "error",
+        })
+      );
+      return;
+    }
     // send listing data to backend
     setPending(true);
     let asset: Asset;
@@ -362,6 +385,12 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       setAmount(newAmount);
     }
   };
+
+  useEffect(() => {
+    if (currency && preFillPrice) {
+      setAmount((preFillPrice / currency.lastPrice).toString());
+    }
+  }, [currency]);
 
   // calculate repayment totals
   useEffect(() => {
