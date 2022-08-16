@@ -6,7 +6,7 @@ import style from "./borrower-asset.module.scss";
 import PreviewImage from "../preview-image/preview-image";
 import { Asset, AssetStatus } from "../../../types/backend-types";
 import { useMemo, useState } from "react";
-import { chains, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
+import { chains, isDev, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
@@ -56,7 +56,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       startIcon: etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `${chains[chainId || 1].blockExplorerUrls[0]}token/${
+      url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
         asset?.assetContractAddress
       }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
@@ -67,7 +67,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       alt: "OpenSea",
       title: "View on OpenSea",
       url: `${
-        chainId === NetworkIds.Ethereum
+        !isDev
           ? "https://opensea.io/assets/ethereum/"
           : "https://testnets.opensea.io/assets/rinkeby/"
       }${asset.assetContractAddress}/${asset.tokenId}`,

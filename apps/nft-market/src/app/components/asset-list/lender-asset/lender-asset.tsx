@@ -18,7 +18,13 @@ import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { useTermDetails } from "../../../hooks/use-term-details";
-import { chains, formatCurrency, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
+import {
+  chains,
+  formatCurrency,
+  isDev,
+  NetworkIds,
+  useWeb3Context,
+} from "@fantohm/shared-web3";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
@@ -109,7 +115,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       startIcon: etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `${chains[chainId || 1].blockExplorerUrls[0]}token/${
+      url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
         asset?.assetContractAddress
       }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
@@ -120,7 +126,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       alt: "OpenSea",
       title: "View on OpenSea",
       url: `${
-        chainId === NetworkIds.Ethereum
+        !isDev
           ? "https://opensea.io/assets/ethereum/"
           : "https://testnets.opensea.io/assets/rinkeby/"
       }${asset.assetContractAddress}/${asset.tokenId}`,
