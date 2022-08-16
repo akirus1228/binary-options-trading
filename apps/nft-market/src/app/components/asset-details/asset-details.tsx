@@ -12,7 +12,7 @@ import {
   Popover,
   IconButton,
 } from "@mui/material";
-import { useWeb3Context, chains, NetworkIds } from "@fantohm/shared-web3";
+import { useWeb3Context, chains, NetworkIds, isDev } from "@fantohm/shared-web3";
 import { useSelector } from "react-redux";
 import {
   useGetCollectionsQuery,
@@ -75,9 +75,9 @@ export const AssetDetails = ({
       startIcon: etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `${
-        chains[chainId || 1].blockExplorerUrls[0]
-      }token/${contractAddress}?a=${tokenId}`,
+      url: `https://${
+        isDev ? "rinkeby." : ""
+      }etherscan.io/token/${contractAddress}?a=${tokenId}`,
       endIcon: grayArrowRightUp,
     },
     {
@@ -85,7 +85,7 @@ export const AssetDetails = ({
       alt: "OpenSea",
       title: "View on OpenSea",
       url: `${
-        chainId === NetworkIds.Ethereum
+        !isDev
           ? "https://opensea.io/assets/ethereum/"
           : "https://testnets.opensea.io/assets/rinkeby/"
       }${contractAddress}/${tokenId}`,
