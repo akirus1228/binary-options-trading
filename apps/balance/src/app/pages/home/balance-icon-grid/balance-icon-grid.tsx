@@ -27,7 +27,7 @@ export const BalanceIconGrid = (): JSX.Element => {
         }}
       >
         <Grid item md={12} sm={12}>
-          <Typography style={{ fontSize: "36px" }}>Our products</Typography>
+          <h2 style={{ fontSize: "36px" }}>Our products</h2>
         </Grid>
         <Grid item lg={3} md={4} sm={12} className={style["productCard"]}>
           <BalanceIconLink

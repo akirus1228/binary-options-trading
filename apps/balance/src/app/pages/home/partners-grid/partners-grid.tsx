@@ -71,7 +71,7 @@ export const PartnersGrid = (): JSX.Element => {
             marginBottom: "30px",
           }}
         >
-          <Typography
+          <h2
             className={style["partnerTitle"]}
             style={{
               textAlign: "center",
@@ -81,7 +81,7 @@ export const PartnersGrid = (): JSX.Element => {
             }}
           >
             Our partners
-          </Typography>
+          </h2>
         </Grid>
         <Grid
           container
