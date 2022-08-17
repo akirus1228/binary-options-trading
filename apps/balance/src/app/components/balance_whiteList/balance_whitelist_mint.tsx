@@ -1,5 +1,8 @@
+import { addressEllipsis } from "@fantohm/shared-helpers";
+import { isDev, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import {
   AboutDivider,
+  DownLine,
   NumberImage1,
   NumberImage2,
   NumberImage3,
@@ -8,6 +11,7 @@ import {
 } from "@fantohm/shared/images";
 import { Button, Container, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { MouseEvent, useState } from "react";
 import style from "./balance_whitelist_mint.module.scss";
 
 /* eslint-disable-next-line */
@@ -16,6 +20,15 @@ export interface BalanceWhitelistMintProps {}
 export const BalanceWhitelistMintPage = (
   props: BalanceWhitelistMintProps
 ): JSX.Element => {
+  const { connect, disconnect, connected, address } = useWeb3Context();
+
+  const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
+    connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+  };
+  const onClickDisconnect = () => {
+    disconnect();
+  };
+
   return (
     <Box>
       <Container maxWidth="xl">
@@ -68,150 +81,238 @@ export const BalanceWhitelistMintPage = (
                 mt: "10%",
               }}
             >
-              Time until WHITELIST mint
+              {!connected ? "TIME UNTIL WHITELIST MINT" : "WHITELIST MINT"}
             </Typography>
-            <Box sx={{ display: "flex", justifyContent: "center", mt: "7%" }}>
-              <Box
-                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-              >
+            {!connected ? (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: "7%" }}>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: "MonumentExtendedRegular",
+                      fontSize: "64px",
+                      color: "#dee9ff",
+                    }}
+                  >
+                    00
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "sequel100black-55",
+                      fontSize: "14px",
+                      color: "#8fa0c3",
+                      letterSpacing: "0.3em",
+                    }}
+                  >
+                    Days
+                  </Typography>
+                </Box>
                 <Typography
                   sx={{
                     fontFamily: "MonumentExtendedRegular",
                     fontSize: "64px",
                     color: "#dee9ff",
+                    ml: "4%",
+                    mr: "4%",
                   }}
                 >
-                  00
+                  :
                 </Typography>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: "MonumentExtendedRegular",
+                      fontSize: "64px",
+                      color: "#dee9ff",
+                    }}
+                  >
+                    12
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "sequel100black-55",
+                      fontSize: "14px",
+                      color: "#8fa0c3",
+                      letterSpacing: "0.3em",
+                    }}
+                  >
+                    Hours
+                  </Typography>
+                </Box>
                 <Typography
                   sx={{
-                    fontFamily: "sequel100black-55",
-                    fontSize: "14px",
-                    color: "#8fa0c3",
-                    letterSpacing: "0.3em",
+                    fontFamily: "MonumentExtendedRegular",
+                    fontSize: "64px",
+                    color: "#dee9ff",
+                    ml: "4%",
+                    mr: "4%",
                   }}
                 >
-                  Days
+                  :
                 </Typography>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: "MonumentExtendedRegular",
+                      fontSize: "64px",
+                      color: "#dee9ff",
+                    }}
+                  >
+                    05
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "sequel100black-55",
+                      fontSize: "14px",
+                      color: "#8fa0c3",
+                      letterSpacing: "0.3em",
+                    }}
+                  >
+                    Minutes
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: "MonumentExtendedRegular",
+                    fontSize: "64px",
+                    color: "#dee9ff",
+                    ml: "4%",
+                    mr: "4%",
+                  }}
+                >
+                  :
+                </Typography>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: "MonumentExtendedRegular",
+                      fontSize: "64px",
+                      color: "#dee9ff",
+                    }}
+                  >
+                    45
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "sequel100black-55",
+                      fontSize: "14px",
+                      color: "#8fa0c3",
+                      letterSpacing: "0.3em",
+                    }}
+                  >
+                    Seconds
+                  </Typography>
+                </Box>
               </Box>
-              <Typography
+            ) : (
+              <Box
                 sx={{
-                  fontFamily: "MonumentExtendedRegular",
-                  fontSize: "64px",
-                  color: "#dee9ff",
-                  ml: "4%",
-                  mr: "4%",
+                  display: "flex",
+                  width: "100%",
+                  mt: "50px",
+                  justifyContent: "center",
                 }}
               >
-                :
-              </Typography>
-              <Box
-                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-              >
-                <Typography
+                <Box
                   sx={{
-                    fontFamily: "MonumentExtendedRegular",
-                    fontSize: "64px",
-                    color: "#dee9ff",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    mr: "10%",
                   }}
                 >
-                  12
-                </Typography>
-                <Typography
+                  <Typography
+                    sx={{
+                      fontFamily: "MonumentExtendedRegular",
+                      fontSize: "55px",
+                      color: "#dee9ff",
+                    }}
+                  >
+                    99/350
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "sequel100black-55",
+                      fontSize: "14px",
+                      color: "#8fa0c3",
+                      letterSpacing: "0.3em",
+                    }}
+                  >
+                    Remaining
+                  </Typography>
+                </Box>
+                <img src={DownLine} alt="down line"></img>
+                <Box
                   sx={{
-                    fontFamily: "sequel100black-55",
-                    fontSize: "14px",
-                    color: "#8fa0c3",
-                    letterSpacing: "0.3em",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    ml: "10%",
                   }}
                 >
-                  Hours
-                </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "MonumentExtendedRegular",
+                      fontSize: "55px",
+                      color: "#dee9ff",
+                    }}
+                  >
+                    Free
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "sequel100black-55",
+                      fontSize: "14px",
+                      color: "#8fa0c3",
+                      letterSpacing: "0.3em",
+                    }}
+                  >
+                    Price
+                  </Typography>
+                </Box>
               </Box>
-              <Typography
+            )}
+
+            {!connected ? (
+              <Button
+                variant="contained"
+                onClick={onClickConnect}
                 sx={{
-                  fontFamily: "MonumentExtendedRegular",
-                  fontSize: "64px",
-                  color: "#dee9ff",
-                  ml: "4%",
-                  mr: "4%",
+                  display: { md: "flex", width: "35%" },
+                  fontSize: "19px",
+                  backgroundColor: "#3744e6",
+                  color: "white",
+                  fontFamily: "sora",
+                  mt: "7%",
                 }}
+                className={style["heroLink"]}
               >
-                :
-              </Typography>
-              <Box
-                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: "MonumentExtendedRegular",
-                    fontSize: "64px",
-                    color: "#dee9ff",
-                  }}
-                >
-                  05
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "sequel100black-55",
-                    fontSize: "14px",
-                    color: "#8fa0c3",
-                    letterSpacing: "0.3em",
-                  }}
-                >
-                  Minutes
-                </Typography>
-              </Box>
-              <Typography
+                Connect Wallet
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                onClick={onClickDisconnect}
                 sx={{
-                  fontFamily: "MonumentExtendedRegular",
-                  fontSize: "64px",
-                  color: "#dee9ff",
-                  ml: "4%",
-                  mr: "4%",
+                  display: { md: "flex", width: "35%" },
+                  fontSize: "19px",
+                  backgroundColor: "#3744e6",
+                  color: "white",
+                  fontFamily: "sora",
+                  mt: "7%",
                 }}
+                className={style["heroLink"]}
               >
-                :
-              </Typography>
-              <Box
-                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: "MonumentExtendedRegular",
-                    fontSize: "64px",
-                    color: "#dee9ff",
-                  }}
-                >
-                  45
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "sequel100black-55",
-                    fontSize: "14px",
-                    color: "#8fa0c3",
-                    letterSpacing: "0.3em",
-                  }}
-                >
-                  Seconds
-                </Typography>
-              </Box>
-            </Box>
-            <Button
-              variant="contained"
-              href=""
-              sx={{
-                display: { md: "flex", width: "35%" },
-                fontSize: "19px",
-                backgroundColor: "#3744e6",
-                color: "white",
-                fontFamily: "sora",
-                mt: "7%",
-              }}
-              className={style["heroLink"]}
-            >
-              Connect Wallet
-            </Button>
+                Disconnect : {addressEllipsis(address)}
+              </Button>
+            )}
           </Grid>
         </Grid>
         <Box sx={{ mt: { md: "200px", xs: "100px" }, mb: { md: "200px", xs: "100px" } }}>

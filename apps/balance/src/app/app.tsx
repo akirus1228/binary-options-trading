@@ -18,6 +18,8 @@ import {
   calculateAllUserBondDetails,
   isPendingTxn,
   txnButtonText,
+  isDev,
+  NetworkIds,
 } from "@fantohm/shared-web3";
 import { Header, Footer } from "./components/template";
 import { ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
@@ -40,7 +42,7 @@ export const App = (): JSX.Element => {
 
   const themeType = useSelector((state: RootState) => state.app.theme);
   const [theme, setTheme] = useState(USDBDark);
-  const { address, chainId, connected } = useWeb3Context();
+  const { address, chainId, connected, switchEthereumChain, provider } = useWeb3Context();
   const { bonds, allBonds } = useBonds(chainId || defaultNetworkId);
   const { investments } = useInvestments();
   const [promptTerms, setPromptTerms] = useState<boolean>(
@@ -66,7 +68,14 @@ export const App = (): JSX.Element => {
     // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
     dispatch(loadAppDetails());
   }, []);
-
+  useEffect(() => {
+    if (provider && connected && address) {
+      const expectedChain = isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
+      if (switchEthereumChain && chainId !== expectedChain) {
+        switchEthereumChain(expectedChain);
+      }
+    }
+  }, [provider, address, connected]);
   // Load account details
   useEffect(() => {
     if (address) {
