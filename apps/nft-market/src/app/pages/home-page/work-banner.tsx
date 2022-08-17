@@ -32,11 +32,10 @@ export const WorkBanner = (): JSX.Element => {
   ]);
 
   const toggleImage = (obj: any) => {
-    setData(
-      data.map((v: any) => {
-        return v.id === obj.id ? { ...obj, over: !obj.over } : v;
-      })
-    );
+    const arr = data.map((v: any) => {
+      return v.id === obj.id ? { ...obj, over: !obj.over } : { ...v };
+    });
+    setData(arr);
   };
 
   return (
@@ -45,7 +44,12 @@ export const WorkBanner = (): JSX.Element => {
         ITS SIMPLE
       </Typography>
       <Typography
-        sx={{ fontSize: { xs: "31px", xl: "45px" }, color: "#E6EDFF", marginTop: "20px" }}
+        sx={{
+          fontSize: { xs: "31px", xl: "45px" },
+          color: "#E6EDFF",
+          marginTop: "20px",
+          fontFamily: "MonumentExtended",
+        }}
       >
         How does it work?
       </Typography>
@@ -67,8 +71,8 @@ export const WorkBanner = (): JSX.Element => {
               height: { xs: "272px", sm: "361px" },
               position: "relative",
             }}
-            onMouseEnter={() => toggleImage(obj)}
-            onMouseLeave={() => toggleImage(obj)}
+            onMouseOver={() => toggleImage(obj)}
+            onMouseOut={() => toggleImage(obj)}
             key={obj.id}
           >
             <img

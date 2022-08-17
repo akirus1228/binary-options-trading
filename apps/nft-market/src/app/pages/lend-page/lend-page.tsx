@@ -1,7 +1,8 @@
+import { scrollTo } from "@fantohm/shared-helpers";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetListingsQuery } from "../../api/backend-api";
+import { useLazyGetListingsQuery } from "../../api/backend-api";
 import LenderAssetFilter from "../../components/asset-filter/lender-asset-filter/lender-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import AssetTypeFilter from "../../components/asset-type-filter/asset-type-filter";
@@ -12,60 +13,85 @@ import { Asset, Listing, ListingStatus } from "../../types/backend-types";
 import style from "./lend-page.module.scss";
 
 export const LendPage = (): JSX.Element => {
-  const [assets, setAssets] = useState<Asset[]>([]);
+  const [displayAssets, setDisplayAssets] = useState<Asset[]>([]);
+  const [hasNext, setHasNext] = useState(true);
+  const [skip, setSkip] = useState(0);
+  const [take, setTake] = useState(6);
   const [query, setQuery] = useState<ListingQueryParam>({
     skip: 0,
-    take: 50,
+    take,
     status: ListingStatus.Listed,
     sort: ListingSort.Recently,
   });
   const { user } = useSelector((state: RootState) => state.backend);
-  const { data: listings, isLoading } = useGetListingsQuery(query);
+  const [trigger, listingsResult] = useLazyGetListingsQuery();
 
   useEffect(() => {
-    if (!listings) {
-      return;
+    // if we're down the page we should go ahead and scroll back to the top of the results
+    if (window.scrollY > 300) {
+      scrollTo(300);
     }
-    setAssets(
-      listings
-        .filter(
-          (listing: Listing) =>
-            new Date(listing.term.expirationAt).getTime() >= new Date().getTime()
-        )
-        .sort((a, b) => {
-          if (a.asset.owner.address === user.address) {
-            return 1;
-          } else if (b.asset.owner.address === user.address) {
-            return -1;
-          }
+    setSkip(0);
+    trigger({ ...query, skip: 0, take });
+    setDisplayAssets([]);
+  }, [query]);
 
-          if (query.sort === ListingSort.Recently) {
-            return (
-              new Date(b.createdAt || "0").getTime() -
-              new Date(a.createdAt || "0").getTime()
-            );
-          } else if (query.sort === ListingSort.Oldest) {
-            return (
-              new Date(a.createdAt || "0").getTime() -
-              new Date(b.createdAt || "0").getTime()
-            );
-          } else if (query.sort === ListingSort.Highest) {
-            return b.term.amount - a.term.amount;
-          } else if (query.sort === ListingSort.Lowest) {
-            return a.term.amount - b.term.amount;
-          }
-          return 0;
-        })
-        .map((listing: Listing): Asset => {
-          return listing.asset;
-        })
-    );
-  }, [listings, query.sort]);
+  useEffect(() => {
+    if (!listingsResult.isSuccess) return;
+    if (!listingsResult.data.length) return;
+    const listings = listingsResult.data;
+
+    const newAssets: Asset[] = listings
+      .filter(
+        (listing: Listing) =>
+          new Date(listing.term.expirationAt).getTime() >= new Date().getTime()
+      )
+      .sort((a, b) => {
+        if (a.asset.owner.address === user.address) {
+          return 1;
+        } else if (b.asset.owner.address === user.address) {
+          return -1;
+        }
+
+        if (query.sort === ListingSort.Recently) {
+          return (
+            new Date(b.createdAt || "0").getTime() -
+            new Date(a.createdAt || "0").getTime()
+          );
+        } else if (query.sort === ListingSort.Oldest) {
+          return (
+            new Date(a.createdAt || "0").getTime() -
+            new Date(b.createdAt || "0").getTime()
+          );
+        } else if (query.sort === ListingSort.Highest) {
+          return b.term.amount - a.term.amount;
+        } else if (query.sort === ListingSort.Lowest) {
+          return a.term.amount - b.term.amount;
+        }
+        return 0;
+      })
+      .map((listing: Listing): Asset => {
+        return listing.asset;
+      });
+    setDisplayAssets([...displayAssets, ...newAssets]);
+    if (listingsResult.data.length < take) {
+      setHasNext(false);
+    }
+  }, [listingsResult.data]);
+
+  const fetchMoreData = () => {
+    setSkip(skip + take);
+    trigger({ ...query, skip: skip + take, take });
+  };
 
   return (
     <Container className={style["lendPageContainer"]}>
       <HeaderBlurryImage
-        url={listings && listings.length > 0 ? listings[0].asset.imageUrl : undefined}
+        url={
+          displayAssets && displayAssets.length > 0
+            ? displayAssets[0].imageUrl
+            : undefined
+        }
         height="300px"
       />
       <h1>Explore loan requests</h1>
@@ -75,13 +101,18 @@ export const LendPage = (): JSX.Element => {
             <LenderAssetFilter query={query} setQuery={setQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {isLoading && (
+            {listingsResult.isLoading && (
               <Box className="flex fr fj-c">
                 <CircularProgress />
               </Box>
             )}
             <AssetTypeFilter query={query} setQuery={setQuery} />
-            <AssetList assets={assets} type="lend" />
+            <AssetList
+              assets={displayAssets}
+              type="lend"
+              fetchData={fetchMoreData}
+              hasMore={hasNext}
+            />
           </Grid>
         </Grid>
       </Box>

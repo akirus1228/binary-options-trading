@@ -12,7 +12,7 @@ import {
   Popover,
   IconButton,
 } from "@mui/material";
-import { useWeb3Context, chains, NetworkIds } from "@fantohm/shared-web3";
+import { useWeb3Context, chains, NetworkIds, isDev } from "@fantohm/shared-web3";
 import { useSelector } from "react-redux";
 import {
   useGetCollectionsQuery,
@@ -27,12 +27,13 @@ import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import style from "./asset-details.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import PriceInfo from "./price-info/price-info";
-
+import loadingGradient from "../../../assets/images/loading.png";
+import axios, { AxiosResponse } from "axios";
 export interface AssetDetailsProps {
   contractAddress: string;
   tokenId: string;
@@ -46,12 +47,13 @@ export const AssetDetails = ({
   listing,
   sx,
 }: AssetDetailsProps): JSX.Element => {
+  const [validImage, setValidImage] = useState(loadingGradient);
   const { chainId } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const asset = useWalletAsset(contractAddress, tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const { data: collections } = useGetCollectionsQuery({});
-  const { data: nftPrice } = useGetNftPriceQuery({
+  const { data: nftPrices } = useGetNftPriceQuery({
     collection: contractAddress,
     tokenId,
   });
@@ -75,9 +77,9 @@ export const AssetDetails = ({
       startIcon: etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `${
-        chains[chainId || 1].blockExplorerUrls[0]
-      }token/${contractAddress}?a=${tokenId}`,
+      url: `https://${
+        isDev ? "rinkeby." : ""
+      }etherscan.io/token/${contractAddress}?a=${tokenId}`,
       endIcon: grayArrowRightUp,
     },
     {
@@ -85,21 +87,57 @@ export const AssetDetails = ({
       alt: "OpenSea",
       title: "View on OpenSea",
       url: `${
-        chainId === NetworkIds.Ethereum
+        !isDev
           ? "https://opensea.io/assets/ethereum/"
           : "https://testnets.opensea.io/assets/rinkeby/"
       }${contractAddress}/${tokenId}`,
       endIcon: grayArrowRightUp,
     },
   ];
+
+  const imageLoadOrder = [
+    asset?.imageUrl || "",
+    asset?.frameUrl || "",
+    asset?.thumbUrl || "",
+  ];
+
+  useEffect(() => {
+    if (validImage === loadingGradient) {
+      findValidImage();
+    }
+  }, [validImage]);
+
+  const findValidImage = () => {
+    imageLoadOrder.forEach((image) => {
+      if (image) {
+        axios.head(image).then(validateImage);
+        imageLoadOrder.shift();
+        return;
+      } else {
+        imageLoadOrder.shift();
+      }
+    });
+  };
+
+  const validateImage = (result: AxiosResponse<any, any>) => {
+    if (
+      result.status === 200 &&
+      result.headers["content-type"].toLowerCase().includes("image")
+    ) {
+      setValidImage(result.config.url || "");
+    } else {
+      setValidImage(loadingGradient);
+    }
+  };
+
   return (
     <Container sx={sx} className={style["assetRow"]}>
       {/* <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} /> */}
-      {asset && asset.imageUrl ? (
+      {asset && (asset.thumbUrl !== "" || asset.imageUrl !== "") ? (
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={asset.imageUrl} alt={asset.name || "unknown"} />
+              <img src={validImage} alt={asset.name || "unknown"} />
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -239,19 +277,18 @@ export const AssetDetails = ({
                   </Box>
                   <QuickStatus listing={listing} />
                 </Paper>
-                {nftPrice && (
+                {nftPrices && (
                   <Paper
                     sx={{
                       marginTop: "20px",
                       display: "flex",
-                      flexDirection: "row",
+                      flexDirection: "column",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      paddingLeft: "10%",
-                      paddingRight: "10%",
+                      padding: "24px",
                     }}
                   >
-                    <PriceInfo price={nftPrice} />
+                    <PriceInfo prices={nftPrices} />
                   </Paper>
                 )}
               </Box>

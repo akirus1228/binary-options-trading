@@ -132,6 +132,10 @@ body[class*=darkTheme] {
 
 }
 
+.infinite-scroll-component__outerdiv {
+  width: 100%;
+}
+
 /* experimental animated gradient background
   body {
       background: radial-gradient(ellipse at top, #492e9554, transparent),

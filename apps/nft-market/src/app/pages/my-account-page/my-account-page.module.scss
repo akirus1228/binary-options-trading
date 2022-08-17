@@ -5,10 +5,12 @@
     }
   }
 
-.tabElem {
-  &[class*=selected] {
-    div {
-    color:#fff !important;
+body[class*=darkTheme] {
+  .tabElem {
+    &[class*=selected] {
+      div {
+        color:#fff !important;
+      }
+    }
   }
-}
 }

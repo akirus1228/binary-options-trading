@@ -373,7 +373,10 @@ export const UserMenu = (): JSX.Element => {
                                   inputProps={{ 'aria-label': 'controlled' }}
                                 /> */}
                       {/* <Switch checked={checked} onChange={themeChangeColor} /> */}
-                      <CustomInnerSwitch onClick={toggleTheme} />
+                      <CustomInnerSwitch
+                        checked={themeType === "dark" ? true : false}
+                        onClick={toggleTheme}
+                      />
                     </Button>
                   )}
                 </>

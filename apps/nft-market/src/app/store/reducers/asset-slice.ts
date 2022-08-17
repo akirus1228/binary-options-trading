@@ -82,7 +82,12 @@ const assetsSlice = createSlice({
     updateAsset: (state, action: PayloadAction<Asset>) => {
       state.assets = {
         ...state.assets,
-        ...{ [assetToAssetId(action.payload)]: action.payload },
+        ...{
+          [assetToAssetId(action.payload)]: {
+            ...state.assets[assetToAssetId(action.payload)],
+            ...action.payload,
+          },
+        },
       };
     },
     updateAssets: (state, action: PayloadAction<Assets>) => {

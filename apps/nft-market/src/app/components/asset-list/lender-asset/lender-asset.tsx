@@ -8,7 +8,7 @@ import {
   Typography,
   Link,
 } from "@mui/material";
-import { useWalletAsset } from "../../../hooks/use-wallet-asset";
+import { Link as RouterLink } from "react-router-dom";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
 import { useEffect, useMemo, useState } from "react";
@@ -18,7 +18,13 @@ import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { useTermDetails } from "../../../hooks/use-term-details";
-import { chains, formatCurrency, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
+import {
+  chains,
+  formatCurrency,
+  isDev,
+  NetworkIds,
+  useWeb3Context,
+} from "@fantohm/shared-web3";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
@@ -26,20 +32,26 @@ import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
+import previewNotAvailable from "../../../../assets/images/preview-not-available.png";
+import loadingGradient from "../../../../assets/images/loading.png";
+import axios, { AxiosResponse } from "axios";
 
 export type LenderAssetProps = {
   asset: Asset;
 };
 
 export function LenderAsset({ asset }: LenderAssetProps) {
+  const imageLoadOrder = [asset.thumbUrl, asset.imageUrl, asset.frameUrl];
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
-  //const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
   );
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
+
+  const [validImage, setValidImage] = useState(loadingGradient);
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -56,6 +68,35 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         return;
     }
   }, [asset]);
+
+  useEffect(() => {
+    if (validImage === loadingGradient) {
+      findValidImage();
+    }
+  }, [validImage]);
+
+  const findValidImage = () => {
+    imageLoadOrder.forEach((image) => {
+      if (image) {
+        axios.head(image).then(validateImage);
+        imageLoadOrder.shift();
+        return;
+      } else {
+        imageLoadOrder.shift();
+      }
+    });
+  };
+
+  const validateImage = (result: AxiosResponse<any, any>) => {
+    if (
+      result.status === 200 &&
+      result.headers["content-type"].toLowerCase().includes("image")
+    ) {
+      setValidImage(result.config.url || "");
+    } else {
+      setValidImage(loadingGradient);
+    }
+  };
 
   const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagMoreDropDown(event.currentTarget);
@@ -74,7 +115,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       startIcon: etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `${chains[chainId || 1].blockExplorerUrls[0]}token/${
+      url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
         asset?.assetContractAddress
       }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
@@ -85,7 +126,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       alt: "OpenSea",
       title: "View on OpenSea",
       url: `${
-        chainId === NetworkIds.Ethereum
+        !isDev
           ? "https://opensea.io/assets/ethereum/"
           : "https://testnets.opensea.io/assets/rinkeby/"
       }${asset.assetContractAddress}/${asset.tokenId}`,
@@ -156,7 +197,9 @@ export function LenderAsset({ asset }: LenderAssetProps) {
               href={link.url}
               style={{ textDecoration: "none" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
-              onClick={() => setFlagMoreDropDown(null)}
+              onClick={(e) => {
+                setFlagMoreDropDown(null);
+              }}
             >
               <Box
                 sx={{
@@ -174,13 +217,17 @@ export function LenderAsset({ asset }: LenderAssetProps) {
                   />
                   <Typography
                     variant="h6"
-                    style={{ fontWeight: "normal", fontSize: "1em" }}
+                    style={{
+                      fontWeight: "normal",
+                      fontSize: "1em",
+                      color: `${themeType === "light" ? "black" : "white"}`,
+                    }}
                   >
                     {link.title}
                   </Typography>
                 </Box>
                 {link?.endIcon && (
-                  <Box sx={{ ml: "7px", mt: "2px" }}>
+                  <Box sx={{ ml: "7px", mt: "-2px" }}>
                     <img src={link.endIcon} style={{ width: "9px" }} alt={link.alt} />
                   </Box>
                 )}
@@ -189,16 +236,20 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           ))}
         </Popover>
       </Box>
-      {asset.imageUrl && asset.openseaId && (
-        <Link href={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
+      <RouterLink
+        to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
+        className="flex"
+        style={{ flexGrow: "1" }}
+      >
+        {asset.openseaId && (
           <PreviewImage
-            url={asset.imageUrl}
+            url={validImage || previewNotAvailable}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
           />
-        </Link>
-      )}
+        )}
+      </RouterLink>
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
           <span

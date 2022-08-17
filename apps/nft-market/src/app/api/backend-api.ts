@@ -46,7 +46,7 @@ import { isDev } from "@fantohm/shared-web3";
 
 export const WEB3_SIGN_MESSAGE =
   "This application uses this cryptographic signature, verifying that you are the owner of this address.";
-// TODO: use production env to determine correct endpoint
+
 export const NFT_MARKETPLACE_API_URL = isDev
   ? "https://liqd-nft-lending-test.herokuapp.com/api"
   : "https://liqd-nft-lending-production.herokuapp.com/api";
@@ -530,7 +530,7 @@ export const backendApi = createApi({
       providesTags: ["PlatformWalletInfo"],
     }),
     // User
-    getNftPrice: builder.query<NftPrice, { collection: string; tokenId: string }>({
+    getNftPrice: builder.query<NftPrice[], { collection: string; tokenId: string }>({
       query: ({ collection, tokenId }) => ({
         url: `nft/price/${collection}/${tokenId}`,
       }),
@@ -546,6 +546,7 @@ export const {
   useDeleteAssetMutation,
   useValidateNFTQuery,
   useGetListingsQuery,
+  useLazyGetListingsQuery,
   useGetListingQuery,
   useDeleteListingMutation,
   useUpdateListingMutation,

@@ -98,6 +98,12 @@ export type Listing = {
 
 export type Chain = "eth" | "sol";
 
+export enum NftPriceProvider {
+  Nabu = "NABU",
+  Upshot = "UPSHOT",
+  NftBank = "NFT_BANK",
+}
+
 export type BackendAsset = {
   status: AssetStatus;
   cacheExpire?: number;
@@ -114,6 +120,7 @@ export type BackendAsset = {
   gifUrl: Nullable<string>;
   videoUrl: Nullable<string>;
   threeDUrl: Nullable<string>;
+  thumbUrl: string;
   isOwned: boolean;
   owner: Owner;
   dateCreated: Nullable<string>;
@@ -363,6 +370,7 @@ export type NftPrice = {
   chain: Chain;
   collection: string;
   tokenId: string;
+  priceProvider: NftPriceProvider;
   priceInEth: string;
   priceInUsd: string;
   originalProviderResponse: string;

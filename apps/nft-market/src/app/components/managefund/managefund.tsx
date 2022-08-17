@@ -205,7 +205,13 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
+    <Dialog
+      onClose={handleClose}
+      open={open}
+      sx={{ padding: "1.5em" }}
+      fullWidth
+      className={style["dialogContainer"]}
+    >
       <Box className="flex fr fj-c">
         <h1 style={{ margin: "0 0 0.5em 0" }}>Manage Allowances</h1>
       </Box>
