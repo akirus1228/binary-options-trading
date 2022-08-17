@@ -34,12 +34,14 @@ type Page = {
   href?: string;
   hash?: string;
   tooltip?: string;
+  external?: boolean;
 };
 
 const pages: Page[] = [
   { title: "Lend", href: "/lend", tooltip: "Earn interest" },
   { title: "Borrow", href: "/borrow", tooltip: "Get liquidity" },
   { title: "Account", href: "/my-account" },
+  { title: "Feedback & Issues", href: "https://liqd.nolt.io/", external: true },
   { title: "About", href: "/", hash: "#about-section" },
   { title: "Blog", href: "/blog" },
 ];
@@ -120,13 +122,8 @@ export const Header = (): JSX.Element => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page: Page) => (
-                <Link
-                  // href={page.href ? page.href : '#'}
-                  to={{ pathname: page.href || "#", hash: page.hash }}
-                  onClick={handleCloseNavMenu}
-                  key={page.title}
-                >
+              {pages.map((page: Page) => {
+                const children = (
                   <Typography
                     textAlign="center"
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
@@ -139,8 +136,28 @@ export const Header = (): JSX.Element => {
                       <Button style={{ width: "100%" }}>{page.title}</Button>
                     )}
                   </Typography>
-                </Link>
-              ))}
+                );
+
+                return page.external ? (
+                  <a
+                    href={page.href}
+                    onClick={handleCloseNavMenu}
+                    key={page.title}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {children}
+                  </a>
+                ) : (
+                  <Link
+                    to={{ pathname: page.href || "#", hash: page.hash }}
+                    onClick={handleCloseNavMenu}
+                    key={page.title}
+                  >
+                    {children}
+                  </Link>
+                );
+              })}
             </Menu>
           </Box>
           <Typography
@@ -167,21 +184,29 @@ export const Header = (): JSX.Element => {
           >
             <Box sx={{ display: "flex", flexDirection: "row" }}>
               {pages.map((page: Page, index: number) => {
+                const children = page.tooltip ? (
+                  <Tooltip title={page.tooltip}>
+                    <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
+                  </Tooltip>
+                ) : (
+                  <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
+                );
+
                 return (
                   <Typography
                     key={`btn-${page.title}-${index}`}
                     textAlign="center"
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
-                    <Link to={{ pathname: page.href || "#", hash: page.hash }}>
-                      {page.tooltip ? (
-                        <Tooltip title={page.tooltip}>
-                          <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
-                        </Tooltip>
-                      ) : (
-                        <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
-                      )}
-                    </Link>
+                    {page.external ? (
+                      <a href={page.href} target="_blank" rel="noreferrer">
+                        {children}
+                      </a>
+                    ) : (
+                      <Link to={{ pathname: page.href || "#", hash: page.hash }}>
+                        {children}
+                      </Link>
+                    )}
                   </Typography>
                 );
               })}
