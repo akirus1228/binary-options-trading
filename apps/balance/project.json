@@ -26,7 +26,9 @@
           "apps/balance/src/favicon-32x32.png",
           "apps/balance/src/mstile-150x150.png",
           "apps/balance/src/safari-pinned-tab.svg",
-          "apps/balance/src/site.webmanifest"
+          "apps/balance/src/site.webmanifest",
+          "apps/balance/src/robots.txt",
+          "apps/balance/src/sitemap.xml"
         ],
         "styles": ["apps/balance/src/styles.scss"],
         "scripts": [],
