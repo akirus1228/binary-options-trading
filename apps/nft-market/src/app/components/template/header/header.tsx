@@ -139,7 +139,13 @@ export const Header = (): JSX.Element => {
                 );
 
                 return page.external ? (
-                  <a href={page.href} onClick={handleCloseNavMenu} key={page.title}>
+                  <a
+                    href={page.href}
+                    onClick={handleCloseNavMenu}
+                    key={page.title}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {children}
                   </a>
                 ) : (
@@ -193,7 +199,9 @@ export const Header = (): JSX.Element => {
                     style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                   >
                     {page.external ? (
-                      <a href={page.href}>{children}</a>
+                      <a href={page.href} target="_blank" rel="noreferrer">
+                        {children}
+                      </a>
                     ) : (
                       <Link to={{ pathname: page.href || "#", hash: page.hash }}>
                         {children}
