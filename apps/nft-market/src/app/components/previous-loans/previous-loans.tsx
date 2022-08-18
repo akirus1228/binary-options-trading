@@ -15,7 +15,7 @@ import {
   TableRow,
   Theme,
 } from "@mui/material";
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { chains } from "@fantohm/shared-web3";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../api/backend-api";
 import store, { RootState } from "../../store";
@@ -34,28 +34,28 @@ export interface PreviousLoansProps {
 }
 
 export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element => {
-  const { provider } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
   const [loans, setLoans] = useState<Loan[]>([]);
-  const { authSignature } = useSelector((state: RootState) => state.backend);
   const { data: completeLoans, isLoading: isCompleteLoansLoading } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
-      assetId: asset.id,
+      contractAddress: asset.assetContractAddress,
+      tokenId: asset.tokenId,
       status: LoanStatus.Complete,
     },
-    { skip: !asset || !authSignature }
+    { skip: !asset }
   );
 
   const { data: defaultedLoans, isLoading: isDefaultedLoading } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
-      assetId: asset.id,
+      contractAddress: asset.assetContractAddress,
+      tokenId: asset.tokenId,
       status: LoanStatus.Default,
     },
-    { skip: !asset || !authSignature }
+    { skip: !asset }
   );
 
   const currencies = useSelector((state: RootState) => selectCurrencies(state));
@@ -73,10 +73,6 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
         return;
       }
       if (!currencies) {
-        setLoans([]);
-        return;
-      }
-      if (asset.id === undefined) {
         setLoans([]);
         return;
       }
@@ -98,11 +94,12 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
               entryCurrency.currentAddress.toLowerCase() ===
               loan.term.currencyAddress.toLowerCase()
           );
+          const staticProvider = await chains[desiredNetworkId].provider;
           const loanDetail = await dispatch(
             getLoanDetailsFromContract({
               loanId: loan.contractLoanId,
               networkId: desiredNetworkId,
-              provider,
+              provider: staticProvider,
             } as LoanDetailsAsyncThunk)
           ).unwrap();
           const currencyPrice = match ? match[1]?.lastPrice : 1;

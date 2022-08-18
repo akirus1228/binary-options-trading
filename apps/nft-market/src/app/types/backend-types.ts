@@ -321,6 +321,8 @@ export type BackendAssetQueryParams = {
 
 export type BackendLoanQueryParams = {
   assetId?: string;
+  contractAddress?: string;
+  tokenId?: string;
   assetListingId?: string;
   lenderAddress?: string;
   borrowerAddress?: string;

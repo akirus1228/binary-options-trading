@@ -53,6 +53,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["WETH_ADDRESS"],
     },
     coingeckoStub: "weth",
+    decimals: 18,
   },
   USDB_ADDRESS: {
     symbol: "USDB",
@@ -63,6 +64,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDB_ADDRESS"],
     },
     coingeckoStub: "usd-balance",
+    decimals: 18,
   },
   DAI_ADDRESS: {
     symbol: "DAI",
@@ -73,6 +75,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["DAI_ADDRESS"],
     },
     coingeckoStub: "dai",
+    decimals: 18,
   },
   WBTC_ADDRESS: {
     symbol: "wBTC",
@@ -105,6 +108,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDT_ADDRESS"],
     },
     coingeckoStub: "tether",
+    decimals: 6,
   },
 };
 
