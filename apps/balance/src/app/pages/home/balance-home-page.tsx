@@ -187,12 +187,8 @@ export const BalanceHomePage = (): JSX.Element => {
                         marginLeft: { sm: "1em", md: "3em", lg: "5em" },
                       }}
                     >
-                      <Typography className={style["heroTitle"]}>
-                        Infrastructure for
-                      </Typography>
-                      <Typography className={style["heroTitle1"]}>
-                        decentralized finance
-                      </Typography>
+                      <h1 className={style["heroTitle"]}>Infrastructure for</h1>
+                      <h1 className={style["heroTitle1"]}>decentralized finance</h1>
                       <Typography style={{ marginTop: "20px", color: "#5f5f5f" }}>
                         We are leveraging our decentralized business experience to help
                         build a more sustainable, inclusive crypto investment economy. See

@@ -50,7 +50,7 @@ export function BalanceIconLink({
               <img src={icon as string} alt={title} className={style["iconImage"]} />
             </Grid>
             <Grid item xs={6}>
-              <h1 className={style["title"]}>{title}</h1>
+              <h3 className={style["title"]}>{title}</h3>
             </Grid>
           </Grid>
           <Grid item xs={12}>
