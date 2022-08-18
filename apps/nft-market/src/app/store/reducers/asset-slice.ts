@@ -7,7 +7,11 @@ import {
 import { isDev, loadState } from "@fantohm/shared-web3";
 import { Asset, AssetStatus, BackendLoadingStatus } from "../../types/backend-types";
 import { OpenseaAsset } from "../../api/opensea";
-import { openseaAssetToAsset } from "../../helpers/data-translations";
+import {
+  openseaAssetToAsset,
+  reservoirTokenToAsset,
+} from "../../helpers/data-translations";
+import { ReservoirToken } from "../../api/reservoir";
 
 const OPENSEA_API_KEY = "6f2462b6e7174e9bbe807169db342ec4";
 
@@ -53,6 +57,18 @@ export const updateAssetsFromOpensea = createAsyncThunk(
     const newAssetAry = await openseaAssetToAsset(
       openseaAssets.filter((asset: OpenseaAsset) => isAssetValid(asset))
     );
+    const newAssets: Assets = {};
+    newAssetAry.forEach((asset: Asset) => {
+      newAssets[assetToAssetId(asset)] = asset;
+    });
+    dispatch(updateAssets(newAssets));
+  }
+);
+
+export const updateAssetsFromReservoir = createAsyncThunk(
+  "asset/updateAssetsFromReservoir",
+  async (reservoirAssets: ReservoirToken[], { dispatch }) => {
+    const newAssetAry = reservoirAssets.map(reservoirTokenToAsset);
     const newAssets: Assets = {};
     newAssetAry.forEach((asset: Asset) => {
       newAssets[assetToAssetId(asset)] = asset;
