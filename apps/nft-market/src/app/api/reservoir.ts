@@ -1,13 +1,14 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { isDev } from "@fantohm/shared-web3";
 import { FetchArgs } from "@reduxjs/toolkit/dist/query";
+import { updateAssetsFromReservoir } from "../store/reducers/asset-slice";
 
 type ReservoirConfig = {
   apiKey: string;
   apiEndpoint: string;
 };
 
-type ReservoirGetCollectionsRequest = {
+export type ReservoirGetCollectionsRequest = {
   user: string;
   community?: string;
   collectionsSetId?: string;
@@ -18,59 +19,57 @@ type ReservoirGetCollectionsRequest = {
   limit: number;
 };
 
-type ReservoirCollection = {
-  collection: {
-    id: string;
-    slug: string;
-    name: string;
-    image?: string;
-    banner?: string;
-    discordUrl?: string;
-    externalUrl?: string;
-    twitterUsername?: string;
-    description?: string;
-    sampleImages?: string[];
-    tokenCount?: string;
-    primaryContract: string;
-    tokenSetId: string;
-    floorAskPrice: number;
-    rank: {
-      "1day": number;
-      "7day": number;
-      "30day": number;
-      allTime: number;
-    };
-    volume: {
-      "1day": number;
-      "7day": number;
-      "30day": number;
-      allTime: number;
-    };
-    volumeChange: {
-      "1day": number;
-      "7day": number;
-      "30day": number;
-    };
-    floorSale: {
-      "1day": number;
-      "7day": number;
-      "30day": number;
-    };
-    topBidValue?: number;
-    topBidMaker?: string;
-    ownership: {
-      tokenCount: string;
-      onSaleCount: string;
-      liquidCount: string;
-    };
+export type ReservoirCollection = {
+  id: string;
+  slug: string;
+  name: string;
+  image?: string;
+  banner?: string;
+  discordUrl?: string;
+  externalUrl?: string;
+  twitterUsername?: string;
+  description?: string;
+  sampleImages?: string[];
+  tokenCount?: string;
+  primaryContract: string;
+  tokenSetId: string;
+  floorAskPrice: number;
+  rank: {
+    "1day": number;
+    "7day": number;
+    "30day": number;
+    allTime: number;
+  };
+  volume: {
+    "1day": number;
+    "7day": number;
+    "30day": number;
+    allTime: number;
+  };
+  volumeChange: {
+    "1day": number;
+    "7day": number;
+    "30day": number;
+  };
+  floorSale: {
+    "1day": number;
+    "7day": number;
+    "30day": number;
+  };
+  topBidValue?: number;
+  topBidMaker?: string;
+  ownership: {
+    tokenCount: string;
+    onSaleCount: string;
+    liquidCount: string;
   };
 };
 
-type ReservoirGetCollectionsResponse = {
+export type ReservoirGetCollectionsResponse = {
   collections: ReservoirCollection[];
 };
 
-type ReservoirTokenDetailsRequest = {
+export type ReservoirTokenDetailsRequest = {
   collection?: string; // 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63
   contract?: string; // 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63
   tokens?: string[]; // Example: tokens[0]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:704 tokens[1]: 0x8d04a8c79ceb0889bdd12acdf3fa9d207ed3ff63:97
@@ -84,12 +83,12 @@ type ReservoirTokenDetailsRequest = {
   continuation: string; // cursor for next page
 };
 
-type ReservoirTokenDetailsResponse = {
+export type ReservoirTokenDetailsResponse = {
   tokens: ReservoirToken[];
   continuation?: string;
 };
 
-type ReservoirToken = {
+export type ReservoirToken = {
   contract: string;
   tokenId: number;
   name?: string;
@@ -113,7 +112,7 @@ type ReservoirToken = {
   market?: ReservoirMarket;
 };
 
-type ReservoirAttribute = {
+export type ReservoirAttribute = {
   key: string;
   value: string;
   tokenCount?: number;
@@ -122,7 +121,7 @@ type ReservoirAttribute = {
   topBidValue?: number;
 };
 
-type ReservoirMarket = {
+export type ReservoirMarket = {
   floorAsk?: {
     id: string; // address
     price: number;
@@ -137,6 +136,45 @@ type ReservoirMarket = {
       url: string;
     };
   };
+};
+
+export type ReservoirGetUserTokensRequest = {
+  user: string;
+  community?: string;
+  collectionsSetId?: string;
+  collection?: string;
+  contract?: string;
+  sortby: "" | "aquiredAt";
+  sortDirection: "desc" | "asc";
+  offset: number;
+  limit: number;
+  includeTopBid: boolean;
+};
+
+export type ReservoirShortToken = {
+  contract: string;
+  tokenId: string;
+  name: string | null;
+  image: string | null;
+  collection: Partial<ReservoirCollection>;
+  topBid: {
+    id: string;
+    value: number;
+  };
+};
+
+export type ReservoirOwnership = {
+  tokenCount: string;
+  onSaleCount: string;
+  floorAskPrice: number;
+  acquiredAt: string;
+};
+
+export type ReservoirGetUserTokensResponse = {
+  tokens: {
+    token: ReservoirShortToken;
+    ownership: ReservoirOwnership;
+  }[];
 };
 
 const reservoirConfig: ReservoirConfig = {
@@ -173,7 +211,7 @@ export const reservoirApi = createApi({
   reducerPath: "reservoirApi",
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
-    getCollections: builder.query<
+    getReservoirCollections: builder.query<
       ReservoirGetCollectionsResponse,
       ReservoirGetCollectionsRequest
     >({
@@ -182,16 +220,37 @@ export const reservoirApi = createApi({
         params: queryParams,
       }),
     }),
-    getTokenDetails: builder.query<
-      ReservoirTokenDetailsRequest,
-      ReservoirTokenDetailsResponse
+    getReservoirTokenDetails: builder.query<
+      ReservoirTokenDetailsResponse,
+      ReservoirTokenDetailsRequest
     >({
       query: (query) => ({
         url: `tokens/details/v4`,
+        params: query,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateAssetsFromReservoir(data.tokens));
+        } catch (e) {
+          console.info("Opensea failing. Reverting to backup");
+        }
+      },
+    }),
+    getReservoirUserTokens: builder.query<
+      ReservoirGetUserTokensResponse,
+      ReservoirGetUserTokensRequest
+    >({
+      query: ({ user, ...query }) => ({
+        url: `users/${user}`,
         params: query,
       }),
     }),
   }),
 });
 
-export const { useGetCollectionsQuery, useGetTokenDetailsQuery } = reservoirApi;
+export const {
+  useGetReservoirCollectionsQuery,
+  useGetReservoirTokenDetailsQuery,
+  useGetReservoirUserTokensQuery,
+} = reservoirApi;

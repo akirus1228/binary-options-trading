@@ -64,6 +64,7 @@ interface AppData {
   readonly checkedConnection: boolean;
   readonly growlNotifications: GrowlNotification[];
   readonly theme: string;
+  readonly isOpenseaUp: boolean;
   blogPosts: any;
 }
 
@@ -84,6 +85,7 @@ const initialState: AppData = {
   growlNotifications: [],
   blogPosts: undefined,
   theme: "dark",
+  isOpenseaUp: true,
 };
 
 const appSlice = createSlice({
@@ -119,6 +121,10 @@ const appSlice = createSlice({
         }),
       ];
     },
+    setOpenseaStatus: (state, action: PayloadAction<boolean>) => {
+      state.isOpenseaUp = action.payload;
+      console.log("opensea status: " + action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadAppDetails.pending, (state, action) => {
@@ -137,6 +143,11 @@ const appSlice = createSlice({
 const baseInfo = (state: RootState) => state.app;
 
 export const appReducer = appSlice.reducer;
-export const { setLoading, setCheckedConnection, addAlert, clearAlert } =
-  appSlice.actions;
+export const {
+  setLoading,
+  setCheckedConnection,
+  addAlert,
+  clearAlert,
+  setOpenseaStatus,
+} = appSlice.actions;
 export const getAppState = createSelector(baseInfo, (app) => app);
