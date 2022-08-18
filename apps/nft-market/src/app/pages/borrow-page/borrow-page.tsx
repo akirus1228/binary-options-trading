@@ -21,11 +21,14 @@ import {
 import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
+  const take = 12;
+  const [skip, setSkip] = useState(0);
   const { address } = useWeb3Context();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
+  const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
-    limit: 12,
+    limit: take,
     owner: user.address,
   });
 
@@ -56,7 +59,7 @@ export const BorrowPage = (): JSX.Element => {
   const { data: osResponse, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(
     osQuery,
     {
-      skip: !osQuery.owner,
+      skip: !osQuery.owner || !isOpenseaUp,
     }
   );
 
@@ -78,7 +81,6 @@ export const BorrowPage = (): JSX.Element => {
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
-    console.log(osResponse);
     if (osResponse && osResponse.next) {
       setOsNext(osResponse?.next || "");
     } else if (osResponse && osResponse.next === null) {
@@ -124,10 +126,6 @@ export const BorrowPage = (): JSX.Element => {
         : 1
     );
   }, [assetsInEscrow, feQuery.status, myAssets]);
-
-  useEffect(() => {
-    console.log(assetsToShow);
-  }, [assetsToShow]);
 
   const isWalletConnected = address && authSignature;
 
