@@ -1,11 +1,13 @@
 import Box from "@mui/material/Box";
 import { HashLink as Link } from "react-router-hash-link";
 import HeroBannerImg from "../../../assets/images/hero-banner.png";
+import HeroBannerLightImg from "../../../assets/images/hero-banner-light.png";
 import HeroBannerMobileImg from "../../../assets/images/hero-banner-mobile.png";
+import HeroBannerMobileLightImg from "../../../assets/images/hero-banner-mobile-light.png";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
-export const HeroBanner = (): JSX.Element => {
+export const HeroBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   return (
     <Box
       sx={{
@@ -15,8 +17,10 @@ export const HeroBanner = (): JSX.Element => {
         left: "0",
         width: "100%",
         backgroundImage: {
-          xs: `url('${HeroBannerMobileImg}')`,
-          sm: `url('${HeroBannerImg}')`,
+          xs: isDark
+            ? `url('${HeroBannerMobileImg}')`
+            : `url('${HeroBannerMobileLightImg}')`,
+          sm: isDark ? `url('${HeroBannerImg}')` : `url('${HeroBannerLightImg}')`,
         },
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -39,7 +43,7 @@ export const HeroBanner = (): JSX.Element => {
             width: "80%",
             textAlign: "center",
             fontFamily: "MonumentExtended",
-            color: "#E6EDFF",
+            color: isDark ? "#E6EDFF" : "#0A0C0F",
           }}
         >
           Unlock the value of your NFTs, without selling
@@ -51,10 +55,10 @@ export const HeroBanner = (): JSX.Element => {
             width: "80%",
             textAlign: "center",
             fontFamily: "inter",
-            color: "#8FA0C3",
+            color: isDark ? "#8FA0C3" : "#0A0C0F",
           }}
         >
-          Unlock the value of your NFTs, without selling
+          Don’t sell your NFT, borrow against it and unlock the value on your own terms
         </Typography>
         <Box
           sx={{

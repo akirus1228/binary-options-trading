@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import BgCard from "../../../assets/images/bg-card.png";
 import BgCardHover from "../../../assets/images/bg-card-hover.png";
 
-export const WorkBanner = (): JSX.Element => {
+export const WorkBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   const [data, setData] = useState([
     {
       id: 1,
@@ -43,7 +43,7 @@ export const WorkBanner = (): JSX.Element => {
       <Typography
         sx={{
           fontSize: { xs: "14px", sm: "16px" },
-          color: "#374FFF",
+          color: isDark ? "#374FFF" : "#8FA0C3",
           fontFamily: "SequelBlack",
         }}
       >
@@ -52,7 +52,7 @@ export const WorkBanner = (): JSX.Element => {
       <Typography
         sx={{
           fontSize: { xs: "31px", xl: "45px" },
-          color: "#E6EDFF",
+          color: isDark ? "#E6EDFF" : "#0A0C0F",
           marginTop: "20px",
           fontFamily: "MonumentExtended",
         }}
@@ -97,14 +97,14 @@ export const WorkBanner = (): JSX.Element => {
             <Typography
               sx={{
                 fontSize: { xs: "28px", xl: "38px" },
-                color: "#8FA0C3",
+                color: isDark ? "#8FA0C3" : "#0A0C0F",
                 height: { xs: "136px", sm: "180px" },
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 fontFamily: "MonumentExtended",
                 "&:hover": {
-                  color: "#CAD6EE",
+                  color: isDark ? "#CAD6EE" : "#0A0C0F",
                 },
               }}
             >
@@ -123,7 +123,7 @@ export const WorkBanner = (): JSX.Element => {
               <Typography
                 sx={{
                   fontSize: { xs: "15px", xl: "22px" },
-                  color: "#CAD6EE",
+                  color: isDark ? "#CAD6EE" : "#000",
                   width: "80%",
                   fontFamily: "inter",
                   fontWeight: "600",
@@ -135,7 +135,7 @@ export const WorkBanner = (): JSX.Element => {
               <Typography
                 sx={{
                   fontSize: { xs: "13px", xl: "18px" },
-                  color: "#8FA0C3",
+                  color: isDark ? "#8FA0C3" : "#7988A8",
                   width: "80%",
                   fontFamily: "inter",
                 }}

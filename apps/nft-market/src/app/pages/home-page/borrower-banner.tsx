@@ -5,8 +5,10 @@ import { HashLink as Link } from "react-router-hash-link";
 
 import FundsImg from "../../../assets/images/funds-img.png";
 import OffersImg from "../../../assets/images/offers-img.png";
+import FundsLightImg from "../../../assets/images/funds-light-img.png";
+import OffersLightImg from "../../../assets/images/offers-light-img.png";
 
-export const BorrowerBanner = (): JSX.Element => {
+export const BorrowerBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   return (
     <Box
       sx={{
@@ -33,7 +35,11 @@ export const BorrowerBanner = (): JSX.Element => {
             height: { xs: "248px", md: "383px" },
           }}
         >
-          <img style={{ width: "100%", height: "100%" }} src={OffersImg} alt="" />
+          <img
+            style={{ width: "100%", height: "100%" }}
+            src={isDark ? OffersImg : OffersLightImg}
+            alt=""
+          />
         </Box>
         <Box
           sx={{
@@ -54,7 +60,7 @@ export const BorrowerBanner = (): JSX.Element => {
           <Typography
             sx={{
               fontSize: { xs: "28px", xl: "28px" },
-              color: "#CAD6EE",
+              color: isDark ? "#CAD6EE" : "#0A0C0F",
               height: { xs: "200px", md: "120px" },
               padding: "20px",
               display: "flex",
@@ -85,7 +91,7 @@ export const BorrowerBanner = (): JSX.Element => {
                 sx={{
                   width: "180px",
                   fontSize: "18px",
-                  color: "#8FA0C3",
+                  color: isDark ? "#8FA0C3" : "#7988A8",
                   fontFamily: "inter",
                 }}
               >
@@ -110,10 +116,10 @@ export const BorrowerBanner = (): JSX.Element => {
                 marginTop: "20px",
                 marginInline: "auto",
                 "&:hover": {
-                  color: "#fff",
+                  color: isDark ? "#fff" : "#000",
                 },
                 "&:hover .arrowSvg path": {
-                  stroke: "#fff",
+                  stroke: isDark ? "#fff" : "#000",
                 },
               }}
             >
@@ -159,7 +165,11 @@ export const BorrowerBanner = (): JSX.Element => {
             height: { xs: "265px", md: "376px" },
           }}
         >
-          <img style={{ width: "100%", height: "100%" }} src={FundsImg} alt="" />
+          <img
+            style={{ width: "100%", height: "100%" }}
+            src={isDark ? FundsImg : FundsLightImg}
+            alt=""
+          />
         </Box>
       </Box>
     </Box>

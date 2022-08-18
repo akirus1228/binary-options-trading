@@ -6,8 +6,10 @@ import { HashLink as Link } from "react-router-hash-link";
 
 import NftOne from "../../../assets/images/nft-1.png";
 import NftTwo from "../../../assets/images/nft-2.png";
+import NftOneLight from "../../../assets/images/nft-1-light.png";
+import NftTwoLight from "../../../assets/images/nft-2-light.png";
 
-export const LendersBanner = (): JSX.Element => {
+export const LendersBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   return (
     <Box
       sx={{
@@ -49,7 +51,7 @@ export const LendersBanner = (): JSX.Element => {
                 height: "100%",
                 position: "absolute",
               }}
-              src={NftOne}
+              src={isDark ? NftOne : NftOneLight}
               alt=""
             />
           </Box>
@@ -73,7 +75,7 @@ export const LendersBanner = (): JSX.Element => {
           <Typography
             sx={{
               fontSize: { xs: "28px", xl: "28px" },
-              color: "#CAD6EE",
+              color: isDark ? "#CAD6EE" : "#0A0C0F",
               height: { xs: "200px", md: "120px" },
               padding: "20px",
               display: "flex",
@@ -96,7 +98,7 @@ export const LendersBanner = (): JSX.Element => {
               sx={{
                 width: "80%",
                 fontSize: "18px",
-                color: "#8FA0C3",
+                color: isDark ? "#8FA0C3" : "#7988A8",
                 fontFamily: "inter",
               }}
             >
@@ -122,10 +124,10 @@ export const LendersBanner = (): JSX.Element => {
                 marginTop: "20px",
                 marginInline: "auto",
                 "&:hover": {
-                  color: "#fff",
+                  color: isDark ? "#fff" : "#000",
                 },
                 "&:hover .arrowSvg path": {
-                  stroke: "#fff",
+                  stroke: isDark ? "#fff" : "#000",
                 },
               }}
             >
@@ -186,7 +188,7 @@ export const LendersBanner = (): JSX.Element => {
                 height: "100%",
                 position: "absolute",
               }}
-              src={NftTwo}
+              src={isDark ? NftTwo : NftTwoLight}
               alt=""
             />
           </Box>

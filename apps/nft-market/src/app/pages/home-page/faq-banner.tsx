@@ -31,7 +31,7 @@ interface IFaq {
   expanded: boolean;
 }
 
-export const FaqBanner = (): JSX.Element => {
+export const FaqBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   const [data, setData] = React.useState<IFaq[]>([
     {
       id: 1,
@@ -82,7 +82,7 @@ export const FaqBanner = (): JSX.Element => {
       <Typography
         sx={{
           fontSize: { xs: "30px", xl: "35px" },
-          color: "#CAD6EE",
+          color: isDark ? "#CAD6EE" : "#0A0C0F",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -101,11 +101,16 @@ export const FaqBanner = (): JSX.Element => {
             marginInline: "auto",
             marginTop: "20px",
             boxShadow: "none",
+            background: isDark ? "rgba(61,69,87,0.2)" : "rgba(61,69,87,0.04)",
           }}
         >
           <CardActions disableSpacing>
             <Typography
-              sx={{ fontSize: { xs: 18, sm: 25 }, fontFamily: "inter", color: "#DEE9FF" }}
+              sx={{
+                fontSize: { xs: 18, sm: 25 },
+                fontFamily: "inter",
+                color: isDark ? "#DEE9FF" : "#0A0C0F",
+              }}
             >
               {obj.title}
             </Typography>
@@ -115,7 +120,9 @@ export const FaqBanner = (): JSX.Element => {
               aria-expanded={obj.expanded}
               aria-label="show more"
             >
-              <ExpandMoreIcon sx={{ color: "#C7D5FF", fontSize: "36px" }} />
+              <ExpandMoreIcon
+                sx={{ color: isDark ? "#C7D5FF" : "#0A0C0F", fontSize: "36px" }}
+              />
             </ExpandMore>
           </CardActions>
           <Collapse in={obj.expanded} timeout="auto" unmountOnExit>
@@ -124,7 +131,7 @@ export const FaqBanner = (): JSX.Element => {
                 sx={{
                   fontSize: 18,
                   fontFamily: "inter",
-                  color: "#8FA0C3",
+                  color: isDark ? "#8FA0C3" : "#7988A8",
                   textAlign: "left",
                 }}
               >

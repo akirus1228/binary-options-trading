@@ -6,7 +6,7 @@ import { HashLink as Link } from "react-router-hash-link";
 
 import BgStarted from "../../../assets/images/bg-started.png";
 
-export const StartedBanner = (): JSX.Element => {
+export const StartedBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   return (
     <Box
       sx={{
@@ -41,7 +41,7 @@ export const StartedBanner = (): JSX.Element => {
         <Typography
           sx={{
             fontSize: { xs: "28px", xl: "28px" },
-            color: "#CAD6EE",
+            color: isDark ? "#CAD6EE" : "#0A0C0F",
             height: { xs: "200px", md: "120px" },
             padding: "20px",
             display: "flex",
@@ -64,7 +64,7 @@ export const StartedBanner = (): JSX.Element => {
             sx={{
               width: "80%",
               fontSize: "18px",
-              color: "#8FA0C3",
+              color: isDark ? "#8FA0C3" : "#7988A8",
               fontFamily: "inter",
             }}
           >
@@ -94,6 +94,12 @@ export const StartedBanner = (): JSX.Element => {
                 borderRadius: "50px",
                 fontFamily: "inter",
                 fontSize: { xs: "14px", md: "17px" },
+                "&:active": {
+                  background: "#374FFF",
+                },
+                "&:hover": {
+                  background: "#374FFF",
+                },
               }}
             >
               Launch App
@@ -106,7 +112,7 @@ export const StartedBanner = (): JSX.Element => {
                 width: { xs: "310px", md: "309px" },
                 height: "62px",
                 border: "2px solid #374FFF",
-                color: "#fff",
+                color: isDark ? "#fff" : "#0A0C0F",
                 borderRadius: "50px",
                 fontFamily: "inter",
                 fontSize: { xs: "14px", md: "17px" },
