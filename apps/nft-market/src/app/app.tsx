@@ -50,7 +50,7 @@ export const App = (): JSX.Element => {
     }
   }, []);
 
-  const themeType = useSelector((state: RootState) => state.theme.mode);
+  const themeType = useSelector((state: RootState) => state.theme.mode) || "light";
   const { user, authorizedAccount, accountStatus } = useSelector(
     (state: RootState) => state.backend
   );
