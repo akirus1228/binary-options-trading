@@ -24,15 +24,59 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-export const FaqBanner = (): JSX.Element => {
-  const [expanded, setExpanded] = React.useState(false);
+interface IFaq {
+  id: number;
+  title: string;
+  description: string;
+  expanded: boolean;
+}
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+export const FaqBanner = (): JSX.Element => {
+  const [data, setData] = React.useState<IFaq[]>([
+    {
+      id: 1,
+      title: `Where does the NFT go?`,
+      description: `The NFT goes into our escrow in the our smart contract. This smart contract has been audited by Hacken with a 10/10 score for security. Once a loan has been repaid in full, the NFT will be released back to its owner.`,
+      expanded: true,
+    },
+    {
+      id: 2,
+      title: `What happens if the loan is not repaid?`,
+      description: `In the event that the loan is not repaid, the NFT which was used as collateral is transferred to the wallet of the lender (the person who provided the liquidity).`,
+      expanded: false,
+    },
+    {
+      id: 3,
+      title: `What if you only repay a portion of the loan?`,
+      description: `This is not possible as the loan plus the interest can only be repaid in full. Users can either repay in full or they can't repay at all.`,
+      expanded: false,
+    },
+    {
+      id: 4,
+      title: `How does Liqd prevent fake asset listings?`,
+      description: `Only verified collections on Opensea and collections which have been manually approved by Liqd can be used as collateral for loans.`,
+      expanded: false,
+    },
+  ]);
+
+  const handleExpandClick = (obj: IFaq) => {
+    const arr = data.map((v: any) => {
+      return v.id === obj.id
+        ? { ...obj, expanded: !obj.expanded }
+        : { ...v, expanded: false };
+    });
+    setData(arr);
   };
+
   return (
     <Box sx={{ width: "100%", marginTop: "100px", textAlign: "center" }}>
-      <Typography sx={{ fontSize: { xs: "14px", sm: "16px" }, color: "#374FFF" }}>
+      <Typography
+        sx={{
+          fontSize: { xs: "14px", sm: "16px" },
+          color: "#8FA0C3",
+          fontFamily: "SequelBlack",
+        }}
+      >
         FAQs
       </Typography>
       <Typography
@@ -44,66 +88,52 @@ export const FaqBanner = (): JSX.Element => {
           alignItems: "center",
           fontFamily: "MonumentExtended",
           marginTop: "20px",
+          marginBottom: "40px",
         }}
       >
         Frequently asked questions
       </Typography>
-      <Card
-        sx={{ maxWidth: 831, marginInline: "auto", marginTop: "20px", boxShadow: "none" }}
-      >
-        <CardActions disableSpacing>
-          <Typography
-            sx={{ fontSize: { xs: 18, sm: 25 }, fontFamily: "inter", color: "#DEE9FF" }}
-          >
-            What are borrowing rates?
-          </Typography>
-          <ExpandMore
-            expand={expanded}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon sx={{ color: "#C7D5FF", fontSize: "36px" }} />
-          </ExpandMore>
-        </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
+      {data.map((obj: IFaq) => (
+        <Card
+          key={obj.id}
+          sx={{
+            maxWidth: 831,
+            marginInline: "auto",
+            marginTop: "20px",
+            boxShadow: "none",
+          }}
+        >
+          <CardActions disableSpacing>
             <Typography
-              sx={{
-                fontSize: 18,
-                fontFamily: "inter",
-                color: "#8FA0C3",
-                textAlign: "left",
-              }}
+              sx={{ fontSize: { xs: 18, sm: 25 }, fontFamily: "inter", color: "#DEE9FF" }}
             >
-              The annualized borrowing rates are typically ranging from 12 to 15%,
-              depending on the market conditions and your specific NFT.
+              {obj.title}
             </Typography>
-          </CardContent>
-        </Collapse>
-      </Card>
-      <Card
-        sx={{ maxWidth: 831, marginInline: "auto", marginTop: "20px", boxShadow: "none" }}
-      >
-        <CardActions disableSpacing>
-          <Typography
-            sx={{ fontSize: { xs: 18, sm: 25 }, fontFamily: "inter", color: "#DEE9FF" }}
-          >
-            What is a loan-to-value (LTV) ratio?
-          </Typography>
-        </CardActions>
-      </Card>
-      <Card
-        sx={{ maxWidth: 831, marginInline: "auto", marginTop: "20px", boxShadow: "none" }}
-      >
-        <CardActions disableSpacing>
-          <Typography
-            sx={{ fontSize: { xs: 18, sm: 25 }, fontFamily: "inter", color: "#DEE9FF" }}
-          >
-            Where does my NFT go?
-          </Typography>
-        </CardActions>
-      </Card>
+            <ExpandMore
+              expand={obj.expanded}
+              onClick={() => handleExpandClick(obj)}
+              aria-expanded={obj.expanded}
+              aria-label="show more"
+            >
+              <ExpandMoreIcon sx={{ color: "#C7D5FF", fontSize: "36px" }} />
+            </ExpandMore>
+          </CardActions>
+          <Collapse in={obj.expanded} timeout="auto" unmountOnExit>
+            <CardContent>
+              <Typography
+                sx={{
+                  fontSize: 18,
+                  fontFamily: "inter",
+                  color: "#8FA0C3",
+                  textAlign: "left",
+                }}
+              >
+                {obj.description}
+              </Typography>
+            </CardContent>
+          </Collapse>
+        </Card>
+      ))}
     </Box>
   );
 };

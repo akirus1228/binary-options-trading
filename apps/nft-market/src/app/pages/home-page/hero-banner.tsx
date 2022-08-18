@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { NavLink } from "react-router-dom";
+import { HashLink as Link } from "react-router-hash-link";
 import HeroBannerImg from "../../../assets/images/hero-banner.png";
 import HeroBannerMobileImg from "../../../assets/images/hero-banner-mobile.png";
 import Typography from "@mui/material/Typography";
@@ -64,7 +64,7 @@ export const HeroBanner = (): JSX.Element => {
             marginTop: "20px",
           }}
         >
-          <NavLink to="/borrow">
+          <Link to="/borrow">
             <Button
               sx={{
                 width: "310px",
@@ -77,8 +77,8 @@ export const HeroBanner = (): JSX.Element => {
             >
               Borrow
             </Button>
-          </NavLink>
-          <NavLink to="/lend">
+          </Link>
+          <Link to="/lend">
             <Button
               sx={{
                 width: "310px",
@@ -91,7 +91,7 @@ export const HeroBanner = (): JSX.Element => {
             >
               Lend
             </Button>
-          </NavLink>
+          </Link>
         </Box>
       </Box>
     </Box>

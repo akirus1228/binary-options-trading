@@ -1,20 +1,12 @@
-import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { NavLink } from "react-router-dom";
+import { HashLink as Link } from "react-router-hash-link";
 
 import FundsImg from "../../../assets/images/funds-img.png";
 import OffersImg from "../../../assets/images/offers-img.png";
 
-import BgCard from "../../../assets/images/bg-card.png";
-import BgCardHover from "../../../assets/images/bg-card-hover.png";
-
 export const BorrowerBanner = (): JSX.Element => {
-  const [over, setOver] = useState(false);
-  const toggleImage = () => {
-    setOver(!over);
-  };
   return (
     <Box
       sx={{
@@ -31,8 +23,8 @@ export const BorrowerBanner = (): JSX.Element => {
           alignItems: "center",
           justifyContent: "center",
           flexWrap: "wrap",
-          gap: "10px",
-          flexDirection: { sm: "column", xl: "row" },
+          gap: { xs: "30px", xl: "10px" },
+          flexDirection: { xs: "column", xl: "row" },
         }}
       >
         <Box
@@ -47,62 +39,18 @@ export const BorrowerBanner = (): JSX.Element => {
           sx={{
             width: { xs: "360px", sm: "376px", md: "717px" },
             height: { xs: "480px", md: "323px" },
-            position: "relative",
             textAlign: "center",
           }}
-          onMouseOver={toggleImage}
-          onMouseOut={toggleImage}
         >
-          <Box
+          <Typography
             sx={{
-              width: "100%",
-              height: "100%",
-              display: { xs: "none", md: "block" },
-              position: "absolute",
+              fontSize: { xs: "14px", sm: "16px" },
+              color: "#8FA0C3",
+              fontFamily: "SequelBlack",
             }}
           >
-            <img
-              style={{
-                position: "absolute",
-                left: "0",
-                top: "0",
-                zIndex: "-1",
-                width: "100%",
-                height: "100%",
-              }}
-              src={over ? BgCardHover : BgCard}
-              alt=""
-            />
-          </Box>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="234"
-            height="21"
-            viewBox="0 0 234 21"
-          >
-            <g id="Group_12781" data-name="Group 12781" transform="translate(-330 -4962)">
-              <text
-                id="For_BORROWERS"
-                data-name="For BORROWERS"
-                transform="translate(360 4979)"
-                fill="#8fa0c3"
-                font-size="16"
-                font-family="SegoeUI, Segoe UI"
-                letter-spacing="0.4em"
-              >
-                <tspan x="0" y="0">
-                  FOR BORROWERS
-                </tspan>
-              </text>
-              <path
-                id="Subtraction_4"
-                data-name="Subtraction 4"
-                d="M9,18v0a13.142,13.142,0,0,0-3.338-5.66A13.142,13.142,0,0,0,0,9,13.141,13.141,0,0,0,5.662,5.662,13.142,13.142,0,0,0,9,0a13.141,13.141,0,0,0,3.338,5.662A13.142,13.142,0,0,0,18,9a13.149,13.149,0,0,0-9,9Z"
-                transform="translate(330 4964)"
-                fill="#8fa0c3"
-              />
-            </g>
-          </svg>
+            FOR BORROWERS
+          </Typography>
           <Typography
             sx={{
               fontSize: { xs: "28px", xl: "28px" },
@@ -128,7 +76,6 @@ export const BorrowerBanner = (): JSX.Element => {
             }}
           >
             {[
-              "Get funds without selling",
               "Borrow in crypto or stablecoins",
               "No credit checks neccessary",
               "Set your own loan terms and duration",
@@ -136,7 +83,7 @@ export const BorrowerBanner = (): JSX.Element => {
               <Typography
                 key={i}
                 sx={{
-                  width: "144px",
+                  width: "180px",
                   fontSize: "18px",
                   color: "#8FA0C3",
                   fontFamily: "inter",
@@ -146,7 +93,7 @@ export const BorrowerBanner = (): JSX.Element => {
               </Typography>
             ))}
           </Box>
-          <NavLink to="#">
+          <Link to="/borrow">
             <Button
               sx={{
                 width: "350px",
@@ -160,7 +107,7 @@ export const BorrowerBanner = (): JSX.Element => {
                 alignItems: "center",
                 justifyContent: "end",
                 gap: "25px",
-                marginTop: "10px",
+                marginTop: "20px",
                 marginInline: "auto",
                 "&:hover": {
                   color: "#fff",
@@ -204,7 +151,7 @@ export const BorrowerBanner = (): JSX.Element => {
                 </g>
               </svg>
             </Button>
-          </NavLink>
+          </Link>
         </Box>
         <Box
           sx={{

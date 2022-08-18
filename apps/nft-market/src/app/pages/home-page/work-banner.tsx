@@ -40,7 +40,13 @@ export const WorkBanner = (): JSX.Element => {
 
   return (
     <Box sx={{ width: "100%", marginTop: "1080px", textAlign: "center" }}>
-      <Typography sx={{ fontSize: { xs: "14px", sm: "16px" }, color: "#374FFF" }}>
+      <Typography
+        sx={{
+          fontSize: { xs: "14px", sm: "16px" },
+          color: "#374FFF",
+          fontFamily: "SequelBlack",
+        }}
+      >
         ITS SIMPLE
       </Typography>
       <Typography

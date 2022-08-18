@@ -2,17 +2,11 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { NavLink } from "react-router-dom";
+import { HashLink as Link } from "react-router-hash-link";
 
 import BgStarted from "../../../assets/images/bg-started.png";
-import BgCard from "../../../assets/images/bg-card.png";
-import BgCardHover from "../../../assets/images/bg-card-hover.png";
 
 export const StartedBanner = (): JSX.Element => {
-  const [over, setOver] = useState(false);
-  const toggleImage = () => {
-    setOver(!over);
-  };
   return (
     <Box
       sx={{
@@ -32,62 +26,18 @@ export const StartedBanner = (): JSX.Element => {
         sx={{
           width: { xs: "360px", sm: "376px", md: "717px" },
           height: { xs: "480px", md: "323px" },
-          position: "relative",
           textAlign: "center",
         }}
-        onMouseOver={toggleImage}
-        onMouseOut={toggleImage}
       >
-        <Box
+        <Typography
           sx={{
-            width: "100%",
-            height: "100%",
-            display: { xs: "none", md: "block" },
-            position: "absolute",
+            fontSize: { xs: "14px", sm: "16px" },
+            color: "#374FFF",
+            fontFamily: "SequelBlack",
           }}
         >
-          <img
-            style={{
-              position: "absolute",
-              left: "0",
-              top: "0",
-              zIndex: "-1",
-              width: "100%",
-              height: "100%",
-            }}
-            src={over ? BgCardHover : BgCard}
-            alt=""
-          />
-        </Box>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="188"
-          height="21"
-          viewBox="0 0 188 21"
-        >
-          <g id="Group_12706" data-name="Group 12706" transform="translate(-21 -12)">
-            <text
-              id="Get_started"
-              data-name="Get started"
-              transform="translate(50 29)"
-              fill="#374fff"
-              font-size="16"
-              font-family="SegoeUI, Segoe UI"
-              letter-spacing="0.4em"
-            >
-              <tspan x="0" y="0">
-                GET STARTED
-              </tspan>
-            </text>
-            <path
-              id="Subtraction_4"
-              data-name="Subtraction 4"
-              d="M10.419,20.837v0a15.213,15.213,0,0,0-3.864-6.552A15.213,15.213,0,0,0,0,10.419,15.213,15.213,0,0,0,6.554,6.554,15.213,15.213,0,0,0,10.419,0a15.213,15.213,0,0,0,3.865,6.554,15.213,15.213,0,0,0,6.554,3.865A15.221,15.221,0,0,0,10.419,20.835Z"
-              transform="translate(21 12)"
-              fill="#374fff"
-            />
-          </g>
-        </svg>
+          GET STARTED
+        </Typography>
         <Typography
           sx={{
             fontSize: { xs: "28px", xl: "28px" },
@@ -133,7 +83,7 @@ export const StartedBanner = (): JSX.Element => {
             gap: "10px",
           }}
         >
-          <NavLink to="#">
+          <Link to="/borrow">
             <Button
               sx={{
                 width: { xs: "310px", md: "309px" },
@@ -148,9 +98,9 @@ export const StartedBanner = (): JSX.Element => {
             >
               Launch App
             </Button>
-          </NavLink>
+          </Link>
 
-          <NavLink to="#">
+          <Link to="#">
             <Button
               sx={{
                 width: { xs: "310px", md: "309px" },
@@ -162,9 +112,9 @@ export const StartedBanner = (): JSX.Element => {
                 fontSize: { xs: "14px", md: "17px" },
               }}
             >
-              Join Discord
+              Get a pass
             </Button>
-          </NavLink>
+          </Link>
         </Box>
       </Box>
     </Box>
