@@ -63,18 +63,18 @@ export const LenderAssetFilter = ({
     return `${value} days`;
   };
 
-  const getSortType = (status: string): ListingSort => {
+  const getSortQuery = (status: string): string => {
     switch (status) {
       case "Recent":
-        return ListingSort.Recently;
+        return "asset_listing.createdAt:DESC";
       case "Oldest":
-        return ListingSort.Oldest;
+        return "asset_listing.createdAt:ASC";
       case "Highest Price":
-        return ListingSort.Highest;
+        return "term.usdPrice:DESC";
       case "Lowest Price":
-        return ListingSort.Lowest;
+        return "term.usdPrice:ASC";
       default:
-        return ListingSort.Recently;
+        return "";
     }
   };
 
@@ -83,7 +83,7 @@ export const LenderAssetFilter = ({
     setSort(event.target.value);
 
     //trigger query update
-    setQuery({ ...query, sort: getSortType(event.target.value) });
+    setQuery({ ...query, sortQuery: getSortQuery(event.target.value) });
   }, []);
 
   const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
@@ -230,10 +230,10 @@ export const LenderAssetFilter = ({
         onChange={handleSortChange}
         className={style["sortList"]}
       >
-        <MenuItem value="Recent">Sort By: Recently Listed</MenuItem>
-        <MenuItem value="Oldest">Sort By: Oldest Listed</MenuItem>
-        <MenuItem value="Highest Price">Sort By: Price Higest</MenuItem>
-        <MenuItem value="Lowest Price">Sort By: Price Lowest</MenuItem>
+        <MenuItem value="Recent">Sort by: Recently listed</MenuItem>
+        <MenuItem value="Oldest">Sort by: Oldest listed</MenuItem>
+        <MenuItem value="Highest Price">Price: Highest - Lowest</MenuItem>
+        <MenuItem value="Lowest Price">Price: Lowest - Highest</MenuItem>
       </Select>
       <Box
         className="flex fc"
