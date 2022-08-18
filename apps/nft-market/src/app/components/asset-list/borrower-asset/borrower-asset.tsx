@@ -186,7 +186,11 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
         <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
-            url={asset.thumbUrl || asset.imageUrl || ""}
+            url={
+              asset.osData?.image_url
+                ? `${asset.osData?.image_url}=w1024`
+                : undefined || asset.imageUrl || ""
+            }
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}

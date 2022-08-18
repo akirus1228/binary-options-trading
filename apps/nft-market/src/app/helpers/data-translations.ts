@@ -26,6 +26,11 @@ export const openseaAssetToAsset = async (
       ...tmpCollectible,
       openseaLoaded: Date.now() + 300 * 1000,
       status: AssetStatus.New,
+      osData: openseaAsset.find(
+        (asset: OpenseaAsset) =>
+          asset.asset_contract?.address === collectible.assetContractAddress &&
+          asset.token_id === collectible.tokenId
+      ),
     } as Asset;
     return asset;
   });

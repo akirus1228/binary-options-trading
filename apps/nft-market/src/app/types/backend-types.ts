@@ -1,3 +1,5 @@
+import { OpenseaAsset } from "../api/opensea";
+
 // request types
 export type CreateListingRequest = {
   asset: Asset | string;
@@ -130,6 +132,7 @@ export type BackendAsset = {
   assetContractAddress: string;
   chain: Chain;
   wallet: string;
+  osData?: OpenseaAsset;
 } & StandardBackendObject;
 
 export type Asset = BackendAsset & {

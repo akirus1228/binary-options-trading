@@ -22,7 +22,7 @@ import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
-  const { user } = useSelector((state: RootState) => state.backend);
+  const { user, authSignature } = useSelector((state: RootState) => state.backend);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
     limit: 12,
@@ -52,8 +52,6 @@ export const BorrowPage = (): JSX.Element => {
     status: LoanStatus.Active,
   });
 
-  const { authSignature } = useSelector((state: RootState) => state.backend);
-
   // load assets from opensea api
   const { data: osResponse, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(
     osQuery,
@@ -61,8 +59,9 @@ export const BorrowPage = (): JSX.Element => {
       skip: !osQuery.owner,
     }
   );
+
   const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {
-    skip: !address,
+    skip: !address || (feQuery.status !== AssetStatus.Locked && feQuery.status !== "All"),
   });
 
   // using the opensea assets, crosscheck with backend api for correlated data
@@ -125,6 +124,10 @@ export const BorrowPage = (): JSX.Element => {
         : 1
     );
   }, [assetsInEscrow, feQuery.status, myAssets]);
+
+  useEffect(() => {
+    console.log(assetsToShow);
+  }, [assetsToShow]);
 
   const isWalletConnected = address && authSignature;
 
