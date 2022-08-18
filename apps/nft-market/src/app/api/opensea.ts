@@ -147,9 +147,10 @@ const staggeredBaseQuery = retry(
       },
     })(args, api, extraOptions);
     if (result.error) {
-      //alert("Fetching metadata, please wait...");
-      //console.log("error being thrown");
-      //console.log(result.error);
+      // fail immediatly if it's a 500 error
+      if (result.error?.status === 500) {
+        retry.fail(result.error);
+      }
     }
     return result;
   },
@@ -191,8 +192,12 @@ export const openseaApi = createApi({
         };
       },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        const { data }: { data: OpenseaAssetResponse } = await queryFulfilled;
-        dispatch(updateAssetsFromOpensea(data.assets));
+        try {
+          const { data }: { data: OpenseaAssetResponse } = await queryFulfilled;
+          dispatch(updateAssetsFromOpensea(data.assets));
+        } catch (e) {
+          console.info("Opensea failing. Reverting to backup");
+        }
       },
     }),
     getRawOpenseaAssets: builder.query<OpenseaGetAssetsResponse, OpenseaAssetQueryParam>({
