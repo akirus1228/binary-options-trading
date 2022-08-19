@@ -96,7 +96,7 @@ const assetsSlice = createSlice({
       const mergedAssets: Assets = {};
       Object.entries(action.payload).forEach(([assetId, asset]) => {
         const newStatus =
-          asset.status === AssetStatus.New // if the asset status on the original state is new, assume the incoming state is from the backend
+          asset.osData && state?.assets[assetId]?.status // if there is osData, it's from opensea, save backend data if available
             ? state?.assets[assetId]?.status
             : asset.status;
         mergedAssets[assetId] = {
