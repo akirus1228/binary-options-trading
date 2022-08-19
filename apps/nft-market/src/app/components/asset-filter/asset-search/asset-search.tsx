@@ -223,6 +223,7 @@ export const AssetSearch = ({ setCollection }: AssetSearchProps): JSX.Element =>
                         borderRadius: "10px",
                         background: `${themeType === "light" ? "white" : "black"}`,
                         cursor: "pointer",
+                        color: `${themeType === "light" ? "black" : "white"}`,
                       }}
                     >
                       <Avatar
@@ -240,7 +241,12 @@ export const AssetSearch = ({ setCollection }: AssetSearchProps): JSX.Element =>
                         <span style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
                           {asset.name}
                         </span>
-                        <span style={{ fontSize: "0.8rem" }}>
+                        <span
+                          style={{
+                            fontSize: "0.8rem",
+                            opacity: "0.8",
+                          }}
+                        >
                           {
                             collections?.find(
                               (item) =>
