@@ -9,27 +9,29 @@ import Button from "@mui/material/Button";
 
 export const HeroBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        zIndex: "-1",
-        top: "0",
-        left: "0",
-        width: "100%",
-        backgroundImage: {
-          xs: isDark
-            ? `url('${HeroBannerMobileImg}')`
-            : `url('${HeroBannerMobileLightImg}')`,
-          sm: isDark ? `url('${HeroBannerImg}')` : `url('${HeroBannerLightImg}')`,
-        },
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <>
       <Box
         sx={{
+          position: "absolute",
+          zIndex: "-1",
+          top: "0",
+          left: "0",
+          width: "100%",
           height: "1080px",
+          backgroundImage: {
+            xs: isDark
+              ? `url('${HeroBannerMobileImg}')`
+              : `url('${HeroBannerMobileLightImg}')`,
+            sm: isDark ? `url('${HeroBannerImg}')` : `url('${HeroBannerLightImg}')`,
+          },
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      ></Box>
+      <Box
+        sx={{
+          height: "936px",
           position: "relative",
           display: "flex",
           flexDirection: "column",
@@ -98,7 +100,7 @@ export const HeroBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
           </Link>
         </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
