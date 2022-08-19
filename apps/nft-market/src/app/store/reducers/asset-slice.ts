@@ -1,9 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  FetchNFTClient,
-  FetchNFTClientProps,
-  isAssetValid,
-} from "@fantohm/shared/fetch-nft";
+import { isAssetValid } from "@fantohm/shared/fetch-nft";
 import { isDev, loadState } from "@fantohm/shared-web3";
 import { Asset, AssetStatus, BackendLoadingStatus } from "../../types/backend-types";
 import { OpenseaAsset } from "../../api/opensea";
@@ -12,19 +8,6 @@ import {
   reservoirTokenToAsset,
 } from "../../helpers/data-translations";
 import { ReservoirToken } from "../../api/reservoir";
-
-const OPENSEA_API_KEY = "6f2462b6e7174e9bbe807169db342ec4";
-
-const openSeaConfig = (): FetchNFTClientProps => {
-  const openSeaConfig: any = {
-    apiKey: isDev ? "5bec8ae0372044cab1bef0d866c98618" : OPENSEA_API_KEY,
-  };
-  if (isDev) {
-    openSeaConfig.apiEndpoint = "https://testnets-api.opensea.io/api/v1";
-  }
-
-  return { openSeaConfig };
-};
 
 export const assetToAssetId = (asset: Asset) =>
   `${asset.tokenId}:::${asset.assetContractAddress}`;
@@ -46,7 +29,6 @@ export interface AssetState {
   readonly assets: Assets;
   readonly isDev: boolean;
   readonly nextOpenseaLoad: number;
-  readonly fetchNftClient: FetchNFTClient;
   readonly assetLoadStatus: AssetLoadStatus;
   readonly openseaCache: OpenseaCache;
 }
@@ -85,7 +67,6 @@ const initialState: AssetState = {
   ...previousState, // overwrite assets and currencies from cache if recent
   assetStatus: "idle",
   nextOpenseaLoad: 0,
-  fetchNftClient: new FetchNFTClient(openSeaConfig()),
   assetLoadStatus: [],
   openseaCache: [],
 };
