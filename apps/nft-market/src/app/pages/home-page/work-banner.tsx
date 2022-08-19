@@ -39,7 +39,7 @@ export const WorkBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   };
 
   return (
-    <Box sx={{ width: "100%", marginTop: "1080px", textAlign: "center" }}>
+    <Box sx={{ width: "100%", marginTop: "150px", textAlign: "center" }}>
       <Typography
         sx={{
           fontSize: { xs: "14px", sm: "16px" },
