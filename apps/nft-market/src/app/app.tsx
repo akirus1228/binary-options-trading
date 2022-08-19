@@ -30,6 +30,7 @@ import BlogPostPage from "./pages/blog/blog-post-page";
 import { DebugHelper } from "@fantohm/shared-helpers";
 import PrivacyPage from "./components/Privacy/privacy";
 import TermsPage from "./components/Terms-Condition/terms";
+import { NewHomePage } from "./pages/home-page";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ export const App = (): JSX.Element => {
     }
   }, []);
 
-  const themeType = useSelector((state: RootState) => state.theme.mode);
+  const themeType = useSelector((state: RootState) => state.theme.mode) || "light";
   const { user, authorizedAccount, accountStatus } = useSelector(
     (state: RootState) => state.backend
   );
@@ -232,7 +233,7 @@ export const App = (): JSX.Element => {
           <Growl />
           <Box sx={{ minHeight: "calc(100% - 194px)" }} className={"mainContent"}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<NewHomePage />} />
               <Route path="/borrow" element={<BorrowPage />} />
               <Route path="/lend" element={<LendPage />} />
               <Route

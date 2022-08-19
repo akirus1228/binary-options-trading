@@ -156,7 +156,10 @@ export const UserMenu = (): JSX.Element => {
         className={styles["accountButton"]}
       >
         <Box sx={{ display: "block" }} className={styles["accountAvatar"]}>
-          <Avatar sx={{ mr: { sm: "0", md: "1em" } }} src={AvatarPlaceholder}></Avatar>
+          <Avatar
+            sx={{ mr: { sm: "0", md: "1em" }, borderRadius: "2rem" }}
+            src={AvatarPlaceholder}
+          ></Avatar>
         </Box>
         {addressEllipsis(address)}
         <Box
