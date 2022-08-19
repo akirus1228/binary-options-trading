@@ -299,6 +299,7 @@ export type Collection = {
 export type BackendCollectionQuery = {
   contractAddress?: string;
   slug: string;
+  keyword: string;
   sortQuery: string;
 } & BackendStandardQuery;
 

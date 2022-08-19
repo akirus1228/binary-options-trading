@@ -1,4 +1,11 @@
-import { Avatar, List, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
+import {
+  Avatar,
+  Badge,
+  List,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
+} from "@mui/material";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { Collection } from "../../types/backend-types";
 
@@ -52,17 +59,23 @@ export const CollectionsFilter = ({
             padding: "10px 0",
           }}
         >
-          <Avatar
-            src={collectionMap.imageUrl}
-            sx={{
-              borderRadius: "50px",
-              border: "3px solid #fff",
-              boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-              margin: "0 10px 0 0",
-              height: "60px",
-              width: "60px",
-            }}
-          />
+          <Badge
+            badgeContent={collectionMap.openListingCount}
+            color="primary"
+            overlap="circular"
+          >
+            <Avatar
+              src={collectionMap.imageUrl}
+              sx={{
+                borderRadius: "50px",
+                border: "3px solid #fff",
+                boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                margin: "0 10px 0 0",
+                height: "60px",
+                width: "60px",
+              }}
+            />
+          </Badge>
           <ListItemText primary={collectionMap.name} />
         </ListItemButton>
       ))}

@@ -25,6 +25,7 @@ import { useGetCollectionsQuery } from "../../../api/backend-api";
 import style from "./lender-asset-filter.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import AssetSearch from "../asset-search/asset-search";
 
 export interface LenderAssetFilterProps {
   query: ListingQueryParam;
@@ -39,7 +40,9 @@ export const LenderAssetFilter = ({
   query,
   setQuery,
 }: LenderAssetFilterProps): JSX.Element => {
-  const { data: collections } = useGetCollectionsQuery({});
+  const { data: collections } = useGetCollectionsQuery({
+    sortQuery: "collection.openListingCount:DESC",
+  });
   const [priceRange, setPriceRange] = useState<number[]>(initialPriceRange);
   const [aprRange, setAprRange] = useState<number[]>(initialAprRange);
   const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);
@@ -215,6 +218,7 @@ export const LenderAssetFilter = ({
 
   return (
     <Box sx={{ ml: "auto" }}>
+      <AssetSearch setCollection={setCollection} />
       <Select
         labelId="asset-sort-by"
         label="Sort by"
