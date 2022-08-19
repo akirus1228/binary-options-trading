@@ -10,7 +10,12 @@ import { Web3ContextData } from "./types/types";
 import { enabledNetworkIds, NetworkId, NetworkIds } from "./networks";
 import { chains } from "./providers";
 import { isIframe, sign } from "@fantohm/shared-helpers";
-import { DEV_UD_REDIRECT_URI, PROD_UD_REDIRECT_URI, UAUTH_CLIENT_ID } from "./constants";
+import {
+  TEST_UD_REDIRECT_URI,
+  PROD_UD_REDIRECT_URI,
+  PROD_UAUTH_CLIENT_ID,
+  TEST_UAUTH_CLIENT_ID,
+} from "./constants";
 import { isDev } from "./helpers";
 
 export const getURI = (networkId: NetworkId): string => {
@@ -18,8 +23,8 @@ export const getURI = (networkId: NetworkId): string => {
 };
 
 export const uauthOptions: IUAuthOptions = {
-  clientID: UAUTH_CLIENT_ID,
-  redirectUri: isDev ? DEV_UD_REDIRECT_URI : PROD_UD_REDIRECT_URI,
+  clientID: isDev ? TEST_UAUTH_CLIENT_ID : PROD_UAUTH_CLIENT_ID,
+  redirectUri: isDev ? TEST_UD_REDIRECT_URI : PROD_UD_REDIRECT_URI,
   // Must include both the openid and wallet scopes.
   scope: "openid wallet",
 };
