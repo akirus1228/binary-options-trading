@@ -543,6 +543,7 @@ export const {
   useGetAssetQuery,
   useGetAssetsQuery,
   useGetCollectionsQuery,
+  useLazyGetCollectionsQuery,
   useDeleteAssetMutation,
   useValidateNFTQuery,
   useGetListingsQuery,

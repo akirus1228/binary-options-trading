@@ -65,6 +65,10 @@ export type ListingQueryParam = {
   status?: string;
   openseaIds?: string[];
   contractAddress?: string;
+  tokenId?: string;
+  borrower?: string;
+  keyword?: string;
+  currencyAddress?: string;
   mediaType?: string;
   minApr?: number;
   maxApr?: number;
@@ -72,8 +76,7 @@ export type ListingQueryParam = {
   maxDuration?: number;
   minPrice?: number;
   maxPrice?: number;
-  borrower?: string;
-  sort?: ListingSort;
+  sortQuery?: string;
 };
 
 export interface ListingQueryAsyncThunk {

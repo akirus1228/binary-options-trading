@@ -21,7 +21,7 @@ export const LendPage = (): JSX.Element => {
     skip: 0,
     take,
     status: ListingStatus.Listed,
-    sort: ListingSort.Recently,
+    sortQuery: "",
   });
   const { user } = useSelector((state: RootState) => state.backend);
   const [trigger, listingsResult] = useLazyGetListingsQuery();
@@ -51,22 +51,6 @@ export const LendPage = (): JSX.Element => {
           return 1;
         } else if (b.asset.owner.address === user.address) {
           return -1;
-        }
-
-        if (query.sort === ListingSort.Recently) {
-          return (
-            new Date(b.createdAt || "0").getTime() -
-            new Date(a.createdAt || "0").getTime()
-          );
-        } else if (query.sort === ListingSort.Oldest) {
-          return (
-            new Date(a.createdAt || "0").getTime() -
-            new Date(b.createdAt || "0").getTime()
-          );
-        } else if (query.sort === ListingSort.Highest) {
-          return b.term.amount - a.term.amount;
-        } else if (query.sort === ListingSort.Lowest) {
-          return a.term.amount - b.term.amount;
         }
         return 0;
       })
