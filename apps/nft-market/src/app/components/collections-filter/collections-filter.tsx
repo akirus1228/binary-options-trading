@@ -61,8 +61,15 @@ export const CollectionsFilter = ({
         >
           <Badge
             badgeContent={collectionMap.openListingCount}
-            color="primary"
+            color="secondary"
             overlap="circular"
+            componentsProps={{
+              badge: {
+                style: {
+                  boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                },
+              },
+            }}
           >
             <Avatar
               src={collectionMap.imageUrl}

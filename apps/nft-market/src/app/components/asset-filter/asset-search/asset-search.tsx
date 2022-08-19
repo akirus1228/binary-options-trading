@@ -170,8 +170,15 @@ export const AssetSearch = ({ setCollection }: AssetSearchProps): JSX.Element =>
                   >
                     <Badge
                       badgeContent={collection.openListingCount}
-                      color="primary"
+                      color="secondary"
                       overlap="circular"
+                      componentsProps={{
+                        badge: {
+                          style: {
+                            boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+                          },
+                        },
+                      }}
                     >
                       <Avatar
                         src={collection.imageUrl}
