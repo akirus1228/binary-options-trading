@@ -90,7 +90,7 @@ export const AssetDetailsPage = (): JSX.Element => {
   const isValidNFT = useMemo(() => {
     return (
       (isValidNFTError as any)?.data?.message !==
-      "This asset is already transferred to someone."
+      "This asset is already transferred outside our platform."
     );
   }, [isValidNFTError]);
 
