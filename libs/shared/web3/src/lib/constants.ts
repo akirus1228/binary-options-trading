@@ -7,7 +7,7 @@ export const TOKEN_DECIMALS = 9;
 
 export const MISSING_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-export const UAUTH_CLIENT_ID = "dbdd65ab-0c1e-46ad-be65-8a6adb3dd4d5";
+export const UAUTH_CLIENT_ID = "3f2f2417-c736-44e2-b2af-84b426fac4db";
 
 export const DEV_UD_REDIRECT_URI = "http://localhost:4200";
 
