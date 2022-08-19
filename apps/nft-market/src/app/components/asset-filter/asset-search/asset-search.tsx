@@ -57,7 +57,7 @@ export const AssetSearch = ({ setCollection }: AssetSearchProps): JSX.Element =>
   useEffect(() => {
     if (!searchedCollections.isSuccess) return;
 
-    setCollections(searchedCollections.data);
+    setCollections(searchedCollections.data.filter((item) => item.openListingCount > 0));
   }, [searchedCollections.data, searchedCollections.fulfilledTimeStamp]);
 
   const onChangeKeyword = (value: string) => {
