@@ -22,7 +22,6 @@ import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
   const take = 12;
-  const [skip, setSkip] = useState(0);
   const { address } = useWeb3Context();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
@@ -68,9 +67,10 @@ export const BorrowPage = (): JSX.Element => {
   });
 
   // using the opensea assets, crosscheck with backend api for correlated data
-  const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
-    skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
-  });
+  const { isLoading: isAssetLoading, isSuccess: isAssetLoadSuccess } =
+    useGetListingsQuery(beQuery, {
+      skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
+    });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
 
@@ -155,7 +155,7 @@ export const BorrowPage = (): JSX.Element => {
             )}
             {isWalletConnected && (
               <>
-                {assetsLoading || isAssetLoading || isLoansLoaing ? (
+                {assetsLoading || isAssetLoading || isLoansLoaing || isAssetLoading ? (
                   <Box className="flex fr fj-c">
                     <CircularProgress />
                   </Box>
@@ -173,12 +173,14 @@ export const BorrowPage = (): JSX.Element => {
                     </Box>
                   )
                 )}
-                <AssetList
-                  assets={assetsToShow}
-                  type="borrow"
-                  fetchData={fetchMoreData}
-                  hasMore={hasNext}
-                />
+                {isAssetLoadSuccess && (
+                  <AssetList
+                    assets={assetsToShow}
+                    type="borrow"
+                    fetchData={fetchMoreData}
+                    hasMore={hasNext}
+                  />
+                )}
               </>
             )}
           </Grid>
