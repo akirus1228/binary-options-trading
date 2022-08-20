@@ -64,6 +64,7 @@ type OpenseaContract = {
   seller_fee_basis_points: number;
   payout_address: Nullable<string>;
 };
+
 export interface OpenseaTrait {
   value: string; //The name of the trait (for example color)
   display_type: "number" | "boost_percentage" | "boost_number" | "boost_number" | "date"; // How this trait will be displayed (options are number, boost_percentage, boost_number, and date).
@@ -123,38 +124,6 @@ export type OpenseaConfig = {
   apiEndpoint: string;
 };
 
-export type GqlAsset = {
-  decimals: string | null;
-  id: string;
-};
-
-export type GqlNode = {
-  assetQuantity: GqlAsset;
-  id: string;
-  quantity: string;
-};
-
-export type GqlEventEdges = {
-  cursor: string;
-  node: GqlNode;
-};
-
-export type GqlPageInfo = {
-  endCursor: string;
-  hasNextPage: boolean;
-};
-
-export type GqllAssetEvent = {
-  edges: GqlEventEdges[];
-  pageInfo: GqlPageInfo;
-};
-
-export type GqlGetEventResponse = {
-  data: {
-    assetEvents: GqllAssetEvent[];
-  };
-};
-
 const openseaConfig = (): OpenseaConfig => {
   const openSeaConfig: any = {
     apiKey: isDev
@@ -164,10 +133,6 @@ const openseaConfig = (): OpenseaConfig => {
       ? "https://testnets-api.opensea.io/api/v1"
       : "https://api.opensea.io/api/v1/",
   };
-
-  // apiEndpoint: isDev
-  // ? "https://testnets-api.opensea.io/api/v1"
-  // : "https://api.opensea.io/api/v1",
 
   return openSeaConfig;
 };
@@ -182,9 +147,10 @@ const staggeredBaseQuery = retry(
       },
     })(args, api, extraOptions);
     if (result.error) {
-      //alert("Fetching metadata, please wait...");
-      //console.log("error being thrown");
-      //console.log(result.error);
+      // fail immediatly if it's a 500 error
+      if (result.error?.status === 500) {
+        retry.fail(result.error);
+      }
     }
     return result;
   },
@@ -226,11 +192,21 @@ export const openseaApi = createApi({
         };
       },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        const { data }: { data: OpenseaAssetResponse } = await queryFulfilled;
-        dispatch(updateAssetsFromOpensea(data.assets));
+        try {
+          const { data }: { data: OpenseaAssetResponse } = await queryFulfilled;
+          dispatch(updateAssetsFromOpensea(data.assets));
+        } catch (e) {
+          console.info("Opensea failing. Reverting to backup");
+        }
       },
+    }),
+    getRawOpenseaAssets: builder.query<OpenseaGetAssetsResponse, OpenseaAssetQueryParam>({
+      query: (queryParams) => ({
+        url: `assets`,
+        params: queryParams,
+      }),
     }),
   }),
 });
 
-export const { useGetOpenseaAssetsQuery } = openseaApi;
+export const { useGetOpenseaAssetsQuery, useGetRawOpenseaAssetsQuery } = openseaApi;

@@ -6,7 +6,7 @@ import style from "./borrower-asset.module.scss";
 import PreviewImage from "../preview-image/preview-image";
 import { Asset, AssetStatus } from "../../../types/backend-types";
 import { useMemo, useState } from "react";
-import { chains, isDev, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
+import { isDev } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
@@ -19,7 +19,6 @@ export interface BorrowerAssetProps {
 }
 
 export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
-  const { chainId } = useWeb3Context();
   // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
@@ -186,7 +185,11 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
         <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
-            url={asset.thumbUrl || asset.imageUrl || ""}
+            url={
+              asset.osData?.image_url
+                ? `${asset.osData?.image_url}=w1024` // todo, verify it's googleusercontent before adding the w1024
+                : undefined || asset.imageUrl || ""
+            }
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}

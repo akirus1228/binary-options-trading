@@ -21,11 +21,13 @@ import {
 import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
+  const take = 12;
   const { address } = useWeb3Context();
-  const { user } = useSelector((state: RootState) => state.backend);
+  const { user, authSignature } = useSelector((state: RootState) => state.backend);
+  const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
-    limit: 12,
+    limit: take,
     owner: user.address,
   });
 
@@ -52,23 +54,23 @@ export const BorrowPage = (): JSX.Element => {
     status: LoanStatus.Active,
   });
 
-  const { authSignature } = useSelector((state: RootState) => state.backend);
-
   // load assets from opensea api
   const { data: osResponse, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(
     osQuery,
     {
-      skip: !osQuery.owner,
+      skip: !osQuery.owner || !isOpenseaUp,
     }
   );
+
   const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {
-    skip: !address,
+    skip: !address || (feQuery.status !== AssetStatus.Locked && feQuery.status !== "All"),
   });
 
   // using the opensea assets, crosscheck with backend api for correlated data
-  const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
-    skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
-  });
+  const { isLoading: isAssetLoading, isSuccess: isAssetLoadSuccess } =
+    useGetListingsQuery(beQuery, {
+      skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
+    });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
 
@@ -79,7 +81,6 @@ export const BorrowPage = (): JSX.Element => {
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
-    console.log(osResponse);
     if (osResponse && osResponse.next) {
       setOsNext(osResponse?.next || "");
     } else if (osResponse && osResponse.next === null) {
@@ -154,7 +155,7 @@ export const BorrowPage = (): JSX.Element => {
             )}
             {isWalletConnected && (
               <>
-                {assetsLoading || isAssetLoading || isLoansLoaing ? (
+                {assetsLoading || isAssetLoading || isLoansLoaing || isAssetLoading ? (
                   <Box className="flex fr fj-c">
                     <CircularProgress />
                   </Box>
@@ -172,12 +173,14 @@ export const BorrowPage = (): JSX.Element => {
                     </Box>
                   )
                 )}
-                <AssetList
-                  assets={assetsToShow}
-                  type="borrow"
-                  fetchData={fetchMoreData}
-                  hasMore={hasNext}
-                />
+                {isAssetLoadSuccess && (
+                  <AssetList
+                    assets={assetsToShow}
+                    type="borrow"
+                    fetchData={fetchMoreData}
+                    hasMore={hasNext}
+                  />
+                )}
               </>
             )}
           </Grid>

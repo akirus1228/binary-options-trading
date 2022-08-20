@@ -34,14 +34,19 @@ import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import previewNotAvailable from "../../../../assets/images/preview-not-available.png";
 import loadingGradient from "../../../../assets/images/loading.png";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 export type LenderAssetProps = {
   asset: Asset;
 };
 
 export function LenderAsset({ asset }: LenderAssetProps) {
-  const imageLoadOrder = [asset.thumbUrl, asset.imageUrl, asset.frameUrl];
+  const imageLoadOrder = [
+    asset.osData?.image_url ? `${asset.osData?.image_url}=w1024` : "",
+    asset.thumbUrl,
+    asset.imageUrl,
+    asset.frameUrl,
+  ];
   const { chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
@@ -78,11 +83,19 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   const findValidImage = () => {
     imageLoadOrder.forEach((image) => {
       if (image) {
-        axios.head(image).then(validateImage);
+        axios
+          .head(image)
+          .then(validateImage)
+          .catch((e: AxiosError) => {
+            console.log(e);
+            console.log(imageLoadOrder);
+            findValidImage();
+          });
         imageLoadOrder.shift();
         return;
       } else {
         imageLoadOrder.shift();
+        findValidImage();
       }
     });
   };

@@ -15,6 +15,7 @@ import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { backendApi } from "../api/backend-api";
 import { loansReducer } from "./reducers/loan-slice";
 import { currencyReducer } from "./reducers/currency-slice";
+import { rtkQueryErrorLogger } from "./middleware/rtkQueryErrorLogger";
 
 // reducers are named automatically based on the name field in the slice
 // exported in slice files by default as nameOfSlice.reducer
@@ -39,7 +40,8 @@ const store = configureStore({
     getDefaultMiddleware({ serializableCheck: false })
       .concat(openseaApi.middleware)
       .concat(backendApi.middleware)
-      .concat(coingeckoApi.middleware),
+      .concat(coingeckoApi.middleware)
+      .concat(rtkQueryErrorLogger),
 });
 
 store.subscribe(() => {
