@@ -40,6 +40,11 @@ export const balanceheaderPages: Page[] = [
     href: "/balancewhitelistmint",
     params: { comingSoon: false },
   },
+  {
+    title: "Balance Pulbic Mint",
+    href: "/balancepublicmint",
+    params: { comingSoon: false },
+  },
 ];
 
 export const footerItems: FooterItem[] = [
@@ -62,6 +67,11 @@ export const footerItems: FooterItem[] = [
       {
         title: "Balance Whitelist Mint",
         href: "/balancewhitelistmint",
+        params: { comingSoon: false },
+      },
+      {
+        title: "Balance Pulbic Mint",
+        href: "/balancepublicmint",
         params: { comingSoon: false },
       },
     ],

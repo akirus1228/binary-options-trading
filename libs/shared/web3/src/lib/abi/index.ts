@@ -77,6 +77,9 @@ import full_UsdbLending from "./UsdbLending.json";
 import full_StakingBackedNFTPool from "./StakingBackedNFTPool.json";
 import full_AmpsToken from "./AmpsToken.json";
 
+//passNFT-mint
+import full_PassNFT from "./passNFT.json";
+
 export const balancerVaultAbi = full_BalancerVault.abi;
 export const balancerWeightedPoolAbi = full_BalancerWeightedPool.abi;
 export const bondCalcContractAbi = full_BondCalcContract.abi;
@@ -144,6 +147,7 @@ export const tradFiBondDepositoryAbi = full_TradFiBondDepository.abi;
 export const usdbFhmBurnBondDepositoryAbi = full_UsdbFhmBurnBondDepository.abi;
 export const usdbABondDepositoryAbi = full_UsdbABondDepository.abi;
 export const usdbNftBondDepositoryAbi = full_UsdbNftBondDepository.abi;
+export const passNFTAbi = full_PassNFT.abi;
 
 //nft-lending
 export const usdbLending = full_UsdbLending.abi;

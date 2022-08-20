@@ -236,3 +236,8 @@ export type Erc20AllowanceAsyncThunk = {
   amount: BigNumber;
 } & InteractiveWalletErc20AsyncThunk;
 
+export interface IMintNFTAsyncThunk extends IBaseAsyncThunk {
+  readonly address: string;
+  readonly provider: JsonRpcProvider;
+  readonly bond: Bond;
+}

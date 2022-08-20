@@ -18,6 +18,7 @@ import {
   NumberImage2,
   NumberImage3,
   NumberImage4,
+  OpenSeaImage,
   preMintImage,
 } from "@fantohm/shared/images";
 import { ethers } from "ethers";
@@ -25,17 +26,14 @@ import { Button, Container, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import style from "./balance_whitelist_mint.module.scss";
-import { whitelist } from "./whitelist";
+import style from "./balance_public_mint.module.scss";
 import { RootState } from "../../store";
 import { AsyncThunkAction } from "@reduxjs/toolkit";
 
 /* eslint-disable-next-line */
-export interface BalanceWhitelistMintProps {}
+export interface BalancePublicMintProps {}
 
-export const BalanceWhitelistMintPage = (
-  props: BalanceWhitelistMintProps
-): JSX.Element => {
+export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Element => {
   const { connect, disconnect, connected, address, provider, chainId } = useWeb3Context();
 
   const [balance, setBalance] = useState(0);
@@ -55,9 +53,6 @@ export const BalanceWhitelistMintPage = (
   const pendingTransactions = useSelector((state: RootState) => {
     return state?.pendingTransactions;
   });
-  const isMintDisabled = useMemo(() => {
-    return !whitelist.includes(address);
-  }, [address]);
 
   useEffect(() => {
     if (connected) {
@@ -141,7 +136,7 @@ export const BalanceWhitelistMintPage = (
                 mt: "10%",
               }}
             >
-              {!connected ? "TIME UNTIL WHITELIST MINT" : "WHITELIST MINT"}
+              {!connected ? "TIME UNTIL PUBLIC MINT" : "PUBLIC MINT"}
             </Typography>
             {!connected ? (
               <Box sx={{ display: "flex", justifyContent: "center", mt: "7%" }}>
@@ -271,7 +266,7 @@ export const BalanceWhitelistMintPage = (
                   </Typography>
                 </Box>
               </Box>
-            ) : (
+            ) : balance !== 0 ? (
               <Box
                 sx={{
                   display: "flex",
@@ -338,6 +333,17 @@ export const BalanceWhitelistMintPage = (
                   </Typography>
                 </Box>
               </Box>
+            ) : (
+              <Typography
+                sx={{
+                  fontFamily: "MonumentExtendedRegular",
+                  fontSize: "55px",
+                  color: "#dee9ff",
+                  mt: "30px",
+                }}
+              >
+                SOLD OUT
+              </Typography>
             )}
 
             {!connected ? (
@@ -373,39 +379,45 @@ export const BalanceWhitelistMintPage = (
                 >
                   Disconnect : {addressEllipsis(address)}
                 </Button>
-                <Button
-                  variant="contained"
-                  disabled={
-                    isPendingTxn(pendingTransactions, "Mint_" + bond?.name) ||
-                    isMintDisabled
-                  }
-                  onClick={handleMint}
-                  sx={{
-                    display: { md: "flex", width: "35%" },
-                    fontSize: "19px",
-                    backgroundColor: "#3744e6",
-                    color: "white",
-                    fontFamily: "sora",
-                    mt: "7%",
-                  }}
-                  className={style["heroLink"]}
-                >
-                  {txnButtonText(pendingTransactions, "Mint_" + bond?.name, "Mint")}
-                </Button>
-                {isMintDisabled ? (
-                  <Typography
+                {balance !== 0 ? (
+                  <Button
+                    variant="contained"
+                    disabled={isPendingTxn(pendingTransactions, "Mint_" + bond?.name)}
+                    onClick={handleMint}
                     sx={{
+                      display: { md: "flex", width: "35%" },
+                      fontSize: "19px",
+                      backgroundColor: "#3744e6",
+                      color: "white",
                       fontFamily: "sora",
-                      fontSize: "16px",
-                      color: "#eb7676",
-                      mt: "20px",
+                      mt: "7%",
+                    }}
+                    className={style["heroLink"]}
+                  >
+                    {txnButtonText(pendingTransactions, "Mint_" + bond?.name, "Mint")}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    href="https://Opensea.io"
+                    sx={{
+                      display: { md: "flex", width: "45%" },
+                      fontSize: "19px",
+                      backgroundColor: "#3744e6",
+                      color: "white",
+                      fontFamily: "sora",
+                      mt: "7%",
                     }}
                   >
-                    *ADDRESS NOT WHITELISTED
-                  </Typography>
-                ) : (
-                  ""
+                    <img
+                      src={OpenSeaImage}
+                      alt="OpenSeaImage"
+                      style={{ marginRight: "5%" }}
+                    />
+                    View on Opensea
+                  </Button>
                 )}
+
                 <Typography
                   sx={{
                     fontFamily: "sora",
@@ -519,4 +531,4 @@ export const BalanceWhitelistMintPage = (
   );
 };
 
-export default BalanceWhitelistMintPage;
+export default BalancePublicMintPage;

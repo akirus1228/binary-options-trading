@@ -92,6 +92,7 @@ import NumberImage2 from "./Mint2.png";
 import NumberImage3 from "./Mint3.png";
 import NumberImage4 from "./Mint4.png";
 import DownLine from "./down line.png";
+import OpenSeaImage from "./Opensea.png";
 
 export {
   NFTsIcon,
@@ -188,4 +189,5 @@ export {
   NumberImage3,
   NumberImage4,
   DownLine,
+  OpenSeaImage,
 };

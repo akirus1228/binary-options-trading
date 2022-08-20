@@ -9,6 +9,7 @@ import {
   usdbFhmBurnBondDepositoryAbi,
   usdbNftBondDepositoryAbi,
   stakingBackedNFTPool,
+  passNFTAbi,
 } from "../abi";
 
 // // TODO(zx): Further modularize by splitting up reserveAssets into vendor token definitions
@@ -262,6 +263,34 @@ export const usdbNft180 = new StableBond({
   },
 });
 
+export const passNFTMint = new StableBond({
+  apr: 0,
+  days: 0,
+  name: "passNFTmint",
+  type: BondType.PASS_NFT,
+  displayName: "PASSNFT",
+  bondToken: "DAI",
+  decimals: 18,
+  isAvailable: {
+    [NetworkIds.Ethereum]: true,
+    [NetworkIds.Rinkeby]: true,
+  },
+  isPurchasable: true,
+  bondIconSvg: undefined,
+  bondContractABI: passNFTAbi,
+  paymentToken: PaymentToken.USDB,
+  roi: 0,
+  networkAddrs: {
+    [NetworkIds.Ethereum]: {
+      bondAddress: "0x9b03609241b7E01796605d34eB4638070fB294aa",
+      reserveAddress: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+    },
+    [NetworkIds.Rinkeby]: {
+      bondAddress: "0x9b03609241b7E01796605d34eB4638070fB294aa",
+      reserveAddress: "0xfa1FBb8Ef55A4855E5688C0eE13aC3f202486286",
+    },
+  },
+});
 export const usdbNft360 = new StableBond({
   apr: 0,
   days: 360,
@@ -452,6 +481,7 @@ export const allBonds = [
   stakeNftPool1,
   stakeNftPool2,
   stakeNftPool3,
+  passNFTMint,
 ];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
