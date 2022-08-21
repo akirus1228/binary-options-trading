@@ -1,10 +1,13 @@
 import { assetToCollectible, Collectible } from "@fantohm/shared/fetch-nft";
 import { OpenseaAsset } from "../api/opensea";
+import { ReservoirToken } from "../api/reservoir";
 import { Assets, assetToAssetId } from "../store/reducers/asset-slice";
 import { Listings } from "../store/reducers/listing-slice";
 import {
   Asset,
   AssetStatus,
+  Chain,
+  CollectibleMediaType,
   CreateListingRequest,
   Listing,
   ListingStatus,
@@ -26,11 +29,48 @@ export const openseaAssetToAsset = async (
       ...tmpCollectible,
       openseaLoaded: Date.now() + 300 * 1000,
       status: AssetStatus.New,
+      osData: openseaAsset.find(
+        (asset: OpenseaAsset) =>
+          asset.asset_contract?.address === collectible.assetContractAddress &&
+          asset.token_id === collectible.tokenId
+      ),
     } as Asset;
     return asset;
   });
 
   return walletContents;
+};
+
+export const reservoirTokenToAsset = (token: ReservoirToken): Asset => {
+  const updatedAsset = {
+    status: AssetStatus.New,
+    tokenId: token.tokenId.toString(),
+    name: token.name || null,
+    description: token.description || null,
+    mediaType: CollectibleMediaType.Image,
+    frameUrl: null,
+    imageUrl: token.image || null,
+    gifUrl: null,
+    videoUrl: token.media || null,
+    threeDUrl: null,
+    thumbUrl: "",
+    isOwned: !!token.owner,
+    owner: { address: token.owner },
+    dateCreated: null,
+    dateLastTransferred: null,
+    externalLink: token.image || null,
+    permaLink: null,
+    assetContractAddress: token.contract || "",
+    chain: "eth" as Chain,
+    wallet: token.owner,
+    reservoirData: token,
+    collection: {
+      name: token.collection.name || "",
+      image_url: token.collection.image || "",
+      slug: token.collection.slug || "",
+    },
+  };
+  return updatedAsset;
 };
 
 // convert Asset[] to Assets

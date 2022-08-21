@@ -1,26 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  FetchNFTClient,
-  FetchNFTClientProps,
-  isAssetValid,
-} from "@fantohm/shared/fetch-nft";
+import { isAssetValid } from "@fantohm/shared/fetch-nft";
 import { isDev, loadState } from "@fantohm/shared-web3";
 import { Asset, AssetStatus, BackendLoadingStatus } from "../../types/backend-types";
 import { OpenseaAsset } from "../../api/opensea";
-import { openseaAssetToAsset } from "../../helpers/data-translations";
-
-const OPENSEA_API_KEY = "6f2462b6e7174e9bbe807169db342ec4";
-
-const openSeaConfig = (): FetchNFTClientProps => {
-  const openSeaConfig: any = {
-    apiKey: isDev ? "5bec8ae0372044cab1bef0d866c98618" : OPENSEA_API_KEY,
-  };
-  if (isDev) {
-    openSeaConfig.apiEndpoint = "https://testnets-api.opensea.io/api/v1";
-  }
-
-  return { openSeaConfig };
-};
+import {
+  openseaAssetToAsset,
+  reservoirTokenToAsset,
+} from "../../helpers/data-translations";
+import { ReservoirToken } from "../../api/reservoir";
 
 export const assetToAssetId = (asset: Asset) =>
   `${asset.tokenId}:::${asset.assetContractAddress}`;
@@ -42,7 +29,6 @@ export interface AssetState {
   readonly assets: Assets;
   readonly isDev: boolean;
   readonly nextOpenseaLoad: number;
-  readonly fetchNftClient: FetchNFTClient;
   readonly assetLoadStatus: AssetLoadStatus;
   readonly openseaCache: OpenseaCache;
 }
@@ -61,6 +47,18 @@ export const updateAssetsFromOpensea = createAsyncThunk(
   }
 );
 
+export const updateAssetsFromReservoir = createAsyncThunk(
+  "asset/updateAssetsFromReservoir",
+  async (reservoirAssets: ReservoirToken[], { dispatch }) => {
+    const newAssetAry = reservoirAssets.map(reservoirTokenToAsset);
+    const newAssets: Assets = {};
+    newAssetAry.forEach((asset: Asset) => {
+      newAssets[assetToAssetId(asset)] = asset;
+    });
+    dispatch(updateAssets(newAssets));
+  }
+);
+
 // initial wallet slice state
 const previousState = loadState("asset");
 const initialState: AssetState = {
@@ -69,7 +67,6 @@ const initialState: AssetState = {
   ...previousState, // overwrite assets and currencies from cache if recent
   assetStatus: "idle",
   nextOpenseaLoad: 0,
-  fetchNftClient: new FetchNFTClient(openSeaConfig()),
   assetLoadStatus: [],
   openseaCache: [],
 };
@@ -86,18 +83,29 @@ const assetsSlice = createSlice({
           [assetToAssetId(action.payload)]: {
             ...state.assets[assetToAssetId(action.payload)],
             ...action.payload,
+            status:
+              state.assets[assetToAssetId(action.payload)].status === AssetStatus.New // if the asset status on the original state is new, assume the incoming state is from the backend
+                ? action.payload.status
+                : state.assets[assetToAssetId(action.payload)].status,
           },
         },
       };
     },
     updateAssets: (state, action: PayloadAction<Assets>) => {
+      console.log(action.payload);
       const mergedAssets: Assets = {};
       Object.entries(action.payload).forEach(([assetId, asset]) => {
+        const newStatus =
+          asset.osData && state?.assets[assetId]?.status // if there is osData, it's from opensea, save backend data if available
+            ? state?.assets[assetId]?.status
+            : asset.status;
         mergedAssets[assetId] = {
-          ...state.assets[assetId],
-          ...asset,
+          ...state.assets[assetId], // spread any existing object in store
+          ...asset, // spread new object
+          status: newStatus,
         };
       });
+      console.log(mergedAssets);
       state.assets = { ...state.assets, ...mergedAssets };
     },
     updateAssetsFromListings: (state, action: PayloadAction<Assets>) => {

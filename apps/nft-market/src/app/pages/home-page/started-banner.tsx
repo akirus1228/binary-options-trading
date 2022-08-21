@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -106,7 +105,11 @@ export const StartedBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
             </Button>
           </Link>
 
-          <Link to="#">
+          <a
+            href="https://www.balance.capital/balancepass"
+            target="_blank"
+            rel="noreffer noreferrer"
+          >
             <Button
               sx={{
                 width: { xs: "310px", md: "309px" },
@@ -120,7 +123,7 @@ export const StartedBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
             >
               Get a pass
             </Button>
-          </Link>
+          </a>
         </Box>
       </Box>
     </Box>

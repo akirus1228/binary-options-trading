@@ -81,6 +81,15 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
 
     const updateLoanRequest: Loan = {
       ...loan,
+      assetListing: {
+        ...loan.assetListing,
+        asset: {
+          ...loan.assetListing.asset,
+          status: AssetStatus.Ready,
+          wallet: loan.lender.address,
+          owner: loan.lender,
+        },
+      },
       status: LoanStatus.Default,
     };
     updateLoan(updateLoanRequest);

@@ -234,3 +234,50 @@ body[class*="darkTheme"] {
     }
   }
 }
+
+.buyLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #88888888;
+
+  > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2rem;
+  }
+
+  > img {
+    width: 12px;
+    height: 12px;
+  }
+
+  > span > img {
+    height: fit-content;
+    margin-right: 0.5rem;
+  }
+}
+
+.buyLink:hover {
+  span {
+    color: blue;
+  }
+
+  > img {
+    filter: invert(8%) sepia(96%) saturate(7339%) hue-rotate(247deg) brightness(105%)
+      contrast(140%);
+    // filter: invert(92%) sepia(96%) saturate(7339%) hue-rotate(247deg) brightness(105%)
+    //   contrast(140%);
+  }
+}
+
+body[class*="darkTheme"] {
+  .buyLink:hover {
+    > img {
+      filter: invert(92%) sepia(96%) saturate(7339%) hue-rotate(247deg) brightness(105%)
+        contrast(140%);
+    }
+  }
+}
