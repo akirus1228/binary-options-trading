@@ -183,6 +183,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       },
       term: offer.term,
       status: LoanStatus.Active,
+      offerId: offer.id,
     };
 
     const createLoanParams = {
@@ -191,10 +192,21 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       networkId: desiredNetworkId,
       currencyAddress: offer.term.currencyAddress,
     };
-
-    const createLoanResult = await createLoan(createLoanRequest).unwrap();
-    console.log(createLoanResult);
-
+    let createLoanResult;
+    try {
+      createLoanResult = await createLoan(createLoanRequest).unwrap();
+    } catch (e: any) {
+      if (e?.data?.message) {
+        dispatch(
+          addAlert({
+            message: e?.data?.message,
+          })
+        );
+      }
+    }
+    if (!createLoanResult) {
+      return;
+    }
     const createLoanContractResult = await dispatch(
       contractCreateLoan(createLoanParams)
     ).unwrap();
@@ -430,7 +442,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             {!isOwner && (
               <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
             )}
-            {!isOwner && offer.status !== OfferStatus.Ready && (
+            {offer.status !== OfferStatus.Ready && (
               <Chip
                 label={offer.status}
                 sx={{

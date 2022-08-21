@@ -252,6 +252,7 @@ export type Loan = {
   contractLoanId?: number;
   currencyPrice?: number;
   amountDue?: number;
+  offerId?: string;
 } & StandardBackendObject;
 
 export type Updatable = {
@@ -306,6 +307,7 @@ export type BackendCollectionQuery = {
 export type BackendStandardQuery = {
   skip: number;
   take: number;
+  sortQuery?: string;
 };
 
 export type FrontendAssetFilterQuery = Omit<Partial<Asset>, "status"> & {
