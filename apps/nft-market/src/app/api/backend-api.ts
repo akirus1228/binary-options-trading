@@ -420,10 +420,17 @@ export const backendApi = createApi({
       },
       invalidatesTags: ["Loan", "Asset", "Listing", "Terms"],
     }),
-    resetPartialLoan: builder.mutation<Loan, string | undefined>({
+    resetPartialLoan: builder.mutation<Listing, string | undefined>({
       query: (id) => ({
         url: `loan/reset-status/${id}`,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data }: { data: Listing } = await queryFulfilled;
+        if (data && data.id) {
+          dispatch(updateListing(data));
+          dispatch(updateAsset({ ...data.asset }));
+        }
+      },
       invalidatesTags: (result, error, queryParams) => [
         { type: "Loan" as const, id: result?.id || "" },
       ],
