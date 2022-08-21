@@ -10,6 +10,7 @@ import {
   Theme,
   Toolbar,
   Tooltip,
+  Popover,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -20,6 +21,10 @@ import { RootState } from "../../../store";
 import NotificationMenu from "./notification-menu";
 import logoDarkMode from "../../../../assets/images/logo-darkmode.svg";
 import logoLightMode from "../../../../assets/images/logo-lightmode.svg";
+import ArrowTopRight from "../../../../assets/images/arrow-top-right.png";
+import ArrowTopRightWhite from "../../../../assets/images/arrow-top-right-white.png";
+import Indacoin from "../../../../assets/images/indacoin.png";
+import Fantohm from "../../../../assets/images/fantohm.png";
 import { HashLink as Link } from "react-router-hash-link";
 import { useSelector } from "react-redux";
 
@@ -50,6 +55,7 @@ export const Header = (): JSX.Element => {
   const { connected, chainId } = useWeb3Context();
   const allowedChain = chainId && enabledNetworkIds.includes(chainId);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorBuyUSDB, setAnchorBuyUSDB] = useState<HTMLButtonElement | null>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
@@ -58,6 +64,14 @@ export const Header = (): JSX.Element => {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleClickBuyUSDB = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorBuyUSDB(event.currentTarget);
+  };
+
+  const handleCloseBuyUSDB = () => {
+    setAnchorBuyUSDB(null);
   };
 
   return (
@@ -158,6 +172,20 @@ export const Header = (): JSX.Element => {
                   </Link>
                 );
               })}
+
+              <Typography
+                key={`btn-buy`}
+                textAlign="center"
+                style={{ order: "10", flex: "0 0 100%" }}
+              >
+                <Button
+                  style={{ padding: "1em 1.25em" }}
+                  aria-describedby="buy-usdb"
+                  onClick={handleClickBuyUSDB}
+                >
+                  Buy USDB
+                </Button>
+              </Typography>
             </Menu>
           </Box>
           <Typography
@@ -210,6 +238,63 @@ export const Header = (): JSX.Element => {
                   </Typography>
                 );
               })}
+              <Typography key={`btn-buy`} textAlign="center">
+                <Button
+                  style={{ padding: "1em 1.25em" }}
+                  aria-describedby="buy-usdb"
+                  onClick={handleClickBuyUSDB}
+                >
+                  Buy USDB
+                </Button>
+              </Typography>
+              <Popover
+                id="buy-usdb"
+                open={anchorBuyUSDB ? true : false}
+                anchorEl={anchorBuyUSDB}
+                onClose={handleCloseBuyUSDB}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                PaperProps={{
+                  style: {
+                    padding: "0px",
+                  },
+                }}
+              >
+                <a
+                  href="https://indacoin.io/buy-usd%20balance-with-card"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles["buyLink"]}
+                  style={{ color: themeType === "light" ? "black" : "white" }}
+                >
+                  <span>
+                    <img src={Indacoin} alt="indacoin" />
+                    Buy on &nbsp;<u>indacoin.io</u>
+                  </span>
+                  <img
+                    src={themeType === "light" ? ArrowTopRight : ArrowTopRightWhite}
+                    alt="arrow-top-right"
+                  />
+                </a>
+                <a
+                  href="https://app.fantohm.com/#/dex"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles["buyLink"]}
+                  style={{ color: themeType === "light" ? "black" : "white" }}
+                >
+                  <span>
+                    <img src={Fantohm} alt="fantohm" />
+                    Buy on &nbsp;<u>fantohm.com</u>
+                  </span>
+                  <img
+                    src={themeType === "light" ? ArrowTopRight : ArrowTopRightWhite}
+                    alt="arrow-top-right"
+                  />
+                </a>
+              </Popover>
             </Box>
           </Box>
           <NotificationMenu />
