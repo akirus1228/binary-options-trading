@@ -30,7 +30,7 @@ import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import style from "./asset-details.module.scss";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
@@ -52,6 +52,7 @@ export const AssetDetails = ({
   sx,
 }: AssetDetailsProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
+  const { address } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const asset = useWalletAsset(contractAddress, tokenId);
   const imageUrl = useBestImage(asset, Math.floor(window.innerWidth * 0.75));
@@ -80,8 +81,6 @@ export const AssetDetails = ({
     return address.toLowerCase() === asset?.owner?.address.toLowerCase();
   }, [asset, address]);
 
-  let isSubscribed = false;
-
   const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagMoreDropDown(event.currentTarget);
   };
@@ -108,7 +107,6 @@ export const AssetDetails = ({
       endIcon: grayArrowRightUp,
     },
   ];
-
 
   const resetStatus = async () => {
     if (!loan) {
