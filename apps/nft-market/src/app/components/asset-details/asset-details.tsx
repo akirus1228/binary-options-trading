@@ -30,13 +30,12 @@ import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import style from "./asset-details.module.scss";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import PriceInfo from "./price-info/price-info";
-import loadingGradient from "../../../assets/images/loading.png";
-import axios, { AxiosResponse } from "axios";
+import { useBestImage } from "../../hooks/use-best-image";
 import { addAlert } from "../../store/reducers/app-slice";
 
 export interface AssetDetailsProps {
@@ -52,11 +51,11 @@ export const AssetDetails = ({
   listing,
   sx,
 }: AssetDetailsProps): JSX.Element => {
-  const [validImage, setValidImage] = useState(loadingGradient);
-  const { address } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
+  const { address } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const asset = useWalletAsset(contractAddress, tokenId);
+  const imageUrl = useBestImage(asset, Math.floor(window.innerWidth * 0.75));
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const { data: collections } = useGetCollectionsQuery({});
   const { data: nftPrices } = useGetNftPriceQuery({
@@ -81,8 +80,6 @@ export const AssetDetails = ({
   const isOwner = useMemo(() => {
     return address.toLowerCase() === asset?.owner?.address.toLowerCase();
   }, [asset, address]);
-
-  let isSubscribed = false;
 
   const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagMoreDropDown(event.currentTarget);
@@ -111,49 +108,6 @@ export const AssetDetails = ({
     },
   ];
 
-  const imageLoadOrder = [
-    asset?.imageUrl || "",
-    asset?.frameUrl || "",
-    asset?.thumbUrl || "",
-  ];
-
-  useEffect(() => {
-    isSubscribed = true;
-    if (validImage === loadingGradient && isSubscribed) {
-      findValidImage();
-    }
-    return () => {
-      isSubscribed = false;
-    };
-  }, [validImage]);
-
-  const findValidImage = () => {
-    imageLoadOrder.forEach((image) => {
-      if (image) {
-        axios.head(image).then(validateImage);
-        imageLoadOrder.shift();
-        return;
-      } else {
-        imageLoadOrder.shift();
-      }
-    });
-  };
-
-  const validateImage = (result: AxiosResponse<any, any>) => {
-    if (
-      result.status === 200 &&
-      result.headers["content-type"].toLowerCase().includes("image")
-    ) {
-      if (isSubscribed) {
-        setValidImage(result.config.url || "");
-      }
-    } else {
-      if (isSubscribed) {
-        setValidImage(loadingGradient);
-      }
-    }
-  };
-
   const resetStatus = async () => {
     if (!loan) {
       return;
@@ -173,7 +127,7 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={validImage} alt={asset.name || "unknown"} />
+              <img src={imageUrl} alt={asset.name || "unknown"} />
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>

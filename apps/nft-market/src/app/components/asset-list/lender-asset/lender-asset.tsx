@@ -18,13 +18,7 @@ import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { useTermDetails } from "../../../hooks/use-term-details";
-import {
-  chains,
-  formatCurrency,
-  isDev,
-  NetworkIds,
-  useWeb3Context,
-} from "@fantohm/shared-web3";
+import { formatCurrency, isDev } from "@fantohm/shared-web3";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
@@ -32,22 +26,14 @@ import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
-import previewNotAvailable from "../../../../assets/images/preview-not-available.png";
-import loadingGradient from "../../../../assets/images/loading.png";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import { useBestImage } from "../../../hooks/use-best-image";
 
 export type LenderAssetProps = {
   asset: Asset;
 };
 
 export function LenderAsset({ asset }: LenderAssetProps) {
-  const imageLoadOrder = [
-    asset.osData?.image_url ? `${asset.osData?.image_url}=w1024` : "",
-    asset.thumbUrl,
-    asset.imageUrl,
-    asset.frameUrl,
-  ];
-  const { chainId } = useWeb3Context();
+  const imageUrl = useBestImage(asset, 1024);
   const dispatch: AppDispatch = useDispatch();
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
@@ -55,8 +41,6 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   );
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
-
-  const [validImage, setValidImage] = useState(loadingGradient);
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -73,43 +57,6 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         return;
     }
   }, [asset]);
-
-  useEffect(() => {
-    if (validImage === loadingGradient) {
-      findValidImage();
-    }
-  }, [validImage]);
-
-  const findValidImage = () => {
-    imageLoadOrder.forEach((image) => {
-      if (image) {
-        axios
-          .head(image)
-          .then(validateImage)
-          .catch((e: AxiosError) => {
-            console.log(e);
-            console.log(imageLoadOrder);
-            findValidImage();
-          });
-        imageLoadOrder.shift();
-        return;
-      } else {
-        imageLoadOrder.shift();
-        findValidImage();
-      }
-    });
-  };
-
-  const validateImage = (result: AxiosResponse<any, any>) => {
-    if (
-      result.status === 200 &&
-      result.headers["content-type"].toLowerCase().includes("image")
-    ) {
-      setValidImage(result.config.url || "");
-    } else {
-      setValidImage(loadingGradient);
-    }
-  };
 
   const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagMoreDropDown(event.currentTarget);
@@ -256,7 +203,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       >
         {asset.openseaId && (
           <PreviewImage
-            url={validImage || previewNotAvailable}
+            url={imageUrl}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}

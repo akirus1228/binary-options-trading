@@ -3,12 +3,13 @@ import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLazyGetListingsQuery } from "../../api/backend-api";
+import { useGetOpenseaAssetsQuery } from "../../api/opensea";
 import LenderAssetFilter from "../../components/asset-filter/lender-asset-filter/lender-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import AssetTypeFilter from "../../components/asset-type-filter/asset-type-filter";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
 import { RootState } from "../../store";
-import { ListingQueryParam, ListingSort } from "../../store/reducers/interfaces";
+import { ListingQueryParam } from "../../store/reducers/interfaces";
 import { Asset, Listing, ListingStatus } from "../../types/backend-types";
 import style from "./lend-page.module.scss";
 
@@ -25,6 +26,17 @@ export const LendPage = (): JSX.Element => {
   });
   const { user } = useSelector((state: RootState) => state.backend);
   const [trigger, listingsResult] = useLazyGetListingsQuery();
+  const { isLoading: isAssetLoading, isSuccess: isAssetLoadingSuccess } =
+    useGetOpenseaAssetsQuery(
+      {
+        token_ids: listingsResult?.data
+          ?.filter((listing) => !!listing.asset)
+          .map((listing) => listing.asset.openseaId) as string[],
+        limit: 30,
+        offset: "0",
+      },
+      { skip: !!listingsResult && (listingsResult?.data?.length || 0) < 1 }
+    );
 
   useEffect(() => {
     // if we're down the page we should go ahead and scroll back to the top of the results

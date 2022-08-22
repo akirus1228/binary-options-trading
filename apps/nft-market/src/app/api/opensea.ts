@@ -3,6 +3,7 @@ import { isDev } from "@fantohm/shared-web3";
 import { OpenseaAssetQueryParam } from "../store/reducers/interfaces";
 import { updateAssetsFromOpensea } from "../store/reducers/asset-slice";
 import { FetchArgs } from "@reduxjs/toolkit/dist/query";
+import * as queryString from "query-string";
 
 export type Nullable<T> = T | null;
 
@@ -145,6 +146,8 @@ const staggeredBaseQuery = retry(
         headers.set("X-API-KEY", openseaConfig().apiKey);
         return headers;
       },
+      paramsSerializer: (params: OpenseaAssetQueryParam) =>
+        queryString.stringify(params, { arrayFormat: "none" }),
     })(args, api, extraOptions);
     if (result.error) {
       // fail immediatly if it's a 500 error

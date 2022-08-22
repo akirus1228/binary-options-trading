@@ -84,15 +84,15 @@ const assetsSlice = createSlice({
             ...state.assets[assetToAssetId(action.payload)],
             ...action.payload,
             status:
-              state.assets[assetToAssetId(action.payload)].status === AssetStatus.New // if the asset status on the original state is new, assume the incoming state is from the backend
-                ? action.payload.status
-                : state.assets[assetToAssetId(action.payload)].status,
+              action.payload.osData && action.payload.osData.id // if the incoming payload has the osDatda attached it's coming from opensea. Don't overwrite existing status
+                ? state.assets[assetToAssetId(action.payload)]?.status || // use existing status if it exists
+                  action.payload.status // if undefined use incoming payload
+                : action.payload.status, // if osData is not attached, it should be from the backend, use it.
           },
         },
       };
     },
     updateAssets: (state, action: PayloadAction<Assets>) => {
-      console.log(action.payload);
       const mergedAssets: Assets = {};
       Object.entries(action.payload).forEach(([assetId, asset]) => {
         const newStatus =
