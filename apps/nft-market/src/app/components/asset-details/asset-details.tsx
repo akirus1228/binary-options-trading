@@ -1,27 +1,30 @@
 import {
   Box,
+  Button,
   Chip,
+  CircularProgress,
   Container,
   Grid,
+  IconButton,
+  Link,
   Paper,
+  Popover,
   Skeleton,
   SxProps,
   Theme,
   Typography,
-  Link,
-  Popover,
-  IconButton,
 } from "@mui/material";
-import { useWeb3Context, chains, NetworkIds, isDev } from "@fantohm/shared-web3";
-import { useSelector } from "react-redux";
+import { isDev, useWeb3Context } from "@fantohm/shared-web3";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useGetCollectionsQuery,
   useGetLoansQuery,
   useGetNftPriceQuery,
+  useResetPartialLoanMutation,
 } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
-import { RootState } from "../../store";
-import { Listing } from "../../types/backend-types";
+import { AppDispatch, RootState } from "../../store";
+import { AssetStatus, Listing } from "../../types/backend-types";
 import AssetOwnerTag from "../asset-owner-tag/asset-owner-tag";
 import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
@@ -33,6 +36,8 @@ import etherScan from "../../../assets/icons/etherscan.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import PriceInfo from "./price-info/price-info";
 import { useBestImage } from "../../hooks/use-best-image";
+import { addAlert } from "../../store/reducers/app-slice";
+
 export interface AssetDetailsProps {
   contractAddress: string;
   tokenId: string;
@@ -46,6 +51,7 @@ export const AssetDetails = ({
   listing,
   sx,
 }: AssetDetailsProps): JSX.Element => {
+  const dispatch: AppDispatch = useDispatch();
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const asset = useWalletAsset(contractAddress, tokenId);
   const imageUrl = useBestImage(asset, Math.floor(window.innerWidth * 0.75));
@@ -55,16 +61,26 @@ export const AssetDetails = ({
     collection: contractAddress,
     tokenId,
   });
+  const [pending, setPending] = useState(false);
+  const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
+    useResetPartialLoanMutation();
   const { data: loan } = useGetLoansQuery(
     {
       skip: 0,
       take: 1,
+      sortQuery: "loan.updatedAt:DESC",
       assetId: asset !== null ? asset.id : "",
     },
     {
-      skip: !asset || false || !asset.id || !listing || !authSignature,
+      skip: !asset || false || !asset.id || !authSignature,
     }
   );
+
+  const isOwner = useMemo(() => {
+    return address.toLowerCase() === asset?.owner?.address.toLowerCase();
+  }, [asset, address]);
+
+  let isSubscribed = false;
 
   const openMoreDropDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFlagMoreDropDown(event.currentTarget);
@@ -92,6 +108,19 @@ export const AssetDetails = ({
       endIcon: grayArrowRightUp,
     },
   ];
+
+
+  const resetStatus = async () => {
+    if (!loan) {
+      return;
+    }
+    setPending(true);
+    resetPartialLoan(loan[0].id).then(() => {
+      setPending(false);
+      resetResetPartialLoan();
+      dispatch(addAlert({ message: "Locked has been cancelled." }));
+    });
+  };
 
   return (
     <Container sx={sx} className={style["assetRow"]}>
@@ -195,6 +224,7 @@ export const AssetDetails = ({
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "flex-start",
+                alignItems: "center",
                 minWidth: "50%",
                 pb: "3em",
               }}
@@ -206,6 +236,23 @@ export const AssetDetails = ({
               />
               <Typography sx={{ mx: "10px" }}>.</Typography>
               <Chip label={asset.mediaType || "Art"} className="light" />
+              {isOwner &&
+                asset?.status === AssetStatus.Locked &&
+                loan &&
+                !loan[0].contractLoanId &&
+                (pending ? (
+                  <Button variant="contained" disabled>
+                    <CircularProgress />
+                  </Button>
+                ) : (
+                  <Button
+                    sx={{ ml: "20px", py: "10px", px: "15px" }}
+                    variant="contained"
+                    onClick={() => resetStatus()}
+                  >
+                    Unlock Asset
+                  </Button>
+                ))}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "row", mb: "3em" }}>
               <Box

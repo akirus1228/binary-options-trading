@@ -66,9 +66,12 @@ export const OffersList = ({
         <TableBody>
           {offers &&
             !isLoading &&
-            offers.map((offer: Offer, index: number) => (
-              <OfferListItem key={`offer-${index}`} offer={offer} fields={fields} />
-            ))}
+            offers.map(
+              (offer: Offer, index: number) =>
+                offer?.assetListing && (
+                  <OfferListItem key={`offer-${index}`} offer={offer} fields={fields} />
+                )
+            )}
         </TableBody>
       </PaperTable>
     </Container>
