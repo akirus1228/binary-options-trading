@@ -327,16 +327,24 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
-    term.signature = await signTerms(
-      provider,
-      asset.owner?.address || "",
-      chainId,
-      asset.assetContractAddress,
-      asset.tokenId,
-      term,
-      currency,
-      dispatch
-    );
+    try {
+      term.signature = await signTerms(
+        provider,
+        asset.owner?.address || "",
+        chainId,
+        asset.assetContractAddress,
+        asset.tokenId,
+        term,
+        currency,
+        dispatch
+      );
+    } catch (err) {
+      // most likely the user rejected the signature
+    }
+    if (!term.signature || term.signature === "") {
+      dispatch(addAlert({ message: "Signature rejected. Terms not updated." }));
+    }
+
     updateTerms(term);
     dispatch(addAlert({ message: "Terms have been updated." }));
     return;
