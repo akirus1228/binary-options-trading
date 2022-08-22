@@ -18,6 +18,7 @@ import {
   NumberImage2,
   NumberImage3,
   NumberImage4,
+  OpenSeaImage,
   preMintImage,
 } from "@fantohm/shared/images";
 import { ethers } from "ethers";
@@ -125,9 +126,10 @@ export const BalanceWhitelistMintPage = (
             <Typography
               sx={{
                 fontFamily: "MonumentExtendedRegular",
-                fontSize: "45px",
+                fontSize: { md: "45px", xs: "40px" },
                 color: "#dee9ff",
                 mt: "5%",
+                textAlign: "center",
               }}
             >
               Balance Alpha Pass
@@ -135,10 +137,11 @@ export const BalanceWhitelistMintPage = (
             <Typography
               sx={{
                 fontFamily: "sequel100black-55",
-                fontSize: "19px",
+                fontSize: { md: "19px", xs: "18px" },
                 color: "#8fa0c3",
                 letterSpacing: "0.3em",
                 mt: "10%",
+                textAlign: "center",
               }}
             >
               {!connected ? "TIME UNTIL WHITELIST MINT" : "WHITELIST MINT"}
@@ -151,7 +154,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "MonumentExtendedRegular",
-                      fontSize: "64px",
+                      fontSize: { md: "64px", xs: "30px" },
                       color: "#dee9ff",
                     }}
                   >
@@ -160,7 +163,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "sequel100black-55",
-                      fontSize: "14px",
+                      fontSize: { md: "14px", xs: "8px" },
                       color: "#8fa0c3",
                       letterSpacing: "0.3em",
                     }}
@@ -171,7 +174,7 @@ export const BalanceWhitelistMintPage = (
                 <Typography
                   sx={{
                     fontFamily: "MonumentExtendedRegular",
-                    fontSize: "64px",
+                    fontSize: { md: "64px", xs: "30px" },
                     color: "#dee9ff",
                     ml: "4%",
                     mr: "4%",
@@ -185,7 +188,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "MonumentExtendedRegular",
-                      fontSize: "64px",
+                      fontSize: { md: "64px", xs: "30px" },
                       color: "#dee9ff",
                     }}
                   >
@@ -194,7 +197,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "sequel100black-55",
-                      fontSize: "14px",
+                      fontSize: { md: "14px", xs: "8px" },
                       color: "#8fa0c3",
                       letterSpacing: "0.3em",
                     }}
@@ -205,7 +208,7 @@ export const BalanceWhitelistMintPage = (
                 <Typography
                   sx={{
                     fontFamily: "MonumentExtendedRegular",
-                    fontSize: "64px",
+                    fontSize: { md: "64px", xs: "30px" },
                     color: "#dee9ff",
                     ml: "4%",
                     mr: "4%",
@@ -219,7 +222,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "MonumentExtendedRegular",
-                      fontSize: "64px",
+                      fontSize: { md: "64px", xs: "30px" },
                       color: "#dee9ff",
                     }}
                   >
@@ -228,7 +231,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "sequel100black-55",
-                      fontSize: "14px",
+                      fontSize: { md: "14px", xs: "8px" },
                       color: "#8fa0c3",
                       letterSpacing: "0.3em",
                     }}
@@ -239,7 +242,7 @@ export const BalanceWhitelistMintPage = (
                 <Typography
                   sx={{
                     fontFamily: "MonumentExtendedRegular",
-                    fontSize: "64px",
+                    fontSize: { md: "64px", xs: "30px" },
                     color: "#dee9ff",
                     ml: "4%",
                     mr: "4%",
@@ -253,7 +256,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "MonumentExtendedRegular",
-                      fontSize: "64px",
+                      fontSize: { md: "64px", xs: "30px" },
                       color: "#dee9ff",
                     }}
                   >
@@ -262,7 +265,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "sequel100black-55",
-                      fontSize: "14px",
+                      fontSize: { md: "14px", xs: "8px" },
                       color: "#8fa0c3",
                       letterSpacing: "0.3em",
                     }}
@@ -271,7 +274,7 @@ export const BalanceWhitelistMintPage = (
                   </Typography>
                 </Box>
               </Box>
-            ) : (
+            ) : balance !== 0 ? (
               <Box
                 sx={{
                   display: "flex",
@@ -285,13 +288,13 @@ export const BalanceWhitelistMintPage = (
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    mr: "10%",
+                    mr: { md: "10%", xs: "5%" },
                   }}
                 >
                   <Typography
                     sx={{
                       fontFamily: "MonumentExtendedRegular",
-                      fontSize: "55px",
+                      fontSize: { md: "55px", xs: "32px" },
                       color: "#dee9ff",
                     }}
                   >
@@ -300,7 +303,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "sequel100black-55",
-                      fontSize: "14px",
+                      fontSize: { md: "14px", xs: "12px" },
                       color: "#8fa0c3",
                       letterSpacing: "0.3em",
                     }}
@@ -308,19 +311,23 @@ export const BalanceWhitelistMintPage = (
                     Remaining
                   </Typography>
                 </Box>
-                <img src={DownLine} alt="down line"></img>
+                <img
+                  src={DownLine}
+                  alt="down line"
+                  className={style["dropLineSection"]}
+                ></img>
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    ml: "10%",
+                    ml: { md: "10%", xs: "5%" },
                   }}
                 >
                   <Typography
                     sx={{
                       fontFamily: "MonumentExtendedRegular",
-                      fontSize: "55px",
+                      fontSize: { md: "55px", xs: "32px" },
                       color: "#dee9ff",
                     }}
                   >
@@ -329,7 +336,7 @@ export const BalanceWhitelistMintPage = (
                   <Typography
                     sx={{
                       fontFamily: "sequel100black-55",
-                      fontSize: "14px",
+                      fontSize: { md: "14px", xs: "12px" },
                       color: "#8fa0c3",
                       letterSpacing: "0.3em",
                     }}
@@ -338,6 +345,17 @@ export const BalanceWhitelistMintPage = (
                   </Typography>
                 </Box>
               </Box>
+            ) : (
+              <Typography
+                sx={{
+                  fontFamily: "MonumentExtendedRegular",
+                  fontSize: "55px",
+                  color: "#dee9ff",
+                  mt: "30px",
+                }}
+              >
+                SOLD OUT
+              </Typography>
             )}
 
             {!connected ? (
@@ -345,12 +363,13 @@ export const BalanceWhitelistMintPage = (
                 variant="contained"
                 onClick={onClickConnect}
                 sx={{
-                  display: { md: "flex", width: "35%" },
-                  fontSize: "19px",
+                  display: { md: "flex" },
+                  width: { md: "35%", xs: "50%" },
+                  fontSize: { md: "19px", xs: "14px" },
                   backgroundColor: "#3744e6",
                   color: "white",
                   fontFamily: "sora",
-                  mt: "7%",
+                  mt: { md: "7%", xs: "15%" },
                 }}
                 className={style["heroLink"]}
               >
@@ -362,41 +381,66 @@ export const BalanceWhitelistMintPage = (
                   variant="contained"
                   onClick={onClickDisconnect}
                   sx={{
-                    display: { md: "flex", width: "35%" },
-                    fontSize: "19px",
+                    display: { md: "flex" },
+                    width: { md: "35%", xs: "50%" },
+                    fontSize: { md: "19px", xs: "14px" },
                     backgroundColor: "#3744e6",
                     color: "white",
                     fontFamily: "sora",
-                    mt: "7%",
+                    mt: { md: "7%", xs: "15%" },
                   }}
                   className={style["heroLink"]}
                 >
                   Disconnect : {addressEllipsis(address)}
                 </Button>
-                <Button
-                  variant="contained"
-                  disabled={
-                    isPendingTxn(pendingTransactions, "Mint_" + bond?.name) ||
-                    isMintDisabled
-                  }
-                  onClick={handleMint}
-                  sx={{
-                    display: { md: "flex", width: "35%" },
-                    fontSize: "19px",
-                    backgroundColor: "#3744e6",
-                    color: "white",
-                    fontFamily: "sora",
-                    mt: "7%",
-                  }}
-                  className={style["heroLink"]}
-                >
-                  {txnButtonText(pendingTransactions, "Mint_" + bond?.name, "Mint")}
-                </Button>
+                {balance !== 0 ? (
+                  <Button
+                    variant="contained"
+                    disabled={
+                      isPendingTxn(pendingTransactions, "Mint_" + bond?.name) ||
+                      isMintDisabled
+                    }
+                    onClick={handleMint}
+                    sx={{
+                      display: { md: "flex" },
+                      width: { md: "35%", xs: "50%" },
+                      fontSize: { md: "19px", xs: "14px" },
+                      backgroundColor: "#3744e6",
+                      color: "white",
+                      fontFamily: "sora",
+                      mt: { md: "7%", xs: "15%" },
+                    }}
+                    className={style["heroLink"]}
+                  >
+                    {txnButtonText(pendingTransactions, "Mint_" + bond?.name, "Mint")}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    href="https://Opensea.io"
+                    sx={{
+                      display: { md: "flex" },
+                      width: { md: "40%", xs: "65%" },
+                      fontSize: { md: "19px", xs: "14px" },
+                      backgroundColor: "#3744e6",
+                      color: "white",
+                      fontFamily: "sora",
+                      mt: { md: "7%", xs: "15%" },
+                    }}
+                  >
+                    <img
+                      src={OpenSeaImage}
+                      alt="OpenSeaImage"
+                      style={{ marginRight: "5%" }}
+                    />
+                    View on Opensea
+                  </Button>
+                )}
                 {isMintDisabled ? (
                   <Typography
                     sx={{
                       fontFamily: "sora",
-                      fontSize: "16px",
+                      fontSize: { md: "16px", xs: "12px" },
                       color: "#eb7676",
                       mt: "20px",
                     }}
@@ -409,9 +453,9 @@ export const BalanceWhitelistMintPage = (
                 <Typography
                   sx={{
                     fontFamily: "sora",
-                    fontSize: "16px",
+                    fontSize: { md: "16px", xs: "12px" },
                     color: "#8fa0c3",
-                    width: "52%",
+                    width: { md: "52%", xs: "80%" },
                     textAlign: "center",
                     mt: "30px",
                   }}
@@ -427,8 +471,9 @@ export const BalanceWhitelistMintPage = (
           <Typography
             sx={{
               fontFamily: "MonumentExtendedRegular",
-              fontSize: "45px",
+              fontSize: { md: "45px", xs: "38px" },
               color: "#dee9ff",
+              textAlign: "center",
             }}
           >
             How to Mint
@@ -439,7 +484,12 @@ export const BalanceWhitelistMintPage = (
             rowSpacing={{ xs: 4, md: 0 }}
             sx={{ mt: { md: "100px", xs: "50px" } }}
           >
-            <Grid item md={3} xs={12} sx={{ display: "flex" }}>
+            <Grid
+              item
+              md={3}
+              xs={12}
+              sx={{ display: "flex", justifyContent: "center !important" }}
+            >
               <img
                 src={NumberImage1}
                 alt="Number1"
@@ -457,7 +507,16 @@ export const BalanceWhitelistMintPage = (
                 Connect your Wallet
               </Typography>
             </Grid>
-            <Grid item md={3} xs={12} sx={{ display: "flex" }}>
+            <Grid
+              item
+              md={3}
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "center !important",
+                mt: { xs: "20px" },
+              }}
+            >
               <img
                 src={NumberImage2}
                 alt="Number2"
@@ -475,7 +534,16 @@ export const BalanceWhitelistMintPage = (
                 Press the ‘Mint’ button
               </Typography>
             </Grid>
-            <Grid item md={3} xs={12} sx={{ display: "flex" }}>
+            <Grid
+              item
+              md={3}
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "center !important",
+                mt: { xs: "20px" },
+              }}
+            >
               <img
                 src={NumberImage3}
                 alt="Number3"
@@ -493,7 +561,16 @@ export const BalanceWhitelistMintPage = (
                 Confirm the transaction
               </Typography>
             </Grid>
-            <Grid item md={3} xs={12} sx={{ display: "flex" }}>
+            <Grid
+              item
+              md={3}
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "center !important",
+                mt: { xs: "20px" },
+              }}
+            >
               <img
                 src={NumberImage4}
                 alt="Number4"
