@@ -170,11 +170,12 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   const amountGwei = ethers.utils.parseUnits(amount.toString(), currency?.decimals);
 
-  const platformFeeAmtGwei: BigNumber = BigNumber.from(
-    platformFees[currency?.currentAddress]
-  )
-    .mul(amountGwei)
-    .div(10000);
+  const platformFeeAmtGwei: BigNumber = useMemo(() => {
+    if (!platformFees[currency?.currentAddress]) return ethers.BigNumber.from(0);
+    return BigNumber.from(platformFees[currency?.currentAddress])
+      .mul(amountGwei)
+      .div(10000);
+  }, [currency?.currentAddress, amountGwei]);
 
   const notEnoughBalance = useMemo(() => {
     return (
@@ -653,7 +654,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             {props?.offerTerm ? "Edit" : "Make"} Offer
           </Button>
         )}
-      {notEnoughBalance && (
+      {notEnoughBalance && !isOwner && (
         <Button variant="contained" disabled={true}>
           Insufficient funds
         </Button>
