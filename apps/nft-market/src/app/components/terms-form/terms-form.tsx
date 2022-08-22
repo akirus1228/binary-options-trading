@@ -6,6 +6,7 @@ import {
   requestErc20Allowance,
   requestNftPermission,
   selectErc20AllowanceByAddress,
+  selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
@@ -38,7 +39,7 @@ import {
   useGetNftPriceQuery,
   useUpdateTermsMutation,
 } from "../../api/backend-api";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
 import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
 import { desiredNetworkId } from "../../constants/network";
@@ -127,6 +128,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     selectCurrencyById(state, `${selectedCurrency.toUpperCase()}_ADDRESS`)
   );
 
+  const currencyBalance = useSelector((state: RootState) =>
+    selectErc20BalanceByAddress(state, currency?.currentAddress)
+  );
+
   useEffect(() => {
     dispatch(loadCurrencyFromId(`${selectedCurrency.toUpperCase()}_ADDRESS`));
   }, [selectedCurrency]);
@@ -162,6 +167,23 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       erc20TokenAddress: currency?.currentAddress || "",
     })
   );
+
+  const amountGwei = ethers.utils.parseUnits(amount.toString(), currency?.decimals);
+
+  const platformFeeAmtGwei: BigNumber = BigNumber.from(
+    platformFees[currency?.currentAddress]
+  )
+    .mul(amountGwei)
+    .div(10000);
+
+  const notEnoughBalance = useMemo(() => {
+    return (
+      currencyBalance &&
+      amountGwei &&
+      platformFeeAmtGwei &&
+      currencyBalance.lt(amountGwei.add(platformFeeAmtGwei))
+    );
+  }, [currencyBalance, amountGwei, platformFeeAmtGwei]);
 
   // when a user connects their wallet login to the backend api
   useEffect(() => {
@@ -617,6 +639,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         props.listing &&
         !!erc20Allowance &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
+        !notEnoughBalance &&
         erc20Allowance.gte(
           ethers.utils.parseEther(
             (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
@@ -630,10 +653,16 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             {props?.offerTerm ? "Edit" : "Make"} Offer
           </Button>
         )}
+      {notEnoughBalance && (
+        <Button variant="contained" disabled={true}>
+          Insufficient funds
+        </Button>
+      )}
       {!isOwner &&
         !pending &&
         props.listing &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
+        !notEnoughBalance &&
         !!erc20Allowance &&
         erc20Allowance.lt(
           ethers.utils.parseEther(
@@ -654,7 +683,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         </Button>
       )}
       <ConfirmDialog
-        title="Confirm Accept Offer"
+        title="Confirm Create Offer"
         open={confirmOpen}
         principal={Number(amount)}
         platformfee={(platformFees[currency?.currentAddress] / 10000) * Number(amount)}
