@@ -65,6 +65,7 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async () =>
 interface IAppData {
   readonly loading: boolean;
   readonly theme: string;
+  readonly checkedConnection: boolean;
   blogPosts: any;
 }
 
@@ -74,6 +75,7 @@ const initialState: IAppData = {
   loading: true,
   theme: "dark",
   blogPosts: undefined,
+  checkedConnection: false,
   // eslint-disable-next-line node/no-unsupported-features/es-syntax
   ...appState?.app,
 };
@@ -85,6 +87,9 @@ const appSlice = createSlice({
     fetchAppSuccess(state, action) {
       state.blogPosts = action.payload;
       setAll(state, action.payload);
+    },
+    setCheckedConnection: (state, action: PayloadAction<boolean>) => {
+      state.checkedConnection = action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -111,6 +116,6 @@ const baseInfo = (state: RootState) => state.app;
 
 export const appReducer = appSlice.reducer;
 
-export const { setTheme, setLoading } = appSlice.actions;
+export const { setTheme, setLoading, setCheckedConnection } = appSlice.actions;
 
 export const getAppState = createSelector(baseInfo, (app) => app);
