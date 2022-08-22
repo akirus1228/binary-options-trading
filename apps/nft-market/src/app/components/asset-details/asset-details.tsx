@@ -237,7 +237,7 @@ export const AssetDetails = ({
               {isOwner &&
                 asset?.status === AssetStatus.Locked &&
                 loan &&
-                !loan[0].contractLoanId &&
+                !loan[0]?.contractLoanId &&
                 (pending ? (
                   <Button variant="contained" disabled>
                     <CircularProgress />
