@@ -40,7 +40,7 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
 
   // query to use on frontend to filter cached results and ultimately display
   const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
-    status: AssetStatus.Ready,
+    status: "All",
     wallet: address,
   });
 
