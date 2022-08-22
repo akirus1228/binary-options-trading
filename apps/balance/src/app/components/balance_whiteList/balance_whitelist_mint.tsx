@@ -482,13 +482,17 @@ export const BalanceWhitelistMintPage = (
             container
             columnSpacing={2}
             rowSpacing={{ xs: 4, md: 0 }}
-            sx={{ mt: { md: "100px", xs: "50px" } }}
+            sx={{ mt: { md: "50px", xs: "20px" } }}
           >
             <Grid
               item
               md={3}
               xs={12}
-              sx={{ display: "flex", justifyContent: "center !important" }}
+              sx={{
+                display: "flex",
+                justifyContent: "center !important",
+                mt: { xs: "20px" },
+              }}
             >
               <img
                 src={NumberImage1}
