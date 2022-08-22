@@ -1,6 +1,6 @@
 import { isRejectedWithValue } from "@reduxjs/toolkit";
 import type { MiddlewareAPI, Middleware } from "@reduxjs/toolkit";
-import { setOpenseaStatus } from "../reducers/app-slice";
+import { addAlert, setOpenseaStatus } from "../reducers/app-slice";
 
 /**
  * Log a warning and show a toast!
@@ -14,6 +14,11 @@ export const rtkQueryErrorLogger: Middleware =
     ) {
       console.log(action);
       api.dispatch(setOpenseaStatus(false));
+      api.dispatch(
+        addAlert({
+          message: "Sorry, we're experiencing delays. Please try again shortly.",
+        })
+      );
     }
 
     return next(action);
