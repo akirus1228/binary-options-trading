@@ -215,7 +215,6 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     const createLoanContractResult = await dispatch(
       contractCreateLoan(createLoanParams)
     ).unwrap();
-    console.log(createLoanContractResult);
 
     if (typeof createLoanContractResult !== "number") {
       dispatch(
