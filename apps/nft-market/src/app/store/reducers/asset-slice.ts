@@ -92,7 +92,6 @@ const assetsSlice = createSlice({
       };
     },
     updateAssets: (state, action: PayloadAction<Assets>) => {
-      console.log(action.payload);
       const mergedAssets: Assets = {};
       Object.entries(action.payload).forEach(([assetId, asset]) => {
         const newStatus =

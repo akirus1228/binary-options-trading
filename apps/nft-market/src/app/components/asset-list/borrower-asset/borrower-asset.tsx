@@ -5,7 +5,7 @@ import { Link as RouterLink } from "react-router-dom";
 import style from "./borrower-asset.module.scss";
 import PreviewImage from "../preview-image/preview-image";
 import { Asset, AssetStatus } from "../../../types/backend-types";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isDev } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
@@ -13,6 +13,7 @@ import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import { useBestImage } from "../../../hooks/use-best-image";
 
 export interface BorrowerAssetProps {
   asset: Asset;
@@ -22,6 +23,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
+  const imageUrl = useBestImage(asset, 1024);
 
   const chipColor = useMemo(() => {
     if (!asset) return;
@@ -185,11 +187,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
         <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
-            url={
-              asset.osData?.image_url
-                ? `${asset.osData?.image_url}=w1024` // todo, verify it's googleusercontent before adding the w1024
-                : undefined || asset.imageUrl || ""
-            }
+            url={imageUrl}
             name={asset.name || "placeholder name"}
             contractAddress={asset.assetContractAddress}
             tokenId={asset.tokenId}
