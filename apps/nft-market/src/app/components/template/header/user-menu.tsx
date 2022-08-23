@@ -1,21 +1,17 @@
 import { CustomInnerSwitch, setTheme } from "@fantohm/shared-ui-themes";
 import {
-  formatCurrency,
   isDev,
   loadErc20Balance,
   NetworkIds,
   networks,
-  selectErc20Balance,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
   Avatar,
   Box,
   Button,
-  Container,
   Icon,
   IconButton,
-  Paper,
   Popover,
   SxProps,
   Theme,
@@ -38,10 +34,9 @@ import { AppDispatch, RootState } from "../../../store";
 import { logout } from "../../../store/reducers/backend-slice";
 import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
 import { desiredNetworkId } from "../../../constants/network";
-import { ethers } from "ethers";
 import { selectCurrencies } from "../../../store/selectors/currency-selectors";
-import ManageFund from "../../managefund/managefund";
 import styles from "./header.module.scss";
+import { MyWallet } from "./my-wallet";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -70,10 +65,9 @@ export const UserMenu = (): JSX.Element => {
   ];
 
   // web3 wallet
-  const { connect, disconnect, connected, address } = useWeb3Context();
+  const { connect, disconnect, address } = useWeb3Context();
 
   const currencies = useSelector((state: RootState) => selectCurrencies(state));
-  const erc20Balances = useSelector((state: RootState) => selectErc20Balance(state));
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   useEffect(() => {
@@ -116,17 +110,6 @@ export const UserMenu = (): JSX.Element => {
         console.error("Async: Could not copy text: ", err);
       }
     );
-  };
-
-  // make offer code
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const handleManageFund = () => {
-    setDialogOpen(true);
-  };
-
-  const onListDialogClose = (accepted: boolean) => {
-    setDialogOpen(false);
   };
 
   useEffect(() => {
@@ -225,114 +208,7 @@ export const UserMenu = (): JSX.Element => {
             <LaunchIcon fontSize="small" />
           </IconButton>
         </div>
-        <div
-          style={{
-            padding: "5px 0",
-            borderRadius: "20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-around",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-            <Container style={{ width: "100%", flex: "0 0 100%", padding: "0" }}>
-              <Paper
-                style={{
-                  marginTop: "5px",
-                  marginBottom: "5px",
-                  padding: "1em",
-                }}
-              >
-                <Box
-                  sx={{
-                    marginBottom: "20px",
-                  }}
-                >
-                  <h6
-                    style={{
-                      color: "grey",
-                      marginLeft: "10px",
-                      marginTop: "10px",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    Wallet balance
-                  </h6>
-                  {Object.values(currencies).map((currencyInfo) => {
-                    const balance =
-                      erc20Balances[currencyInfo.currentAddress] ||
-                      ethers.BigNumber.from(0);
-                    const value = +ethers.utils.formatUnits(
-                      balance,
-                      currencyInfo.decimals || 18
-                    );
-
-                    if (value === 0) {
-                      return null;
-                    }
-
-                    return (
-                      <h4
-                        key={currencyInfo.symbol}
-                        style={{
-                          marginLeft: "10px",
-                          marginTop: "5px",
-                          marginBottom: "1px",
-                        }}
-                      >
-                        {formatCurrency(value)} {currencyInfo.symbol}
-                      </h4>
-                    );
-                  })}
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {/* <div>
-                    <h6
-                      style={{
-                        color: "grey",
-                        marginLeft: "10px",
-                        marginTop: "5px",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      Offer balance
-                    </h6>
-                    <h4
-                      style={{
-                        marginLeft: "10px",
-                        marginTop: "5px",
-                        marginBottom: "1px",
-                      }}
-                    >
-                      {repaymentTotal.toFixed(2)}{" "}
-                      {(listings && currency?.symbol) || "USDB"}
-                    </h4>
-                  </div> */}
-                  <ManageFund onClose={onListDialogClose} open={dialogOpen} />
-                  <Button
-                    size="small"
-                    onClick={handleManageFund}
-                    sx={{
-                      padding: "5px 20px",
-                      fontSize: "10px",
-                      height: "30px",
-                      color: "blue",
-                      backgroundColor: "#e6edfd",
-                    }}
-                  >
-                    Manage Allowance
-                  </Button>
-                </Box>
-              </Paper>
-            </Container>
-          </div>
-        </div>
+        <MyWallet />
         <Button
           variant="contained"
           sx={{ mt: "10px", mb: "20px", width: "300px", fontSize: "14px" }}
