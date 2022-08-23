@@ -59,9 +59,19 @@ export const Footer = (): JSX.Element => {
             <Typography textAlign="center" variant="body2" color="white">
               Copyright &copy; 2022. All rights reserved.
             </Typography>
-            <img src={discordIcon} alt="discordIcon" className={style["socialDiv"]} />
-            <img src={twitterIcon} alt="twitterIcon" className={style["socialDiv"]} />
-            <img src={instagramIcon} alt="instagramIcon" className={style["socialDiv"]} />
+            <a href="https://discord.gg/balanceco" target="_blank" rel="noreferrer">
+              <img src={discordIcon} alt="discordIcon" className={style["socialDiv"]} />
+            </a>
+            <a href="https://twitter.com/liqdnft" target="_blank" rel="noreferrer">
+              <img src={twitterIcon} alt="twitterIcon" className={style["socialDiv"]} />
+            </a>
+            <a href=" https://instagram.com/liqdnft" target="_blank" rel="noreferrer">
+              <img
+                src={instagramIcon}
+                alt="instagramIcon"
+                className={style["socialDiv"]}
+              />
+            </a>
           </Box>
         </Toolbar>
       </Container>
