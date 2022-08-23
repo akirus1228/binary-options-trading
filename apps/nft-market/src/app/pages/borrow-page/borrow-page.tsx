@@ -21,7 +21,7 @@ import {
 import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
-  const take = 12;
+  const take = 20;
   const { address } = useWeb3Context();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);

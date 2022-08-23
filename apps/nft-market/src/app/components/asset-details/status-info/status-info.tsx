@@ -1,14 +1,21 @@
 import { Box, Icon } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import style from "./status-info.module.scss";
-import { Asset, Listing, Loan, LoanStatus } from "../../../types/backend-types";
+import { Asset, Listing, Loan } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
 import { formatCurrency } from "@fantohm/shared-helpers";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import { AppDispatch, RootState } from "../../../store";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
+import {
+  getLoanDetailsFromContract,
+  LoanDetails,
+  LoanDetailsStatus,
+} from "../../../store/reducers/loan-slice";
+import { desiredNetworkId } from "../../../constants/network";
+import { useWeb3Context } from "@fantohm/shared-web3";
 
 export interface StatusInfoProps {
   asset: Asset;
@@ -16,12 +23,42 @@ export interface StatusInfoProps {
   loan?: Loan;
 }
 
-const ListedInfo = ({
+const formatDateTimeString = (time: Date) => {
+  const items = new Date(time).toString().split(" ");
+  return (
+    new Date(time).toLocaleTimeString() +
+    ", " +
+    new Date(time).toDateString().slice(4) +
+    " " +
+    items[items.length - 1]
+  );
+};
+
+const BorrowserNotListed = ({ asset }: { asset: Asset }): JSX.Element => {
+  return (
+    <Box className={style["mainContainer"]}>
+      <Icon>
+        <InfoOutlinedIcon />
+      </Icon>
+      <Box className={style["textContainer"]}>
+        <span className={style["strong"]}>{asset.name}</span>
+        <span> is currently </span>
+        <span className={style["strong"]}>unlisted</span>
+        <span> and is </span>
+        <span className={style["strong"]}>available</span>
+        <span> to be used as collateral to </span>
+        <span className={style["strong"]}>receive a loan</span>
+      </Box>
+    </Box>
+  );
+};
+
+const BorrowserOnlyListed = ({
+  asset,
   listing,
-  repaymentTotal,
 }: {
+  asset: Asset;
   listing: Listing;
-  repaymentTotal: number;
 }): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const currency = useSelector((state: RootState) =>
@@ -36,32 +73,36 @@ const ListedInfo = ({
         <InfoOutlinedIcon />
       </Icon>
       <Box className={style["textContainer"]}>
-        <span className={style["strong"]}>{listing.asset.name} </span>
-        <span>is currently listed seeking a loan amount of </span>
+        <span className={style["strong"]}>{asset.name}</span>
+        <span> is currently listed seeking a loan amount of </span>
         <span className={style["strong"]}>
-          {formatCurrency(listing.term.amount * currency?.lastPrice)}{" "}
+          {listing.term.amount} {currency?.symbol}
         </span>
-        <span> in {currency?.symbol}. </span>
-        <span>Listing expires </span>
-        <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
+        <span> at a </span>
+        <span className={style["strong"]}>{listing.term.apr}% APY</span>
+        <span> over </span>
+        <span className={style["strong"]}>{listing.term.duration} days</span>
       </Box>
     </Box>
   );
 };
 
-const LockedInfo = ({
+const BorrowserListedLoan = ({
+  asset,
   loan,
-  repaymentTotal,
+  endTime,
 }: {
+  asset: Asset;
   loan: Loan;
-  repaymentTotal: number;
+  endTime: Date;
 }): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
+  const { repaymentTotal } = useTermDetails(loan.term);
   const currency = useSelector((state: RootState) =>
-    selectCurrencyByAddress(state, loan.assetListing.term.currencyAddress)
+    selectCurrencyByAddress(state, loan.term.currencyAddress)
   );
   useEffect(() => {
-    dispatch(loadCurrencyFromAddress(loan.assetListing.term.currencyAddress));
+    dispatch(loadCurrencyFromAddress(loan.term.currencyAddress));
   }, []);
   return (
     <Box className={style["mainContainer"]}>
@@ -69,30 +110,88 @@ const LockedInfo = ({
         <InfoOutlinedIcon />
       </Icon>
       <Box className={style["textContainer"]}>
-        <span className={style["strong"]}>{loan.assetListing.asset.name} </span>
+        <span className={style["strong"]}>{asset.name}</span>
         <span>
-          is currently being held in escrow in a smart contract and will be released back
-          to its borrower if a repayment amount&nbsp;
+          &nbsp; is currently being held in escrow and will be released to its owner if a
+          repayment amount of{" "}
         </span>
-        <span className={style["strong"]}>of {formatCurrency(repaymentTotal)}</span>
-        <span> in {currency?.symbol} is made before </span>
-        <span className={style["strong"]}>11:53 PM, 20 July 2022 (GMT +1)</span>
+        <span className={style["strong"]}>
+          {formatCurrency(repaymentTotal, 2).replaceAll("$", "")} {currency?.symbol}
+        </span>
+        <span> is made before </span>
+        <span className={style["strong"]}>{formatDateTimeString(endTime)}</span>
+      </Box>
+    </Box>
+  );
+};
+
+const LenderListedLoanDefaulted = ({ asset }: { asset: Asset }): JSX.Element => {
+  return (
+    <Box className={style["mainContainer"]}>
+      <Icon>
+        <InfoOutlinedIcon />
+      </Icon>
+      <Box className={style["textContainer"]}>
+        <span>The borrower has </span>
+        <span className={style["strong"]}>defaulted</span>
+        <span> on this loan, </span>
+        <span className={style["strong"]}>{asset.name}</span>
+        <span> can now be claimed by the lender as </span>
+        <span className={style["strong"]}>collateral.</span>
       </Box>
     </Box>
   );
 };
 
 export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Element => {
-  const { repaymentTotal } = useTermDetails(listing?.term);
+  const dispatch: AppDispatch = useDispatch();
+  const { provider } = useWeb3Context();
+  const [loanDetails, setLoanDetails] = useState<LoanDetails>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  console.log(listing, loan);
+  useEffect(() => {
+    if (!loan || !loan.contractLoanId || !provider) return;
+    dispatch(
+      getLoanDetailsFromContract({
+        loanId: loan.contractLoanId,
+        networkId: desiredNetworkId,
+        provider,
+      })
+    )
+      .unwrap()
+      .then((loanDetails: LoanDetails) => {
+        if (loanDetails.status === LoanDetailsStatus.CREATED) {
+          setLoanDetails(loanDetails);
+        }
+        setIsLoading(false);
+      });
+  }, [loan]);
 
-  if (loan && loan.status === LoanStatus.Active) {
-    return <LockedInfo loan={loan} repaymentTotal={repaymentTotal} />;
-  } else if (!loan && listing) {
-    return <ListedInfo listing={listing} repaymentTotal={repaymentTotal} />;
-  } else {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
+  if (listing) {
+    return <BorrowserOnlyListed asset={asset} listing={listing} />;
+  }
+
+  if (!loan && !listing) {
+    return <BorrowserNotListed asset={asset} />;
+  }
+
+  if (isLoading) {
     return <></>;
   }
+
+  if (loanDetails) {
+    if (loanDetails.endDateTime.getTime() <= new Date().getTime()) {
+      return <LenderListedLoanDefaulted asset={asset} />;
+    }
+  }
+
+  if (loan && loanDetails) {
+    return (
+      <BorrowserListedLoan asset={asset} loan={loan} endTime={loanDetails.endDateTime} />
+    );
+  }
+
+  return <BorrowserNotListed asset={asset} />;
 };
 
 export default StatusInfo;
