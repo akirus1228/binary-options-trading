@@ -95,7 +95,7 @@ export const BalancePassPage = (): JSX.Element => {
             </Typography>
             <Button
               variant="contained"
-              href="https://www.premint.xyz/balance-pass/"
+              href="https://www.premint.xyz/balance-pass-2/"
               sx={{
                 display: { md: "flex", width: "35%" },
                 fontSize: "19px",
@@ -410,7 +410,7 @@ export const BalancePassPage = (): JSX.Element => {
           </Typography>
           <Button
             variant="contained"
-            href="https://www.premint.xyz/balance-pass/"
+            href="https://www.premint.xyz/balance-pass-2/"
             sx={{
               display: { md: "flex", width: "42%" },
               fontSize: "19px",
