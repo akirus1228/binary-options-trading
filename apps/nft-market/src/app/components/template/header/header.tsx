@@ -181,7 +181,7 @@ export const Header = (): JSX.Element => {
                 <Button
                   style={{ padding: "1em 1.25em" }}
                   aria-describedby="buy-usdb"
-                  onClick={handleClickBuyUSDB}
+                  onMouseEnter={handleClickBuyUSDB}
                 >
                   Buy USDB
                 </Button>
@@ -242,7 +242,7 @@ export const Header = (): JSX.Element => {
                 <Button
                   style={{ padding: "1em 1.25em" }}
                   aria-describedby="buy-usdb"
-                  onClick={handleClickBuyUSDB}
+                  onMouseEnter={handleClickBuyUSDB}
                 >
                   Buy USDB
                 </Button>
