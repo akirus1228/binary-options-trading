@@ -338,18 +338,21 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         currency,
         dispatch
       );
+      if (!term.signature || term.signature === "") {
+        // user rejected signature
+        // error message being dispatched from another catch
+        // dispatch(addAlert({ message: "Signature rejected. Terms not updated." }));
+        return;
+      }
+
+      updateTerms(term);
+      dispatch(addAlert({ message: "Terms have been updated." }));
     } catch (err) {
       // most likely the user rejected the signature
-    }
-    if (!term.signature || term.signature === "") {
-      // user rejected signature
-      // error message being dispatched from another catch
-      // dispatch(addAlert({ message: "Signature rejected. Terms not updated." }));
-      return;
+    } finally {
+      setPending(false);
     }
 
-    updateTerms(term);
-    dispatch(addAlert({ message: "Terms have been updated." }));
     return;
   };
 
