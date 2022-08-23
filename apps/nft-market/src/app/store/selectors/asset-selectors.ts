@@ -32,7 +32,7 @@ export const selectAssetByAddress = createSelector(
   selectAssets,
   selectAssetAddress,
   (assets, addressParams) =>
-    assets[`${addressParams.tokenId}:::${addressParams.contractAddress}`]
+    assets[`${addressParams.tokenId}:::${addressParams.contractAddress.toLowerCase()}`]
 );
 
 const selectAssetMine = (state: RootState, address: string) => address;
