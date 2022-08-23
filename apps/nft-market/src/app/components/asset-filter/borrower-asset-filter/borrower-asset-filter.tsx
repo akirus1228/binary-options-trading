@@ -32,10 +32,13 @@ export const BorrowerAssetFilter = ({
 }: BorrowerAssetFilterProps): JSX.Element => {
   const { address } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
-  const { data: collections } = useGetCollectionsQuery({});
+  const { data: collections } = useGetCollectionsQuery(
+    {},
+    { refetchOnMountOrArgChange: true }
+  );
   const myAssets = useSelector((state: RootState) =>
     selectAssetsByQuery(state, {
-      status: AssetStatus.Ready,
+      status: "All",
       wallet: address,
     })
   );

@@ -148,7 +148,6 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
   const { provider } = useWeb3Context();
   const [loanDetails, setLoanDetails] = useState<LoanDetails>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  console.log(listing, loan);
   useEffect(() => {
     if (!loan || !loan.contractLoanId || !provider) return;
     dispatch(
