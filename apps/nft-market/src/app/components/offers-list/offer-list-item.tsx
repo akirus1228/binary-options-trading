@@ -17,6 +17,7 @@ import {
   useUpdateLoanMutation,
   useUpdateOfferMutation,
   useDeleteOfferMutation,
+  useResetPartialLoanMutation,
 } from "../../api/backend-api";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../store";
@@ -67,6 +68,9 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
     useUpdateLoanMutation();
+
+  const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
+    useResetPartialLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
   const [deleteOffer, { isLoading: isDeletingOffer }] = useDeleteOfferMutation();
@@ -207,10 +211,10 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     if (!createLoanResult) {
       return;
     }
+
     const createLoanContractResult = await dispatch(
       contractCreateLoan(createLoanParams)
     ).unwrap();
-    console.log(createLoanContractResult);
 
     if (typeof createLoanContractResult !== "number") {
       dispatch(
@@ -218,6 +222,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           message: "There was an error. Please try again.",
         })
       );
+      resetPartialLoan(createLoanResult.id || "");
       resetCreateLoan();
       return;
     }
