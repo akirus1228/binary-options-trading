@@ -79,7 +79,12 @@ export const NotificationMenu = (): JSX.Element => {
     <>
       <IconButton
         onClick={handleClick}
-        sx={{ background: "#FFF", mr: "10px", padding: "12px" }}
+        sx={{
+          background: "#FFF",
+          mr: "10px",
+          padding: "12px",
+          border: "1px solid #8080801f",
+        }}
         className={styles["notificationIcon"]}
       >
         <Badge
