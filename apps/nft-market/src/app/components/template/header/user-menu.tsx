@@ -432,6 +432,7 @@ export const UserMenu = (): JSX.Element => {
           padding: "0.9em",
           minWidth: { xs: "60px", sm: "250px" },
           fontSize: "16px",
+          border: "1px solid #8080801f",
         }}
       >
         Connect
