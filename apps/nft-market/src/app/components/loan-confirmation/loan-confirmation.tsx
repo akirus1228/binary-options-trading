@@ -486,7 +486,7 @@ export const LoanConfirmation = ({
             <span className="strong" style={{ color: "#aaa" }}>
               If the loan is not repaid by
               <strong className={style["repayDate"]}>
-                {estRepaymentDate.toLocaleString()}
+                {` ${estRepaymentDate.toLocaleString()} `}
               </strong>
               you are entitled to:
             </span>
