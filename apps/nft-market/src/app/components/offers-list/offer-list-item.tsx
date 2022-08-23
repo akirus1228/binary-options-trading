@@ -407,7 +407,14 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             <Box className="flex fr ai-c">{getFieldData(field)}</Box>
           </PaperTableCell>
         ))}
-        <PaperTableCell sx={{ display: "flex", fontSize: "1rem", alignItems: "middle" }}>
+        <PaperTableCell
+          sx={{
+            display: "flex",
+            fontSize: "1rem",
+            alignItems: "middle",
+            marginRight: "20px",
+          }}
+        >
           <Box className="flex fr ai-c">
             {isOwner &&
               !hasPermission &&

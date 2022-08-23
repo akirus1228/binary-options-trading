@@ -45,36 +45,57 @@ export const OffersList = ({
     return <></>;
   }
   return (
-    <Container maxWidth="xl" className={style["offerContainer"]}>
-      <h2 className={style["title"]}>
-        {title || "Offers"} ({!!offers && offers.length})
-      </h2>
-      <PaperTable>
-        <PaperTableHead>
-          <TableRow>
-            {fields.map((field: OffersListFields, index: number) => (
-              <PaperTableCell
-                key={`offer-table-header-${index}`}
-                className={style["offersHead"]}
-              >
-                {field}
-              </PaperTableCell>
-            ))}
-            <PaperTableCell></PaperTableCell>
-          </TableRow>
-        </PaperTableHead>
-        <TableBody>
-          {offers &&
-            !isLoading &&
-            offers.map(
-              (offer: Offer, index: number) =>
-                offer?.assetListing && (
-                  <OfferListItem key={`offer-${index}`} offer={offer} fields={fields} />
-                )
-            )}
-        </TableBody>
-      </PaperTable>
-    </Container>
+    <>
+      <Container>
+        <h2 className={style["title"]}>
+          {title || "Offers"} ({!!offers && offers.length})
+        </h2>
+      </Container>
+      <Container
+        className={style["offerContainer"]}
+        sx={{
+          overflow: "auto",
+          scrollbarWidth: "thin",
+          "&::-webkit-scrollbar": {
+            width: "0.4em",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "transparent",
+            borderRadius: "50px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#374FFF",
+            borderRadius: "50px",
+          },
+        }}
+      >
+        <PaperTable sx={{ minWidth: 1320 }}>
+          <PaperTableHead>
+            <TableRow>
+              {fields.map((field: OffersListFields, index: number) => (
+                <PaperTableCell
+                  key={`offer-table-header-${index}`}
+                  className={style["offersHead"]}
+                >
+                  {field}
+                </PaperTableCell>
+              ))}
+              <PaperTableCell></PaperTableCell>
+            </TableRow>
+          </PaperTableHead>
+          <TableBody>
+            {offers &&
+              !isLoading &&
+              offers.map(
+                (offer: Offer, index: number) =>
+                  offer?.assetListing && (
+                    <OfferListItem key={`offer-${index}`} offer={offer} fields={fields} />
+                  )
+              )}
+          </TableBody>
+        </PaperTable>
+      </Container>
+    </>
   );
 };
 
