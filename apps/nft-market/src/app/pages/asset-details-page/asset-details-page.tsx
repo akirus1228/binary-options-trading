@@ -102,8 +102,15 @@ export const AssetDetailsPage = (): JSX.Element => {
     return listings.find((listing: Listing) => listing.status === ListingStatus.Listed);
   }, [listings]);
 
+  const assetId = useMemo(() => {
+    if (!asset) {
+      return null;
+    }
+    return asset?.id;
+  }, [asset]);
+
   const { data: offers, isLoading: isOffersLoading } = useGetOffersQuery({
-    assetId: asset?.id || "",
+    assetId: assetId || "",
   });
 
   const activeLoan = useMemo(() => {
