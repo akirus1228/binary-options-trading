@@ -559,7 +559,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         </Box>
       </Box>
       <Box className="flex fc" sx={{ my: "1em" }}>
-        <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>Set loan duration</Typography>
+        <Box sx={{ display: "flex" }}>
+          <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
+            Set loan duration
+          </Typography>
+          <Typography sx={{ color: "#aaaaaa", mb: "0.5em" }}>
+            &nbsp;(Minimum Duration is 1 day)
+          </Typography>
+        </Box>
         <Box className={`flex fr ${style["valueContainer"]}`}>
           <Box className={`flex fr ai-c ${style["leftSide"]}`}>
             <Select
