@@ -10,7 +10,7 @@ import {
 import { ReservoirToken } from "../../api/reservoir";
 
 export const assetToAssetId = (asset: Asset) =>
-  `${asset.tokenId}:::${asset.assetContractAddress}`;
+  `${asset.tokenId}:::${asset.assetContractAddress.toLowerCase()}`;
 
 export type AssetLoadStatus = {
   [assetId: string]: BackendLoadingStatus;
@@ -105,7 +105,6 @@ const assetsSlice = createSlice({
           status: newStatus,
         };
       });
-      console.log(mergedAssets);
       state.assets = { ...state.assets, ...mergedAssets };
     },
     updateAssetsFromListings: (state, action: PayloadAction<Assets>) => {
