@@ -80,7 +80,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
 
   return (
     <Box className={`flex fc fj-c ai-c ${style["responsive_table"]}`} sx={{ mt: "50px" }}>
-      <Box>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={activeOffersAsBorrower}
           fields={offerListFields}
@@ -88,7 +88,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Current offers as a borrower"
         />
       </Box>
-      <Box>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={activeOffersAsLender}
           fields={offerListFields}
@@ -96,7 +96,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Current offers as a lender"
         />
       </Box>
-      <Box>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={historicalOffersAsBorrower}
           fields={offerListFields}
@@ -104,7 +104,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Previous offers as a borrower"
         />
       </Box>
-      <Box>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={historicalOffersAsLender}
           fields={offerListFields}
