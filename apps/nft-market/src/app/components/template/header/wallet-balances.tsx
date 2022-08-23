@@ -8,7 +8,7 @@ import { RootState } from "../../../store";
 import { selectCurrencies } from "../../../store/selectors/currency-selectors";
 import ManageFund from "../../managefund/managefund";
 
-export const MyWallet = (): JSX.Element => {
+export const WalletBalances = (): JSX.Element => {
   const currencies = useSelector((state: RootState) => selectCurrencies(state));
   const erc20Balances = useSelector((state: RootState) => selectErc20Balance(state));
 
@@ -60,6 +60,8 @@ export const MyWallet = (): JSX.Element => {
               {Object.values(currencies).map((currencyInfo) => {
                 const balance =
                   erc20Balances[currencyInfo.currentAddress] || ethers.BigNumber.from(0);
+                console.log("symbol", currencyInfo.symbol);
+                console.log("decimals", currencyInfo.decimals);
                 const value = +ethers.utils.formatUnits(
                   balance,
                   currencyInfo.decimals || 18
@@ -72,13 +74,19 @@ export const MyWallet = (): JSX.Element => {
                 return (
                   <h4
                     key={currencyInfo.symbol}
+                    className="flex fr ai-c"
                     style={{
                       marginLeft: "10px",
                       marginTop: "5px",
                       marginBottom: "1px",
                     }}
                   >
-                    {formatCurrency(value)} {currencyInfo.symbol}
+                    <img
+                      src={currencyInfo.icon}
+                      alt={currencyInfo.symbol}
+                      style={{ height: "1em", width: "1em", marginRight: "5px" }}
+                    />{" "}
+                    {parseFloat(value.toFixed(4))} {currencyInfo.symbol}
                   </h4>
                 );
               })}
@@ -133,3 +141,5 @@ export const MyWallet = (): JSX.Element => {
     </div>
   );
 };
+
+export default WalletBalances;

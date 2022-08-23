@@ -36,7 +36,7 @@ import AvatarPlaceholder from "../../../../assets/images/temp-avatar.png";
 import { desiredNetworkId } from "../../../constants/network";
 import { selectCurrencies } from "../../../store/selectors/currency-selectors";
 import styles from "./header.module.scss";
-import { MyWallet } from "./my-wallet";
+import { WalletBalances } from "./wallet-balances";
 
 type PageParams = {
   sx?: SxProps<Theme> | undefined;
@@ -208,7 +208,7 @@ export const UserMenu = (): JSX.Element => {
             <LaunchIcon fontSize="small" />
           </IconButton>
         </div>
-        <MyWallet />
+        <WalletBalances />
         <Button
           variant="contained"
           sx={{ mt: "10px", mb: "20px", width: "300px", fontSize: "14px" }}
