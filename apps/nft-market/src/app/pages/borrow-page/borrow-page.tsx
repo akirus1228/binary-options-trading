@@ -84,7 +84,6 @@ export const BorrowPage = (): JSX.Element => {
     if (osResponse && osResponse.next) {
       setOsNext(osResponse?.next || "");
     } else if (osResponse && osResponse.next === null) {
-      console.log("hasNext false");
       setHasNext(false);
     }
   }, [osResponse]);
