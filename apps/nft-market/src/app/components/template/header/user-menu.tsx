@@ -209,13 +209,13 @@ export const UserMenu = (): JSX.Element => {
           </IconButton>
         </div>
         <WalletBalances />
-        <Button
+        {/* <Button
           variant="contained"
           sx={{ mt: "10px", mb: "20px", width: "300px", fontSize: "14px" }}
         >
           Buy USDB on Exchanges &nbsp;&nbsp;
           <NorthEastOutlinedIcon />
-        </Button>
+        </Button> */}
 
         {accountSubMenu.map((dropMenu: AccountSubMenu, index: number) => {
           return (
