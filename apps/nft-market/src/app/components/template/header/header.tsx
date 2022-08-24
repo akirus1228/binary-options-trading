@@ -181,7 +181,7 @@ export const Header = (): JSX.Element => {
                 <Button
                   style={{ padding: "1em 1.25em" }}
                   aria-describedby="buy-usdb"
-                  onMouseEnter={handleClickBuyUSDB}
+                  onClick={handleClickBuyUSDB}
                 >
                   Buy USDB
                 </Button>
@@ -214,10 +214,22 @@ export const Header = (): JSX.Element => {
               {pages.map((page: Page, index: number) => {
                 const children = page.tooltip ? (
                   <Tooltip title={page.tooltip}>
-                    <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
+                    <Button
+                      style={{
+                        padding: "1em 1.25em",
+                      }}
+                    >
+                      {page.title}
+                    </Button>
                   </Tooltip>
                 ) : (
-                  <Button style={{ padding: "1em 1.25em" }}>{page.title}</Button>
+                  <Button
+                    style={{
+                      padding: "1em 1.25em",
+                    }}
+                  >
+                    {page.title}
+                  </Button>
                 );
 
                 return (
@@ -240,9 +252,13 @@ export const Header = (): JSX.Element => {
               })}
               <Typography key={`btn-buy`} textAlign="center">
                 <Button
-                  style={{ padding: "1em 1.25em" }}
+                  style={{
+                    padding: "1em 1.25em",
+                    backgroundColor: anchorBuyUSDB ? "rgba(0, 0, 0, 0.04)" : undefined,
+                  }}
                   aria-describedby="buy-usdb"
                   onMouseEnter={handleClickBuyUSDB}
+                  onClick={handleClickBuyUSDB}
                 >
                   Buy USDB
                 </Button>
@@ -252,6 +268,7 @@ export const Header = (): JSX.Element => {
                 open={anchorBuyUSDB ? true : false}
                 anchorEl={anchorBuyUSDB}
                 onClose={handleCloseBuyUSDB}
+                disableScrollLock={true}
                 anchorOrigin={{
                   vertical: "bottom",
                   horizontal: "left",
