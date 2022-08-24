@@ -117,6 +117,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     currentTerm?.apr != null ? currentTerm?.apr.toString() : "25"
   );
   const [amount, setAmount] = useState(currentTerm?.amount.toString() || "1");
+  const [textAmount, setTextAmount] = useState(currentTerm?.amount.toString() || "1");
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
   const [selectedCurrency, setSelectedCurrency] = useState(
     props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "wETH"
@@ -418,7 +419,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
   const handleAmountChange = (event: BaseSyntheticEvent) => {
     const newAmount: string = event.target.value;
+
     const [integerPart, decimalPart] = newAmount.split(".");
+
     if (
       currency?.decimals &&
       decimalPart?.length &&
@@ -426,7 +429,12 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     ) {
       setAmount(integerPart + "." + decimalPart.substring(0, currency?.decimals));
     } else {
-      setAmount(newAmount);
+      setTextAmount(newAmount);
+      if (newAmount === "") {
+        setAmount("0");
+      } else {
+        setAmount(newAmount);
+      }
     }
   };
 
@@ -552,7 +560,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           <Box className={`flex fr ${style["rightSide"]}`}>
             <TextField
               type="number"
-              value={amount}
+              value={textAmount}
               onChange={handleAmountChange}
               variant="standard"
               InputProps={{
