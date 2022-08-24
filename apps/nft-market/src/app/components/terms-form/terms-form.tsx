@@ -168,16 +168,22 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     })
   );
 
-  const amountGwei = ethers.utils.parseUnits(amount.toString(), currency?.decimals);
+  useEffect(() => {
+    console.table(erc20Allowance);
+  }, [erc20Allowance]);
+
+  const amountGwei = useMemo(() => {
+    return ethers.utils.parseUnits(amount.toString(), currency?.decimals);
+  }, [amount, currency.symbol]);
 
   const platformFeeAmtGwei: BigNumber = useMemo(() => {
     if (!platformFees[currency?.currentAddress]) return ethers.BigNumber.from(0);
     return BigNumber.from(platformFees[currency?.currentAddress])
       .mul(amountGwei)
       .div(10000);
-  }, [currency?.currentAddress, amountGwei]);
+  }, [currency?.currentAddress, amountGwei, platformFees]);
 
-  const notEnoughBalance = useMemo(() => {
+  const insufficientBalance = useMemo(() => {
     return (
       currencyBalance &&
       amountGwei &&
@@ -656,12 +662,12 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           Update Terms (no cost)
         </Button>
       )}
-      {!isOwner &&
-        !pending &&
-        props.listing &&
-        !!erc20Allowance &&
-        typeof platformFees[currency?.currentAddress] !== "undefined" &&
-        !notEnoughBalance &&
+      {!isOwner && // not owner, making an offer
+        !pending && // no pending actions
+        props.listing && // listing exists
+        !!erc20Allowance && // has allowance
+        typeof platformFees[currency?.currentAddress] !== "undefined" && // has platform fees
+        !insufficientBalance && // has sufficient balance
         erc20Allowance.gte(
           ethers.utils.parseEther(
             (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
@@ -675,7 +681,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             {props?.offerTerm ? "Edit" : "Make"} Offer
           </Button>
         )}
-      {notEnoughBalance && !isOwner && (
+      {insufficientBalance && !isOwner && (
         <Button variant="contained" disabled={true}>
           Insufficient funds
         </Button>
@@ -684,13 +690,13 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !pending &&
         props.listing &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
-        !notEnoughBalance &&
-        !!erc20Allowance &&
-        erc20Allowance.lt(
-          ethers.utils.parseEther(
-            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
-          )
-        ) && (
+        !insufficientBalance &&
+        (!erc20Allowance ||
+          erc20Allowance.lt(
+            ethers.utils.parseEther(
+              (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
+            )
+          )) && (
           <Button
             variant="contained"
             onClick={handleRequestAllowance}
