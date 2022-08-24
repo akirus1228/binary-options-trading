@@ -29,7 +29,7 @@ export const BorrowerCreateListing = (props: BorrowerCreateListingProps): JSX.El
       <Paper>
         <Box className="flex fr fj-sa fw">
           <Button variant="contained" onClick={onClickButton}>
-            Get liquidity
+            List this asset as collateral
           </Button>
         </Box>
       </Paper>

@@ -1,6 +1,6 @@
 import {
   checkErc20Allowance,
-  prettifySeconds,
+  formatCurrency,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   selectErc20BalanceByAddress,
@@ -15,6 +15,7 @@ import {
   Paper,
   SxProps,
   Theme,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -225,87 +226,152 @@ export const BorrowerLoanDetails = ({
       </Box>
     );
   }
+
+  const getLoanExpires = () => {
+    if (loan && loan.term && loanDetails) {
+      if (!canRepay) {
+        return "Overdue";
+      }
+      const duration = loan.term.duration * 24 * 60 * 60;
+      const passedDays = Math.floor(
+        (duration - Math.max(loanDetails.endTime - Date.now() / 1000, 0)) / (24 * 60 * 60)
+      );
+
+      return passedDays + " / " + loan.term.duration + " days";
+    }
+    return "";
+  };
+
+  const getLoanProgress = () => {
+    if (loan && loan.term && loanDetails) {
+      const duration = loan.term.duration * 24 * 60 * 60;
+      return (
+        ((duration - Math.max(loanDetails.endTime - Date.now() / 1000, 0)) * 100) /
+        duration
+      );
+    }
+
+    return 0;
+  };
+
   return (
     <Container sx={sx}>
       <Paper>
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
-            <Typography className={style["label"]}>Total repayment</Typography>
-            <Typography className={`${style["data"]} ${style["primary"]} flex fr ai-c`}>
-              <img
-                src={currency.icon}
-                style={{ height: "1em", width: "1em", paddingRight: "0.25em" }}
-                alt={currency.name}
-              />
-              {loanDetails.amountDue.toFixed(6)} {currency?.symbol}
-            </Typography>
-            <Typography sx={{ color: "#8891A2" }}>
-              ~
-              {(loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
-            </Typography>
-          </Box>
-          <Box className="flex fc">
             <Typography className={style["label"]}>Loan amount</Typography>
-            <Typography className={`${style["data"]} flex fr ai-c`}>
+            <Typography
+              className={`${style["data"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
               <img
                 src={currency.icon}
-                style={{ height: "1em", width: "1em", paddingRight: "0.25em" }}
-                alt={currency.name}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
               />
-              {loanDetails.loanAmount.toFixed(6)} {currency?.symbol}
-            </Typography>
-            <Typography sx={{ color: "#8891A2" }}>
-              ~
-              {(loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography>
+                  {formatCurrency(loan.term.amount, 2).replace("$", "")}
+                </Typography>
+              </Tooltip>
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>APY</Typography>
-            <Typography className={`${style["data"]}`}>{loan.term.apr}%</Typography>
+            <Typography className={style["label"]}>Total repayment</Typography>
+            <Typography
+              className={`${style["data"]} ${style["primary"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src={currency.icon}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography>
+                  {formatCurrency(loanDetails.amountDue, 2).replace("$", "")}
+                </Typography>
+              </Tooltip>
+            </Typography>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Time until loan expires</Typography>
-            <Box className="flex fr w100">
-              <Typography className={`${style["data"]}`}>
-                {prettifySeconds(loanDetails.endTime - Date.now() / 1000)}
+            <Box className="flex fr w100" sx={{ alignItems: "center" }}>
+              <Typography
+                className={`${style["data"]}`}
+                sx={{ color: !canRepay ? "#fb1868" : undefined }}
+              >
+                {getLoanExpires()}
               </Typography>
-              <LinearProgress variant="determinate" value={10} />
+              <LinearProgress
+                variant="determinate"
+                className={canRepay ? style["progress-info"] : style["progress-error"]}
+                value={getLoanProgress()}
+                sx={{
+                  width: "10rem",
+                  marginLeft: "20px",
+                  height: "8px",
+                  borderRadius: "8px",
+                }}
+              />
             </Box>
           </Box>
-          {canRepay && (
-            <Box className="flex fc">
-              {!!erc20Allowance &&
-                erc20Allowance.gte(loanDetails.amountDueGwei) &&
-                !isPending && (
-                  <Button variant="contained" onClick={handleRepayLoan}>
-                    Repay loan
+          <Box className="flex fc">
+            {canRepay && (
+              <>
+                {" "}
+                {!!erc20Allowance &&
+                  erc20Allowance.gte(loanDetails.amountDueGwei) &&
+                  !isPending && (
+                    <Button variant="contained" onClick={handleRepayLoan}>
+                      Repay loan
+                    </Button>
+                  )}
+                {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
+                  !notEnoughBalance &&
+                  !isPending && (
+                    <Button variant="contained" onClick={handleRequestAllowance}>
+                      Approve {currency?.symbol} for repayment
+                    </Button>
+                  )}
+                {notEnoughBalance && (
+                  <Button variant="contained" disabled={true}>
+                    Insufficient Funds for Repayment
                   </Button>
                 )}
-              {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
-                !notEnoughBalance &&
-                !isPending && (
-                  <Button variant="contained" onClick={handleRequestAllowance}>
-                    Approve {currency?.symbol} for repayment
+                {isPending && (
+                  <Button variant="contained">
+                    <CircularProgress color="inherit" />
                   </Button>
                 )}
-              {notEnoughBalance && (
-                <Button variant="contained" disabled={true}>
-                  Insufficient Funds for Repayment
-                </Button>
-              )}
-              {isPending && (
-                <Button variant="contained">
-                  <CircularProgress color="inherit" />
-                </Button>
-              )}
-            </Box>
-          )}
+              </>
+            )}
+            {!canRepay && (
+              <Button variant="contained" onClick={handleRepayLoan} disabled>
+                Repay loan
+              </Button>
+            )}
+          </Box>
         </Box>
       </Paper>
     </Container>

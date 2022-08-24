@@ -234,11 +234,19 @@ export const AssetDetails = ({
               }}
             >
               <Chip
-                label={asset.status !== AssetStatus.New ? asset.status : "Unlisted"}
+                label={
+                  asset.status === AssetStatus.New
+                    ? "Unlisted"
+                    : asset.status === AssetStatus.Locked
+                    ? "Escrow"
+                    : asset.status
+                }
                 sx={{
                   backgroundColor:
                     asset.status === AssetStatus.New
                       ? "#f2f2f2 !important"
+                      : asset.status === AssetStatus.Locked
+                      ? "black !important"
                       : "#374FFF !important",
                   color:
                     asset.status === AssetStatus.New
