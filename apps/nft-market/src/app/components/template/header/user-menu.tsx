@@ -86,8 +86,8 @@ export const UserMenu = (): JSX.Element => {
   };
 
   const onClickDisconnect = () => {
-    disconnect();
     dispatch(logout());
+    disconnect();
   };
 
   // theme control

@@ -62,7 +62,7 @@ export const MyAccountPage = (): JSX.Element => {
   const address = useMemo(() => {
     return !!params["walletAddress"] && params["walletAddress"].length > 1
       ? params["walletAddress"]
-      : user.address;
+      : user.address ?? "";
   }, [user, params["walletAddress"]]);
 
   useMemo(() => {
@@ -85,6 +85,15 @@ export const MyAccountPage = (): JSX.Element => {
     { title: "Assets", component: <MyAccountAssets address={address} />, isGlobal: true },
     { title: "Activity", component: <MyAccountActivity />, isGlobal: false },
   ];
+
+  if (typeof address === "undefined" || !address) {
+    return (
+      <Box>
+        <h1>Not logged in</h1>
+        <p>Please connect to view your account</p>
+      </Box>
+    );
+  }
 
   return (
     <Box>
