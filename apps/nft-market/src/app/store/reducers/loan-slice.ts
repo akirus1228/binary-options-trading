@@ -141,6 +141,8 @@ export const contractCreateLoan = createAsyncThunk(
       sig: loan.term.signature,
     };
 
+    console.log("params: ", params);
+
     try {
       // call the contract
       const approveTx: ContractTransaction = await lendingContract["createLoan"](
