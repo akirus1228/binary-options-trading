@@ -1,4 +1,13 @@
-import { Box, Button, Container, Paper, SxProps, Theme, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  SxProps,
+  Theme,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useListingTermDetails } from "../../hooks/use-listing-terms";
@@ -11,6 +20,7 @@ import style from "./borrower-listing-details.module.scss";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import CancelListing from "../cancel-listing/cancel-listing";
+import { formatCurrency } from "@fantohm/shared-web3";
 
 export interface BorrowerListingDetailsProps {
   asset: Asset;
@@ -85,49 +95,90 @@ export const BorrowerListingDetails = (
       <Paper>
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
-            <Typography className={style["label"]}>Total repayment</Typography>
-            <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {repaymentTotal.toFixed(4)} {currency?.symbol}
-            </Typography>
-            <Typography className={`${style["data"]} ${style["secondary"]}`}>
-              ~
-              {(repaymentTotal * currency?.lastPrice).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+            <Typography className={style["label"]}>Loan amount</Typography>
+            <Typography
+              className={`${style["data"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src={currency.icon}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (listing.term.amount * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography>
+                  {formatCurrency(listing.term.amount, 2).replace("$", "")}
+                </Typography>
+              </Tooltip>
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>Loan amount</Typography>
-            <Typography className={`${style["data"]}`}>
-              {listing.term.amount.toFixed(4)}
+            <Typography className={style["label"]}>Repayment</Typography>
+            <Typography
+              className={`${style["data"]} ${style["primary"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src={currency.icon}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (repaymentTotal * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography>
+                  {formatCurrency(repaymentTotal, 2).replace("$", "")}
+                </Typography>
+              </Tooltip>
             </Typography>
-            <Typography className={`${style["data"]} ${style["secondary"]}`}>
-              {(listing.term.amount * currency?.lastPrice).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+          </Box>
+          <Box className="flex fc">
+            <Typography className={style["label"]}>Duration</Typography>
+            <Typography className={`${style["data"]}`}>
+              {listing.term.duration} days
             </Typography>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>APY</Typography>
             <Typography className={`${style["data"]}`}>{listing.term.apr}%</Typography>
           </Box>
-          <Box className="flex fc">
+          {/* <Box className="flex fc">
             <Typography className={style["label"]}>Time until offer expires</Typography>
             <Box className="flex fr w100">
               <Typography className={`${style["data"]}`}>
                 {new Date(Date.parse(listing.term.expirationAt)).toLocaleString()}
               </Typography>
             </Box>
-          </Box>
+          </Box> */}
           <Box className="flex fc">
-            <Button variant="contained" onClick={onDialogUpdateTermsOpen}>
+            <Button
+              variant="contained"
+              onClick={onDialogUpdateTermsOpen}
+              style={{ backgroundColor: "#374fff" }}
+            >
               Update Terms
             </Button>
           </Box>
           <Box className="flex fc">
-            <Button variant="contained" onClick={onDialogCancelListingOpen}>
+            <Button variant="outlined" onClick={onDialogCancelListingOpen}>
               Cancel Listing
             </Button>
           </Box>

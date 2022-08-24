@@ -34,6 +34,7 @@ import { useMemo, useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
+import BlueChip from "../../../assets/icons/blue-chip.svg";
 import PriceInfo from "./price-info/price-info";
 import { useBestImage } from "../../hooks/use-best-image";
 import { addAlert } from "../../store/reducers/app-slice";
@@ -139,10 +140,15 @@ export const AssetDetails = ({
                 )
                 .map((collection, index) => (
                   <Typography
-                    sx={{ color: "#374FFF" }}
+                    sx={{ color: "#374FFF", display: "flex" }}
                     key={`${collection.slug}_${index}`}
                   >
                     {collection.slug}
+                    <img
+                      src={BlueChip}
+                      style={{ width: "fit-content", marginLeft: "10px" }}
+                      alt="blue-chip"
+                    />
                   </Typography>
                 ))}
               <Box sx={{ display: "flex", my: "20px", alignItems: "center" }}>
@@ -224,15 +230,36 @@ export const AssetDetails = ({
                 justifyContent: "flex-start",
                 alignItems: "center",
                 minWidth: "50%",
-                pb: "3em",
+                pb: "1em",
               }}
             >
               <Chip
-                label={asset.status || "Unlisted"}
-                sx={{ backgroundColor: "#374FFF !important", textTransform: "none" }}
+                label={asset.status !== AssetStatus.New ? asset.status : "Unlisted"}
+                sx={{
+                  backgroundColor:
+                    asset.status === AssetStatus.New
+                      ? "#f2f2f2 !important"
+                      : "#374FFF !important",
+                  color:
+                    asset.status === AssetStatus.New
+                      ? "black !important"
+                      : "white !important",
+                  textTransform: "none",
+                }}
                 className="dark"
               />
-              <Typography sx={{ mx: "10px" }}>.</Typography>
+              <Typography sx={{ mx: "10px" }}>
+                <div
+                  style={{
+                    background: "black",
+                    width: "5px",
+                    height: "5px",
+                    borderRadius: "50%",
+                  }}
+                >
+                  {" "}
+                </div>
+              </Typography>
               <Chip label={asset.mediaType || "Art"} className="light" />
               {isOwner &&
                 asset?.status === AssetStatus.Locked &&
@@ -257,12 +284,11 @@ export const AssetDetails = ({
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  background: "#FFF",
                   borderRadius: "30px",
                   width: "100%",
                 }}
               >
-                <Paper
+                <Box
                   sx={{
                     display: "flex",
                     padding: "1.5em",
@@ -284,11 +310,10 @@ export const AssetDetails = ({
                     <AssetOwnerTag asset={asset} />
                   </Box>
                   <QuickStatus listing={listing} />
-                </Paper>
+                </Box>
                 {nftPrices && nftPrices.length > 0 && (
                   <Paper
                     sx={{
-                      marginTop: "20px",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
