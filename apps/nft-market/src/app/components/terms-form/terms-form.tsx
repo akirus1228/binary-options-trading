@@ -371,6 +371,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         // user rejected signature
         // error message being dispatched from another catch
         // dispatch(addAlert({ message: "Signature rejected. Terms not updated." }));
+        props.onClose(true);
         return;
       }
 
