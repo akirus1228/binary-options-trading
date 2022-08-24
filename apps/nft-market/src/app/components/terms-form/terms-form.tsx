@@ -119,7 +119,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [amount, setAmount] = useState(currentTerm?.amount.toString() || "1");
   const [repaymentAmount, setRepaymentAmount] = useState(2500);
   const [selectedCurrency, setSelectedCurrency] = useState(
-    props.listing ? getSymbolFromAddress(props.listing.term.currencyAddress) : "wETH"
+    props.listing ? getSymbolFromAddress(currentTerm?.currencyAddress || "") : "wETH"
   );
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -431,8 +431,15 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   useEffect(() => {
+    console.log("currency :", currency);
     if (currency && preFillPrice) {
-      setAmount((preFillPrice / currency.lastPrice).toString());
+      if (
+        !props?.offerTerm ||
+        (props.offerTerm &&
+          currency.currentAddress.toLowerCase() !==
+            props?.offerTerm?.currencyAddress.toLowerCase())
+      )
+        setAmount((preFillPrice / currency.lastPrice).toString());
     }
   }, [currency]);
 
