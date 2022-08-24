@@ -63,21 +63,52 @@ export const BalanceWhitelistMintPage = (
   useEffect(() => {
     if (connected) {
       const getBalance = async (): Promise<any> => {
-        const balance: any = await dispatch(
-          getNFTBalance({
-            address,
-            provider,
-            networkId: chainId,
-            bond: bond,
-          } as IMintNFTAsyncThunk)
-        );
-
-        setBalance(350 - ethers.BigNumber.from(balance.payload).toNumber());
+        try {
+          const balance: any = await dispatch(
+            getNFTBalance({
+              address,
+              provider,
+              networkId: chainId,
+              bond: bond,
+            } as IMintNFTAsyncThunk)
+          );
+          setBalance(350 - ethers.BigNumber.from(balance.payload).toNumber());
+        } catch (e) {
+          return;
+        }
       };
 
       getBalance();
     }
   }, [connected]);
+
+  const useCountdown = () => {
+    const countDownDate = 1661513679000;
+
+    const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setCountDown(countDownDate - new Date().getTime());
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }, [countDownDate]);
+
+    return getReturnValues(countDown);
+  };
+
+  const getReturnValues = (countDown: any) => {
+    // calculate time left
+    const days = Math.floor(countDown / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((countDown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((countDown % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((countDown % (1000 * 60)) / 1000);
+
+    return [days, hours, minutes, seconds];
+  };
+
+  const [days, hours, minutes, seconds] = useCountdown();
 
   async function handleMint() {
     dispatch(
@@ -158,7 +189,7 @@ export const BalanceWhitelistMintPage = (
                       color: "#dee9ff",
                     }}
                   >
-                    00
+                    {days < 10 ? `0${days}` : days}
                   </Typography>
                   <Typography
                     sx={{
@@ -192,7 +223,7 @@ export const BalanceWhitelistMintPage = (
                       color: "#dee9ff",
                     }}
                   >
-                    12
+                    {hours < 10 ? `0${hours}` : hours}
                   </Typography>
                   <Typography
                     sx={{
@@ -226,7 +257,7 @@ export const BalanceWhitelistMintPage = (
                       color: "#dee9ff",
                     }}
                   >
-                    05
+                    {minutes < 10 ? `0${minutes}` : minutes}
                   </Typography>
                   <Typography
                     sx={{
@@ -260,7 +291,7 @@ export const BalanceWhitelistMintPage = (
                       color: "#dee9ff",
                     }}
                   >
-                    45
+                    {seconds < 10 ? `0${seconds}` : seconds}
                   </Typography>
                   <Typography
                     sx={{
@@ -352,6 +383,7 @@ export const BalanceWhitelistMintPage = (
                   fontSize: "55px",
                   color: "#dee9ff",
                   mt: "30px",
+                  textAlign: "center",
                 }}
               >
                 SOLD OUT
@@ -431,7 +463,7 @@ export const BalanceWhitelistMintPage = (
                     <img
                       src={OpenSeaImage}
                       alt="OpenSeaImage"
-                      style={{ marginRight: "5%" }}
+                      style={{ marginRight: "5%", width: "20%" }}
                     />
                     View on Opensea
                   </Button>

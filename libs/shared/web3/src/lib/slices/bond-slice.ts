@@ -1027,11 +1027,24 @@ export const getNFTBalance = createAsyncThunk(
     const bondContractForRead = await bond.getContractForBond(networkId);
     const bondContractForWrite = bond.getContractForBondForWrite(networkId, signer);
 
-    const supply = await bondContractForRead["_totalSupply"]();
-
-    console.log("supply: ", supply);
-
-    return supply;
+    try {
+      const supply = await bondContractForRead["_totalSupply"]();
+      return supply;
+    } catch (e: any) {
+      if (e.error === undefined) {
+        let message;
+        if (e.message === "Internal JSON-RPC error.") {
+          message = e.data.message;
+        } else {
+          message = e.message;
+        }
+        if (typeof message === "string") {
+          dispatch(error(`Unknown error: ${message}`));
+        }
+      } else {
+        dispatch(error(`Unknown error: ${e.error.message}`));
+      }
+    }
   }
 );
 

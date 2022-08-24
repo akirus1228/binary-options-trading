@@ -346,6 +346,7 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
                   fontSize: "55px",
                   color: "#dee9ff",
                   mt: "30px",
+                  textAlign: "center",
                 }}
               >
                 SOLD OUT
@@ -422,7 +423,7 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
                     <img
                       src={OpenSeaImage}
                       alt="OpenSeaImage"
-                      style={{ marginRight: "5%" }}
+                      style={{ marginRight: "5%", width: "20%" }}
                     />
                     View on Opensea
                   </Button>
