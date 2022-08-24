@@ -181,7 +181,7 @@ export const Header = (): JSX.Element => {
                 <Button
                   style={{ padding: "1em 1.25em" }}
                   aria-describedby="buy-usdb"
-                  onMouseEnter={handleClickBuyUSDB}
+                  onClick={handleClickBuyUSDB}
                 >
                   Buy USDB
                 </Button>
@@ -243,6 +243,7 @@ export const Header = (): JSX.Element => {
                   style={{ padding: "1em 1.25em" }}
                   aria-describedby="buy-usdb"
                   onMouseEnter={handleClickBuyUSDB}
+                  onClick={handleClickBuyUSDB}
                 >
                   Buy USDB
                 </Button>
@@ -252,6 +253,7 @@ export const Header = (): JSX.Element => {
                 open={anchorBuyUSDB ? true : false}
                 anchorEl={anchorBuyUSDB}
                 onClose={handleCloseBuyUSDB}
+                disableScrollLock={true}
                 anchorOrigin={{
                   vertical: "bottom",
                   horizontal: "left",
