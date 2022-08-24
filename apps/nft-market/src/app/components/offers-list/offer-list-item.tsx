@@ -17,6 +17,7 @@ import {
   useUpdateLoanMutation,
   useUpdateOfferMutation,
   useDeleteOfferMutation,
+  useResetPartialLoanMutation,
 } from "../../api/backend-api";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../store";
@@ -67,6 +68,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
     useUpdateLoanMutation();
+  const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
+    useResetPartialLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
   const [deleteOffer, { isLoading: isDeletingOffer }] = useDeleteOfferMutation();
@@ -155,6 +158,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           tokenId: offer.assetListing.asset.tokenId,
         })
       );
+      setIsPending(false);
     }
   }, [offer.id, provider, hasPermission]);
 
@@ -195,6 +199,32 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     let createLoanResult;
     try {
       createLoanResult = await createLoan(createLoanRequest).unwrap();
+      if (!createLoanResult) {
+        setIsPending(false);
+        return;
+      }
+      const createLoanContractResult = await dispatch(
+        contractCreateLoan(createLoanParams)
+      ).unwrap();
+
+      if (typeof createLoanContractResult !== "number") {
+        setIsPending(false);
+        resetCreateLoan();
+        resetPartialLoan(createLoanResult.id);
+        return;
+      }
+
+      createLoanRequest.contractLoanId = createLoanContractResult as number;
+      createLoanRequest.id = createLoanResult.id;
+      await updateLoan(createLoanRequest).unwrap();
+
+      resetUpdateLoan();
+      dispatch(
+        addAlert({
+          message:
+            "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
+        })
+      );
     } catch (e: any) {
       if (e?.data?.message) {
         dispatch(
@@ -203,36 +233,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           })
         );
       }
+      if (createLoanResult) {
+        resetPartialLoan(createLoanResult?.id);
+      }
+    } finally {
+      setIsPending(false);
     }
-    if (!createLoanResult) {
-      return;
-    }
-    const createLoanContractResult = await dispatch(
-      contractCreateLoan(createLoanParams)
-    ).unwrap();
-    console.log(createLoanContractResult);
-
-    if (typeof createLoanContractResult !== "number") {
-      dispatch(
-        addAlert({
-          message: "There was an error. Please try again.",
-        })
-      );
-      resetCreateLoan();
-      return;
-    }
-    createLoanRequest.contractLoanId = createLoanContractResult;
-    createLoanRequest.id = createLoanResult.id;
-    const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
-    console.log(updateLoanResult);
-
-    resetUpdateLoan();
-    dispatch(
-      addAlert({
-        message:
-          "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
-      })
-    );
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
 
   const handleDeleteOffer = useCallback(async () => {
@@ -418,9 +424,13 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           <Box className="flex fr ai-c">
             {isOwner &&
               !hasPermission &&
-              !isPending &&
               offer.status === OfferStatus.Ready &&
-              Date.parse(offer.term.expirationAt) > Date.now() && (
+              Date.parse(offer.term.expirationAt) > Date.now() &&
+              (isPending ? (
+                <Button variant="contained" className="offer slim">
+                  <CircularProgress />
+                </Button>
+              ) : (
                 <Button
                   variant="contained"
                   className="offer slim"
@@ -428,11 +438,15 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 >
                   Accept
                 </Button>
-              )}
+              ))}
             {isOwner &&
               hasPermission &&
-              !isPending &&
-              offer.status === OfferStatus.Ready && (
+              offer.status === OfferStatus.Ready &&
+              (isPending ? (
+                <Button variant="contained" className="offer slim">
+                  <CircularProgress />
+                </Button>
+              ) : (
                 <Button
                   variant="contained"
                   className="offer slim"
@@ -440,12 +454,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 >
                   Accept
                 </Button>
-              )}
-            {isPending && (
-              <Button variant="contained" className="offer slim">
-                <CircularProgress />
-              </Button>
-            )}
+              ))}
             {!isOwner && (
               <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
             )}

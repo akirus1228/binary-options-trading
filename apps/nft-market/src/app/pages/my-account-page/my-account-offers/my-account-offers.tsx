@@ -80,7 +80,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
 
   return (
     <Box className={`flex fc fj-c ai-c ${style["responsive_table"]}`} sx={{ mt: "50px" }}>
-      <Box sx={{ width: "100%" }}>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={activeOffersAsBorrower}
           fields={offerListFields}
@@ -88,7 +88,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Current offers as a borrower"
         />
       </Box>
-      <Box sx={{ width: "100%" }}>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={activeOffersAsLender}
           fields={offerListFields}
@@ -96,7 +96,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Current offers as a lender"
         />
       </Box>
-      <Box sx={{ width: "100%" }}>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={historicalOffersAsBorrower}
           fields={offerListFields}
@@ -104,7 +104,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Previous offers as a borrower"
         />
       </Box>
-      <Box sx={{ width: "100%" }}>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={historicalOffersAsLender}
           fields={offerListFields}
@@ -112,7 +112,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Previous offers as a lender"
         />
       </Box>
-      <Box sx={{ width: "100%" }}>
+      <Box>
         <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
           {activeOffersAsBorrower.length === 0 &&
             activeOffersAsLender.length === 0 &&

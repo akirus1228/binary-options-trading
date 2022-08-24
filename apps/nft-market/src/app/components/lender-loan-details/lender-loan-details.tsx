@@ -97,11 +97,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   }, [loan, provider]);
 
   if (!loan || !loan.term || !loanDetails.amountDue) {
-    return (
-      <Box className="flex fr fj-c">
-        <CircularProgress />
-      </Box>
-    );
+    return <Box className="flex fr fj-c"></Box>;
   }
   return (
     <Container sx={sx}>

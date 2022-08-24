@@ -237,7 +237,7 @@ export const AssetDetails = ({
               {isOwner &&
                 asset?.status === AssetStatus.Locked &&
                 loan &&
-                !loan[0].contractLoanId &&
+                !loan[0]?.contractLoanId &&
                 (pending ? (
                   <Button variant="contained" disabled>
                     <CircularProgress />
@@ -301,13 +301,11 @@ export const AssetDetails = ({
                 )}
               </Box>
             </Box>
-            {!!listing && (
-              <StatusInfo
-                asset={asset}
-                listing={listing}
-                loan={loan ? loan[0] : undefined}
-              />
-            )}
+            <StatusInfo
+              asset={asset}
+              listing={listing}
+              loan={loan ? loan[0] : undefined}
+            />
           </Grid>
         </Grid>
       ) : (

@@ -10,6 +10,7 @@
         color: #8991A2;
         .strong {
            color: #000; 
+           display: inline-block;
         }
     }
 }
@@ -20,6 +21,7 @@ body[class*=darkTheme] {
     .textContainer {
         .strong {
             color: #fff;
+            display: inline-block;
         }
     }
 }

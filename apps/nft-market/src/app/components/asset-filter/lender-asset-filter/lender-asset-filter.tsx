@@ -40,9 +40,12 @@ export const LenderAssetFilter = ({
   query,
   setQuery,
 }: LenderAssetFilterProps): JSX.Element => {
-  const { data: collections } = useGetCollectionsQuery({
-    sortQuery: "collection.openListingCount:DESC",
-  });
+  const { data: collections } = useGetCollectionsQuery(
+    {
+      sortQuery: "collection.openListingCount:DESC",
+    },
+    { refetchOnMountOrArgChange: true }
+  );
   const [priceRange, setPriceRange] = useState<number[]>(initialPriceRange);
   const [aprRange, setAprRange] = useState<number[]>(initialAprRange);
   const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);

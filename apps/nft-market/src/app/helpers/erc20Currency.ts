@@ -1,4 +1,10 @@
-import { addresses, getTokenPrice, NetworkIds, networks } from "@fantohm/shared-web3";
+import {
+  addresses,
+  getTokenPrice,
+  isDev,
+  NetworkIds,
+  networks,
+} from "@fantohm/shared-web3";
 import {
   DaiToken,
   EthToken,
@@ -108,7 +114,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDT_ADDRESS"],
     },
     coingeckoStub: "tether",
-    decimals: 6,
+    decimals: isDev ? 18 : 6,
   },
 };
 

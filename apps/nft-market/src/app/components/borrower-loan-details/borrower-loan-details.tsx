@@ -3,6 +3,7 @@ import {
   prettifySeconds,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
+  selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
@@ -72,6 +73,18 @@ export const BorrowerLoanDetails = ({
       erc20TokenAddress: loanDetails.currency || "",
     })
   );
+
+  const currencyBalance = useSelector((state: RootState) =>
+    selectErc20BalanceByAddress(state, currency?.currentAddress)
+  );
+
+  const notEnoughBalance = useMemo(() => {
+    return (
+      currencyBalance &&
+      loanDetails.amountDueGwei &&
+      currencyBalance.lt(loanDetails.amountDueGwei)
+    );
+  }, [currencyBalance, loanDetails.amountDueGwei]);
 
   const [updateLoan, { isLoading: isLoanUpdating }] = useUpdateLoanMutation();
 
@@ -194,7 +207,7 @@ export const BorrowerLoanDetails = ({
     }
     provider.getBlockNumber().then((blockNumber) => {
       provider.getBlock(blockNumber).then((block) => {
-        setCurrentBlockTime(block.timestamp);
+        setCurrentBlockTime(block?.timestamp);
       });
     });
   }, [provider]);
@@ -218,7 +231,16 @@ export const BorrowerLoanDetails = ({
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
             <Typography className={style["label"]}>Total repayment</Typography>
-            <Typography className={`${style["data"]} ${style["primary"]}`}>
+            <Typography className={`${style["data"]} ${style["primary"]} flex fr ai-c`}>
+              <img
+                src={currency.icon}
+                style={{ height: "1em", width: "1em", paddingRight: "0.25em" }}
+                alt={currency.name}
+              />
+              {loanDetails.amountDue.toFixed(6)} {currency?.symbol}
+            </Typography>
+            <Typography sx={{ color: "#8891A2" }}>
+              ~
               {(loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -227,7 +249,16 @@ export const BorrowerLoanDetails = ({
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Loan amount</Typography>
-            <Typography className={`${style["data"]}`}>
+            <Typography className={`${style["data"]} flex fr ai-c`}>
+              <img
+                src={currency.icon}
+                style={{ height: "1em", width: "1em", paddingRight: "0.25em" }}
+                alt={currency.name}
+              />
+              {loanDetails.loanAmount.toFixed(6)} {currency?.symbol}
+            </Typography>
+            <Typography sx={{ color: "#8891A2" }}>
+              ~
               {(loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -257,11 +288,17 @@ export const BorrowerLoanDetails = ({
                   </Button>
                 )}
               {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
+                !notEnoughBalance &&
                 !isPending && (
                   <Button variant="contained" onClick={handleRequestAllowance}>
                     Approve {currency?.symbol} for repayment
                   </Button>
                 )}
+              {notEnoughBalance && (
+                <Button variant="contained" disabled={true}>
+                  Insufficient Funds for Repayment
+                </Button>
+              )}
               {isPending && (
                 <Button variant="contained">
                   <CircularProgress color="inherit" />

@@ -40,6 +40,7 @@ export type NftPermissionPayload = {
 export type PlatformFees = {
   [currencyAddress: string]: number;
 };
+
 export interface WalletState {
   readonly currencyStatus: "idle" | "loading" | "succeeded" | "failed";
   readonly checkPermStatus: "idle" | "loading" | "failed";
@@ -53,9 +54,9 @@ export interface WalletState {
   readonly platformFees: PlatformFees;
 }
 
-/* 
+/*
 loadPlatformFee: loads current fee for usdbLending contract
-params: 
+params:
 - networkId: number
 - address: string
 returns: void
@@ -80,9 +81,9 @@ export const loadPlatformFee = createAsyncThunk(
   }
 );
 
-/* 
+/*
 loadWalletCurrencies: loads balances
-params: 
+params:
 - networkId: number
 - address: string
 returns: void
@@ -103,9 +104,9 @@ export const loadErc20Balance = createAsyncThunk(
   }
 );
 
-/* 
+/*
 requestNftPermission: loads nfts owned by specific address
-params: 
+params:
 - address: string
 returns: void
 */
@@ -142,7 +143,7 @@ export const requestNftPermission = createAsyncThunk(
 
       await approveTx.wait();
       const payload: NftPermStatus = {};
-      payload[`${tokenId}:::${assetAddress}`] = true;
+      payload[`${tokenId}:::${assetAddress.toLowerCase()}`] = true;
       return payload;
     } catch (err) {
       console.log(err);
@@ -151,9 +152,9 @@ export const requestNftPermission = createAsyncThunk(
   }
 );
 
-/* 
+/*
 checkNftPermission: loads nfts owned by specific address
-params: 
+params:
 - networkId: string
 - provider: JsonRpcProvider
 - walletAddress: string
@@ -183,7 +184,7 @@ export const checkNftPermission = createAsyncThunk(
         response.toLowerCase() ===
         addresses[networkId]["USDB_LENDING_ADDRESS"].toLowerCase();
       const payload: NftPermStatus = {};
-      payload[`${tokenId}:::${assetAddress}`] = hasPermission;
+      payload[`${tokenId}:::${assetAddress.toLowerCase()}`] = hasPermission;
       return payload;
     } catch (err) {
       console.log(err);
@@ -192,9 +193,9 @@ export const checkNftPermission = createAsyncThunk(
   }
 );
 
-/* 
+/*
 requestNftPermission: loads nfts owned by specific address
-params: 
+params:
 - address: string
 returns: void
 */
@@ -222,7 +223,7 @@ export const requestErc20Allowance = createAsyncThunk(
       );
       await approveTx.wait();
       const payload: Erc20Allowance = {};
-      payload[`${walletAddress}:::${assetAddress}`] = amount;
+      payload[`${walletAddress}:::${assetAddress.toLowerCase()}`] = amount;
       return payload;
     } catch (err) {
       console.log(err);
@@ -231,9 +232,9 @@ export const requestErc20Allowance = createAsyncThunk(
   }
 );
 
-/* 
+/*
 checkCurrencyAllowance: loads nfts owned by specific address
-params: 
+params:
 - networkId: string
 - provider: JsonRpcProvider
 - walletAddress: string
@@ -272,7 +273,7 @@ export const checkErc20Allowance = createAsyncThunk(
         addresses[networkId]["USDB_LENDING_ADDRESS"]
       );
       const payload: Erc20Allowance = {};
-      payload[`${walletAddress}:::${assetAddress}`] = response;
+      payload[`${walletAddress}:::${assetAddress.toLowerCase()}`] = response;
       return payload;
     } catch (err) {
       console.log(err);
