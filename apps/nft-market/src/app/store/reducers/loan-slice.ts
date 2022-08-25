@@ -131,7 +131,7 @@ export const contractCreateLoan = createAsyncThunk(
       borrower: loan.borrower.address,
       lender: loan.lender.address,
       nftAddress: loan.assetListing.asset.assetContractAddress,
-      currencyAddress: loan.assetListing.term.currencyAddress,
+      currencyAddress: loan.term.currencyAddress,
       nftTokenId: loan.assetListing.asset.tokenId,
       duration: loan.term.duration,
       expiration: Math.round(Date.parse(loan.term.expirationAt) / 1000),
@@ -140,8 +140,6 @@ export const contractCreateLoan = createAsyncThunk(
       nftTokenType: contractType || 0, // token type
       sig: loan.term.signature,
     };
-
-    console.log("params: ", params);
 
     try {
       // call the contract
