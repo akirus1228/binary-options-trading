@@ -30,8 +30,9 @@ const ConfirmDialog = (props: ConfirmDialogProps): JSX.Element => {
   } = props;
   return (
     <Dialog open={open} onClose={() => setOpen(false)} aria-labelledby="confirm-dialog">
-      <DialogTitle id="confirm-dialog">{title}</DialogTitle>
       <DialogContent>
+        <Typography sx={{ fontSize: "1.75em" }}>{title}</Typography>
+        <hr />
         <Typography>
           Principal: {principal} {currencySymbol}
         </Typography>
