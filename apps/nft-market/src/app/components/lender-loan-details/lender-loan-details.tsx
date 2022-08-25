@@ -1,4 +1,4 @@
-import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import { formatCurrency, useWeb3Context } from "@fantohm/shared-web3";
 import {
   Box,
   Button,
@@ -8,9 +8,10 @@ import {
   Paper,
   SxProps,
   Theme,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateLoanMutation } from "../../api/backend-api";
 import { desiredNetworkId } from "../../constants/network";
@@ -96,6 +97,37 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
     setIsPending(false);
   }, [loan, provider]);
 
+  const canClaim = useMemo(() => {
+    return loanDetails.endTime < Date.now() / 1000;
+  }, [loanDetails]);
+
+  const getLoanExpires = () => {
+    if (loan && loan.term && loanDetails) {
+      if (canClaim) {
+        return "Overdue";
+      }
+      const duration = loan.term.duration * 24 * 60 * 60;
+      const passedDays = Math.floor(
+        (duration - Math.max(loanDetails.endTime - Date.now() / 1000, 0)) / (24 * 60 * 60)
+      );
+
+      return passedDays + " / " + loan.term.duration + " days";
+    }
+    return "";
+  };
+
+  const getLoanProgress = () => {
+    if (loan && loan.term && loanDetails) {
+      const duration = loan.term.duration * 24 * 60 * 60;
+      return (
+        ((duration - Math.max(loanDetails.endTime - Date.now() / 1000, 0)) * 100) /
+        duration
+      );
+    }
+
+    return 0;
+  };
+
   if (!loan || !loan.term || !loanDetails.amountDue) {
     return <Box className="flex fr fj-c"></Box>;
   }
@@ -104,50 +136,93 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
       <Paper>
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
-            <Typography className={style["label"]}>Total repayment</Typography>
-            <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {loanDetails.amountDue.toFixed(4)} {currency?.symbol}
-            </Typography>
-            <Typography className={`${style["data"]} ${style["secondary"]}`}>
-              {(loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
-            </Typography>
-          </Box>
-          <Box className="flex fc">
             <Typography className={style["label"]}>Loan amount</Typography>
-            <Typography className={`${style["data"]}`}>
-              {loan.term.amount.toFixed(4)} {currency?.symbol}
-            </Typography>
-            <Typography className={`${style["data"]} ${style["secondary"]}`}>
-              {(loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+            <Typography
+              className={`${style["data"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src={currency.icon}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography>
+                  {formatCurrency(loan.term.amount, 2).replace("$", "")}
+                </Typography>
+              </Tooltip>
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>APY</Typography>
-            <Typography className={`${style["data"]}`}>{loan.term.apr}%</Typography>
+            <Typography className={style["label"]}>Total repayment</Typography>
+            <Typography
+              className={`${style["data"]} ${style["primary"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src={currency.icon}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography>
+                  {formatCurrency(loanDetails.amountDue, 2).replace("$", "")}
+                </Typography>
+              </Tooltip>
+            </Typography>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Time until loan expires</Typography>
-            <Box className="flex fr w100">
-              <Typography className={`${style["data"]}`}>
-                {prettifySeconds(loanDetails.endTime - Date.now() / 1000)}
+            <Box className="flex fr w100" sx={{ alignItems: "center" }}>
+              <Typography
+                className={`${style["data"]}`}
+                sx={{ color: canClaim ? "#fb1868" : undefined }}
+              >
+                {getLoanExpires()}
               </Typography>
-              <LinearProgress variant="determinate" value={10} />
+              <LinearProgress
+                variant="determinate"
+                className={!canClaim ? style["progress-info"] : style["progress-error"]}
+                value={getLoanProgress()}
+                sx={{
+                  width: "10rem",
+                  marginLeft: "20px",
+                  height: "8px",
+                  borderRadius: "8px",
+                }}
+              />
             </Box>
           </Box>
           <Box className="flex fc">
-            {loanDetails.endTime < Date.now() / 1000 &&
-              !isPending &&
-              loanDetails.lender === user.address && (
-                <Button variant="contained" onClick={handleForecloseLoan}>
-                  Claim NFT
-                </Button>
-              )}
+            {!isPending && loanDetails.lender === user.address && (
+              <Button
+                variant="contained"
+                onClick={handleForecloseLoan}
+                disabled={!canClaim}
+              >
+                Claim NFT
+              </Button>
+            )}
             {isPending && (
               <Button variant="contained">
                 <CircularProgress color="inherit" />

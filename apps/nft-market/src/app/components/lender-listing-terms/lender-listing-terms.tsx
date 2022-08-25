@@ -19,7 +19,7 @@ import { AppDispatch, RootState } from "../../store";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { MakeOffer } from "../make-offer/make-offer";
 import LoanConfirmation from "../loan-confirmation/loan-confirmation";
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { formatCurrency, useWeb3Context } from "@fantohm/shared-web3";
 import OfferConfirmDialog from "../offer-confirm-modal/offer-confirm-dialog";
 import { addAlert } from "../../store/reducers/app-slice";
 import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
@@ -152,7 +152,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                 }
               >
                 <Typography className={`${style["data"]} ${style["primary"]}`}>
-                  {props.listing.term.amount.toFixed(4)}
+                  {formatCurrency(props.listing.term.amount, 2).replace("$", "")}
                 </Typography>
               </Tooltip>
             </Box>
@@ -182,7 +182,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                 }
               >
                 <Typography className={`${style["data"]}`}>
-                  {repaymentAmount.toFixed(4)}
+                  {formatCurrency(repaymentAmount, 2).replace("$", "")}
                 </Typography>
               </Tooltip>
             </Box>
