@@ -715,7 +715,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         )}
       {pending && (
         <Button variant="contained" disabled>
-          <CircularProgress />
+          <CircularProgress size={"1.75em"} />
         </Button>
       )}
       <ConfirmDialog
