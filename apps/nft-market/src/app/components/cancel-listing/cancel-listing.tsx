@@ -54,11 +54,6 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
     requestErc20AllowanceStatus,
   } = useSelector((state: RootState) => state.wallet);
 
-  // select perm status for this asset from state
-  const hasPermission = useSelector((state: RootState) =>
-    selectNftPermFromAsset(state, props.listing.asset)
-  );
-
   const handleClose = () => {
     onClose(false);
   };
@@ -119,7 +114,7 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
           <Box className="flex fc" sx={{ padding: "1em" }}>
             <Typography>Do you want to cancel listing?</Typography>
           </Box>
-          {isOwner && hasPermission && !pending && props.listing && (
+          {isOwner && !pending && props.listing && (
             <Button variant="contained" onClick={handleCancelListing}>
               Cancel Listing (no cost)
             </Button>
