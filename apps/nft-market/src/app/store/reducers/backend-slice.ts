@@ -47,11 +47,22 @@ export const authorizeAccount = createAsyncThunk(
   ) => {
     const loginResponse: LoginResponse = await BackendApi.doLogin(address);
     if (loginResponse.id) {
+      const savedSig = localStorage.getItem("sign") || "";
+      if (savedSig.includes(address)) {
+        const sigs = savedSig.split(" ");
+        const sig: string = sigs.find((item) => item.includes(address)) || "";
+        const sign: string = sig?.substring(sig.indexOf("|") + 1);
+
+        return { signature: sign, address, user: loginResponse };
+      }
       const signature = await BackendApi.handleSignMessage(address, provider);
       if (!signature) {
         if (onFailed) onFailed();
         return rejectWithValue("Login Failed");
       }
+      let addr: string = localStorage.getItem("sign") || "";
+      addr += address + "|" + signature + " ";
+      localStorage.setItem("sign", addr);
       return { signature, address, user: loginResponse };
     } else {
       return rejectWithValue("Login Failed");
