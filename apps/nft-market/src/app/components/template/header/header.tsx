@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -73,6 +73,16 @@ export const Header = (): JSX.Element => {
   const handleCloseBuyUSDB = () => {
     setAnchorBuyUSDB(null);
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setAnchorBuyUSDB(null);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <AppBar position="static" color="transparent" elevation={0}>
@@ -257,7 +267,6 @@ export const Header = (): JSX.Element => {
                     backgroundColor: anchorBuyUSDB ? "rgba(0, 0, 0, 0.04)" : undefined,
                   }}
                   aria-describedby="buy-usdb"
-                  onMouseEnter={handleClickBuyUSDB}
                   onClick={handleClickBuyUSDB}
                 >
                   Buy USDB
