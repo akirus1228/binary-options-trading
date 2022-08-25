@@ -138,6 +138,7 @@ export const BorrowerAssetFilter = ({
             )}
             collection={collection}
             setCollection={setCollection}
+            type="borrow"
           />
         </>
       )}

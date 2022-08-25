@@ -380,6 +380,7 @@ export const LenderAssetFilter = ({
         )}
         collection={collection}
         setCollection={setCollection}
+        type="lend"
       />
 
       <Box
