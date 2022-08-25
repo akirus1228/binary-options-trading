@@ -13,12 +13,14 @@ export interface CollectionsFilterProps {
   collections?: Collection[];
   collection: Collection;
   setCollection: Dispatch<SetStateAction<Collection>>;
+  type: "lend" | "borrow";
 }
 
 export const CollectionsFilter = ({
   collections,
   collection,
   setCollection,
+  type,
 }: CollectionsFilterProps): JSX.Element => {
   const handleCollectionClick = useCallback(
     (newCollection: Collection) => {
@@ -60,7 +62,7 @@ export const CollectionsFilter = ({
           }}
         >
           <Badge
-            badgeContent={collectionMap.openListingCount}
+            badgeContent={type === "lend" ? collectionMap.openListingCount : undefined}
             color="secondary"
             overlap="circular"
             componentsProps={{
