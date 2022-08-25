@@ -30,11 +30,14 @@ export interface MyAccountAssetsProps {
 }
 
 export function MyAccountAssets({ address }: MyAccountAssetsProps) {
+  const take = 20;
   const [status, setStatus] = useState<string>("All");
+  const [osNext, setOsNext] = useState("");
+  const [hasNext, setHasNext] = useState(true);
 
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
-    limit: 50,
+    limit: take,
     owner: address,
   });
 
@@ -47,13 +50,13 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   // query to use on backend api call, to pull data we have
   const [beQuery, setBeQuery] = useState<BackendAssetQueryParams>({
     skip: 0,
-    take: 50,
+    take: take,
   });
 
   // query assets in escrow
   const [loansQuery, setLoansQuery] = useState<BackendLoanQueryParams>({
     skip: 0,
-    take: 50,
+    take: take,
     walletAddress: address,
     status: LoanStatus.Active,
   });
@@ -110,6 +113,11 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
       openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
     };
     setBeQuery(newQuery);
+    if (osResponse && osResponse.next) {
+      setOsNext(osResponse?.next || "");
+    } else if (osResponse && osResponse.next === null) {
+      setHasNext(false);
+    }
   }, [osResponse]);
 
   useEffect(() => {
@@ -131,6 +139,10 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
     feQuery.status === AssetStatus.Locked && loans
       ? loans?.map((loan) => loan.assetListing.asset)
       : myAssets;
+
+  const fetchMoreData = () => {
+    setOsQuery({ ...osQuery, cursor: osNext });
+  };
 
   return (
     <Box className="flex fr fj-c" sx={{ mt: "50px" }}>
@@ -160,7 +172,12 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
               <MenuItem value="In Escrow">In Escrow</MenuItem>
             </Select>
           </Box>
-          <AssetList assets={assetsToShow} type="borrow" />
+          <AssetList
+            assets={assetsToShow}
+            type="borrow"
+            hasMore={hasNext}
+            fetchData={fetchMoreData}
+          />
         </Container>
       )}
     </Box>
