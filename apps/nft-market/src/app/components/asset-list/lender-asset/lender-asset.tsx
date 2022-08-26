@@ -307,7 +307,9 @@ export function LenderAsset({ asset }: LenderAssetProps) {
               <Tooltip
                 title={formatCurrency(listing.term.amount * currency?.lastPrice, 2)}
               >
-                <span className={style["assetPrice"]}>{listing.term.amount}</span>
+                <span className={style["assetPrice"]}>
+                  {parseFloat(listing.term.amount.toFixed(5))}
+                </span>
               </Tooltip>
             </Box>
             <Box
