@@ -144,11 +144,14 @@ export const AssetDetails = ({
                     key={`${collection.slug}_${index}`}
                   >
                     {collection.slug}
-                    <img
-                      src={BlueChip}
-                      style={{ width: "fit-content", marginLeft: "10px" }}
-                      alt="blue-chip"
-                    />
+                    {(isDev ||
+                      asset.collection.safelist_request_status === "verified") && (
+                      <img
+                        src={BlueChip}
+                        style={{ width: "fit-content", marginLeft: "10px" }}
+                        alt="blue-chip"
+                      />
+                    )}
                   </Typography>
                 ))}
               <Box sx={{ display: "flex", my: "20px", alignItems: "center" }}>
