@@ -2,22 +2,21 @@ html,
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-
-
+  overflow-x: hidden;
 }
 
 .mainContent {
-  @media (min-width:1201px) {
-    padding:0 100px !important;
+  @media (min-width: 1201px) {
+    padding: 0 100px !important;
   }
-  @media (max-width:1200px) {
-    padding:0 50px !important;
+  @media (max-width: 1200px) {
+    padding: 0 50px !important;
   }
-  @media (max-width:900px) {
-    padding:0 25px !important;
+  @media (max-width: 900px) {
+    padding: 0 25px !important;
   }
-  @media (max-width:480px) {
-    padding:0 10px !important;
+  @media (max-width: 480px) {
+    padding: 0 10px !important;
   }
 }
 
@@ -123,13 +122,10 @@ input[type="number"] {
   font-size: 80%;
 }
 
-
-body[class*=darkTheme] {
-
-    .progress-ring {
-      fill: #fff;
-    }
-
+body[class*="darkTheme"] {
+  .progress-ring {
+    fill: #fff;
+  }
 }
 
 .infinite-scroll-component__outerdiv {
