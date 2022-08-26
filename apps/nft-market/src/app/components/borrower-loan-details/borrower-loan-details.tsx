@@ -131,19 +131,25 @@ export const BorrowerLoanDetails = ({
         provider,
         networkId: desiredNetworkId,
       };
-      const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
-      if (repayLoanResult === false) return; //todo: throw nice error
-      const updateLoanRequest: Loan = {
-        ...loan,
-        assetListing: {
-          ...loan.assetListing,
-          asset: { ...loan.assetListing.asset, status: AssetStatus.Ready },
-        },
-        status: LoanStatus.Complete,
-      };
-      updateLoan(updateLoanRequest);
+      try {
+        const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
+        if (!repayLoanResult) {
+          return; //todo: throw nice error
+        }
+        const updateLoanRequest: Loan = {
+          ...loan,
+          assetListing: {
+            ...loan.assetListing,
+            asset: { ...loan.assetListing.asset, status: AssetStatus.Ready },
+          },
+          status: LoanStatus.Complete,
+        };
+        updateLoan(updateLoanRequest);
+      } catch (e) {
+        console.log(e);
+      }
     } else {
-      console.warn(`insufficiant allowance: ${erc20Allowance}`);
+      console.warn(`insufficient allowance: ${erc20Allowance}`);
     }
   }, [
     checkErc20AllowanceStatus,
