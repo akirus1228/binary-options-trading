@@ -19,6 +19,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { isDev } from "@fantohm/shared-web3";
 import { AppDispatch, RootState } from "../../store";
 import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,6 +79,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, 0);
   const preFillPrice = (estimatedPrice || 0) * 0.9;
   const maxFillPrice = (estimatedPrice || 0) * 1.5;
+  const canGetLiquidity =
+    isDev || props.asset.collection.safelist_request_status === "verified";
 
   // update term backend api call
   const [
@@ -647,7 +650,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         <Button
           variant="contained"
           onClick={handlePermissionRequest}
-          disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
+          disabled={
+            !canGetLiquidity ||
+            !amount ||
+            !duration ||
+            amount === "0" ||
+            duration === "0" ||
+            !apr
+          }
         >
           Allow Liqd to Access your NFT
         </Button>
@@ -656,7 +666,14 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         <Button
           variant="contained"
           onClick={handleCreateListing}
-          disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
+          disabled={
+            !canGetLiquidity ||
+            !amount ||
+            !duration ||
+            amount === "0" ||
+            duration === "0" ||
+            !apr
+          }
         >
           Get liquidity
         </Button>
