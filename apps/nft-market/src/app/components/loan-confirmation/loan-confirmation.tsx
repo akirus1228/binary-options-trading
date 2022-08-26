@@ -187,15 +187,13 @@ export const LoanConfirmation = ({
       networkId: desiredNetworkId,
     };
 
-    const createLoanResult = await createLoan(createLoanRequest).unwrap();
-    console.log(createLoanResult);
-
     try {
       const createLoanContractResult = await dispatch(
         contractCreateLoan(createLoanParams)
       ).unwrap();
       console.log(createLoanContractResult);
-
+      if (!createLoanContractResult) return;
+      const createLoanResult = await createLoan(createLoanRequest).unwrap();
       if (typeof createLoanContractResult !== "number") {
         dispatch(
           addAlert({
