@@ -211,15 +211,20 @@ export const repayLoan = createAsyncThunk(
       loanId,
       amountDue
     );
-    const response: ContractReceipt = await repayTxn.wait();
-    const event: Event | undefined = response.events?.find(
-      (event: RepayLoanEvent | Event) => !!event.event && event.event === "LoanLiquidated"
-    );
-    if (event && event.args) {
-      const [, , , , loanId] = event.args;
-      return +loanId;
-    } else {
-      return false;
+    try {
+      const response: ContractReceipt = await repayTxn.wait();
+      const event: Event | undefined = response.events?.find(
+        (event: RepayLoanEvent | Event) =>
+          !!event.event && event.event === "LoanLiquidated"
+      );
+      if (event && event.args) {
+        const [, , , , loanId] = event.args;
+        return +loanId;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
     }
   }
 );
