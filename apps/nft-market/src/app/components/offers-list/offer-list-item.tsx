@@ -411,6 +411,20 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         );
       case OffersListFields.CREATED_AGO:
         return <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>;
+      case OffersListFields.STATUS:
+        return offer.status !== OfferStatus.Ready ? (
+          <Chip
+            label={offer.status}
+            sx={{
+              fontSize: "0.875em",
+              marginRight: "2em",
+              backgroundColor: "#374FFF",
+              color: "#fff",
+            }}
+          ></Chip>
+        ) : (
+          <></>
+        );
       default:
         return "?";
     }
@@ -445,7 +459,18 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           }}
         >
           <Box className="flex fr ai-c">
-            {(isOwner || isMyOffer) && (
+            {offer.status !== OfferStatus.Ready && (
+              <Chip
+                label={offer.status}
+                sx={{
+                  fontSize: "0.875em",
+                  marginRight: "2em",
+                  backgroundColor: "#374FFF",
+                  color: "#fff",
+                }}
+              ></Chip>
+            )}
+            {((isOwner && offer.status === OfferStatus.Ready) || isMyOffer) && (
               <IconButton onClick={handleOpenActionClick}>
                 {!actionsOpen && <ChevronLeftIcon />}
                 {actionsOpen && <ChevronRightIcon />}
@@ -498,17 +523,6 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                     Accept
                   </Button>
                 ))}
-              {offer.status !== OfferStatus.Ready && (
-                <Chip
-                  label={offer.status}
-                  sx={{
-                    fontSize: "0.875em",
-                    marginRight: "2em",
-                    backgroundColor: "#374FFF",
-                    color: "#fff",
-                  }}
-                ></Chip>
-              )}
               {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
                 <Box>
                   <Button
