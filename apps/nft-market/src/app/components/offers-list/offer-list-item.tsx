@@ -1,6 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Box, Button, Chip, CircularProgress, Tooltip } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  IconButton,
+  Menu,
+  Tooltip,
+} from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -260,6 +271,16 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     return prettifySeconds(createdAgo / 1000);
   }, [offer.term]);
 
+  const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const actionsOpen = Boolean(actionMenuAnchorEl);
+
+  const handleOpenActionClick = (event: MouseEvent<HTMLElement>) => {
+    setActionMenuAnchorEl(event.currentTarget);
+  };
+  const handleActionMenuClose = () => {
+    setActionMenuAnchorEl(null);
+  };
+
   const getFieldData = (field: OffersListFields): JSX.Element | string => {
     switch (field) {
       case OffersListFields.LENDER_PROFILE:
@@ -388,6 +409,22 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             {offer.assetListing.asset.name || ""}
           </Link>
         );
+      case OffersListFields.CREATED_AGO:
+        return <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>;
+      case OffersListFields.STATUS:
+        return offer.status !== OfferStatus.Ready ? (
+          <Chip
+            label={offer.status}
+            sx={{
+              fontSize: "0.875em",
+              marginRight: "2em",
+              backgroundColor: "#374FFF",
+              color: "#fff",
+            }}
+          ></Chip>
+        ) : (
+          <></>
+        );
       default:
         return "?";
     }
@@ -422,42 +459,6 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           }}
         >
           <Box className="flex fr ai-c">
-            {isOwner &&
-              !hasPermission &&
-              offer.status === OfferStatus.Ready &&
-              Date.parse(offer.term.expirationAt) > Date.now() &&
-              (isPending ? (
-                <Button variant="contained" className="offer slim">
-                  <CircularProgress />
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  className="offer slim"
-                  onClick={handleRequestPermission}
-                >
-                  Accept
-                </Button>
-              ))}
-            {isOwner &&
-              hasPermission &&
-              offer.status === OfferStatus.Ready &&
-              (isPending ? (
-                <Button variant="contained" className="offer slim">
-                  <CircularProgress />
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  className="offer slim"
-                  onClick={handleAcceptOffer}
-                >
-                  Accept
-                </Button>
-              ))}
-            {!isOwner && (
-              <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
-            )}
             {offer.status !== OfferStatus.Ready && (
               <Chip
                 label={offer.status}
@@ -469,26 +470,80 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 }}
               ></Chip>
             )}
-            {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
-              <Box>
-                <Button
-                  variant="contained"
-                  className="offer slim"
-                  sx={{ my: "10px", mr: "10px", width: "100px" }}
-                  onClick={handleUpdateOffer}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="outlined"
-                  className="offer slim"
-                  sx={{ my: "10px", width: "100px" }}
-                  onClick={() => setRemoveOfferConfirmDialogOpen(true)}
-                >
-                  Remove
-                </Button>
-              </Box>
+            {((isOwner && offer.status === OfferStatus.Ready) || isMyOffer) && (
+              <IconButton onClick={handleOpenActionClick}>
+                {!actionsOpen && <ChevronLeftIcon />}
+                {actionsOpen && <ChevronRightIcon />}
+              </IconButton>
             )}
+            <Menu
+              open={actionsOpen}
+              anchorEl={actionMenuAnchorEl}
+              onClose={handleActionMenuClose}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "center",
+                horizontal: "right",
+              }}
+              disableScrollLock={true}
+            >
+              {isOwner &&
+                !hasPermission &&
+                offer.status === OfferStatus.Ready &&
+                Date.parse(offer.term.expirationAt) > Date.now() &&
+                (isPending ? (
+                  <Button variant="contained" className="offer slim">
+                    <CircularProgress />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    className="offer slim"
+                    onClick={handleRequestPermission}
+                  >
+                    Accept
+                  </Button>
+                ))}
+              {isOwner &&
+                hasPermission &&
+                offer.status === OfferStatus.Ready &&
+                (isPending ? (
+                  <Button variant="contained" className="offer slim">
+                    <CircularProgress />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    className="offer slim"
+                    onClick={handleAcceptOffer}
+                  >
+                    Accept
+                  </Button>
+                ))}
+              {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
+                <Box>
+                  <Button
+                    variant="contained"
+                    className="offer slim"
+                    sx={{ my: "10px", mr: "10px", width: "100px" }}
+                    onClick={handleUpdateOffer}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    className="offer slim"
+                    sx={{ my: "10px", width: "100px" }}
+                    onClick={() => setRemoveOfferConfirmDialogOpen(true)}
+                  >
+                    Remove
+                  </Button>
+                </Box>
+              )}
+            </Menu>
           </Box>
         </PaperTableCell>
       </PaperTableRow>
