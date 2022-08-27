@@ -80,7 +80,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const preFillPrice = (estimatedPrice || 0) * 0.9;
   const maxFillPrice = (estimatedPrice || 0) * 1.5;
   const canGetLiquidity =
-    isDev || props.asset.collection.safelist_request_status === "verified";
+    isDev || props.asset?.collection?.safelist_request_status === "verified";
 
   // update term backend api call
   const [
