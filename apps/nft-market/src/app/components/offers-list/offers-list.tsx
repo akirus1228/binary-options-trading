@@ -18,6 +18,7 @@ export enum OffersListFields {
   ASSET = "Asset",
   NAME = "Name",
   STATUS = "Status",
+  CREATED_AGO = "Created",
 }
 
 export interface OffersListProps {
@@ -69,7 +70,7 @@ export const OffersList = ({
           },
         }}
       >
-        <PaperTable sx={{ minWidth: 1320 }}>
+        <PaperTable>
           <PaperTableHead>
             <TableRow>
               {fields.map((field: OffersListFields, index: number) => (
