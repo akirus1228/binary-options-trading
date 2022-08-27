@@ -237,7 +237,7 @@ params:
 - networkId: number;
 returns: number | boolean
 */
-export const forecloseLoan = createAsyncThunk(
+export const forceCloseLoan = createAsyncThunk(
   "loan/forecloseLoan",
   async ({ loanId, provider, networkId }: LoanDetailsAsyncThunk) => {
     const signer = provider.getSigner();
@@ -249,15 +249,20 @@ export const forecloseLoan = createAsyncThunk(
     const liquidateTxn: ContractTransaction = await lendingContract["liquidateLoan"](
       loanId
     );
-    const response: ContractReceipt = await liquidateTxn.wait();
-    const event: Event | undefined = response.events?.find(
-      (event: Event) => !!event.event && event.event === "LoanTerminated"
-    );
-    if (event && event.args) {
-      const [, , , , loanId] = event.args;
-      return +loanId;
-    } else {
-      return false;
+    try {
+      const response: ContractReceipt = await liquidateTxn.wait();
+      const event: Event | undefined = response.events?.find(
+        (event: RepayLoanEvent | Event) =>
+          !!event.event && event.event === "LoanTerminated"
+      );
+      if (event && event.args) {
+        const [, , , , loanId] = event.args;
+        return +loanId;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
     }
   }
 );
@@ -347,14 +352,14 @@ const loansSlice = createSlice({
     builder.addCase(repayLoan.rejected, (state, action) => {
       state.repayLoanStatus = BackendLoadingStatus.failed;
     });
-    builder.addCase(forecloseLoan.pending, (state, action) => {
+    builder.addCase(forceCloseLoan.pending, (state, action) => {
       state.forecloseLoanStatus = BackendLoadingStatus.loading;
     });
-    builder.addCase(forecloseLoan.fulfilled, (state, action) => {
+    builder.addCase(forceCloseLoan.fulfilled, (state, action) => {
       state.forecloseLoanStatus = BackendLoadingStatus.succeeded;
       // dispatch update loan status
     });
-    builder.addCase(forecloseLoan.rejected, (state, action) => {
+    builder.addCase(forceCloseLoan.rejected, (state, action) => {
       state.forecloseLoanStatus = BackendLoadingStatus.failed;
     });
   },
