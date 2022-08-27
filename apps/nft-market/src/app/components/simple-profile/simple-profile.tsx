@@ -1,6 +1,5 @@
 import { addressEllipsis } from "@fantohm/shared-helpers";
 import { Avatar, Box, CircularProgress, SxProps, Theme } from "@mui/material";
-import { User } from "../../types/backend-types";
 import tmpAvatar from "../../../assets/images/temp-avatar.png";
 import style from "./simple-profile.module.scss";
 import { useGetUserQuery } from "../../api/backend-api";
