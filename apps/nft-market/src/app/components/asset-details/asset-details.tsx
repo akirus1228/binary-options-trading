@@ -145,7 +145,7 @@ export const AssetDetails = ({
                   >
                     {collection.slug}
                     {(isDev ||
-                      asset.collection.safelist_request_status === "verified") && (
+                      asset?.collection?.safelist_request_status === "verified") && (
                       <img
                         src={BlueChip}
                         style={{ width: "fit-content", marginLeft: "10px" }}
