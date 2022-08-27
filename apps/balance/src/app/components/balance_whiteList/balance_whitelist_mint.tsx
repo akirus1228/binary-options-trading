@@ -89,7 +89,11 @@ export const BalanceWhitelistMintPage = (
 
     useEffect(() => {
       const interval = setInterval(() => {
-        setCountDown(countDownDate - new Date().getTime());
+        if (countDownDate >= new Date().getTime()) {
+          setCountDown(countDownDate - new Date().getTime());
+        } else {
+          setCountDown(0);
+        }
       }, 1000);
 
       return () => clearInterval(interval);

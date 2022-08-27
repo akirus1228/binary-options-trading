@@ -83,6 +83,37 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
       } as IMintNFTAsyncThunk)
     );
   }
+  const useCountdown = () => {
+    const countDownDate = 1661513679000;
+
+    const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        if (countDownDate >= new Date().getTime()) {
+          setCountDown(countDownDate - new Date().getTime());
+        } else {
+          setCountDown(0);
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }, [countDownDate]);
+
+    return getReturnValues(countDown);
+  };
+
+  const getReturnValues = (countDown: any) => {
+    // calculate time left
+    const days = Math.floor(countDown / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((countDown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((countDown % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((countDown % (1000 * 60)) / 1000);
+
+    return [days, hours, minutes, seconds];
+  };
+
+  const [days, hours, minutes, seconds] = useCountdown();
 
   return (
     <Box>
@@ -152,7 +183,7 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
                       color: "#dee9ff",
                     }}
                   >
-                    00
+                    {days < 10 ? `0${days}` : days}
                   </Typography>
                   <Typography
                     sx={{
@@ -186,7 +217,7 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
                       color: "#dee9ff",
                     }}
                   >
-                    12
+                    {hours < 10 ? `0${hours}` : hours}
                   </Typography>
                   <Typography
                     sx={{
@@ -220,7 +251,7 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
                       color: "#dee9ff",
                     }}
                   >
-                    05
+                    {minutes < 10 ? `0${minutes}` : minutes}
                   </Typography>
                   <Typography
                     sx={{
@@ -254,7 +285,7 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
                       color: "#dee9ff",
                     }}
                   >
-                    45
+                    {seconds < 10 ? `0${seconds}` : seconds}
                   </Typography>
                   <Typography
                     sx={{
