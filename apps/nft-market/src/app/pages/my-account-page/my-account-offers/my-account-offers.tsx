@@ -84,7 +84,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
         <OffersList
           offers={activeOffersAsBorrower}
           fields={offerListFields}
-          isLoading={isOffersAsBorrowerLoading}
+          isLoading={isOffersAsBorrowerLoading || isOffersAsLenderLoading}
           title="Current offers as a borrower"
         />
       </Box>
@@ -92,7 +92,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
         <OffersList
           offers={activeOffersAsLender}
           fields={offerListFields}
-          isLoading={isOffersAsLenderLoading}
+          isLoading={false}
           title="Current offers as a lender"
         />
       </Box>
@@ -100,7 +100,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
         <OffersList
           offers={historicalOffersAsBorrower}
           fields={offerListFields}
-          isLoading={isOffersAsBorrowerLoading}
+          isLoading={false}
           title="Previous offers as a borrower"
         />
       </Box>
@@ -108,13 +108,14 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
         <OffersList
           offers={historicalOffersAsLender}
           fields={offerListFields}
-          isLoading={isOffersAsLenderLoading}
+          isLoading={false}
           title="Previous offers as a lender"
         />
       </Box>
       <Box>
         <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
-          {activeOffersAsBorrower.length === 0 &&
+          {(!isOffersAsBorrowerLoading || !isOffersAsLenderLoading) &&
+            activeOffersAsBorrower.length === 0 &&
             activeOffersAsLender.length === 0 &&
             historicalOffersAsBorrower.length === 0 &&
             historicalOffersAsLender.length === 0 &&
