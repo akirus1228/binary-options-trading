@@ -112,15 +112,17 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
           title="Previous offers as a lender"
         />
       </Box>
-      <Box>
-        <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
-          {activeOffersAsBorrower.length === 0 &&
-            activeOffersAsLender.length === 0 &&
-            historicalOffersAsBorrower.length === 0 &&
-            historicalOffersAsLender.length === 0 &&
-            "You don`t currently have any offers"}
-        </Typography>
-      </Box>
+      {!isOffersAsLenderLoading && !isOffersAsBorrowerLoading && (
+        <Box>
+          <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
+            {activeOffersAsBorrower.length === 0 &&
+              activeOffersAsLender.length === 0 &&
+              historicalOffersAsBorrower.length === 0 &&
+              historicalOffersAsLender.length === 0 &&
+              "You don`t currently have any offers"}
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 }
