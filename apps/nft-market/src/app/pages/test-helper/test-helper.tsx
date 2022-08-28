@@ -37,7 +37,7 @@ const SimpleLoanDetail = ({ loanDetails }: { loanDetails: LoanDetails }): JSX.El
   const handleRepay = useCallback(async () => {
     if (!provider) return;
     const repayLoanParams = {
-      loanId: loanDetails.loanId,
+      loan: loanDetails,
       amountDue: loanDetails.amountDueGwei,
       provider,
       networkId: desiredNetworkId,
@@ -57,7 +57,7 @@ const SimpleLoanDetail = ({ loanDetails }: { loanDetails: LoanDetails }): JSX.El
         End Time: {loanDetails.endDateTime.toLocaleTimeString()}{" "}
         {loanDetails.endDateTime.toLocaleDateString()}
       </Box>
-      <Box>Created: {loanDetails.starttime}</Box>
+      <Box>Created: {loanDetails.startTime}</Box>
       <Box>Status: {LoanStatusTl[loanDetails.status]}</Box>
       {loanDetails.status === 0 && <Button onClick={handleRepay}>Repay</Button>}
     </Box>
@@ -142,24 +142,24 @@ export const TestHelper = (): JSX.Element => {
 
   const handleGetAllLoansFromContract = async () => {
     if (!provider) return;
-    setIsPending(true);
-    const tempContractLoans: LoanDetails[] = [];
-    let tempLoan;
-    for (let i = 1; i < 100; i++) {
-      tempLoan = await dispatch(
-        getLoanDetailsFromContract({
-          loanId: i,
-          networkId: desiredNetworkId,
-          provider,
-        })
-      )
-        .unwrap()
-        .then((loanDetails: LoanDetails) => loanDetails);
-      if (tempLoan.endTime === 0) break;
-      tempContractLoans.push(tempLoan);
-    }
-    setContractLoans(tempContractLoans);
-    setIsPending(false);
+    // setIsPending(true);
+    // const tempContractLoans: LoanDetails[] = [];
+    // let tempLoan;
+    // for (let i = 1; i < 100; i++) {
+    //   tempLoan = await dispatch(
+    //     getLoanDetailsFromContract({
+    //       loan: null,
+    //       networkId: desiredNetworkId,
+    //       provider,
+    //     })
+    //   )
+    //     .unwrap()
+    //     .then((loanDetails: LoanDetails) => loanDetails);
+    //   if (tempLoan.endTime === 0) break;
+    //   tempContractLoans.push(tempLoan);
+    // }
+    // setContractLoans(tempContractLoans);
+    // setIsPending(false);
   };
 
   const handleNukeLocal = () => {

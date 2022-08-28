@@ -60,8 +60,6 @@ export const WalletBalances = (): JSX.Element => {
               {Object.values(currencies).map((currencyInfo) => {
                 const balance =
                   erc20Balances[currencyInfo.currentAddress] || ethers.BigNumber.from(0);
-                console.log("symbol", currencyInfo.symbol);
-                console.log("decimals", currencyInfo.decimals);
                 const value = +ethers.utils.formatUnits(
                   balance,
                   currencyInfo.decimals || 18

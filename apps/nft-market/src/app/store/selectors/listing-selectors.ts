@@ -19,7 +19,8 @@ export const selectListingFromAsset = createSelector(
     if (asset === null) return {} as Listing;
     const matches = Object.entries(listings).filter(([key, listing]) => {
       const rtn =
-        listing.asset.assetContractAddress === asset.assetContractAddress &&
+        listing.asset.assetContractAddress.toLowerCase() ===
+          asset.assetContractAddress.toLowerCase() &&
         listing.asset.tokenId === asset.tokenId;
       return rtn;
     });

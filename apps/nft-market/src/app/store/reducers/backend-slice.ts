@@ -30,8 +30,8 @@ export interface BackendData {
   readonly user: User;
 }
 
-/* 
-authorizeAccount: generates user account if non existant 
+/*
+authorizeAccount: generates user account if non existant
   requests signature to create bearer token
 params:
 - networkId: number

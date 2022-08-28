@@ -9,7 +9,12 @@ import {
   usdbLending,
 } from "@fantohm/shared-web3";
 import { BackendLoadingStatus, Loan } from "../../types/backend-types";
-import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
+import {
+  ListingCancelAsyncThunk,
+  LoanAsyncThunk,
+  LoanDetailsAsyncThunk,
+  RepayLoanAsyncThunk,
+} from "./interfaces";
 import { RootState } from "..";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
 import {
@@ -64,7 +69,7 @@ export type LoanDetailsResponse = {
   currency: string;
   status: number;
   nftTokenId: BigNumber;
-  starttime: BigNumber;
+  startTime: BigNumber;
   endTime: BigNumber;
   loanAmount: BigNumber;
   amountDue: BigNumber;
@@ -78,7 +83,7 @@ export type LoanDetails = {
   currency: string;
   status: LoanDetailsStatus;
   nftTokenId: number;
-  starttime: number;
+  startTime: number;
   endTime: number;
   endDateTime: Date;
   loanAmount: number;
@@ -86,6 +91,8 @@ export type LoanDetails = {
   amountDueGwei: BigNumber;
   nftTokenType: TokenType;
   loanId: number;
+  contractLoanId?: number;
+  lendingContractAddress?: string;
 };
 
 export enum LoanDetailsStatus {
@@ -121,7 +128,8 @@ export const contractCreateLoan = createAsyncThunk(
     const contractType = await ercType(nftContract);
 
     const lendingContract = new ethers.Contract(
-      networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
+        networks[networkId].addresses["USDB_LENDING_ADDRESS"],
       usdbLending,
       signer
     );
@@ -199,16 +207,18 @@ returns: number | boolean
 */
 export const repayLoan = createAsyncThunk(
   "loan/repayLoan",
-  async ({ loanId, amountDue, provider, networkId }: RepayLoanAsyncThunk) => {
+  async ({ loan, amountDue, provider, networkId }: RepayLoanAsyncThunk) => {
     const signer = provider.getSigner();
 
     const lendingContract = new ethers.Contract(
-      networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      loan?.lendingContractAddress
+        ? networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"]
+        : networks[networkId].addresses["USDB_LENDING_ADDRESS"],
       usdbLending,
       signer
     );
     const repayTxn: ContractTransaction = await lendingContract["repayLoan"](
-      loanId,
+      loan.contractLoanId,
       amountDue
     );
     try {
@@ -239,25 +249,60 @@ returns: number | boolean
 */
 export const forecloseLoan = createAsyncThunk(
   "loan/forecloseLoan",
-  async ({ loanId, provider, networkId }: LoanDetailsAsyncThunk) => {
+  async ({ loan, provider, networkId }: LoanDetailsAsyncThunk) => {
     const signer = provider.getSigner();
     const lendingContract = new ethers.Contract(
-      networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      loan?.lendingContractAddress
+        ? networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"]
+        : networks[networkId].addresses["USDB_LENDING_ADDRESS"],
       usdbLending,
       signer
     );
     const liquidateTxn: ContractTransaction = await lendingContract["liquidateLoan"](
-      loanId
+      loan.contractLoanId
     );
-    const response: ContractReceipt = await liquidateTxn.wait();
-    const event: Event | undefined = response.events?.find(
-      (event: Event) => !!event.event && event.event === "LoanTerminated"
+    try {
+      const response: ContractReceipt = await liquidateTxn.wait();
+      const event: Event | undefined = response.events?.find(
+        (event: Event) => !!event.event && event.event === "LoanTerminated"
+      );
+      if (event && event.args) {
+        const [, , , , loanId] = event.args;
+        return +loanId;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+);
+
+/*
+listingCancel: add cancelled listing signature
+params:
+- sig: bytes string;
+- provider: JsonRpcProvider;
+- networkId: number;
+returns: number | boolean
+*/
+export const listingCancel = createAsyncThunk(
+  "loan/listingCancel",
+  async ({ sig, provider, networkId }: ListingCancelAsyncThunk) => {
+    const signer = provider.getSigner();
+    const lendingContract = new ethers.Contract(
+      networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
+        networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      usdbLending,
+      signer
     );
-    if (event && event.args) {
-      const [, , , , loanId] = event.args;
-      return +loanId;
-    } else {
-      return false;
+    const liquidateTxn: ContractTransaction = await lendingContract[
+      "setCancelledSignature"
+    ](sig);
+    try {
+      return await liquidateTxn.wait();
+    } catch (e) {
+      return null;
     }
   }
 );
@@ -272,14 +317,18 @@ returns: void
 */
 export const getLoanDetailsFromContract = createAsyncThunk(
   "loan/getLoanDetailsFromContract",
-  async ({ loanId, networkId, provider }: LoanDetailsAsyncThunk) => {
+  async ({ loan, networkId, provider }: LoanDetailsAsyncThunk) => {
     const lendingContract = new ethers.Contract(
-      networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      loan?.lendingContractAddress
+        ? networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"]
+        : networks[networkId].addresses["USDB_LENDING_ADDRESS"],
       usdbLending,
       provider
     );
     // call the contract
-    const loanDetails: LoanDetailsResponse = await lendingContract["loans"](loanId);
+    const loanDetails: LoanDetailsResponse = await lendingContract["loans"](
+      loan.contractLoanId
+    );
     return {
       nftAddress: loanDetails.nftAddress,
       borrower: loanDetails.borrower,
@@ -287,14 +336,14 @@ export const getLoanDetailsFromContract = createAsyncThunk(
       currency: loanDetails.currency,
       status: loanDetails.status,
       nftTokenId: +loanDetails.nftTokenId,
-      starttime: +loanDetails.starttime,
+      startTime: +loanDetails.startTime,
       endTime: loanDetails.endTime.toNumber(),
       endDateTime: new Date(+loanDetails.endTime * 1000),
       loanAmount: +ethers.utils.formatEther(loanDetails.loanAmount),
       amountDue: +ethers.utils.formatEther(loanDetails.amountDue),
       amountDueGwei: loanDetails.amountDue,
       nftTokenType: loanDetails.nftTokenType,
-      loanId,
+      loanId: loan.contractLoanId,
     } as LoanDetails;
   }
 );

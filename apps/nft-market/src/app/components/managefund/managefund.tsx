@@ -81,7 +81,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
 
   const { address, chainId, provider } = useWeb3Context();
   // primary form pending state
-  const [pending, setPending] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -98,9 +98,9 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
       requestErc20AllowanceStatus !== "loading" &&
       checkErc20AllowanceStatus !== "loading"
     ) {
-      setPending(false);
+      setIsPending(false);
     } else {
-      setPending(true);
+      setIsPending(true);
     }
   }, [
     checkPermStatus,
@@ -111,7 +111,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   // request allowance necessary to create loan with these term
   const handleRequestAllowance = useCallback(async () => {
     if (provider && address) {
-      setPending(true);
+      setIsPending(true);
       const result = await dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
@@ -384,7 +384,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                   </Box>
                 </Box>
               </Box>
-              {!pending && (
+              {!isPending && (
                 <Button
                   variant="contained"
                   onClick={handleRequestAllowance}
@@ -396,7 +396,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                   Allow Liqd to Access your {currency?.symbol}
                 </Button>
               )}
-              {pending && (
+              {isPending && (
                 <Button variant="contained" disabled sx={{ width: "100%", mt: 4 }}>
                   <CircularProgress />
                 </Button>

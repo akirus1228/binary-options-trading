@@ -26,6 +26,7 @@ import {
   checkErc20Allowance,
   loadErc20Balance,
   loadPlatformFee,
+  networks,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   selectErc20BalanceByAddress,
@@ -177,6 +178,9 @@ export const LoanConfirmation = ({
         status: ListingStatus.Completed,
         asset: { ...listing.asset, status: AssetStatus.Locked },
       },
+      lendingContractAddress:
+        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
+        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS"],
       term: listing.term,
       status: LoanStatus.Active,
     };
@@ -186,42 +190,36 @@ export const LoanConfirmation = ({
       provider,
       networkId: desiredNetworkId,
     };
-
+    let createLoanResult;
     try {
+      createLoanResult = await createLoan(createLoanRequest).unwrap();
       const createLoanContractResult = await dispatch(
         contractCreateLoan(createLoanParams)
       ).unwrap();
-      console.log(createLoanContractResult);
-      if (!createLoanContractResult) return;
-      const createLoanResult = await createLoan(createLoanRequest).unwrap();
-      if (typeof createLoanContractResult !== "number") {
-        dispatch(
-          addAlert({
-            message: "There was an error. Please try again.",
-          })
-        );
-        resetPartialLoan(createLoanResult.id || "");
-        resetCreateLoan();
-        return;
-      }
 
+      if (!createLoanContractResult) {
+        resetCreateLoan();
+        resetPartialLoan(createLoanResult?.id || "");
+        return; //todo: throw nice error
+      }
       createLoanRequest.contractLoanId = createLoanContractResult;
       createLoanRequest.id = createLoanResult.id;
-      const updateLoanResult = await updateLoan(createLoanRequest).unwrap();
-      console.log(updateLoanResult);
+      await updateLoan(createLoanRequest).unwrap();
+      resetUpdateLoan();
+      dispatch(
+        addAlert({
+          message:
+            "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
+        })
+      );
+      handleClose();
     } catch (e) {
       console.log(e);
+      if (createLoanResult) {
+        resetPartialLoan(createLoanResult?.id || "");
+      }
       return;
     }
-
-    resetUpdateLoan();
-    dispatch(
-      addAlert({
-        message:
-          "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
-      })
-    );
-    handleClose();
   }, [listing, provider, listing.asset, allowance, user.address, platformFees]);
 
   // request allowance necessary to complete txn
