@@ -116,7 +116,7 @@ export const BorrowerListingDetails = (
                   })
                 }
               >
-                <Typography>
+                <Typography component="span">
                   {formatCurrency(listing.term.amount, 2).replace("$", "")}
                 </Typography>
               </Tooltip>
@@ -144,7 +144,7 @@ export const BorrowerListingDetails = (
                   })
                 }
               >
-                <Typography>
+                <Typography component="span">
                   {formatCurrency(repaymentTotal, 2).replace("$", "")}
                 </Typography>
               </Tooltip>

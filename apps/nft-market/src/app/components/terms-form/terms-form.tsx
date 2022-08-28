@@ -12,7 +12,6 @@ import {
 import {
   Box,
   Button,
-  CircularProgress,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -170,10 +169,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       erc20TokenAddress: currency?.currentAddress || "",
     })
   );
-
-  useEffect(() => {
-    console.table(erc20Allowance);
-  }, [erc20Allowance]);
 
   const amountGwei = useMemo(() => {
     const [integerPart, decimalPart] = amount.split(".");
@@ -445,17 +440,15 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   useEffect(() => {
-    console.log("currency :", currency);
-    if (currency && preFillPrice) {
-      if (
-        !props?.offerTerm ||
-        (props.offerTerm &&
-          currency.currentAddress.toLowerCase() !==
-            props?.offerTerm?.currencyAddress.toLowerCase())
-      )
-        handleAmountChange((preFillPrice / currency.lastPrice).toString());
-    } else if (currency) {
-      handleAmountChange(amount);
+    if (!currency) {
+      return;
+    }
+    if (
+      currency.currentAddress.toLowerCase() === currentTerm?.currencyAddress.toLowerCase()
+    ) {
+      handleAmountChange(currentTerm?.amount.toString() || "1");
+    } else if (preFillPrice) {
+      handleAmountChange((preFillPrice / currency.lastPrice).toString());
     }
   }, [currency]);
 
@@ -743,11 +736,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             Allow Liqd to Access your {currency?.symbol}
           </Button>
         )}
-      {pending && (
-        <Button variant="contained" disabled>
-          <CircularProgress size={"1.75em"} />
-        </Button>
-      )}
       <ConfirmDialog
         title="Confirm Create Offer"
         open={confirmOpen}

@@ -259,7 +259,7 @@ export const AssetDetails = ({
                 }}
                 className="dark"
               />
-              <Typography sx={{ mx: "10px" }}>
+              <Typography component="span" sx={{ mx: "10px" }}>
                 <div
                   style={{
                     background: "black",
