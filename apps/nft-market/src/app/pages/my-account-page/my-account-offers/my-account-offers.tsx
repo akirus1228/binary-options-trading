@@ -84,7 +84,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
         <OffersList
           offers={activeOffersAsBorrower}
           fields={offerListFields}
-          isLoading={isOffersAsBorrowerLoading || isOffersAsLenderLoading}
+          isLoading={isOffersAsBorrowerLoading && isOffersAsLenderLoading}
           title="Current offers as a borrower"
         />
       </Box>
