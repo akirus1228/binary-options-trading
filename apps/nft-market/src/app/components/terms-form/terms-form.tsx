@@ -176,7 +176,19 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [erc20Allowance]);
 
   const amountGwei = useMemo(() => {
-    return ethers.utils.parseUnits(amount.toString() || "0", currency?.decimals);
+    const [integerPart, decimalPart] = amount.split(".");
+    if (
+      currency?.decimals &&
+      decimalPart?.length &&
+      decimalPart?.length > currency?.decimals
+    ) {
+      return ethers.utils.parseUnits(
+        integerPart + "." + decimalPart.substring(0, currency?.decimals),
+        currency?.decimals
+      );
+    } else {
+      return ethers.utils.parseUnits(amount.toString() || "0", currency?.decimals);
+    }
   }, [amount, currency.symbol]);
 
   const platformFeeAmtGwei: BigNumber = useMemo(() => {
@@ -419,8 +431,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     setApr(event.target.value);
   };
 
-  const handleAmountChange = (event: BaseSyntheticEvent) => {
-    const newAmount: string = event.target.value;
+  const handleAmountChange = (newAmount: string) => {
     const [integerPart, decimalPart] = newAmount.split(".");
     if (
       currency?.decimals &&
@@ -442,7 +453,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           currency.currentAddress.toLowerCase() !==
             props?.offerTerm?.currencyAddress.toLowerCase())
       )
-        setAmount((preFillPrice / currency.lastPrice).toString());
+        handleAmountChange((preFillPrice / currency.lastPrice).toString());
+    } else if (currency) {
+      handleAmountChange(amount);
     }
   }, [currency]);
 
@@ -563,7 +576,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             <TextField
               type="number"
               value={amount}
-              onChange={handleAmountChange}
+              onChange={(e: BaseSyntheticEvent) => handleAmountChange(e.target.value)}
               variant="standard"
               InputProps={{
                 disableUnderline: true,
