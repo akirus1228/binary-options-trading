@@ -125,6 +125,7 @@ export const NotificationMenu = (): JSX.Element => {
           vertical: "top",
           horizontal: "right",
         }}
+        disableScrollLock={true}
       >
         <Box className="flex fr fj-sb" sx={{ mt: "1em" }}>
           <span>Notifications</span>

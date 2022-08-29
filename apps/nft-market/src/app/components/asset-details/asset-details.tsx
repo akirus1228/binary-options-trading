@@ -180,6 +180,7 @@ export const AssetDetails = ({
                     vertical: "bottom",
                     horizontal: "left",
                   }}
+                  disableScrollLock={true}
                 >
                   {viewLinks.map((link) => (
                     <Link
