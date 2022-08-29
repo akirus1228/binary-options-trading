@@ -31,7 +31,7 @@ export const BalanceVaultDetailsPage = (
 
   return (
     <Box className="flexCenterRow" id="content-centering-container">
-      <Box className="grid" sx={{ m: "2em" }} maxWidth="xl" id="grid-container">
+      <Box className="grid g-x-2" sx={{ m: "2em" }} maxWidth="xl" id="grid-container">
         <Box className="rounded-lg" sx={{ border: borderStyle }} id="left-box">
           <Box
             className="flex fr fj-sb ai-c gap-x-2"
