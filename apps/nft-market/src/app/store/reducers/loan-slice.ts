@@ -9,7 +9,12 @@ import {
   usdbLending,
 } from "@fantohm/shared-web3";
 import { BackendLoadingStatus, Loan } from "../../types/backend-types";
-import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
+import {
+  ListingCancelAsyncThunk,
+  LoanAsyncThunk,
+  LoanDetailsAsyncThunk,
+  RepayLoanAsyncThunk,
+} from "./interfaces";
 import { RootState } from "..";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
 import {
@@ -268,6 +273,35 @@ export const forceCloseLoan = createAsyncThunk(
       } else {
         return null;
       }
+    } catch (e) {
+      return null;
+    }
+  }
+);
+
+/*
+listingCancel: add cancelled listing signature
+params:
+- sig: bytes string;
+- provider: JsonRpcProvider;
+- networkId: number;
+returns: number | boolean
+*/
+export const listingCancel = createAsyncThunk(
+  "loan/listingCancel",
+  async ({ sig, provider, networkId }: ListingCancelAsyncThunk) => {
+    const signer = provider.getSigner();
+    const lendingContract = new ethers.Contract(
+      networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
+        networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      usdbLending,
+      signer
+    );
+    const liquidateTxn: ContractTransaction = await lendingContract[
+      "setCancelledSignature"
+    ](sig);
+    try {
+      return await liquidateTxn.wait();
     } catch (e) {
       return null;
     }
