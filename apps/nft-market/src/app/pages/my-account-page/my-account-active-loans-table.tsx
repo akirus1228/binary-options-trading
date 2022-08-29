@@ -54,10 +54,12 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
   }, [loan]);
 
   useEffect(() => {
-    if (!loan || !loan.contractLoanId || !provider) return;
+    if (!loan || loan.contractLoanId == null || !provider) {
+      return;
+    }
     dispatch(
       getLoanDetailsFromContract({
-        loanId: loan.contractLoanId,
+        loan,
         networkId: desiredNetworkId,
         provider,
       })

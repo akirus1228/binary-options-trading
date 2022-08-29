@@ -39,6 +39,7 @@ import {
   useWeb3Context,
   checkNftPermission,
   prettifySeconds,
+  networks,
 } from "@fantohm/shared-web3";
 import style from "./offers-list.module.scss";
 import SimpleProfile from "../simple-profile/simple-profile";
@@ -196,6 +197,9 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         status: ListingStatus.Completed,
         asset: { ...asset, status: AssetStatus.Locked },
       },
+      lendingContractAddress:
+        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
+        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS"],
       term: offer.term,
       status: LoanStatus.Active,
       offerId: offer.id,
@@ -212,17 +216,17 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       createLoanResult = await createLoan(createLoanRequest).unwrap();
       if (!createLoanResult) {
         setIsPending(false);
-        return;
+        return; //todo: throw nice error
       }
       const createLoanContractResult = await dispatch(
         contractCreateLoan(createLoanParams)
       ).unwrap();
 
-      if (typeof createLoanContractResult !== "number") {
+      if (!createLoanContractResult) {
         setIsPending(false);
         resetCreateLoan();
-        resetPartialLoan(createLoanResult.id);
-        return;
+        resetPartialLoan(createLoanResult?.id || "");
+        return; //todo: throw nice error
       }
 
       createLoanRequest.contractLoanId = createLoanContractResult as number;

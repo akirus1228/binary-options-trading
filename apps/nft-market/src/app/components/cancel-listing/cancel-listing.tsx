@@ -13,11 +13,10 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { AssetStatus, Listing, ListingStatus } from "../../types/backend-types";
 import { useUpdateListingMutation } from "../../api/backend-api";
 import { AppDispatch, RootState } from "../../store";
-import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { addAlert } from "../../store/reducers/app-slice";
-import { updateAsset } from "../../store/reducers/asset-slice";
 import style from "./cancel-listing.module.scss";
-import { updateListing } from "../../store/reducers/listing-slice";
+import { listingCancel } from "../../store/reducers/loan-slice";
+import { desiredNetworkId } from "../../constants/network";
 
 export interface CancelListingProps {
   listing: Listing;
@@ -40,7 +39,7 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
     },
   ] = useUpdateListingMutation();
   // primary form pending state
-  const [pending, setPending] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const isOwner = useMemo(() => {
     return address.toLowerCase() === props.listing.asset?.owner?.address.toLowerCase();
@@ -66,9 +65,9 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
       requestErc20AllowanceStatus !== "loading" &&
       checkErc20AllowanceStatus !== "loading"
     ) {
-      setPending(false);
+      setIsPending(false);
     } else {
-      setPending(true);
+      setIsPending(true);
     }
   }, [
     checkPermStatus,
@@ -80,20 +79,37 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
   const handleCancelListing = async () => {
     if (!provider || !chainId || !props.listing) return;
     // send listing data to backend
-    setPending(true);
-    const cancelledListing = {
-      ...props.listing,
-      asset: { ...props.listing.asset, status: AssetStatus.Ready },
-      status: ListingStatus.Cancelled,
-    };
+    setIsPending(true);
+    try {
+      const listingCancelParams = {
+        sig: props?.listing?.term?.signature,
+        provider,
+        networkId: desiredNetworkId,
+      };
+      const listingCancelResult = await dispatch(
+        listingCancel(listingCancelParams)
+      ).unwrap();
+      if (!listingCancelResult) {
+        setIsPending(false);
+        return; //todo: throw nice error
+      }
+      const cancelledListing = {
+        ...props.listing,
+        asset: { ...props.listing.asset, status: AssetStatus.Ready },
+        status: ListingStatus.Cancelled,
+      };
 
-    updateListingApi(cancelledListing).then(() => {
-      updateListingReset();
-      props.onClose(true);
-      setPending(false);
-    });
-    dispatch(addAlert({ message: "Listing has been cancelled." }));
-    return;
+      updateListingApi(cancelledListing).then(() => {
+        updateListingReset();
+        props.onClose(true);
+        setIsPending(false);
+        dispatch(addAlert({ message: "Listing has been cancelled." }));
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -114,12 +130,12 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
           <Box className="flex fc" sx={{ padding: "1em" }}>
             <Typography>Do you want to cancel listing?</Typography>
           </Box>
-          {isOwner && !pending && props.listing && (
+          {isOwner && !isPending && props.listing && (
             <Button variant="contained" onClick={handleCancelListing}>
               Cancel Listing (no cost)
             </Button>
           )}
-          {pending && (
+          {isPending && (
             <Button variant="contained" disabled>
               <CircularProgress />
             </Button>

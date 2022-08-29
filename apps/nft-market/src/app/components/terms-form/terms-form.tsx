@@ -12,6 +12,7 @@ import {
 import {
   Box,
   Button,
+  CircularProgress,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -105,7 +106,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     return durationDay / termTypes[exactType];
   };
   // primary form pending state
-  const [pending, setPending] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   // primary term variables
   const [duration, setDuration] = useState(
     currentTerm?.duration != null
@@ -218,7 +219,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // request permission to access the NFT from the contract
   const handlePermissionRequest = useCallback(() => {
     if (chainId && address && props.asset.assetContractAddress && provider) {
-      setPending(true);
+      setIsPending(true);
       dispatch(
         requestNftPermission({
           networkId: chainId,
@@ -270,9 +271,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       requestErc20AllowanceStatus !== "loading" &&
       checkErc20AllowanceStatus !== "loading"
     ) {
-      setPending(false);
+      setIsPending(false);
     } else {
-      setPending(true);
+      setIsPending(true);
     }
   }, [
     checkPermStatus,
@@ -297,7 +298,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       return;
     }
     // send listing data to backend
-    setPending(true);
+    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -341,7 +342,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         props.onClose(true);
       }
     } else {
-      setPending(false);
+      setIsPending(false);
     }
     return;
   };
@@ -349,7 +350,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const handleUpdateTerms = async () => {
     if (!provider || !chainId || !props.listing) return;
     // send listing data to backend
-    setPending(true);
+    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -390,7 +391,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     } catch (err) {
       // most likely the user rejected the signature
     } finally {
-      setPending(false);
+      setIsPending(false);
     }
 
     return;
@@ -514,7 +515,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // request allowance necessary to create loan with these term
   const handleRequestAllowance = useCallback(() => {
     if (provider && address && props.listing) {
-      setPending(true);
+      setIsPending(true);
       dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
@@ -652,7 +653,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           </Box>
         </Box>
       </Box>
-      {isOwner && !hasPermission && !pending && (
+      {isOwner && !hasPermission && !isPending && (
         <Button
           variant="contained"
           onClick={handlePermissionRequest}
@@ -668,7 +669,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           Allow Liqd to Access your NFT
         </Button>
       )}
-      {isOwner && hasPermission && !pending && !props.listing && (
+      {isOwner && hasPermission && !isPending && !props.listing && (
         <Button
           variant="contained"
           onClick={handleCreateListing}
@@ -684,7 +685,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           Get liquidity
         </Button>
       )}
-      {isOwner && hasPermission && !pending && props.listing && (
+      {isOwner && hasPermission && !isPending && props.listing && (
         <Button
           variant="contained"
           onClick={handleUpdateTerms}
@@ -694,7 +695,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         </Button>
       )}
       {!isOwner && // not owner, making an offer
-        !pending && // no pending actions
+        !isPending && // no pending actions
         props.listing && // listing exists
         !!erc20Allowance && // has allowance
         typeof platformFees[currency?.currentAddress] !== "undefined" && // has platform fees
@@ -712,13 +713,13 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             {props?.offerTerm ? "Edit" : "Make"} Offer
           </Button>
         )}
-      {insufficientBalance && !isOwner && (
+      {insufficientBalance && !isOwner && !isPending && (
         <Button variant="contained" disabled={true}>
           Insufficient funds
         </Button>
       )}
       {!isOwner &&
-        !pending &&
+        !isPending &&
         props.listing &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
         !insufficientBalance &&
@@ -736,6 +737,11 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             Allow Liqd to Access your {currency?.symbol}
           </Button>
         )}
+      {isPending && (
+        <Button variant="contained" disabled>
+          <CircularProgress size={"1.75em"} />
+        </Button>
+      )}
       <ConfirmDialog
         title="Confirm Create Offer"
         open={confirmOpen}

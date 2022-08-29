@@ -97,7 +97,7 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
           const staticProvider = await chains[desiredNetworkId].provider;
           const loanDetail = await dispatch(
             getLoanDetailsFromContract({
-              loanId: loan.contractLoanId,
+              loan,
               networkId: desiredNetworkId,
               provider: staticProvider,
             } as LoanDetailsAsyncThunk)

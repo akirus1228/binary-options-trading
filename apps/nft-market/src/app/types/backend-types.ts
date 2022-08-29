@@ -258,6 +258,7 @@ export type Loan = {
   currencyPrice?: number;
   amountDue?: number;
   offerId?: string;
+  lendingContractAddress?: string;
 } & StandardBackendObject;
 
 export type Updatable = {
