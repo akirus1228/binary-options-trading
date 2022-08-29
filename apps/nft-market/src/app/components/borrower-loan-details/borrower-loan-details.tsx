@@ -110,10 +110,12 @@ export const BorrowerLoanDetails = ({
   }, [user.address, provider, loanDetails.currency, erc20Allowance]);
 
   useEffect(() => {
-    if (!loan || !loan.contractLoanId || !provider) return;
+    if (!loan || loan.contractLoanId == null || !provider) {
+      return;
+    }
     dispatch(
       getLoanDetailsFromContract({
-        loanId: loan.contractLoanId,
+        loan,
         networkId: desiredNetworkId,
         provider,
       })
@@ -123,10 +125,12 @@ export const BorrowerLoanDetails = ({
   }, [loan]);
 
   const handleRepayLoan = useCallback(async () => {
-    if (!loan.contractLoanId || !provider) return;
+    if (loan.contractLoanId == null || !provider) {
+      return;
+    }
     if (erc20Allowance && erc20Allowance.gte(loanDetails.amountDueGwei)) {
       const repayLoanParams = {
-        loanId: loan.contractLoanId,
+        loan,
         amountDue: loanDetails.amountDueGwei,
         provider,
         networkId: desiredNetworkId,
@@ -286,7 +290,7 @@ export const BorrowerLoanDetails = ({
                   })
                 }
               >
-                <Typography>
+                <Typography component="span">
                   {formatCurrency(loan.term.amount, 2).replace("$", "")}
                 </Typography>
               </Tooltip>
@@ -314,7 +318,7 @@ export const BorrowerLoanDetails = ({
                   })
                 }
               >
-                <Typography>
+                <Typography component="span">
                   {formatCurrency(loanDetails.amountDue, 2).replace("$", "")}
                 </Typography>
               </Tooltip>

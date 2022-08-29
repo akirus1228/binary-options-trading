@@ -106,7 +106,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     return durationDay / termTypes[exactType];
   };
   // primary form pending state
-  const [pending, setPending] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   // primary term variables
   const [duration, setDuration] = useState(
     currentTerm?.duration != null
@@ -171,12 +171,20 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     })
   );
 
-  useEffect(() => {
-    console.table(erc20Allowance);
-  }, [erc20Allowance]);
-
   const amountGwei = useMemo(() => {
-    return ethers.utils.parseUnits(amount.toString() || "0", currency?.decimals);
+    const [integerPart, decimalPart] = amount.split(".");
+    if (
+      currency?.decimals &&
+      decimalPart?.length &&
+      decimalPart?.length > currency?.decimals
+    ) {
+      return ethers.utils.parseUnits(
+        integerPart + "." + decimalPart.substring(0, currency?.decimals),
+        currency?.decimals
+      );
+    } else {
+      return ethers.utils.parseUnits(amount.toString() || "0", currency?.decimals);
+    }
   }, [amount, currency.symbol]);
 
   const platformFeeAmtGwei: BigNumber = useMemo(() => {
@@ -211,7 +219,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // request permission to access the NFT from the contract
   const handlePermissionRequest = useCallback(() => {
     if (chainId && address && props.asset.assetContractAddress && provider) {
-      setPending(true);
+      setIsPending(true);
       dispatch(
         requestNftPermission({
           networkId: chainId,
@@ -263,9 +271,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       requestErc20AllowanceStatus !== "loading" &&
       checkErc20AllowanceStatus !== "loading"
     ) {
-      setPending(false);
+      setIsPending(false);
     } else {
-      setPending(true);
+      setIsPending(true);
     }
   }, [
     checkPermStatus,
@@ -290,7 +298,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       return;
     }
     // send listing data to backend
-    setPending(true);
+    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -334,7 +342,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         props.onClose(true);
       }
     } else {
-      setPending(false);
+      setIsPending(false);
     }
     return;
   };
@@ -342,7 +350,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const handleUpdateTerms = async () => {
     if (!provider || !chainId || !props.listing) return;
     // send listing data to backend
-    setPending(true);
+    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -383,7 +391,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     } catch (err) {
       // most likely the user rejected the signature
     } finally {
-      setPending(false);
+      setIsPending(false);
     }
 
     return;
@@ -419,8 +427,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     setApr(event.target.value);
   };
 
-  const handleAmountChange = (event: BaseSyntheticEvent) => {
-    const newAmount: string = event.target.value;
+  const handleAmountChange = (newAmount: string) => {
     const [integerPart, decimalPart] = newAmount.split(".");
     if (
       currency?.decimals &&
@@ -434,15 +441,15 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   };
 
   useEffect(() => {
-    console.log("currency :", currency);
-    if (currency && preFillPrice) {
-      if (
-        !props?.offerTerm ||
-        (props.offerTerm &&
-          currency.currentAddress.toLowerCase() !==
-            props?.offerTerm?.currencyAddress.toLowerCase())
-      )
-        setAmount((preFillPrice / currency.lastPrice).toString());
+    if (!currency) {
+      return;
+    }
+    if (
+      currency.currentAddress.toLowerCase() === currentTerm?.currencyAddress.toLowerCase()
+    ) {
+      handleAmountChange(currentTerm?.amount.toString() || "1");
+    } else if (preFillPrice) {
+      handleAmountChange((preFillPrice / currency.lastPrice).toString());
     }
   }, [currency]);
 
@@ -508,7 +515,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // request allowance necessary to create loan with these term
   const handleRequestAllowance = useCallback(() => {
     if (provider && address && props.listing) {
-      setPending(true);
+      setIsPending(true);
       dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
@@ -563,7 +570,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             <TextField
               type="number"
               value={amount}
-              onChange={handleAmountChange}
+              onChange={(e: BaseSyntheticEvent) => handleAmountChange(e.target.value)}
               variant="standard"
               InputProps={{
                 disableUnderline: true,
@@ -646,7 +653,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           </Box>
         </Box>
       </Box>
-      {isOwner && !hasPermission && !pending && (
+      {isOwner && !hasPermission && !isPending && (
         <Button
           variant="contained"
           onClick={handlePermissionRequest}
@@ -662,7 +669,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           Allow Liqd to Access your NFT
         </Button>
       )}
-      {isOwner && hasPermission && !pending && !props.listing && (
+      {isOwner && hasPermission && !isPending && !props.listing && (
         <Button
           variant="contained"
           onClick={handleCreateListing}
@@ -678,7 +685,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
           Get liquidity
         </Button>
       )}
-      {isOwner && hasPermission && !pending && props.listing && (
+      {isOwner && hasPermission && !isPending && props.listing && (
         <Button
           variant="contained"
           onClick={handleUpdateTerms}
@@ -688,7 +695,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         </Button>
       )}
       {!isOwner && // not owner, making an offer
-        !pending && // no pending actions
+        !isPending && // no pending actions
         props.listing && // listing exists
         !!erc20Allowance && // has allowance
         typeof platformFees[currency?.currentAddress] !== "undefined" && // has platform fees
@@ -706,13 +713,13 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             {props?.offerTerm ? "Edit" : "Make"} Offer
           </Button>
         )}
-      {insufficientBalance && !isOwner && (
+      {insufficientBalance && !isOwner && !isPending && (
         <Button variant="contained" disabled={true}>
           Insufficient funds
         </Button>
       )}
       {!isOwner &&
-        !pending &&
+        !isPending &&
         props.listing &&
         typeof platformFees[currency?.currentAddress] !== "undefined" &&
         !insufficientBalance &&
@@ -730,7 +737,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             Allow Liqd to Access your {currency?.symbol}
           </Button>
         )}
-      {pending && (
+      {isPending && (
         <Button variant="contained" disabled>
           <CircularProgress size={"1.75em"} />
         </Button>

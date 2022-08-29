@@ -19,9 +19,8 @@ import store, { RootState } from "../../store";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import {
   forceCloseLoan,
-  getLoanDetailsFromContract,
   LoanDetails,
-  repayLoan,
+  getLoanDetailsFromContract,
 } from "../../store/reducers/loan-slice";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { Asset, AssetStatus, Loan, LoanStatus } from "../../types/backend-types";
@@ -55,10 +54,12 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   const [updateLoan] = useUpdateLoanMutation();
 
   useEffect(() => {
-    if (!loan || !loan.contractLoanId || !provider) return;
+    if (!loan || loan.contractLoanId == null || !provider) {
+      return;
+    }
     dispatch(
       getLoanDetailsFromContract({
-        loanId: loan.contractLoanId,
+        loan,
         networkId: desiredNetworkId,
         provider,
       })
@@ -68,7 +69,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   }, [loan]);
 
   const handleForecloseLoan = useCallback(async () => {
-    if (!loan.contractLoanId || !provider) {
+    if (loan.contractLoanId == null || !provider) {
       console.warn("Missing provider");
       return;
     }
@@ -76,7 +77,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
     try {
       const forceCloseLoanResult = await dispatch(
         forceCloseLoan({
-          loanId: +loan.contractLoanId,
+          loan,
           provider,
           networkId: desiredNetworkId,
         })

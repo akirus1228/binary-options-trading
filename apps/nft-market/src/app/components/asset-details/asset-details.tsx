@@ -63,7 +63,7 @@ export const AssetDetails = ({
     collection: contractAddress,
     tokenId,
   });
-  const [pending, setPending] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
     useResetPartialLoanMutation();
   const { data: loan } = useGetLoansQuery(
@@ -113,9 +113,9 @@ export const AssetDetails = ({
     if (!loan) {
       return;
     }
-    setPending(true);
+    setIsPending(true);
     resetPartialLoan(loan[0].id).then(() => {
-      setPending(false);
+      setIsPending(false);
       resetResetPartialLoan();
       dispatch(addAlert({ message: "Locked has been cancelled." }));
     });
@@ -259,7 +259,7 @@ export const AssetDetails = ({
                 }}
                 className="dark"
               />
-              <Typography sx={{ mx: "10px" }}>
+              <Typography component="span" sx={{ mx: "10px" }}>
                 <div
                   style={{
                     background: "black",
@@ -275,8 +275,8 @@ export const AssetDetails = ({
               {isOwner &&
                 asset?.status === AssetStatus.Locked &&
                 loan &&
-                !loan[0]?.contractLoanId &&
-                (pending ? (
+                loan[0]?.contractLoanId == null &&
+                (isPending ? (
                   <Button variant="contained" disabled>
                     <CircularProgress />
                   </Button>
