@@ -123,13 +123,17 @@ export function shorten(str: string) {
   return `${str.slice(0, 6)}...${str.slice(str.length - 4)}`;
 }
 
-export function formatCurrency(c: number, precision = 0) {
-  return new Intl.NumberFormat("en-US", {
+export function formatCurrency(c: number, precision = 0): string {
+  if (precision === 7) return "$0"; // show decimals by 6 digits at most
+  const currencyStr = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: precision,
     minimumFractionDigits: precision,
   }).format(c);
+  if (parseFloat(currencyStr.replace("$", "")) === 0)
+    return formatCurrency(c, precision + 1);
+  return currencyStr;
 }
 
 export function trim(number = 0, precision = 0) {
