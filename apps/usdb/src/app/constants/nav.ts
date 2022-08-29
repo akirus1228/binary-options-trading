@@ -27,11 +27,16 @@ export const headerPages: Page[] = [
     href: "https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1",
     params: { comingSoon: false },
   },
-  { title: "Vault", href: "/", params: { comingSoon: true } },
+  { title: "Vault", href: "/balanceVault", params: { comingSoon: false } },
   // { title: "Backed NFT", href: "/backed-nft", params: { comingSoon: false } },
   // { title: "Amps", href: "/amps", params: { comingSoon: true } },
 ];
 
+export const balanceVaultPages: Page[] = [
+  { title: "Vault", href: "/", params: { comingSoon: false } },
+  { title: "Portofolio", href: "/", params: { comingSoon: false } },
+  { title: "Create Vault", href: "/", params: { comingSoon: false } },
+];
 export const balanceheaderPages: Page[] = [
   { title: "About", href: "/about", params: { comingSoon: false } },
   { title: "USDB", href: "/usdb", params: { comingSoon: false } },
@@ -53,7 +58,7 @@ export const footerItems: FooterItem[] = [
         title: "Bridge",
         href: "https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1",
       },
-      { title: "Vault", href: "", params: { comingSoon: true } },
+      { title: "Vault", href: "", params: { comingSoon: false } },
       // { title: "Backed NFT", href: "/backed-nft" },
       // { title: "Amps", href: "/amps", params: { comingSoon: true } },
     ],

@@ -39,6 +39,7 @@ import HomePage from "./pages/home/home-page";
 import FhmPage from "./pages/fhm/fhm-page";
 import Typography from "@mui/material/Typography";
 import style from "./pages/trad-fi/deposit/deposit.module.scss";
+import BalanceVault from "./pages/balance-vault/balanceVault";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -186,6 +187,7 @@ export const App = (): JSX.Element => {
             <Route path="/backed-nft" element={<MintNftPage />} />
             <Route path="/amps" element={<Amps />} />
             <Route path="/my-account" element={<MyAccount />} />
+            <Route path="/balanceVault" element={<BalanceVault />} />
             <Route
               path="*"
               element={

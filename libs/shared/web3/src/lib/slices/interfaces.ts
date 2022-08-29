@@ -236,3 +236,15 @@ export type Erc20AllowanceAsyncThunk = {
   amount: BigNumber;
 } & InteractiveWalletErc20AsyncThunk;
 
+export type BalanceVaultManagerAsyncThunk = {
+  readonly networkId: number;
+  readonly provider: JsonRpcProvider;
+  readonly skip: string;
+  readonly limit: string;
+  readonly callback?: any;
+};
+export type BalanceVaultLengthAsyncThunk = {
+  readonly networkId: number;
+  readonly provider: JsonRpcProvider;
+  readonly callback?: any;
+};
