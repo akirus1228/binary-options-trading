@@ -86,6 +86,11 @@ input[type=number] {
   grid-gap: 2em;
 }
 
+.grid .g-x-2 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 1em;
+}
+
 .grid .g-x-3 {
   grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 1em;
@@ -141,6 +146,11 @@ input[type=number] {
 
 .flex.fw {
   flex-wrap: wrap;
+}
+
+.gap-x-1 {
+  grid-column-gap: 1em;
+  column-gap: 1em;
 }
 
 .gap-x-2 {
