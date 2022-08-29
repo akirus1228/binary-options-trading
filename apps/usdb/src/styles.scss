@@ -77,6 +77,85 @@ input[type=number] {
   height: 100%;
 }
 
+.grid {
+  display: grid;
+}
+
+.grid .auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 2em;
+}
+
+.grid .g-x-3 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 1em;
+}
+
+.flex { 
+  display: flex;
+}
+
+.flex.fj-c {
+  justify-content: center;
+}
+
+.flex.fj-sb {
+  justify-content: space-between;
+}
+
+.flex.fj-sa {
+  justify-content: space-around;
+}
+
+.flex.fj-fe {
+  justify-content: flex-end;
+}
+
+.flex.fj-fs {
+  justify-content: flex-start;
+}
+
+.flex.ai-b {
+  align-items: baseline;
+}
+
+.flex.ai-c {
+  align-items: center;
+}
+
+.flex.ai-s {
+  align-items: stretch;
+}
+
+.flex.ai-fe {
+  align-items: flex-end;
+}
+
+.flex.fr {
+  flex-direction: row;
+}
+
+.flex.fc {
+  flex-direction: column;
+}
+
+.flex.fw {
+  flex-wrap: wrap;
+}
+
+.gap-x-2 {
+  grid-column-gap: 2em;
+  column-gap: 2em;
+}
+
+.rounded {
+  border-radius: 0.75em;
+}
+
+.rounded-lg {
+  border-radius: 3em;
+}
+
 /* experimental animated gradient background
 body {
     background: radial-gradient(ellipse at top, #492e9554, transparent),
