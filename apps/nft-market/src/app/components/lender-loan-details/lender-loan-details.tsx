@@ -166,7 +166,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
                   })
                 }
               >
-                <Typography>
+                <Typography component="span">
                   {formatCurrency(loan.term.amount, 2).replace("$", "")}
                 </Typography>
               </Tooltip>
@@ -194,7 +194,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
                   })
                 }
               >
-                <Typography>
+                <Typography component="span">
                   {formatCurrency(loanDetails.amountDue, 2).replace("$", "")}
                 </Typography>
               </Tooltip>
