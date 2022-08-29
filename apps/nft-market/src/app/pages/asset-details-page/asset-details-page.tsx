@@ -73,7 +73,7 @@ export const AssetDetailsPage = (): JSX.Element => {
 
   const { error: isValidNFTError, isLoading: isValidating } = useValidateNFTQuery(
     asset?.id?.toString() || "",
-    { skip: !asset?.id }
+    { skip: !authSignature || !asset?.id }
   );
 
   // load loans for this contract
