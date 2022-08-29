@@ -187,7 +187,7 @@ export const App = (): JSX.Element => {
             <Route path="/backed-nft" element={<MintNftPage />} />
             <Route path="/amps" element={<Amps />} />
             <Route path="/my-account" element={<MyAccount />} />
-            <Route path="/balanceVault" element={<BalanceVault />} />
+            <Route path="/balance-vault" element={<BalanceVault />} />
             <Route
               path="*"
               element={
