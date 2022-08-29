@@ -18,9 +18,9 @@ import { desiredNetworkId } from "../../constants/network";
 import store, { RootState } from "../../store";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import {
-  forecloseLoan,
-  getLoanDetailsFromContract,
+  forceCloseLoan,
   LoanDetails,
+  getLoanDetailsFromContract,
 } from "../../store/reducers/loan-slice";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { Asset, AssetStatus, Loan, LoanStatus } from "../../types/backend-types";
@@ -54,10 +54,12 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   const [updateLoan] = useUpdateLoanMutation();
 
   useEffect(() => {
-    if (!loan || !loan.contractLoanId || !provider) return;
+    if (!loan || loan.contractLoanId == null || !provider) {
+      return;
+    }
     dispatch(
       getLoanDetailsFromContract({
-        loanId: loan.contractLoanId,
+        loan,
         networkId: desiredNetworkId,
         provider,
       })
@@ -67,34 +69,41 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
   }, [loan]);
 
   const handleForecloseLoan = useCallback(async () => {
-    if (!loan.contractLoanId || !provider) {
-      console.warn("Missing prereqs");
+    if (loan.contractLoanId == null || !provider) {
+      console.warn("Missing provider");
       return;
     }
     setIsPending(true);
-    await dispatch(
-      forecloseLoan({
-        loanId: +loan.contractLoanId,
-        provider,
-        networkId: desiredNetworkId,
-      })
-    ).unwrap();
-
-    const updateLoanRequest: Loan = {
-      ...loan,
-      assetListing: {
-        ...loan.assetListing,
-        asset: {
-          ...loan.assetListing.asset,
-          status: AssetStatus.Ready,
-          wallet: loan.lender.address,
-          owner: loan.lender,
+    try {
+      const forceCloseLoanResult = await dispatch(
+        forceCloseLoan({
+          loan,
+          provider,
+          networkId: desiredNetworkId,
+        })
+      ).unwrap();
+      if (!forceCloseLoanResult) {
+        return; //todo: throw nice error
+      }
+      const updateLoanRequest: Loan = {
+        ...loan,
+        assetListing: {
+          ...loan.assetListing,
+          asset: {
+            ...loan.assetListing.asset,
+            status: AssetStatus.Ready,
+            wallet: loan.lender.address,
+            owner: loan.lender,
+          },
         },
-      },
-      status: LoanStatus.Default,
-    };
-    updateLoan(updateLoanRequest);
-    setIsPending(false);
+        status: LoanStatus.Default,
+      };
+      updateLoan(updateLoanRequest);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsPending(false);
+    }
   }, [loan, provider]);
 
   const canClaim = useMemo(() => {

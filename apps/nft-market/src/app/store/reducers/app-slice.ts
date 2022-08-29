@@ -123,7 +123,6 @@ const appSlice = createSlice({
     },
     setOpenseaStatus: (state, action: PayloadAction<boolean>) => {
       state.isOpenseaUp = action.payload;
-      console.log("opensea status: " + action.payload);
     },
   },
   extraReducers: (builder) => {

@@ -6,6 +6,7 @@ import {
 } from "@fantohm/shared-web3";
 import { BigNumber } from "ethers";
 import { Asset, BackendAssetQueryParams, Loan, Terms } from "../../types/backend-types";
+import { LoanDetails } from "./loan-slice";
 
 // nft-marketplace slice
 export interface SignerAsyncThunk extends IBaseAddressAsyncThunk, IInteractiveAsyncThunk {
@@ -29,13 +30,19 @@ export interface LoanAsyncThunk extends IBaseAsyncThunk {
 }
 
 export interface LoanDetailsAsyncThunk extends IBaseAsyncThunk {
-  readonly loanId: number;
+  readonly loan: Loan;
+  readonly networkId: number;
+  readonly provider: JsonRpcProvider;
+}
+
+export interface ListingCancelAsyncThunk extends IBaseAsyncThunk {
+  readonly sig: string;
   readonly networkId: number;
   readonly provider: JsonRpcProvider;
 }
 
 export interface RepayLoanAsyncThunk extends IBaseAsyncThunk {
-  readonly loanId: number;
+  readonly loan: Loan | LoanDetails;
   readonly amountDue: BigNumber;
   readonly networkId: number;
   readonly provider: JsonRpcProvider;

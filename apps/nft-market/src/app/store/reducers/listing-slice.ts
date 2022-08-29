@@ -46,6 +46,7 @@ export const createListing = createAsyncThunk(
         term
       );
       if (typeof listing !== "string") {
+        dispatch(updateListing(listing));
         dispatch(updateAsset({ ...listing.asset, owner: thisState.backend.user }));
       } else {
         return rejectWithValue(listing);

@@ -149,10 +149,12 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
   const [loanDetails, setLoanDetails] = useState<LoanDetails>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
-    if (!loan || !loan.contractLoanId || !provider) return;
+    if (!loan || loan.contractLoanId == null || !provider) {
+      return;
+    }
     dispatch(
       getLoanDetailsFromContract({
-        loanId: loan.contractLoanId,
+        loan,
         networkId: desiredNetworkId,
         provider,
       })
