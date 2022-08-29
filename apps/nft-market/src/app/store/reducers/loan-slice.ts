@@ -9,12 +9,7 @@ import {
   usdbLending,
 } from "@fantohm/shared-web3";
 import { BackendLoadingStatus, Loan } from "../../types/backend-types";
-import {
-  ListingCancelAsyncThunk,
-  LoanAsyncThunk,
-  LoanDetailsAsyncThunk,
-  RepayLoanAsyncThunk,
-} from "./interfaces";
+import { LoanAsyncThunk, LoanDetailsAsyncThunk, RepayLoanAsyncThunk } from "./interfaces";
 import { RootState } from "..";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
 import {
@@ -247,7 +242,7 @@ params:
 - networkId: number;
 returns: number | boolean
 */
-export const forecloseLoan = createAsyncThunk(
+export const forceCloseLoan = createAsyncThunk(
   "loan/forecloseLoan",
   async ({ loan, provider, networkId }: LoanDetailsAsyncThunk) => {
     const signer = provider.getSigner();
@@ -264,7 +259,8 @@ export const forecloseLoan = createAsyncThunk(
     try {
       const response: ContractReceipt = await liquidateTxn.wait();
       const event: Event | undefined = response.events?.find(
-        (event: Event) => !!event.event && event.event === "LoanTerminated"
+        (event: RepayLoanEvent | Event) =>
+          !!event.event && event.event === "LoanTerminated"
       );
       if (event && event.args) {
         const [, , , , loanId] = event.args;
@@ -272,35 +268,6 @@ export const forecloseLoan = createAsyncThunk(
       } else {
         return null;
       }
-    } catch (e) {
-      return null;
-    }
-  }
-);
-
-/*
-listingCancel: add cancelled listing signature
-params:
-- sig: bytes string;
-- provider: JsonRpcProvider;
-- networkId: number;
-returns: number | boolean
-*/
-export const listingCancel = createAsyncThunk(
-  "loan/listingCancel",
-  async ({ sig, provider, networkId }: ListingCancelAsyncThunk) => {
-    const signer = provider.getSigner();
-    const lendingContract = new ethers.Contract(
-      networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
-        networks[networkId].addresses["USDB_LENDING_ADDRESS"],
-      usdbLending,
-      signer
-    );
-    const liquidateTxn: ContractTransaction = await lendingContract[
-      "setCancelledSignature"
-    ](sig);
-    try {
-      return await liquidateTxn.wait();
     } catch (e) {
       return null;
     }
@@ -396,14 +363,14 @@ const loansSlice = createSlice({
     builder.addCase(repayLoan.rejected, (state, action) => {
       state.repayLoanStatus = BackendLoadingStatus.failed;
     });
-    builder.addCase(forecloseLoan.pending, (state, action) => {
+    builder.addCase(forceCloseLoan.pending, (state, action) => {
       state.forecloseLoanStatus = BackendLoadingStatus.loading;
     });
-    builder.addCase(forecloseLoan.fulfilled, (state, action) => {
+    builder.addCase(forceCloseLoan.fulfilled, (state, action) => {
       state.forecloseLoanStatus = BackendLoadingStatus.succeeded;
       // dispatch update loan status
     });
-    builder.addCase(forecloseLoan.rejected, (state, action) => {
+    builder.addCase(forceCloseLoan.rejected, (state, action) => {
       state.forecloseLoanStatus = BackendLoadingStatus.failed;
     });
   },

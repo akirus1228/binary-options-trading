@@ -18,7 +18,7 @@ import { desiredNetworkId } from "../../constants/network";
 import store, { RootState } from "../../store";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import {
-  forecloseLoan,
+  forceCloseLoan,
   LoanDetails,
   getLoanDetailsFromContract,
 } from "../../store/reducers/loan-slice";
@@ -70,20 +70,19 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
 
   const handleForecloseLoan = useCallback(async () => {
     if (loan.contractLoanId == null || !provider) {
-      console.warn("Missing prereqs");
+      console.warn("Missing provider");
       return;
     }
     setIsPending(true);
     try {
-      const forecloseLoanResult = await dispatch(
-        forecloseLoan({
+      const forceCloseLoanResult = await dispatch(
+        forceCloseLoan({
           loan,
           provider,
           networkId: desiredNetworkId,
         })
       ).unwrap();
-      if (!forecloseLoanResult) {
-        setIsPending(false);
+      if (!forceCloseLoanResult) {
         return; //todo: throw nice error
       }
       const updateLoanRequest: Loan = {
