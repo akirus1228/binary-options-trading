@@ -10,6 +10,9 @@
     "prepare": "husky install"
   },
   "private": true,
+  "engines": {
+    "node": ">=12.9.0"
+  },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.12.1",
     "@contentful/rich-text-types": "^15.12.1",
@@ -29,6 +32,7 @@
     "@walletconnect/web3-provider": "^1.7.1",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
+    "clsx": "^1.2.1",
     "contentful": "^9.1.29",
     "core-js": "^3.6.5",
     "cross-fetch": "^3.1.5",

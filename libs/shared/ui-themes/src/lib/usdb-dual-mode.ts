@@ -160,6 +160,16 @@ const globalTheme: ThemeOptions = {
             margin: "auto 0 auto 1em",
             fontSize: "1em",
           },
+          "&.thinSquaredButton": {
+            height: "1em",
+            paddingTop: "1.25em",
+            paddingBottom: "1.25em",
+            paddingLeft: "1.25em",
+            paddingRight: "1.25em",
+            borderRadius: "0.5em",
+            margin: "auto 0 auto 1em",
+            fontSize: "1em",
+          },
           "&.cardActionButton": {
             width: "100%",
           },

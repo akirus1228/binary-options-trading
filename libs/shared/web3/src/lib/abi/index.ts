@@ -1,3 +1,4 @@
+import full_BalanceVault from "./BalanceVault.json";
 import full_BalancerVault from "./BalancerVault.json";
 import full_BalancerWeightedPool from "./BalancerWeightedPool.json";
 import full_BondCalcContract from "./BondCalcContract.json";
@@ -78,6 +79,7 @@ import full_UsdbLending from "./UsdbLending.json";
 import full_StakingBackedNFTPool from "./StakingBackedNFTPool.json";
 import full_AmpsToken from "./AmpsToken.json";
 
+export const balanceVaultAbi = full_BalanceVault.abi;
 export const balancerVaultAbi = full_BalancerVault.abi;
 export const balancerWeightedPoolAbi = full_BalancerWeightedPool.abi;
 export const bondCalcContractAbi = full_BondCalcContract.abi;
