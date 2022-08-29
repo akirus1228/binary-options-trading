@@ -388,6 +388,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
 
       updateTerms(term);
       dispatch(addAlert({ message: "Terms have been updated." }));
+      props.onClose(true);
     } catch (err) {
       // most likely the user rejected the signature
     } finally {
@@ -503,6 +504,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     };
     createOffer(offer);
     dispatch(addAlert({ message: "Offer sent" }));
+    props.onClose(true);
   }, [props.listing, provider, props.asset, amount, duration, apr, currency]);
 
   useEffect(() => {
