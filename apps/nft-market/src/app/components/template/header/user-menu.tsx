@@ -161,6 +161,7 @@ export const UserMenu = (): JSX.Element => {
           horizontal: "left",
         }}
         className="accountDropdown"
+        disableScrollLock={true}
       >
         <h3 style={{ marginBottom: "5px", marginTop: "5px" }}>
           {addressEllipsis(address)}

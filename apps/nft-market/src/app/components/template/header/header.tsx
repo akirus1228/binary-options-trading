@@ -145,6 +145,7 @@ export const Header = (): JSX.Element => {
               sx={{
                 display: { xs: "block", md: "none" },
               }}
+              disableScrollLock={true}
             >
               {pages.map((page: Page) => {
                 const children = (

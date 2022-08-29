@@ -140,6 +140,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
             vertical: "bottom",
             horizontal: "left",
           }}
+          disableScrollLock={true}
         >
           {viewLinks.map((link, index) => (
             <Link

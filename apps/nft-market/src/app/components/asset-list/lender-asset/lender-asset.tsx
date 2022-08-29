@@ -150,6 +150,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
             vertical: "bottom",
             horizontal: "left",
           }}
+          disableScrollLock={true}
         >
           {viewLinks.map((link, index) => (
             <Link
