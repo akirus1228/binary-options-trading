@@ -86,6 +86,7 @@ import GoldNFTPass from "./Gold NFT Pass.webp";
 import PlatinumNFTPass from "./Platinum NFT Pass.webp";
 import BalancePassFooter1 from "./footer1.webp";
 import BalancePassFooter2 from "./footer2.webp";
+import TakepileLogo from "./partners/Takepile.svg";
 
 export {
   NFTsIcon,
@@ -176,4 +177,5 @@ export {
   PlatinumNFTPass,
   BalancePassFooter1,
   BalancePassFooter2,
+  TakepileLogo,
 };
