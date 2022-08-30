@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
 import { RootState } from "../../store";
 import style from "./balance-vault-details-page.module.scss";
+import { ExternalLink } from "./external-link";
 import { PositionTemplate } from "./position-template";
 
 export const BalanceVaultDetailsPage = (): JSX.Element => {
@@ -224,34 +225,10 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             </Box>
             <h2 className={`${style["text-md"]}`}>External Links</h2>
             <Box className="flex fr ai-c gap-x-1">
-              <Box
-                sx={{ p: "0.75em" }}
-                className={`flex fr jf-c ai-c rounded ${lowContrastBg} ${lowContrastText}`}
-              >
-                Documentation
-                <NorthEast />
-              </Box>
-              <Box
-                sx={{ p: "0.75em" }}
-                className={`flex fr jf-c ai-c rounded ${lowContrastBg} ${lowContrastText}`}
-              >
-                Proposal
-                <NorthEast />
-              </Box>
-              <Box
-                sx={{ p: "0.75em" }}
-                className={`flex fr jf-c ai-c rounded ${lowContrastBg} ${lowContrastText}`}
-              >
-                Website
-                <NorthEast />
-              </Box>
-              <Box
-                sx={{ p: "0.75em" }}
-                className={`flex fr jf-c ai-c rounded ${lowContrastBg} ${lowContrastText}`}
-              >
-                Twitter
-                <NorthEast />
-              </Box>
+              <ExternalLink href="#" title="Documentation" />
+              <ExternalLink href="#" title="Proposal" />
+              <ExternalLink href="#" title="Website" />
+              <ExternalLink href="#" title="Twitter" />
             </Box>
           </Box>
         </Box>
