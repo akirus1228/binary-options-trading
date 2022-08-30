@@ -1,4 +1,4 @@
-import { formatCurrency } from "@fantohm/shared-helpers";
+import { copyToClipboard, formatCurrency } from "@fantohm/shared-helpers";
 import {
   getErc20CurrencyFromAddress,
   prettifySeconds,
@@ -6,7 +6,14 @@ import {
 } from "@fantohm/shared-web3";
 import { TakepileLogo } from "@fantohm/shared/images";
 import { ContentCopy, NorthEast, OpenInNew } from "@mui/icons-material";
-import { Avatar, Box, Button, LinearProgress, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  LinearProgress,
+  Typography,
+} from "@mui/material";
 import { ethers } from "ethers";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -29,6 +36,10 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   useEffect(() => {
     console.log("positionData", positionData);
   }, [positionData]);
+
+  const handleCopyAddress = () => {
+    copyToClipboard(vaultData?.ownerWallet ?? "");
+  };
 
   // theme relevant style data
   const borderStyle = "2px solid #101112";
@@ -219,8 +230,14 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 {vaultData && vaultData?.ownerWallet}
               </span>
               <Box>
-                <ContentCopy sx={{ color: "#8A99A8" }} />
-                <OpenInNew sx={{ color: "#8A99A8" }} />
+                <IconButton onClick={handleCopyAddress}>
+                  <ContentCopy sx={{ color: "#8A99A8" }} />
+                </IconButton>
+                <IconButton
+                  href={`https://etherscan.io/address/${vaultData?.ownerWallet}`}
+                >
+                  <OpenInNew sx={{ color: "#8A99A8" }} />
+                </IconButton>
               </Box>
             </Box>
             <h2 className={`${style["text-md"]}`}>External Links</h2>
