@@ -85,7 +85,12 @@ export const LoanConfirmation = ({
     useSelector((state: RootState) => state.wallet);
 
   const handleClose = () => {
-    if (onClose) onClose();
+    if (isPending) {
+      return;
+    }
+    if (onClose) {
+      onClose();
+    }
     setOpen(false);
   };
 
