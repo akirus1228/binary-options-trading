@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { MouseEvent, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
+import { useWeb3Context } from "@fantohm/shared-web3";
 import {
   useGetUserNotificationsQuery,
   useUpdateUserNotificationMutation,
@@ -26,6 +27,7 @@ export const NotificationMenu = (): JSX.Element => {
   const [updateNotification] = useUpdateUserNotificationMutation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { address } = useWeb3Context();
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -40,7 +42,7 @@ export const NotificationMenu = (): JSX.Element => {
         userAddress: user.address,
         status: NotificationStatus.Unread,
       },
-      { skip: !authSignature }
+      { skip: !address || !authSignature }
     );
 
   const { data: notifications, isLoading } = useGetUserNotificationsQuery(
@@ -50,7 +52,7 @@ export const NotificationMenu = (): JSX.Element => {
       skip: 0,
       take: 4,
     },
-    { skip: !user || !user.address || !authSignature }
+    { skip: !address || !authSignature }
   );
 
   const handleRecordClick = useCallback(() => {
