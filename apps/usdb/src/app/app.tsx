@@ -35,7 +35,7 @@ import Typography from "@mui/material/Typography";
 import style from "./pages/trad-fi/deposit/deposit.module.scss";
 import BalanceVault from "./pages/balance-vault/balanceVault";
 import BalanceVaultDetailsPage from "./pages/balance-vault-details-page/balance-vault-details-page";
-import Portfolio from "./pages/portfolio/portfolio";
+import PortfolioPage from "./pages/portfolio/portfolio-page";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -178,7 +178,7 @@ export const App = (): JSX.Element => {
             <Route path="/trad-fi" element={<TradFi />}>
               <Route path="/trad-fi/deposit/:bondType" element={<TradFiDeposit />} />
             </Route>
-            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/xfhm" element={<XfhmLqdrPage />} />
             <Route path="/mint" element={<Mint />} />
             <Route path="/backed-nft" element={<MintNftPage />} />
