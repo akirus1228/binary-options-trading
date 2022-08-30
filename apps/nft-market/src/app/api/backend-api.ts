@@ -48,8 +48,8 @@ export const WEB3_SIGN_MESSAGE =
   "Welcome to Liqdnft!\n\nTo get started, click Sign In and accept our Terms of Service: <>\n\nThis request will not trigger a blockchain transaction or cost any gas fees.";
 
 export const NFT_MARKETPLACE_API_URL = isDev
-  ? "https://api.liqdnft.com/api"
-  : "https://apitest.liqdnft.com/api";
+  ? "https://apitest.liqdnft.com/api"
+  : "https://api.liqdnft.com/api";
 
 export const doLogin = (address: string): Promise<LoginResponse> => {
   const url = `${NFT_MARKETPLACE_API_URL}/auth/login`;
