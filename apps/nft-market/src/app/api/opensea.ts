@@ -1,6 +1,9 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { isDev } from "@fantohm/shared-web3";
-import { OpenseaAssetQueryParam } from "../store/reducers/interfaces";
+import {
+  OpenseaAssetQueryParam,
+  OpenseaCollectionQueryParam,
+} from "../store/reducers/interfaces";
 import { updateAssetsFromOpensea } from "../store/reducers/asset-slice";
 import { FetchArgs } from "@reduxjs/toolkit/dist/query";
 import * as queryString from "query-string";
@@ -113,6 +116,7 @@ export type OpenseaCollection = {
   telegram_url?: string;
   twitter_username?: string;
   wiki_url?: string;
+  owned_asset_count?: number;
 };
 
 export type OpenseaDisplayData = {
@@ -209,7 +213,22 @@ export const openseaApi = createApi({
         params: queryParams,
       }),
     }),
+    getOpenseaCollections: builder.query<
+      OpenseaCollection[],
+      OpenseaCollectionQueryParam
+    >({
+      query: (queryParams) => ({
+        url: `collections`,
+        params: queryParams,
+      }),
+    }),
   }),
 });
 
-export const { useGetOpenseaAssetsQuery, useGetRawOpenseaAssetsQuery } = openseaApi;
+export const {
+  useGetOpenseaAssetsQuery,
+  useGetRawOpenseaAssetsQuery,
+  useGetOpenseaCollectionsQuery,
+  useLazyGetRawOpenseaAssetsQuery,
+  useLazyGetOpenseaCollectionsQuery,
+} = openseaApi;

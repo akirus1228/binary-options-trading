@@ -20,6 +20,7 @@ import { RootState } from "../../../store";
 import { useGetCollectionsQuery } from "../../../api/backend-api";
 import { selectAssetsByQuery } from "../../../store/selectors/asset-selectors";
 import { useWeb3Context } from "@fantohm/shared-web3";
+import BorrowerAssetSearch from "../borrower-asset-search/borrower-asset-search";
 
 export interface BorrowerAssetFilterProps {
   query: FrontendAssetFilterQuery;
@@ -91,6 +92,7 @@ export const BorrowerAssetFilter = ({
 
   return (
     <Box sx={{ ml: "auto" }}>
+      <BorrowerAssetSearch setCollection={setCollection} />
       <Select
         labelId="asset-sort-by"
         label="Sort by"
