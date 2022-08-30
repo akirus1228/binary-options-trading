@@ -21,12 +21,34 @@ export type BalanceVault = {
   lockDuration: number;
 };
 
+export type BalanceVaultRaw = {
+  allowedTokens: string[];
+  apr: BigNumber;
+  freezeTimestamp: BigNumber;
+  fundingAmount: BigNumber;
+  fundraised: BigNumber;
+  index: BigNumber;
+  nftAddress: string;
+  ownerContacts: string[];
+  ownerInfos: string[];
+  ownerWallet: string;
+  repaymentTimestamp: BigNumber;
+  shouldBeFrozen: boolean;
+  vaultAddress: string;
+};
+
 export type UseBalanceVaultResponse = {
   vaultData: BalanceVault | undefined;
   isLoading: boolean;
   error: unknown;
 };
 
+/**
+ * Returns vault poisitions from the BalanceVaultManager contract.
+ *
+ * @param contractAddress Vault address to load details from.
+ *
+ */
 export const useBalanceVault = (contractAddress: string): UseBalanceVaultResponse => {
   const { provider, address } = useWeb3Context();
 
@@ -118,6 +140,12 @@ export type UseBalanceVaultPositionResponse = {
   error: unknown;
 };
 
+/**
+ * Returns vault poisitions from the BalanceVaultManager contract.
+ *
+ * @param contractAddress Vault address to load position from;
+ *
+ */
 export const useBalanceVaultPosition = (
   contractAddress: string
 ): UseBalanceVaultPositionResponse => {

@@ -1,61 +1,47 @@
-import { Box, Grid, LinearProgress, Container, Icon, Typography } from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { useDispatch, useSelector } from "react-redux";
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  defaultNetworkId,
-  getBalanceVaultManager,
-  getGeneratedVaultsLength,
-  useWeb3Context,
-} from "@fantohm/shared-web3";
-import { VaultType } from "./vaultType";
+  Box,
+  Grid,
+  LinearProgress,
+  Container,
+  Icon,
+  Typography,
+  Avatar,
+} from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { formatCurrency, prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import {
+  useBvmGetGeneratedVaults,
+  useBvmGetPositions,
+  VaultPosition,
+} from "../../hooks/use-balance-vault-manager";
+import { BalanceVault } from "../../hooks/use-balance-vault";
+import { useMemo } from "react";
 import { RootState } from "../../store";
 
-export default function BalanceVault() {
-  const { provider, chainId } = useWeb3Context();
-  const dispatch = useDispatch();
+export default function PortfolioPage() {
+  const { provider, address } = useWeb3Context();
   const themeType = useSelector((state: RootState) => state.app.theme);
 
-  const [createVaultOpen, setCreateVaultOpen] = useState(false);
-  const [vaults, setVaults] = useState<VaultType[]>([]);
+  const {
+    data: positionData,
+    isLoading: isPositionsLoading,
+    error: positionLoadError,
+  } = useBvmGetPositions(address, 0, 10);
 
-  useEffect(() => {
-    if (!provider) return;
+  const {
+    data: vaultData,
+    isLoading: isVaultsLoading,
+    error: vaultLoadError,
+  } = useBvmGetGeneratedVaults(0, 10);
 
-    setVaults([
-      {
-        name: "Takepile Vault",
-        apr: 30,
-        lockPeriod: 120,
-        position: 2200,
-        duration: 90,
-      },
-      {
-        name: "Takepile Vault",
-        apr: 30,
-        lockPeriod: 120,
-        position: 2200,
-        duration: 100,
-      },
-    ]);
-
-    // dispatch(
-    //   getGeneratedVaultsLength({
-    //     networkId: chainId ?? defaultNetworkId,
-    //     provider: provider,
-    //     callback: (result: any) => {
-    //       setVaultLength(BigNumber.from(result).toString());
-    //     },
-    //   })
-    // );
-  }, [provider]);
-
-  const onCreateVaultOpen = useCallback(() => {
-    setCreateVaultOpen(true);
-  }, []);
-  const onCreateVaultClose = () => {
-    setCreateVaultOpen(false);
-  };
+  const portfolioValue = useMemo(() => {
+    return positionData?.reduce(
+      (previous: number, current: VaultPosition) => previous + current.totalUsdValue,
+      0
+    );
+  }, [positionData]);
 
   return (
     <Container maxWidth="xl">
@@ -86,7 +72,7 @@ export default function BalanceVault() {
           marginTop: "20px",
         }}
       >
-        ${3284.99}
+        {formatCurrency(portfolioValue ?? 0)}
       </Typography>
       <Box
         sx={{
@@ -98,7 +84,7 @@ export default function BalanceVault() {
         }}
       />
       <Grid container spacing={8}>
-        {vaults.map((vault, idx) => (
+        {vaultData?.map((vault: BalanceVault, idx) => (
           <Grid item md={4} xs={12} key={idx}>
             <Box
               sx={{
@@ -107,7 +93,11 @@ export default function BalanceVault() {
                 background: themeType === "light" ? "#FFFFFF" : "#0A0C0F",
               }}
             >
-              <Box>
+              <Box className="flex fr ai-c">
+                <Avatar
+                  src={vault.ownerContacts[0]}
+                  sx={{ width: 48, height: 48, mr: "1em", border: "1px solid #1C1E21" }}
+                />
                 <Typography
                   sx={{
                     fontFamily: "sora",
@@ -140,7 +130,7 @@ export default function BalanceVault() {
                         marginTop: "18px",
                       }}
                     >
-                      {vault.apr}%
+                      {vault.apr / 100}%
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
@@ -160,7 +150,7 @@ export default function BalanceVault() {
                         marginTop: "18px",
                       }}
                     >
-                      {vault.lockPeriod} days
+                      {prettifySeconds(vault.lockDuration)}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -196,7 +186,13 @@ export default function BalanceVault() {
                     marginTop: "18px",
                   }}
                 >
-                  ${vault.position}
+                  $
+                  {
+                    positionData?.find(
+                      (position: VaultPosition) =>
+                        position.vaultAddress === vault.vaultAddress
+                    )?.totalUsdValue
+                  }
                 </Typography>
               </Box>
               <Box
@@ -229,13 +225,10 @@ export default function BalanceVault() {
                       fontSize: "16px",
                     }}
                   >
-                    {vault.duration}
+                    {100}
                   </Typography>
                   <Box sx={{ width: "100px", margin: "0 10px" }}>
-                    <LinearProgress
-                      variant="determinate"
-                      value={(vault.duration / vault.lockPeriod) * 100}
-                    />
+                    <LinearProgress variant="determinate" value={(10 / 100) * 100} />
                   </Box>
                   <Typography
                     sx={{
@@ -243,7 +236,7 @@ export default function BalanceVault() {
                       fontSize: "16px",
                     }}
                   >
-                    {vault.lockPeriod} days
+                    {prettifySeconds(vault.lockDuration)}
                   </Typography>
                 </Box>
               </Box>
