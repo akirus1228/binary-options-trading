@@ -43,6 +43,12 @@ export type UseBalanceVaultResponse = {
   error: unknown;
 };
 
+/**
+ * Returns vault poisitions from the BalanceVaultManager contract.
+ *
+ * @param contractAddress Vault address to load details from.
+ *
+ */
 export const useBalanceVault = (contractAddress: string): UseBalanceVaultResponse => {
   const { provider, address } = useWeb3Context();
 
@@ -134,6 +140,12 @@ export type UseBalanceVaultPositionResponse = {
   error: unknown;
 };
 
+/**
+ * Returns vault poisitions from the BalanceVaultManager contract.
+ *
+ * @param contractAddress Vault address to load position from;
+ *
+ */
 export const useBalanceVaultPosition = (
   contractAddress: string
 ): UseBalanceVaultPositionResponse => {
