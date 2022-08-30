@@ -21,6 +21,22 @@ export type BalanceVault = {
   lockDuration: number;
 };
 
+export type BalanceVaultRaw = {
+  allowedTokens: string[];
+  apr: BigNumber;
+  freezeTimestamp: BigNumber;
+  fundingAmount: BigNumber;
+  fundraised: BigNumber;
+  index: BigNumber;
+  nftAddress: string;
+  ownerContacts: string[];
+  ownerInfos: string[];
+  ownerWallet: string;
+  repaymentTimestamp: BigNumber;
+  shouldBeFrozen: boolean;
+  vaultAddress: string;
+};
+
 export type UseBalanceVaultResponse = {
   vaultData: BalanceVault | undefined;
   isLoading: boolean;
