@@ -191,9 +191,9 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 </p>
                 <h2 className={style["text-md"]}>Duration</h2>
                 <Box className="flex fr jf-sb ai-c">
-                  <span>0</span>
+                  <span>{vaultData?.time.completedTime}</span>
                   <LinearProgress
-                    value={50}
+                    value={vaultData?.time.percentComplete}
                     variant="determinate"
                     sx={{ width: "60%" }}
                   />
@@ -203,7 +203,9 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
               <Box className="flex fc fj-sb">
                 <Box className="flex fr fj-sb ai-c">
                   <h2 className={style["text-md"]}>My Position</h2>
-                  <Typography sx={{ color: "#69D9C8" }}>$0.00</Typography>
+                  <Typography sx={{ color: "#69D9C8" }}>
+                    {formatCurrency(positionData?.totalUsdValue ?? 0)}
+                  </Typography>
                   {/* todo: replace with position total */}
                 </Box>
                 <Box className="flex fr fj-sb ai-c">
@@ -211,7 +213,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                   <span>My position</span>
                 </Box>
                 {positionData &&
-                  positionData.map((position) => (
+                  positionData.positionEntries.map((position) => (
                     <PositionTemplate
                       key={position.tokenId}
                       currency={getErc20CurrencyFromAddress(
