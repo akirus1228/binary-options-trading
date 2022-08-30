@@ -27,12 +27,8 @@ export const BalanceVaultDetailsPage = (
 
   const { chainId } = useWeb3Context();
 
-  const { vaultData, isLoading, error } = useBalanceVault(vaultId as string);
-  const {
-    positionData,
-    isLoading: isPositionLoading,
-    error: positionError,
-  } = useBalanceVaultPosition(vaultId as string);
+  const { vaultData } = useBalanceVault(vaultId as string);
+  const { positionData } = useBalanceVaultPosition(vaultId as string);
 
   useEffect(() => {
     console.log("positionData", positionData);
@@ -153,7 +149,7 @@ export const BalanceVaultDetailsPage = (
                   {vaultData &&
                     vaultData?.allowedTokens.map((currency) => (
                       <span key={currency}>
-                        {getErc20CurrencyFromAddress(currency, chainId || 4).symbol}
+                        {getErc20CurrencyFromAddress(currency, chainId || 4).symbol}{" "}
                       </span>
                     ))}{" "}
                   to earn from this vault. Funds are locked for{" "}
@@ -175,6 +171,7 @@ export const BalanceVaultDetailsPage = (
                 <Box className="flex fr fj-sb ai-c">
                   <h2 className={style["text-md"]}>My Position</h2>
                   <Typography sx={{ color: "#69D9C8" }}>$0.00</Typography>
+                  {/* todo: replace with position total */}
                 </Box>
                 <Box className="flex fr fj-sb ai-c">
                   <span>Asset</span>
