@@ -375,8 +375,10 @@ export const LenderAssetFilter = ({
         <span style={{ fontSize: "10px" }}>{durationRange[1]} days</span>
       </Box>
       <CollectionsFilter
-        collections={collections?.filter((collection) =>
-          collectionAddresses?.includes(collection.contractAddress)
+        collections={collections?.filter(
+          (collection) =>
+            collectionAddresses?.includes(collection.contractAddress) &&
+            collection.openListingCount > 0
         )}
         collection={collection}
         setCollection={setCollection}
