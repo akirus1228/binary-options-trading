@@ -1,9 +1,17 @@
-import { DaiToken, TakepileLogo } from "@fantohm/shared/images";
+import { formatCurrency } from "@fantohm/shared-helpers";
+import {
+  getErc20CurrencyFromAddress,
+  prettifySeconds,
+  useWeb3Context,
+} from "@fantohm/shared-web3";
+import { TakepileLogo } from "@fantohm/shared/images";
 import { ContentCopy, NorthEast, OpenInNew } from "@mui/icons-material";
 import { Avatar, Box, Button, LinearProgress, Typography } from "@mui/material";
-import clsx from "clsx";
+import { ethers } from "ethers";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
 import { RootState } from "../../store";
 import style from "./balance-vault-details-page.module.scss";
 import { PositionTemplate } from "./position-template";
@@ -17,13 +25,25 @@ export const BalanceVaultDetailsPage = (
   const { vaultId } = useParams();
   const themeType = useSelector((state: RootState) => state.app.theme);
 
-  const borderStyle = "2px solid #101112";
+  const { chainId } = useWeb3Context();
 
+  const { vaultData, isLoading, error } = useBalanceVault(vaultId as string);
+  const {
+    positionData,
+    isLoading: isPositionLoading,
+    error: positionError,
+  } = useBalanceVaultPosition(vaultId as string);
+
+  useEffect(() => {
+    console.log("positionData", positionData);
+  }, [positionData]);
+
+  // theme relevant style data
+  const borderStyle = "2px solid #101112";
   const lowContrastBg =
     themeType === "light"
       ? style["low-contrast-bg-light"]
       : style["low-contrast-bg-light"];
-
   const lowContrastText =
     themeType === "light"
       ? style["low-contrast-text-light"]
@@ -40,10 +60,10 @@ export const BalanceVaultDetailsPage = (
           >
             <Box className="flex fr ai-c">
               <Avatar
-                src={TakepileLogo}
+                src={TakepileLogo} // todo: replace with vaultData.ownerContacts[0]
                 sx={{ p: "5px", border: borderStyle, mr: "1em" }}
               />
-              <h2 className={`${style["text-lg"]}`}>Takepile Vault</h2>
+              <h2 className={`${style["text-lg"]}`}>{vaultData?.name}</h2>
             </Box>
             <Box className="flex fr">
               <Button
@@ -75,7 +95,17 @@ export const BalanceVaultDetailsPage = (
             >
               <Box>
                 <Typography>Vault Funding</Typography>
-                <h2 className={`${style["text-lg"]}`}>$54,521.00 / $100,000.00</h2>
+                <h2 className={`${style["text-lg"]}`}>
+                  {vaultData?.fundsRaised &&
+                    formatCurrency(
+                      +ethers.utils.formatUnits(vaultData?.fundsRaised, 18)
+                    )}{" "}
+                  /{" "}
+                  {vaultData?.fundingAmount &&
+                    formatCurrency(
+                      +ethers.utils.formatUnits(vaultData?.fundingAmount, 18)
+                    )}
+                </h2>
               </Box>
               <Box>
                 <Button variant="contained" className="thinButton">
@@ -89,39 +119,56 @@ export const BalanceVaultDetailsPage = (
                 className={`flex fc jf-c ai-c gap-x-2 fj-sb rounded ${lowContrastBg}`}
               >
                 <span>Vault APR</span>
-                <h2 className={style["text-md"]}>30.00%</h2>
+                <h2 className={style["text-md"]}>{vaultData && vaultData?.apr / 100}%</h2>
               </Box>
               <Box
                 sx={{ p: "1em" }}
                 className={`flex fc jf-c ai-c gap-x-2 fj-sb rounded ${lowContrastBg}`}
               >
                 <span>Lock duration</span>
-                <h2 className={style["text-md"]}>120 days</h2>
+                <h2 className={style["text-md"]}>
+                  {prettifySeconds(vaultData?.lockDuration ?? 0)}
+                </h2>
               </Box>
               <Box
                 sx={{ p: "1em" }}
                 className={`flex fc jf-c ai-c gap-x-2 fj-sb rounded ${lowContrastBg}`}
               >
                 <span>Currencies</span>
-                <h2 className={style["text-md"]}>DAI, USDC, USDT</h2>
+                <h2 className={style["text-md"]}>
+                  {vaultData &&
+                    vaultData?.allowedTokens.map((currency) => (
+                      <span key={currency}>
+                        {getErc20CurrencyFromAddress(currency, chainId || 4).symbol}
+                      </span>
+                    ))}
+                </h2>
               </Box>
             </Box>
             <Box className="grid g-x-2">
               <Box>
                 <h2 className={style["text-md"]}>Overview</h2>
                 <p className={lowContrastText}>
-                  Deposit USDC, USDT or DAI to earn from this vault. Funds are locked for
-                  120 days once the vault’s desired financing has been met.
+                  Deposit{" "}
+                  {vaultData &&
+                    vaultData?.allowedTokens.map((currency) => (
+                      <span key={currency}>
+                        {getErc20CurrencyFromAddress(currency, chainId || 4).symbol}
+                      </span>
+                    ))}{" "}
+                  to earn from this vault. Funds are locked for{" "}
+                  {prettifySeconds(vaultData?.lockDuration ?? 0)} once the vault’s desired
+                  financing has been met.
                 </p>
                 <h2 className={style["text-md"]}>Duration</h2>
                 <Box className="flex fr jf-sb ai-c">
                   <span>0</span>
                   <LinearProgress
-                    value={100}
+                    value={50}
                     variant="determinate"
                     sx={{ width: "60%" }}
                   />
-                  <span>120 days</span>
+                  <span>{prettifySeconds(vaultData?.lockDuration ?? 0)}</span>
                 </Box>
               </Box>
               <Box className="flex fc fj-sb">
@@ -133,10 +180,17 @@ export const BalanceVaultDetailsPage = (
                   <span>Asset</span>
                   <span>My position</span>
                 </Box>
-                <PositionTemplate symbol="DAI" />
-                <PositionTemplate symbol="USDC" />
-                <PositionTemplate symbol="USDB" />
-                <PositionTemplate symbol="USDT" />
+                {positionData &&
+                  positionData.map((position) => (
+                    <PositionTemplate
+                      key={position.tokenId}
+                      currency={getErc20CurrencyFromAddress(
+                        position.tokenId,
+                        chainId || 4
+                      )}
+                      amount={position.amount}
+                    />
+                  ))}
               </Box>
             </Box>
           </Box>
@@ -161,13 +215,7 @@ export const BalanceVaultDetailsPage = (
           </Box>
           <Box sx={{ p: "2em" }}>
             <h2 className={`${style["text-md"]}`}>Description</h2>
-            <p className={lowContrastText}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a sapien
-              magna. Phasellus finibus diam turpis, eu efficitur mi pretium quis. Nunc
-              viverra massa ut felis fermentum aliquam. Integer sed ligula vel sapien
-              tincidunt feugiat sit amet sed felis. Maecenas volutpat posuere dolor vitae
-              laoreet.
-            </p>
+            <p className={lowContrastText}>{vaultData?.description}</p>
 
             <h2 className={`${style["text-md"]}`}>Vault owner</h2>
             <Box
@@ -175,7 +223,7 @@ export const BalanceVaultDetailsPage = (
               className={`flex fr jf-c ai-c gap-x-2 fj-sb rounded ${lowContrastBg}`}
             >
               <span className={lowContrastText}>
-                0x50664edE715e131F584D3E7EaAbd7818Bb20A068
+                {vaultData && vaultData?.ownerWallet}
               </span>
               <Box>
                 <ContentCopy sx={{ color: "#8A99A8" }} />

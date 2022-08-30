@@ -37,11 +37,10 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
   } = useQuery(
     ["vault"],
     () => {
-      console.log("query running");
-      console.log("query actually running");
       const contract = new ethers.Contract(
         contractAddress ?? "",
         balanceVaultAbi,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         provider!
       );
       const vaultName = contract["ownerName"]();
@@ -101,4 +100,60 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
   }, [error]);
 
   return { vaultData, isLoading, error };
+};
+
+export type BalanceOfResponse = {
+  _amounts: BigNumber[];
+  _tokens: string[];
+};
+
+export type PositionData = {
+  tokenId: string;
+  amount: BigNumber;
+};
+
+export type UseBalanceVaultPositionResponse = {
+  positionData: PositionData[] | undefined;
+  isLoading: boolean;
+  error: unknown;
+};
+
+export const useBalanceVaultPosition = (
+  contractAddress: string
+): UseBalanceVaultPositionResponse => {
+  const { provider, address } = useWeb3Context();
+
+  const {
+    data: positionData,
+    isLoading,
+    error,
+  } = useQuery(
+    ["vaultPosition"],
+    () => {
+      const contract = new ethers.Contract(
+        contractAddress ?? "",
+        balanceVaultAbi,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        provider!
+      );
+      const position = contract["balanceOf(address)"](address).then(
+        (res: BalanceOfResponse) =>
+          res._amounts.map(
+            (_amount: BigNumber, amountIndex: number) =>
+              ({
+                tokenId: res._tokens[amountIndex],
+                amount: _amount,
+              } as PositionData)
+          )
+      );
+      return position;
+    },
+    { enabled: provider !== null && !!address }
+  );
+
+  useEffect(() => {
+    console.log(error);
+  }, [error]);
+
+  return { positionData, isLoading, error };
 };
