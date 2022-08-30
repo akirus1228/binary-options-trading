@@ -4,7 +4,7 @@ import {
   prettifySeconds,
   useWeb3Context,
 } from "@fantohm/shared-web3";
-import { TakepileLogo } from "@fantohm/shared/images";
+
 import { useState, useCallback } from "react";
 import { DaiToken, TakepileLogo } from "@fantohm/shared/images";
 import { ContentCopy, NorthEast, OpenInNew } from "@mui/icons-material";
@@ -45,8 +45,6 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   };
   const [vaultActionFormOpen, setVaultActionFormOpen] = useState(false);
   const [isDeposit, setIsDeposit] = useState(false);
-
-  const borderStyle = "2px solid #101112";
 
   // theme relevant style data
   const borderStyle = "2px solid #101112";
