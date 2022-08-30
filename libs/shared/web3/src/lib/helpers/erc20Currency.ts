@@ -1,11 +1,4 @@
 import {
-  addresses,
-  getTokenPrice,
-  isDev,
-  NetworkIds,
-  networks,
-} from "@fantohm/shared-web3";
-import {
   DaiToken,
   EthToken,
   USDBToken,
@@ -13,6 +6,9 @@ import {
   UsdtToken,
   WbtcToken,
 } from "@fantohm/shared/images";
+import { getTokenPrice, isDev } from ".";
+import { addresses } from "../constants";
+import { NetworkIds, networks } from "../networks";
 
 export type Erc20CurrencyAddress = {
   [networkId: number]: string;
