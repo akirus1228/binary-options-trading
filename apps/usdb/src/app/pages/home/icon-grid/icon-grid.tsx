@@ -13,6 +13,9 @@ import IconLink from "../../../components/icon-link/icon-link";
 export const IconGrid = (): JSX.Element => {
   return (
     <Grid container rowSpacing={6} className={style["productGrid"]}>
+      <Grid item md={4} xs={6}>
+        <IconLink title="Vault" icon={BankIcon} link="/vault" />
+      </Grid>
       {/* <Grid item md={4} xs={6}>
         <IconLink title="Traditional Finance" icon={TradFiIcon} link="/trad-fi" />
       </Grid>
@@ -36,9 +39,6 @@ export const IconGrid = (): JSX.Element => {
           icon={BridgeIcon}
           link="https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1"
         />
-      </Grid>
-      <Grid item md={4} xs={6}>
-        <IconLink title="Vault" icon={BankIcon} />
       </Grid>
       {/* <Grid item md={4} xs={6}>
        <IconLink title="Backed NFT" icon={WalletIcon} link="/backed-nft" />
