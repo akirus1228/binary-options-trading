@@ -18,7 +18,7 @@ import { BalanceVaultItem } from "./balance-vault-item";
 export enum BalanceVaultOverview {
   Vault_Name = "Vault",
   Vault_Size = "TVL",
-  Vault_Apr = "apr",
+  Vault_Apr = "APR",
   Vault_Duration = "Lock Duration",
   Vault_Currency = "Currencies",
   Vault_Status = "Funding Status",
@@ -97,7 +97,7 @@ export default function BalanceVault() {
   };
   console.log("balanceVaults", balanceVaults);
   return (
-    <Box>
+    <Box sx={{ mt: "100px" }}>
       <CreateVaultForm onClose={onCreateVaultClose} open={createVaultOpen} />
       <Typography
         sx={{
@@ -109,13 +109,20 @@ export default function BalanceVault() {
       >
         Vaults Overview
       </Typography>
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mt: "20px",
+        }}
+      >
         <Typography sx={{ fontSize: "16px", color: "#8a99a8" }}>
           Hide closed vaults
         </Typography>
         <Switch defaultChecked />
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: "30px" }}>
         <Button sx={{ border: "solid 2px #3744e6", width: "13%" }}>
           View portofolio
         </Button>
@@ -126,8 +133,12 @@ export default function BalanceVault() {
           + Create Vault
         </Button>
       </Box>
-      <Container className={style["offerContainer"]}>
-        <PaperTable>
+      <Box className={style["offerContainer"]}>
+        <PaperTable sx={{ borderSpacing: "0em !important" }}>
+          <colgroup>
+            <col width="20%"></col>
+            <col width="25%"></col>
+          </colgroup>
           <PaperTableHead>
             <TableRow className={style["rowh"]}>
               {overView.map((item, index) => (
@@ -144,7 +155,7 @@ export default function BalanceVault() {
               ))}
           </TableBody>
         </PaperTable>
-      </Container>
+      </Box>
     </Box>
   );
 }

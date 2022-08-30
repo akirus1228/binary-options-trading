@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   Dialog,
+  FormControl,
   IconButton,
+  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -12,6 +14,7 @@ import style from "./createVault.module.scss";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { BaseSyntheticEvent, useState } from "react";
 import ArrowCircleLeftOutlinedIcon from "@mui/icons-material/ArrowCircleLeftOutlined";
+import { currencyInfo } from "../../helpers/erc20Currency";
 
 export interface CreateVaultProps {
   onClose: (value: boolean) => void;
@@ -349,42 +352,33 @@ export const CreateVaultForm = (props: CreateVaultProps): JSX.Element => {
                 </Typography>
               </Box>
               <Box sx={{ mt: "-15px" }}>
-                {/* <Select
-                  value={currency?.symbol}
-                  variant="standard"
-                  sx={{ background: "transparent" }}
-                  className="borderless"
-                >
-                  {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
-                    <MenuItem
-                      value={currencyDetails.symbol}
-                      key={`currency-option-item-${tokenId}`}
-                    >
-                      <Box className="flex fr ai-c">
-                        <img
-                          style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                          src={currencyDetails.icon}
-                          alt={`${currencyDetails.symbol} Token Icon`}
-                        />
-                        {currencyDetails.symbol}
-                      </Box>
-                    </MenuItem>
-                  ))}
-                </Select> */}
-                <TextField
-                  variant="standard"
-                  InputProps={{
-                    disableUnderline: true,
-                  }}
-                  InputLabelProps={{ style: { fontSize: 40 } }}
-                  placeholder="Enter Name"
-                  sx={{
-                    border: "solid 1px #101112",
-                    borderRadius: "25px",
-                    width: "100%",
-                    padding: "20px 20px",
-                  }}
-                ></TextField>
+                <Box sx={{ mt: "30px" }}>
+                  <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                    <InputLabel>Select Currency</InputLabel>
+                    <Select variant="standard" value="">
+                      <MenuItem value="">Select Currency</MenuItem>
+                      {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
+                        <MenuItem
+                          value={currencyDetails.symbol}
+                          key={`currency-option-item-${tokenId}`}
+                        >
+                          <Box className="flex fr ai-c">
+                            <img
+                              style={{
+                                height: "28px",
+                                width: "28px",
+                                marginRight: "5px",
+                              }}
+                              src={currencyDetails.icon}
+                              alt={`${currencyDetails.symbol} Token Icon`}
+                            />
+                            {currencyDetails.symbol}
+                          </Box>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
               </Box>
             </Box>
           </Box>
