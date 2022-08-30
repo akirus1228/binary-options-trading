@@ -2,7 +2,7 @@ import { balanceVaultAbi, useWeb3Context } from "@fantohm/shared-web3";
 import { useQuery } from "@tanstack/react-query";
 import { BigNumber, ethers } from "ethers";
 import { useEffect } from "react";
-import { calcTimeCompleted } from "./use-balance-vault-manager";
+import { calcTimeCompleted, calcUsdValue } from "./use-balance-vault-manager";
 
 export type BalanceVault = {
   vaultAddress: string;
@@ -136,12 +136,17 @@ export type BalanceOfResponse = {
 };
 
 export type PositionData = {
+  positionEntries: PositionEntry[];
+  totalUsdValue: number;
+};
+
+export type PositionEntry = {
   tokenId: string;
   amount: BigNumber;
 };
 
 export type UseBalanceVaultPositionResponse = {
-  positionData: PositionData[] | undefined;
+  positionData: PositionData | undefined;
   isLoading: boolean;
   error: unknown;
 };
@@ -155,7 +160,7 @@ export type UseBalanceVaultPositionResponse = {
 export const useBalanceVaultPosition = (
   contractAddress: string
 ): UseBalanceVaultPositionResponse => {
-  const { provider, address } = useWeb3Context();
+  const { provider, address, chainId } = useWeb3Context();
 
   const {
     data: positionData,
@@ -171,14 +176,16 @@ export const useBalanceVaultPosition = (
         provider!
       );
       const position = contract["balanceOf(address)"](address).then(
-        (res: BalanceOfResponse) =>
-          res._amounts.map(
+        (res: BalanceOfResponse) => ({
+          positionEntries: res._amounts.map(
             (_amount: BigNumber, amountIndex: number) =>
               ({
                 tokenId: res._tokens[amountIndex],
                 amount: _amount,
-              } as PositionData)
-          )
+              } as PositionEntry)
+          ),
+          totalUsdValue: calcUsdValue(res._amounts, res._tokens, chainId ?? 4),
+        })
       );
       return position;
     },

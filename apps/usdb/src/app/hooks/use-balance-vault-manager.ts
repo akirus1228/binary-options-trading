@@ -196,7 +196,7 @@ export const calcTimeCompleted = (
   if (now < freezeTimestamp)
     return {
       completedTime: "Not Started",
-      percentComplete: 100,
+      percentComplete: 0,
     };
   const duration = repaymentTimestamp - freezeTimestamp;
   const completedTime = now - freezeTimestamp > 0 ? now - freezeTimestamp : 0;
@@ -206,4 +206,3 @@ export const calcTimeCompleted = (
     percentComplete,
   };
 };
-
