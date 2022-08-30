@@ -1,5 +1,6 @@
 import { Box, Button, Container, TableBody, TableRow, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import React, { useCallback, useEffect, useState } from "react";
 import Switch from "@mui/material/Switch";
 import { BigNumber } from "ethers";
@@ -116,12 +117,14 @@ export default function BalanceVault() {
         <Switch defaultChecked />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Button sx={{ border: "solid 2px #3744e6", width: "13%" }}>
-          View portofolio
-        </Button>
+        <Link to="/portfolio">
+          <Button sx={{ border: "solid 2px #3744e6", width: "190px" }}>
+            View portfolio
+          </Button>
+        </Link>
         <Button
           onClick={onCreateVaultOpen}
-          sx={{ border: "solid 2px #252729", width: "13%", ml: "20px" }}
+          sx={{ border: "solid 2px #252729", width: "190px", ml: "20px" }}
         >
           + Create Vault
         </Button>
