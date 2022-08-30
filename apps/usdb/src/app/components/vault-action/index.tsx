@@ -1,11 +1,42 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Box, Dialog, IconButton, TextField, Typography, Button } from "@mui/material";
+import {
+  Box,
+  Dialog,
+  TextField,
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import styles from "./style.module.scss";
-import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { USDBToken } from "@fantohm/shared/images";
+import { EthToken, USDBToken, DaiToken } from "@fantohm/shared/images";
 import FormInputWrapper from "../formInputWrapper";
 import { RootState } from "../../store";
+
+const currencyInfo = {
+  WETH_ADDRESS: {
+    symbol: "wETH",
+    name: "Wrapped Ethereum",
+    icon: EthToken,
+    coingeckoStub: "weth",
+    decimals: 18,
+  },
+  USDB_ADDRESS: {
+    symbol: "USDB",
+    name: "USDBalance",
+    icon: USDBToken,
+    coingeckoStub: "usd-balance",
+    decimals: 18,
+  },
+  DAI_ADDRESS: {
+    symbol: "DAI",
+    name: "DAI",
+    icon: DaiToken,
+    coingeckoStub: "dai",
+    decimals: 18,
+  },
+};
 
 export interface VaultActionProps {
   onClose: (value: boolean) => void;
@@ -17,6 +48,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const { onClose, open, deposit } = props;
 
   const [isDeposit, setIsDeposit] = useState(deposit);
+  const [token, setToken] = useState("USDB");
 
   const themeType = useSelector((state: RootState) => state.app.theme);
 
@@ -79,19 +111,39 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         <FormInputWrapper title="My wallet">
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box
-              className={`flex fr ai-c`}
+              className="flex fr ai-c"
               sx={{
                 padding: "10px 20px",
                 border: "1px solid #101112",
                 borderRadius: "10px",
               }}
             >
-              <img
-                style={{ height: "26px", width: "26px", marginRight: 10 }}
-                src={USDBToken}
-                alt="USDB Token Icon"
-              />
-              <Typography sx={{ fontSize: 16 }}>USDB</Typography>
+              <Select
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                variant="standard"
+                sx={{ background: "transparent" }}
+                className="borderless"
+                disableUnderline
+              >
+                {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
+                  <MenuItem
+                    value={currencyDetails.symbol}
+                    key={`currency-option-item-${tokenId}`}
+                  >
+                    <Box className="flex fr ai-c">
+                      <img
+                        style={{ height: "26px", width: "26px", marginRight: 10 }}
+                        src={currencyDetails.icon}
+                        alt={`${currencyDetails.symbol} Token Icon`}
+                      />
+                      <Typography sx={{ fontSize: 16 }}>
+                        {currencyDetails.symbol}
+                      </Typography>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
             </Box>
             <TextField
               variant="standard"
@@ -122,7 +174,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         <FormInputWrapper title="Estimated yield" className={styles["inputWrapper"]}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box
-              className={`flex fr ai-c`}
+              className="flex fr ai-c"
               sx={{
                 padding: "10px 20px",
                 border: "1px solid #101112",
