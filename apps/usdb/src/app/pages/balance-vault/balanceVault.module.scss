@@ -14,15 +14,16 @@
   margin-left: 10%;
 }
 .row {
-  background-color: #0a0c0f !important;
   box-shadow: none !important;
   td {
+    background-color: #0a0c0f !important;
   }
   td:first-child {
     padding-left: 20px !important;
   }
   td:last-child {
-    float: right;
+    text-align:right;
+    border-radius: 0 24px 24px 0;
     padding-right: 20px !important;
   }
 }
