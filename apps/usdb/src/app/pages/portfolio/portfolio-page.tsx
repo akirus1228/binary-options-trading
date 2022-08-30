@@ -24,18 +24,21 @@ export default function PortfolioPage() {
   const { provider, address } = useWeb3Context();
   const themeType = useSelector((state: RootState) => state.app.theme);
 
+  // load user positions from balance vault manager
   const {
     data: positionData,
     isLoading: isPositionsLoading,
     error: positionLoadError,
   } = useBvmGetPositions(address, 0, 10);
 
+  // load generated vaults from balance vault manager
   const {
     data: vaultData,
     isLoading: isVaultsLoading,
     error: vaultLoadError,
   } = useBvmGetGeneratedVaults(0, 10);
 
+  // total portfolio value from all vaults
   const portfolioValue = useMemo(() => {
     return positionData?.reduce(
       (previous: number, current: VaultPosition) => previous + current.totalUsdValue,
