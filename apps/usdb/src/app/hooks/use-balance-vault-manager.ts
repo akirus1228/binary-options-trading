@@ -2,6 +2,7 @@ import {
   addresses,
   balanceVaultManager,
   getErc20CurrencyFromAddress,
+  prettifySeconds,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import { useQuery } from "@tanstack/react-query";
@@ -62,7 +63,7 @@ export const useBvmGetPositions = (
             userAddress: vaultPosition.userAddress,
             amounts: vaultPosition.amounts,
             tokens: vaultPosition.tokens,
-            totalUsdValue: getUsdValue(
+            totalUsdValue: calcUsdValue(
               vaultPosition.amounts,
               vaultPosition.tokens,
               chainId ?? 4
@@ -101,7 +102,7 @@ export const useBvmGetGeneratedVaults = (
 ): UseBvmGetGeneratedVaultsResponse => {
   const { provider, address, chainId } = useWeb3Context();
 
-  const { data, isLoading, error } = useQuery(
+  const { data, isLoading, error } = useQuery<BalanceVault[]>(
     ["getGeneratedVaults"],
     () => {
       const contract = new ethers.Contract(
@@ -112,25 +113,32 @@ export const useBvmGetGeneratedVaults = (
       );
       return contract["getGeneratedVaultsPage"](skip, take).then(
         (res: BalanceVaultRaw[]) => {
-          return res.map((vaultData: BalanceVaultRaw) => ({
-            vaultAddress: vaultData.vaultAddress,
-            name: vaultData.ownerInfos[0],
-            description: vaultData.ownerInfos[1],
-            nftAddress: vaultData.nftAddress,
-            ownerName: vaultData.ownerInfos[0],
-            ownerContacts: vaultData.ownerContacts,
-            ownerWallet: vaultData.ownerWallet,
-            fundingAmount: vaultData.fundingAmount,
-            fundsRaised: vaultData.fundraised,
-            allowedTokens: vaultData.allowedTokens,
-            freezeTimestamp: vaultData.freezeTimestamp.toNumber(),
-            repaymentTimestamp: vaultData.repaymentTimestamp.toNumber(),
-            apr: vaultData.apr.toNumber(),
-            shouldBeFrozen: vaultData.shouldBeFrozen,
-            lockDuration:
-              (vaultData.repaymentTimestamp as BigNumber).toNumber() -
-              (vaultData.freezeTimestamp as BigNumber).toNumber(),
-          }));
+          return res.map(
+            (vaultData: BalanceVaultRaw) =>
+              ({
+                vaultAddress: vaultData.vaultAddress,
+                name: vaultData.ownerInfos[0],
+                description: vaultData.ownerInfos[1],
+                nftAddress: vaultData.nftAddress,
+                ownerName: vaultData.ownerInfos[0],
+                ownerContacts: vaultData.ownerContacts,
+                ownerWallet: vaultData.ownerWallet,
+                fundingAmount: vaultData.fundingAmount,
+                fundsRaised: vaultData.fundraised,
+                allowedTokens: vaultData.allowedTokens,
+                freezeTimestamp: vaultData.freezeTimestamp.toNumber(),
+                repaymentTimestamp: vaultData.repaymentTimestamp.toNumber(),
+                apr: vaultData.apr.toNumber(),
+                shouldBeFrozen: vaultData.shouldBeFrozen,
+                lockDuration:
+                  (vaultData.repaymentTimestamp as BigNumber).toNumber() -
+                  (vaultData.freezeTimestamp as BigNumber).toNumber(),
+                time: calcTimeCompleted(
+                  vaultData.freezeTimestamp.toNumber(),
+                  vaultData.repaymentTimestamp.toNumber()
+                ),
+              } as BalanceVault)
+          );
         }
       );
     },
@@ -144,7 +152,15 @@ export const useBvmGetGeneratedVaults = (
   return { data, isLoading, error };
 };
 
-export const getUsdValue = (
+/**
+ * Returns total usd value from a list of amounts and tokens.
+ *
+ * @param amounts array of bignumbers containing balance of each token
+ * @param tokens addresses of each token index maps to amount array
+ * @param networkId network to use for conversion
+ *
+ */
+export const calcUsdValue = (
   amounts: BigNumber[],
   tokens: string[],
   networkId: number
@@ -159,3 +175,35 @@ export const getUsdValue = (
     0
   );
 };
+
+/**
+ * Returns time since freeze in seconds and percent complete
+ *
+ * @param freezeTimestamp timestamp of when the lock starts
+ * @param repaymentTimestamp timestamp of when the lock ends
+ *
+ */
+export const calcTimeCompleted = (
+  freezeTimestamp: number,
+  repaymentTimestamp: number
+): { completedTime: string; percentComplete: number } => {
+  const now = Math.floor(Date.now() / 1000);
+  if (now > repaymentTimestamp)
+    return {
+      completedTime: "Complete",
+      percentComplete: 100,
+    };
+  if (now < freezeTimestamp)
+    return {
+      completedTime: "Not Started",
+      percentComplete: 100,
+    };
+  const duration = repaymentTimestamp - freezeTimestamp;
+  const completedTime = now - freezeTimestamp > 0 ? now - freezeTimestamp : 0;
+  const percentComplete = completedTime / duration;
+  return {
+    completedTime: prettifySeconds(completedTime),
+    percentComplete,
+  };
+};
+

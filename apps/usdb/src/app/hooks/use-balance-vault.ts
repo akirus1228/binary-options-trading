@@ -2,6 +2,7 @@ import { balanceVaultAbi, useWeb3Context } from "@fantohm/shared-web3";
 import { useQuery } from "@tanstack/react-query";
 import { BigNumber, ethers } from "ethers";
 import { useEffect } from "react";
+import { calcTimeCompleted } from "./use-balance-vault-manager";
 
 export type BalanceVault = {
   vaultAddress: string;
@@ -19,6 +20,7 @@ export type BalanceVault = {
   apr: number;
   shouldBeFrozen: boolean;
   lockDuration: number;
+  time: { completedTime: string; percentComplete: number };
 };
 
 export type BalanceVaultRaw = {
@@ -111,6 +113,10 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
           shouldBeFrozen: res[12] as boolean,
           lockDuration:
             (res[11] as BigNumber).toNumber() - (res[10] as BigNumber).toNumber(),
+          time: calcTimeCompleted(
+            (res[10] as BigNumber).toNumber(),
+            (res[11] as BigNumber).toNumber()
+          ),
         };
       });
     },
