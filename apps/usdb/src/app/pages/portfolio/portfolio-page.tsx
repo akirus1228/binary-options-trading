@@ -228,10 +228,13 @@ export default function PortfolioPage() {
                       fontSize: "16px",
                     }}
                   >
-                    {100}
+                    {vault.time.completedTime}
                   </Typography>
                   <Box sx={{ width: "100px", margin: "0 10px" }}>
-                    <LinearProgress variant="determinate" value={(10 / 100) * 100} />
+                    <LinearProgress
+                      variant="determinate"
+                      value={vault.time.percentComplete * 100}
+                    />
                   </Box>
                   <Typography
                     sx={{
