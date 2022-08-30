@@ -47,7 +47,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   const [isDeposit, setIsDeposit] = useState(false);
 
   // theme relevant style data
-  const borderStyle = "2px solid #101112";
+  const borderStyle = themeType === "light" ? "2px solid #ECECF4" : "2px solid #101112";
   const lowContrastBg =
     themeType === "light"
       ? style["low-contrast-bg-light"]
@@ -79,7 +79,11 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
         open={vaultActionFormOpen}
       />
       <Box className="grid g-x-2" sx={{ m: "2em" }} maxWidth="xl" id="grid-container">
-        <Box className="rounded-lg" sx={{ border: borderStyle }} id="left-box">
+        <Box
+          className="rounded-lg"
+          sx={{ border: borderStyle, background: themeType === "light" ? "#FFF" : "" }}
+          id="left-box"
+        >
           <Box
             className="flex fr fj-sb ai-c gap-x-2"
             sx={{ borderBottom: borderStyle, p: "2em" }}
@@ -227,7 +231,11 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             </Box>
           </Box>
         </Box>
-        <Box className="rounded-lg" sx={{ border: borderStyle }} id="right-box">
+        <Box
+          className="rounded-lg"
+          sx={{ border: borderStyle, background: themeType === "light" ? "#FFF" : "" }}
+          id="right-box"
+        >
           <Box
             className="flex fr fj-sb gap-x-2"
             sx={{ borderBottom: borderStyle, p: "2em" }}
