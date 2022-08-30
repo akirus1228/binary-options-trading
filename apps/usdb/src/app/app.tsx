@@ -16,32 +16,26 @@ import {
   loadAccountDetails,
   defaultNetworkId,
   calculateAllUserBondDetails,
-  isPendingTxn,
-  txnButtonText,
 } from "@fantohm/shared-web3";
 import { StakingChoicePage } from "./pages/staking-choice/staking-choice";
 import { Header, Footer } from "./components/template";
 import { ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
 import { Messages } from "./components/messages/messages";
 import { XfhmLqdrPage } from "./pages/xfhm-lqdr/xfhm-lqdr";
-import { BalanceHomePage } from "./pages/home/balance-home-page";
 import { TradFiDeposit } from "./pages/trad-fi/deposit/deposit";
 import { TradFi } from "./pages/trad-fi/trad-fi";
 import { MyAccount } from "./pages/my-account/my-account";
 import { RootState } from "./store";
-import { loadAppDetails, setTheme } from "./store/reducers/app-slice";
+import { loadAppDetails } from "./store/reducers/app-slice";
 import StakingV1Page from "./pages/staking-v1/staking-v1";
 import { MintNftPage } from "./pages/backed-nft/mint-nft";
 import Amps from "./pages/amps/amps";
-import BalanceAboutPage from "./pages/balance-about-page/balance-about-page";
-import { HomeHeader } from "./components/template/header/home-header";
 import HomePage from "./pages/home/home-page";
-import FhmPage from "./pages/fhm/fhm-page";
 import Typography from "@mui/material/Typography";
 import style from "./pages/trad-fi/deposit/deposit.module.scss";
 import BalanceVault from "./pages/balance-vault/balanceVault";
 import BalanceVaultDetailsPage from "./pages/balance-vault-details-page/balance-vault-details-page";
-import Portfolio from "./pages/portfolio";
+import Portfolio from "./pages/portfolio/portfolio";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -72,7 +66,7 @@ export const App = (): JSX.Element => {
         );
       });
     dispatch(calcGlobalBondDetails({ allBonds }));
-    investments.map((investment) => {
+    investments.forEach((investment) => {
       dispatch(calcInvestmentDetails({ investment }));
       dispatch(fetchTokenPrice({ investment }));
     });
