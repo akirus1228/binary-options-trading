@@ -40,7 +40,7 @@ export default function BalanceVault() {
     BalanceVaultOverview.Vault_Currency,
     BalanceVaultOverview.Vault_Status,
   ];
-
+  console.log("length", vaultLength);
   useEffect(() => {
     if (!provider) return;
 
@@ -53,7 +53,7 @@ export default function BalanceVault() {
         },
       })
     );
-  }, [provider]);
+  }, [provider, connected, address]);
 
   useEffect(() => {
     if (!provider) return;
@@ -87,7 +87,7 @@ export default function BalanceVault() {
         },
       })
     );
-  }, [provider]);
+  }, [provider, connected, address]);
 
   const onCreateVaultOpen = useCallback(() => {
     setCreateVaultOpen(true);
@@ -95,7 +95,7 @@ export default function BalanceVault() {
   const onCreateVaultClose = () => {
     setCreateVaultOpen(false);
   };
-
+  console.log("balanceVaults", balanceVaults);
   return (
     <Box>
       <CreateVaultForm onClose={onCreateVaultClose} open={createVaultOpen} />
@@ -130,14 +130,11 @@ export default function BalanceVault() {
         <PaperTable>
           <PaperTableHead>
             <TableRow>
-              <PaperTableCell
-                key={`overview-table-header`}
-                className={style["offersHead"]}
-              >
-                {overView}
-              </PaperTableCell>
-
-              <PaperTableCell></PaperTableCell>
+              {overView.map((item, index) => (
+                <PaperTableCell key={index} className={style["offersHead"]}>
+                  {item}
+                </PaperTableCell>
+              ))}
             </TableRow>
           </PaperTableHead>
           <TableBody>

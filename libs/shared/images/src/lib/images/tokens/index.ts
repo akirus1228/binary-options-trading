@@ -6,6 +6,7 @@ import EthToken from "./ETH.svg";
 import UsdcToken from "./USDC.svg";
 import UsdtToken from "./USDT.svg";
 import WbtcToken from "./wBTC.svg";
+
 export {
   EthToken,
   DaiToken,

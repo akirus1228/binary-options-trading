@@ -2,7 +2,6 @@ import { Box, TextField, Typography } from "@mui/material";
 import style from "./vaultForm1.module.scss";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
-
 export interface VaultForm1Props {}
 
 export const VaultForm1 = (props: VaultForm1Props): JSX.Element => {
