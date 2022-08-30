@@ -32,3 +32,4 @@ export * from "./lib/constants";
 export * from "./lib/wallet";
 export { changeMint } from "./lib/slices/stake-thunk";
 export * from "./lib/lib/api";
+export * from "./lib/helpers/erc20Currency";
