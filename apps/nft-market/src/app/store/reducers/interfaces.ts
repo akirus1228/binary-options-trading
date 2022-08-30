@@ -101,10 +101,16 @@ export type OpenseaAssetQueryParam = {
   collection_slug?: string;
   order_direction?: string;
   asset_contract_address?: string;
-  asset_contract_addresses?: string;
+  asset_contract_addresses?: string[];
   limit?: number;
   offset?: string;
   cursor?: string;
+};
+
+export type OpenseaCollectionQueryParam = {
+  asset_owner?: string; // wallet address
+  limit?: number;
+  offset?: string;
 };
 
 export interface OpenseaAssetQueryAsyncThunk {
