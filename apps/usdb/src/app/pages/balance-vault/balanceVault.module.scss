@@ -23,6 +23,20 @@
         }
     } 
 }
+.rowh {
+    padding-left: 50px !important;
+    th:first-child {
+        padding-left: 1rem !important;
+    }
+    th:last-child {
+        float: right;
+        div {
+            div {
+                span {width:150px;text-align:center;}
+            }
+        }
+    } 
+}
 .offerElem {
     font-size:1rem !important;
     padding:0 !important;

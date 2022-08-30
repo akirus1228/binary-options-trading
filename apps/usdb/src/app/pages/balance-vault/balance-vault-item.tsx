@@ -4,6 +4,7 @@ import { BigNumber, ethers } from "ethers";
 import { BalanceVaultType } from "../../store/interfaces";
 import { BalanceVaultOverview } from "./balanceVault";
 import style from "./balanceVault.module.scss";
+import { Link } from "react-router-dom";
 
 export type BalanceVaultItemProps = {
   Type: BalanceVaultType;
@@ -26,7 +27,7 @@ export const BalanceVaultItem = ({
   return (
     <PaperTableRow className={style["row"]}>
       <PaperTableCell key="vaultName" className={style["offerElem"]}>
-        <Box className="flex fr ai-c">{Type.ownerInfos}</Box>
+        <Box className="flex fr ai-c">{Type.ownerInfos[0]}</Box>
       </PaperTableCell>
       <PaperTableCell key="vaultAmount" className={style["offerElem"]}>
         <Box className="flex fr ai-c">{fundingAmount}</Box>
@@ -39,7 +40,9 @@ export const BalanceVaultItem = ({
       </PaperTableCell>
       <PaperTableCell>Token</PaperTableCell>
       <PaperTableCell>
-        <Button variant="contained">open</Button>
+        <Link to={`/vault/${Type.vaultAddress}`} key={Type.ownerInfos[0]}>
+          <Button variant="contained">open</Button>
+        </Link>
       </PaperTableCell>
     </PaperTableRow>
   );

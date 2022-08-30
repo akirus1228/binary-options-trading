@@ -87,7 +87,7 @@ export default function BalanceVault() {
         },
       })
     );
-  }, [provider, connected, address]);
+  }, [provider, connected, address, vaultLength]);
 
   const onCreateVaultOpen = useCallback(() => {
     setCreateVaultOpen(true);
@@ -129,7 +129,7 @@ export default function BalanceVault() {
       <Container className={style["offerContainer"]}>
         <PaperTable>
           <PaperTableHead>
-            <TableRow>
+            <TableRow className={style["rowh"]}>
               {overView.map((item, index) => (
                 <PaperTableCell key={index} className={style["offersHead"]}>
                   {item}
