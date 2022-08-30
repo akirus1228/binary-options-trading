@@ -123,15 +123,16 @@ export default function BalanceVault() {
         </Typography>
         <Switch defaultChecked />
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: "50px" }}>
         <Link to="/portfolio">
-          <Button sx={{ border: "solid 2px #3744e6", width: "190px" }}>
+          <Button sx={{ border: "solid 2px #3744e6", width: "200px" }}>
             View portfolio
           </Button>
         </Link>
         <Button
           onClick={onCreateVaultOpen}
-          sx={{ border: "solid 2px #252729", width: "190px", ml: "20px" }}
+          disabled={true}
+          sx={{ border: "solid 2px #252729", width: "200px", ml: "20px" }}
         >
           + Create Vault
         </Button>

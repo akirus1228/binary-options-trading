@@ -234,6 +234,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             <h2 className={`${style["text-lg"]}`}>About</h2>
             <Button
               variant="contained"
+              disabled={true}
               className="thinSquaredButton"
               sx={{
                 backgroundColor: "#0D1014",
