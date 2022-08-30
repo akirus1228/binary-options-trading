@@ -21,6 +21,10 @@ export const ExternalLink = ({ href, title }: ExternalLinkProps) => {
       ? style["low-contrast-text-light"]
       : style["low-contrast-text-light"];
 
+  if (href === "#") {
+    return <></>;
+  }
+
   return (
     <Box
       sx={{ p: "0.75em" }}

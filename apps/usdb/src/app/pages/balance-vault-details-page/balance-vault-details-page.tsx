@@ -87,7 +87,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
           >
             <Box className="flex fr ai-c">
               <Avatar
-                src={TakepileLogo} // todo: replace with vaultData.ownerContacts[0]
+                src={vaultData?.ownerContacts[0]}
                 sx={{ p: "5px", border: borderStyle, mr: "1em" }}
               />
               <h2 className={`${style["text-lg"]}`}>{vaultData?.name}</h2>
@@ -271,10 +271,13 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             </Box>
             <h2 className={`${style["text-md"]}`}>External Links</h2>
             <Box className="flex fr ai-c gap-x-1">
-              <ExternalLink href="#" title="Documentation" />
-              <ExternalLink href="#" title="Proposal" />
-              <ExternalLink href="#" title="Website" />
-              <ExternalLink href="#" title="Twitter" />
+              <ExternalLink
+                href={vaultData?.ownerContacts[1] ?? "#"}
+                title="Documentation"
+              />
+              <ExternalLink href={vaultData?.ownerContacts[2] ?? "#"} title="Proposal" />
+              <ExternalLink href={vaultData?.ownerContacts[3] ?? "#"} title="Website" />
+              <ExternalLink href={vaultData?.ownerContacts[4] ?? "#"} title="Twitter" />
             </Box>
           </Box>
         </Box>
