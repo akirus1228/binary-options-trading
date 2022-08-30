@@ -17,7 +17,7 @@ export const PositionTemplate = ({ currency, amount }: PositionTemplateProps) =>
           style={{ height: "1.2em", width: "1.2em", marginRight: "0.5em" }}
           alt={currency.name}
         />
-        DAI
+        {currency.symbol}
       </Box>
       <span>{amount && formatCurrency(+ethers.utils.formatUnits(amount, 18))}</span>
     </Box>
