@@ -16,12 +16,7 @@ import { RootState } from "../../store";
 import style from "./balance-vault-details-page.module.scss";
 import { PositionTemplate } from "./position-template";
 
-/* eslint-disable-next-line */
-export interface BalanceVaultDetailsPageProps {}
-
-export const BalanceVaultDetailsPage = (
-  props: BalanceVaultDetailsPageProps
-): JSX.Element => {
+export const BalanceVaultDetailsPage = (): JSX.Element => {
   const { vaultId } = useParams();
   const themeType = useSelector((state: RootState) => state.app.theme);
 
