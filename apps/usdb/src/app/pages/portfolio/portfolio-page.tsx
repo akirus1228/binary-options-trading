@@ -2,21 +2,14 @@ import { Box, Grid, LinearProgress, Container, Icon, Typography } from "@mui/mat
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  defaultNetworkId,
-  getBalanceVaultManager,
-  getGeneratedVaultsLength,
-  useWeb3Context,
-} from "@fantohm/shared-web3";
+import { useWeb3Context } from "@fantohm/shared-web3";
 import { VaultType } from "./vaultType";
 import { RootState } from "../../store";
 
 export default function PortfolioPage() {
-  const { provider, chainId } = useWeb3Context();
-  const dispatch = useDispatch();
+  const { provider } = useWeb3Context();
   const themeType = useSelector((state: RootState) => state.app.theme);
 
-  const [createVaultOpen, setCreateVaultOpen] = useState(false);
   const [vaults, setVaults] = useState<VaultType[]>([]);
 
   useEffect(() => {
@@ -49,14 +42,7 @@ export default function PortfolioPage() {
     //   })
     // );
   }, [provider]);
-
-  const onCreateVaultOpen = useCallback(() => {
-    setCreateVaultOpen(true);
-  }, []);
-  const onCreateVaultClose = () => {
-    setCreateVaultOpen(false);
-  };
-
+  
   return (
     <Container maxWidth="xl">
       <Typography
