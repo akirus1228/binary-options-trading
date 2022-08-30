@@ -60,7 +60,7 @@ export const App = (): JSX.Element => {
     dispatch(loadAppDetails({ networkId: chainId || defaultNetworkId }));
     bonds
       .filter((bond) => bond.name !== "stakeNft" && bond.name !== "usdbNft")
-      .map((bond) => {
+      .forEach((bond) => {
         dispatch(
           calcBondDetails({ bond, value: "", networkId: chainId || defaultNetworkId })
         );
