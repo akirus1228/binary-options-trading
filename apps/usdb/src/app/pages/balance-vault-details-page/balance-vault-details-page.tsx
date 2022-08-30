@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { DaiToken, TakepileLogo } from "@fantohm/shared/images";
 import { ContentCopy, NorthEast, OpenInNew } from "@mui/icons-material";
 import { Avatar, Box, Button, LinearProgress, Typography } from "@mui/material";
@@ -5,6 +6,7 @@ import clsx from "clsx";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
+import VaultActionForm from "../../components/vault-action";
 import style from "./balance-vault-details-page.module.scss";
 import { PositionTemplate } from "./position-template";
 
@@ -16,6 +18,9 @@ export const BalanceVaultDetailsPage = (
 ): JSX.Element => {
   const { vaultId } = useParams();
   const themeType = useSelector((state: RootState) => state.app.theme);
+
+  const [vaultActionFormOpen, setVaultActionFormOpen] = useState(false);
+  const [isDeposit, setIsDeposit] = useState(false);
 
   const borderStyle = "2px solid #101112";
 
@@ -29,8 +34,27 @@ export const BalanceVaultDetailsPage = (
       ? style["low-contrast-text-light"]
       : style["low-contrast-text-light"];
 
+  const onDeposit = () => {
+    setIsDeposit(true);
+    setVaultActionFormOpen(true);
+  };
+
+  const onWithdraw = () => {
+    setIsDeposit(false);
+    setVaultActionFormOpen(true);
+  };
+
+  const onVaultActionFormClose = () => {
+    setVaultActionFormOpen(false);
+  };
+
   return (
     <Box className="flexCenterRow" id="content-centering-container">
+      <VaultActionForm
+        onClose={onVaultActionFormClose}
+        deposit={isDeposit}
+        open={vaultActionFormOpen}
+      />
       <Box className="grid g-x-2" sx={{ m: "2em" }} maxWidth="xl" id="grid-container">
         <Box className="rounded-lg" sx={{ border: borderStyle }} id="left-box">
           <Box
@@ -53,6 +77,7 @@ export const BalanceVaultDetailsPage = (
                   backgroundColor: "#0D1014",
                   color: "#8A99A8",
                 }}
+                onClick={onDeposit}
               >
                 + Deposit
               </Button>
@@ -63,6 +88,7 @@ export const BalanceVaultDetailsPage = (
                   backgroundColor: "#0D1014",
                   color: "#8A99A859",
                 }}
+                onClick={onWithdraw}
               >
                 - Withdraw
               </Button>
