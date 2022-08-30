@@ -144,6 +144,14 @@ export const useBvmGetGeneratedVaults = (
   return { data, isLoading, error };
 };
 
+/**
+ * Returns generated vaults from the BalanceVaultManager contract.
+ *
+ * @param amounts array of bignumbers containing balance of each token
+ * @param tokens addresses of each token index maps to amount array
+ * @param networkId network to use for conversion
+ *
+ */
 export const getUsdValue = (
   amounts: BigNumber[],
   tokens: string[],
