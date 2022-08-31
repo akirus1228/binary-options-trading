@@ -15,11 +15,11 @@ export const ExternalLink = ({ href, title }: ExternalLinkProps) => {
   const lowContrastBg =
     themeType === "light"
       ? style["low-contrast-bg-light"]
-      : style["low-contrast-bg-light"];
+      : style["low-contrast-bg-dark"];
   const lowContrastText =
     themeType === "light"
       ? style["low-contrast-text-light"]
-      : style["low-contrast-text-light"];
+      : style["low-contrast-text-dark"];
 
   if (href === "#") {
     return <></>;
@@ -30,9 +30,9 @@ export const ExternalLink = ({ href, title }: ExternalLinkProps) => {
       sx={{ p: "0.75em" }}
       className={`flex fr jf-c ai-c rounded ${lowContrastBg} ${lowContrastText}`}
     >
-      <Link to={href}>
+      <a href={href}>
         <span className={lowContrastText}>{title}</span>
-      </Link>
+      </a>
       <NorthEast />
     </Box>
   );

@@ -141,7 +141,7 @@ export default function BalanceVault() {
         <PaperTable sx={{ borderSpacing: "0em 2em !important" }}>
           <colgroup>
             <col width="20%"></col>
-            <col width="25%"></col>
+            <col width="30%"></col>
           </colgroup>
           <PaperTableHead>
             <TableRow className={style["rowh"]}>

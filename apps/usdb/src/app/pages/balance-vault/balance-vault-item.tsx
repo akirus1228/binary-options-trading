@@ -24,14 +24,10 @@ export const BalanceVaultItem = ({
   overview,
 }: BalanceVaultItemProps): JSX.Element => {
   const { provider, address, chainId, connected } = useWeb3Context();
-  const fundingAmount = BigNumber.from(Type.fundingAmount)
-    .div(Math.pow(10, 15))
-    .div(1000)
-    .toString();
-  const fundraisedAmount = BigNumber.from(Type.fundraised)
-    .div(Math.pow(10, 15))
-    .div(1000)
-    .toString();
+  const fundingAmount =
+    BigNumber.from(Type.fundingAmount).div(Math.pow(10, 15)).div(1000).toNumber() / 1000;
+  const fundraisedAmount =
+    BigNumber.from(Type.fundraised).div(Math.pow(10, 15)).div(1000).toNumber() / 1000;
   const apr = parseFloat(BigNumber.from(Type.apr).div(100).toString()).toFixed(2);
   const duration = BigNumber.from(Type.repaymentTimestamp)
     .sub(BigNumber.from(Type.freezeTimestamp))
@@ -51,15 +47,23 @@ export const BalanceVaultItem = ({
       </PaperTableCell>
       <PaperTableCell key="vaultAmount" className={style["offerElem"]}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box className="flex fr ai-c">${fundraisedAmount}</Box>
+          <Box
+            className="flex fr ai-c"
+            sx={{ width: "15%", display: "flex", justifyContent: "center" }}
+          >
+            ${fundraisedAmount}K
+          </Box>
           <LinearProgress
             variant="determinate"
-            value={Number(
-              BigNumber.from(Type.fundingAmount).div(BigNumber.from(Type.fundraised))
-            )}
-            sx={{ width: "60%", ml: "5%", mr: "5%" }}
+            value={Number((fundraisedAmount / fundingAmount) * 100)}
+            sx={{ width: "50%", ml: "5%", mr: "5%" }}
           />
-          <Box className="flex fr ai-c">${fundingAmount}</Box>
+          <Box
+            className="flex fr ai-c"
+            sx={{ width: "10%", display: "flex", justifyContent: "center" }}
+          >
+            ${fundingAmount}K
+          </Box>
         </Box>
       </PaperTableCell>
       <PaperTableCell key="vaultapr" className={style["offerElem"]}>

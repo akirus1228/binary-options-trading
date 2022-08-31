@@ -12,6 +12,7 @@ import {
   Avatar,
   Box,
   Button,
+  Icon,
   IconButton,
   LinearProgress,
   Typography,
@@ -26,6 +27,7 @@ import VaultActionForm from "../../components/vault-action";
 import style from "./balance-vault-details-page.module.scss";
 import { ExternalLink } from "./external-link";
 import { PositionTemplate } from "./position-template";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 export const BalanceVaultDetailsPage = (): JSX.Element => {
   const { vaultId } = useParams();
@@ -47,11 +49,11 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   const lowContrastBg =
     themeType === "light"
       ? style["low-contrast-bg-light"]
-      : style["low-contrast-bg-light"];
+      : style["low-contrast-bg-dark"];
   const lowContrastText =
     themeType === "light"
       ? style["low-contrast-text-light"]
-      : style["low-contrast-text-light"];
+      : style["low-contrast-text-dark"];
 
   const onDeposit = () => {
     setIsDeposit(true);
@@ -68,7 +70,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   };
 
   return (
-    <Box className="flexCenterRow" id="content-centering-container">
+    <Box className="flexCenterRow" id="content-centering-container" sx={{ mt: "100px" }}>
       <VaultActionForm
         onClose={onVaultActionFormClose}
         deposit={isDeposit}
@@ -176,7 +178,14 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             </Box>
             <Box className="grid g-x-2">
               <Box>
-                <h2 className={style["text-md"]}>Overview</h2>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <h2 className={style["text-md"]}>Overview</h2>
+                  <Icon
+                    component={InfoOutlinedIcon}
+                    fontSize={"medium"}
+                    sx={{ ml: "5px" }}
+                  />
+                </Box>
                 <p className={lowContrastText}>
                   Deposit{" "}
                   {vaultData &&
@@ -189,20 +198,34 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                   {prettifySeconds(vaultData?.lockDuration ?? 0)} once the vault’s desired
                   financing has been met.
                 </p>
-                <h2 className={style["text-md"]}>Duration</h2>
-                <Box className="flex fr jf-sb ai-c">
+                <Box className="flex ai-c">
+                  <h2 className={style["text-md"]}>Duration</h2>
+                  <Icon
+                    component={InfoOutlinedIcon}
+                    fontSize={"medium"}
+                    sx={{ ml: "5px" }}
+                  />
+                </Box>
+                <Box className="flex fr jf-sb ai-c" sx={{ textAlign: "center" }}>
                   <span>{vaultData?.time.completedTime}</span>
                   <LinearProgress
                     value={vaultData?.time.percentComplete ?? 0}
                     variant="determinate"
-                    sx={{ width: "60%" }}
+                    sx={{ width: "50%", ml: "10px", mr: "10px" }}
                   />
                   <span>{prettifySeconds(vaultData?.lockDuration ?? 0)}</span>
                 </Box>
               </Box>
               <Box className="flex fc fj-sb">
                 <Box className="flex fr fj-sb ai-c">
-                  <h2 className={style["text-md"]}>My Position</h2>
+                  <Box className="flex ai-c">
+                    <h2 className={style["text-md"]}>My Position</h2>
+                    <Icon
+                      component={InfoOutlinedIcon}
+                      fontSize={"medium"}
+                      sx={{ ml: "5px" }}
+                    />
+                  </Box>
                   <Typography sx={{ color: "#69D9C8" }}>
                     {formatCurrency(positionData?.totalUsdValue ?? 0)}
                   </Typography>
@@ -251,10 +274,15 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             </Button>
           </Box>
           <Box sx={{ p: "2em" }}>
-            <h2 className={`${style["text-md"]}`}>Description</h2>
+            <Box className="flex ai-c">
+              <h2 className={`${style["text-md"]}`}>Description</h2>
+              <Icon component={InfoOutlinedIcon} fontSize={"medium"} sx={{ ml: "5px" }} />
+            </Box>
             <p className={lowContrastText}>{vaultData?.description}</p>
-
-            <h2 className={`${style["text-md"]}`}>Vault owner</h2>
+            <Box className="flex ai-c">
+              <h2 className={`${style["text-md"]}`}>Vault owner</h2>
+              <Icon component={InfoOutlinedIcon} fontSize={"medium"} sx={{ ml: "5px" }} />
+            </Box>
             <Box
               sx={{ p: "0.75em" }}
               className={`flex fr jf-c ai-c gap-x-2 fj-sb rounded ${lowContrastBg}`}
@@ -273,15 +301,21 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 </IconButton>
               </Box>
             </Box>
-            <h2 className={`${style["text-md"]}`}>External Links</h2>
+            <Box className="flex ai-c">
+              <h2 className={`${style["text-md"]}`}>External Links</h2>
+              <Icon component={InfoOutlinedIcon} fontSize={"medium"} sx={{ ml: "5px" }} />
+            </Box>
             <Box className="flex fr ai-c gap-x-1">
-              <ExternalLink
-                href={vaultData?.ownerContacts[1] ?? "#"}
-                title="Documentation"
-              />
-              <ExternalLink href={vaultData?.ownerContacts[2] ?? "#"} title="Proposal" />
-              <ExternalLink href={vaultData?.ownerContacts[3] ?? "#"} title="Website" />
-              <ExternalLink href={vaultData?.ownerContacts[4] ?? "#"} title="Twitter" />
+              {vaultData?.ownerContacts.map(
+                (item, index) =>
+                  item.search("~!_") > -1 && (
+                    <ExternalLink
+                      key={index}
+                      href={item.split("~!_")[1]}
+                      title={item.split("~!_")[0]}
+                    />
+                  )
+              )}
             </Box>
           </Box>
         </Box>
