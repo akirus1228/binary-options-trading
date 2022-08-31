@@ -34,7 +34,7 @@ const formatDateTimeString = (time: Date) => {
   );
 };
 
-const BorrowserNotListed = ({ asset }: { asset: Asset }): JSX.Element => {
+const BorrowerNotListed = ({ asset }: { asset: Asset }): JSX.Element => {
   return (
     <Box className={style["mainContainer"]}>
       <Icon>
@@ -53,7 +53,7 @@ const BorrowserNotListed = ({ asset }: { asset: Asset }): JSX.Element => {
   );
 };
 
-const BorrowserOnlyListed = ({
+const BorrowerOnlyListed = ({
   asset,
   listing,
 }: {
@@ -87,7 +87,7 @@ const BorrowserOnlyListed = ({
   );
 };
 
-const BorrowserListedLoan = ({
+const BorrowerListedLoan = ({
   asset,
   loan,
   endTime,
@@ -169,11 +169,11 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
   }, [loan]);
 
   if (listing) {
-    return <BorrowserOnlyListed asset={asset} listing={listing} />;
+    return <BorrowerOnlyListed asset={asset} listing={listing} />;
   }
 
   if (!loan && !listing) {
-    return <BorrowserNotListed asset={asset} />;
+    return <BorrowerNotListed asset={asset} />;
   }
 
   if (isLoading) {
@@ -188,11 +188,11 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
 
   if (loan && loanDetails) {
     return (
-      <BorrowserListedLoan asset={asset} loan={loan} endTime={loanDetails.endDateTime} />
+      <BorrowerListedLoan asset={asset} loan={loan} endTime={loanDetails.endDateTime} />
     );
   }
 
-  return <BorrowserNotListed asset={asset} />;
+  return <BorrowerNotListed asset={asset} />;
 };
 
 export default StatusInfo;
