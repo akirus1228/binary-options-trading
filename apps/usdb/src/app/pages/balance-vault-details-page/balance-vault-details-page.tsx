@@ -51,11 +51,11 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   const lowContrastBg =
     themeType === "light"
       ? style["low-contrast-bg-light"]
-      : style["low-contrast-bg-light"];
+      : style["low-contrast-bg-dark"];
   const lowContrastText =
     themeType === "light"
       ? style["low-contrast-text-light"]
-      : style["low-contrast-text-light"];
+      : style["low-contrast-text-dark"];
 
   const onDeposit = () => {
     setIsDeposit(true);

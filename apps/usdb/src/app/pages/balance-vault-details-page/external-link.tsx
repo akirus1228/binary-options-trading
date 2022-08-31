@@ -15,11 +15,11 @@ export const ExternalLink = ({ href, title }: ExternalLinkProps) => {
   const lowContrastBg =
     themeType === "light"
       ? style["low-contrast-bg-light"]
-      : style["low-contrast-bg-light"];
+      : style["low-contrast-bg-dark"];
   const lowContrastText =
     themeType === "light"
       ? style["low-contrast-text-light"]
-      : style["low-contrast-text-light"];
+      : style["low-contrast-text-dark"];
 
   if (href === "#") {
     return <></>;
