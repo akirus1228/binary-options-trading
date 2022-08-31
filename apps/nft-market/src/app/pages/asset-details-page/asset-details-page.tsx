@@ -80,10 +80,11 @@ export const AssetDetailsPage = (): JSX.Element => {
   const { data: loans, isLoading: isLoansLoading } = useGetLoansQuery(
     {
       skip: 0,
-      take: 40,
+      take: 1,
+      sortQuery: "loan.updatedAt:DESC",
       assetId: asset?.id || "",
     },
-    { skip: !authSignature }
+    { skip: !authSignature || asset?.status !== AssetStatus.Locked }
   );
 
   // is the user the owner of the asset?
