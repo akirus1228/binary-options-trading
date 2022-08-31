@@ -376,7 +376,7 @@ export const BorrowerLoanDetails = ({
                 )}
               </>
             )}
-            {!canRepay && (
+            {!canRepay && !notEnoughBalance && (
               <Button variant="contained" onClick={handleRepayLoan} disabled>
                 Repay loan
               </Button>
