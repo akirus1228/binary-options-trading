@@ -183,8 +183,10 @@ export const checkNftPermission = createAsyncThunk(
       const response: string = await nftContract["getApproved"](tokenId);
       const hasPermission =
         response.toLowerCase() ===
-        (addresses[networkId]["USDB_LENDING_ADDRESS_V2"].toLowerCase() ||
-          addresses[networkId]["USDB_LENDING_ADDRESS"].toLowerCase());
+        (
+          addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
+          addresses[networkId]["USDB_LENDING_ADDRESS"]
+        ).toLowerCase();
       const payload: NftPermStatus = {};
       payload[`${tokenId}:::${assetAddress.toLowerCase()}`] = hasPermission;
       return payload;
