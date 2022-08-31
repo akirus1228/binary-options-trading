@@ -120,7 +120,7 @@ export function LenderLoanDetails({ loan, asset, sx }: LenderLoanDetailsProps) {
         (duration - Math.max(loanDetails.endTime - Date.now() / 1000, 0)) / (24 * 60 * 60)
       );
 
-      return passedDays + " / " + loan.term.duration + " days";
+      return Math.max(passedDays, 0) + " / " + loan.term.duration + " days";
     }
     return "";
   };
