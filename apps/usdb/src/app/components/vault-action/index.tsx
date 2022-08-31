@@ -184,7 +184,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
           >
             <Typography>Wallet balance: {accountBalances.usdb}</Typography>
-            <Typography>$29,988.99</Typography>
+            <Typography>${amount || 0}</Typography>
           </Box>
         </FormInputWrapper>
         <FormInputWrapper title="Estimated yield" className={styles["inputWrapper"]}>
