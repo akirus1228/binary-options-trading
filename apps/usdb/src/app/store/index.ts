@@ -1,5 +1,5 @@
 import { configureStore, createSelector } from "@reduxjs/toolkit";
-import { web3Reducers } from "@fantohm/shared-web3";
+import { walletReducer, web3Reducers } from "@fantohm/shared-web3";
 import { appReducer } from "./reducers/app-slice";
 import { saveState } from "./localstorage";
 
@@ -10,6 +10,7 @@ const store = configureStore({
   reducer: {
     ...web3Reducers,
     app: appReducer,
+    wallet: walletReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
