@@ -9,7 +9,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import styles from "./style.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
 import { currencyInfo, useWeb3Context, vaultDeposit } from "@fantohm/shared-web3";
@@ -30,6 +30,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const [isDeposit, setIsDeposit] = useState(deposit);
+  const [amount, setAmount] = useState("");
   const [token, setToken] = useState("USDB");
 
   const themeType = useSelector((state: RootState) => state.app.theme);
@@ -45,13 +46,16 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   };
 
   const handleDeposit = async () => {
-    if (provider) {
+    const key = Object.keys(currencyInfo).find(
+      (key) => currencyInfo[key].symbol === token
+    );
+    if (provider && key) {
       dispatch(
         vaultDeposit({
           address,
           vaultId,
-          amount: BigNumber.from("1000"),
-          token: "0xE827c1D2da22496A09055140c2454c953710751C",
+          amount: ethers.utils.parseUnits(amount, 18),
+          token: currencyInfo[key].addresses[chainId ?? 250],
           provider,
           networkId: chainId ?? 250,
         })
@@ -146,6 +150,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             </Box>
             <TextField
               variant="standard"
+              type="number"
               InputProps={{
                 disableUnderline: true,
                 style: {
@@ -158,6 +163,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                 width: "100%",
                 marginLeft: "20px",
               }}
+              onChange={(e) => setAmount(e.target.value)}
             />
           </Box>
           <Box
