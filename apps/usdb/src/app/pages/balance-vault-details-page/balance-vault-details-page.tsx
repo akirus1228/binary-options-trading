@@ -199,7 +199,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                   financing has been met.
                 </p>
                 <Box className="flex ai-c">
-                  <h2 className={style["text-md"]}>Duration</h2>
+                  <h2 className={style["text-md"]}>Lock Duration</h2>
                   <Icon
                     component={InfoOutlinedIcon}
                     fontSize={"medium"}

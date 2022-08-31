@@ -97,7 +97,7 @@ export default function BalanceVault() {
     setCreateVaultOpen(false);
   };
   console.log("balanceVaults", balanceVaults);
-  return (
+  return connected ? (
     <Box sx={{ mt: "100px" }}>
       <CreateVaultForm onClose={onCreateVaultClose} open={createVaultOpen} />
       <Typography
@@ -160,6 +160,10 @@ export default function BalanceVault() {
           </TableBody>
         </PaperTable>
       </Box>
+    </Box>
+  ) : (
+    <Box className="flex fj-c" sx={{ mt: "100px" }}>
+      <Typography sx={{ fontSize: "40px" }}>Please connect your wallet</Typography>
     </Box>
   );
 }
