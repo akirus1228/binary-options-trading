@@ -6,17 +6,17 @@ import HeroBannerMobileImg from "../../../assets/images/hero-banner-mobile.png";
 import HeroBannerMobileLightImg from "../../../assets/images/hero-banner-mobile-light.png";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import style from "./hero-banner.module.scss";
 
 export const HeroBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
   return (
-    <>
+    <Box sx={{ position: "relative" }}>
       <Box
         sx={{
           position: "absolute",
           zIndex: "-1",
-          top: "0",
-          left: "0",
-          width: "100%",
+          top: "-142px",
+          left: "-100px",
           height: "1080px",
           backgroundImage: {
             xs: isDark
@@ -28,6 +28,7 @@ export const HeroBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
+        className={style["bgImgWidth"]}
       ></Box>
       <Box
         sx={{
@@ -100,7 +101,7 @@ export const HeroBanner = ({ isDark }: { isDark: boolean }): JSX.Element => {
           </Link>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 
