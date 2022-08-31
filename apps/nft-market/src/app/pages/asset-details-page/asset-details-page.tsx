@@ -84,7 +84,7 @@ export const AssetDetailsPage = (): JSX.Element => {
       sortQuery: "loan.updatedAt:DESC",
       assetId: asset?.id || "",
     },
-    { skip: !authSignature || asset?.status !== AssetStatus.Locked }
+    { skip: !authSignature }
   );
 
   // is the user the owner of the asset?

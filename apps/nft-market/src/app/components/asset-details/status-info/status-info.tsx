@@ -161,9 +161,7 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
     )
       .unwrap()
       .then((loanDetails: LoanDetails) => {
-        if (loanDetails.status === LoanDetailsStatus.CREATED) {
-          setLoanDetails(loanDetails);
-        }
+        setLoanDetails(loanDetails);
         setIsLoading(false);
       });
   }, [loan]);
