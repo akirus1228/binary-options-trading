@@ -14,7 +14,7 @@ import style from "./createVault.module.scss";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { BaseSyntheticEvent, useState } from "react";
 import ArrowCircleLeftOutlinedIcon from "@mui/icons-material/ArrowCircleLeftOutlined";
-import { currencyInfo } from "../../helpers/erc20Currency";
+import { currencyInfo } from "@fantohm/shared-web3";
 
 export interface CreateVaultProps {
   onClose: (value: boolean) => void;
