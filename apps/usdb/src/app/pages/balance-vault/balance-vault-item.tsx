@@ -1,5 +1,5 @@
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
-import { Box, Button, LinearProgress, Typography } from "@mui/material";
+import { Avatar, Box, Button, LinearProgress, Typography } from "@mui/material";
 import { BigNumber, ethers } from "ethers";
 import { BalanceVaultType } from "../../store/interfaces";
 import { BalanceVaultOverview } from "./balanceVault";
@@ -11,6 +11,8 @@ import {
   getErc20CurrencyFromAddress,
 } from "@fantohm/shared-web3";
 import { TakepileLogo } from "@fantohm/shared/images";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 export type BalanceVaultItemProps = {
   Type: BalanceVaultType;
@@ -35,15 +37,15 @@ export const BalanceVaultItem = ({
     .sub(BigNumber.from(Type.freezeTimestamp))
     .div(86400)
     .toString();
+
+  const themeType = useSelector((state: RootState) => state.app.theme);
+  const rowThemeMod = themeType === "light" ? style["light"] : style["dark"];
+
   return (
-    <PaperTableRow className={style["row"]}>
+    <PaperTableRow className={`${style["row"]} ${rowThemeMod}`}>
       <PaperTableCell key="vaultName" className={style["offerElem"]}>
         <Box sx={{ display: "flex" }}>
-          <img
-            src={TakepileLogo}
-            alt="TakePileLogo"
-            style={{ width: "43px", marginRight: "10px" }}
-          ></img>
+          <Avatar src={Type.ownerContacts[0]} sx={{ height: 43, width: 43, mr: 10 }} />
           <Box className="flex fr ai-c">{Type.ownerInfos[0]}</Box>
         </Box>
       </PaperTableCell>

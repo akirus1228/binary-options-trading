@@ -138,7 +138,7 @@ export default function BalanceVault() {
         </Button>
       </Box>
       <Box className={style["offerContainer"]}>
-        <PaperTable sx={{ borderSpacing: "0em !important" }}>
+        <PaperTable sx={{ borderSpacing: "0em 2em !important" }}>
           <colgroup>
             <col width="20%"></col>
             <col width="25%"></col>
