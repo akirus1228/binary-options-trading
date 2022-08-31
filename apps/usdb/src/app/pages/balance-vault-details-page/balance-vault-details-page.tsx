@@ -193,7 +193,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 <Box className="flex fr jf-sb ai-c">
                   <span>{vaultData?.time.completedTime}</span>
                   <LinearProgress
-                    value={vaultData?.time.percentComplete}
+                    value={vaultData?.time.percentComplete ?? 0}
                     variant="determinate"
                     sx={{ width: "60%" }}
                   />
