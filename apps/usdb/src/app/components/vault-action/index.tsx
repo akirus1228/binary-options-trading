@@ -12,7 +12,13 @@ import {
 import { BigNumber, ethers } from "ethers";
 import styles from "./style.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
-import { currencyInfo, useWeb3Context, vaultDeposit } from "@fantohm/shared-web3";
+import {
+  currencyInfo,
+  useWeb3Context,
+  getBalances,
+  changeApproval,
+  vaultDeposit,
+} from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
 import { RootState } from "../../store";
 
@@ -34,6 +40,10 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const [token, setToken] = useState("USDB");
 
   const themeType = useSelector((state: RootState) => state.app.theme);
+
+  const accountBalances = useSelector((state: RootState) => {
+    return state.account.balances;
+  });
 
   useEffect(() => {
     if (open) {
@@ -128,6 +138,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                 sx={{ background: "transparent" }}
                 className="borderless"
                 disableUnderline
+                disabled
               >
                 {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
                   <MenuItem
@@ -172,7 +183,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             alignItems="center"
             sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
           >
-            <Typography>Wallet balance: 100,000.00</Typography>
+            <Typography>Wallet balance: {accountBalances.usdb}</Typography>
             <Typography>$29,988.99</Typography>
           </Box>
         </FormInputWrapper>
