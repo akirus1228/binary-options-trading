@@ -36,10 +36,6 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   const { vaultData } = useBalanceVault(vaultId as string);
   const { positionData } = useBalanceVaultPosition(vaultId as string);
 
-  useEffect(() => {
-    console.log("positionData", positionData);
-  }, [positionData]);
-
   const handleCopyAddress = () => {
     copyToClipboard(vaultData?.ownerWallet ?? "");
   };
