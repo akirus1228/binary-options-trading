@@ -10,33 +10,10 @@ import {
   MenuItem,
 } from "@mui/material";
 import styles from "./style.module.scss";
-import { EthToken, USDBToken, DaiToken } from "@fantohm/shared/images";
+import { USDBToken } from "@fantohm/shared/images";
+import { currencyInfo } from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
 import { RootState } from "../../store";
-
-const currencyInfo = {
-  WETH_ADDRESS: {
-    symbol: "wETH",
-    name: "Wrapped Ethereum",
-    icon: EthToken,
-    coingeckoStub: "weth",
-    decimals: 18,
-  },
-  USDB_ADDRESS: {
-    symbol: "USDB",
-    name: "USDBalance",
-    icon: USDBToken,
-    coingeckoStub: "usd-balance",
-    decimals: 18,
-  },
-  DAI_ADDRESS: {
-    symbol: "DAI",
-    name: "DAI",
-    icon: DaiToken,
-    coingeckoStub: "dai",
-    decimals: 18,
-  },
-};
 
 export interface VaultActionProps {
   onClose: (value: boolean) => void;
