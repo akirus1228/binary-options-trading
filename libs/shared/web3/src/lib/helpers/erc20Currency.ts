@@ -120,7 +120,7 @@ export const currencyInfo: CurrencyInfo = {
         networks[NetworkIds.FantomOpera].addresses["USDT_ADDRESS"],
     },
     coingeckoStub: "tether",
-    decimals: isDev() ? 18 : 6,
+    decimals: isDev ? 18 : 6,
   },
 };
 
