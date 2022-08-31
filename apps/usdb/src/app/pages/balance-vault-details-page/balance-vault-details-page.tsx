@@ -279,13 +279,13 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             </Box>
             <h2 className={`${style["text-md"]}`}>External Links</h2>
             <Box className="flex fr ai-c gap-x-1">
-              <ExternalLink
-                href={vaultData?.ownerContacts[1] ?? "#"}
-                title="Documentation"
-              />
-              <ExternalLink href={vaultData?.ownerContacts[2] ?? "#"} title="Proposal" />
-              <ExternalLink href={vaultData?.ownerContacts[3] ?? "#"} title="Website" />
-              <ExternalLink href={vaultData?.ownerContacts[4] ?? "#"} title="Twitter" />
+              {vaultData?.ownerContacts.map((item, index) => (
+                <ExternalLink
+                  key={index}
+                  href={item.split("_")[1]}
+                  title={item.split("_")[0]}
+                />
+              ))}
             </Box>
           </Box>
         </Box>

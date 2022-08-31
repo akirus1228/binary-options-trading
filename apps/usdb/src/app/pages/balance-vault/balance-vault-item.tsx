@@ -55,9 +55,7 @@ export const BalanceVaultItem = ({
           </Box>
           <LinearProgress
             variant="determinate"
-            value={Number(
-              BigNumber.from(Type.fundingAmount).div(BigNumber.from(Type.fundraised))
-            )}
+            value={Number((fundraisedAmount / fundingAmount) * 100)}
             sx={{ width: "50%", ml: "5%", mr: "5%" }}
           />
           <Box

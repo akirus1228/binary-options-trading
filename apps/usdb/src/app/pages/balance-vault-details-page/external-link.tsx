@@ -30,9 +30,9 @@ export const ExternalLink = ({ href, title }: ExternalLinkProps) => {
       sx={{ p: "0.75em" }}
       className={`flex fr jf-c ai-c rounded ${lowContrastBg} ${lowContrastText}`}
     >
-      <Link to={href}>
+      <a href={href}>
         <span className={lowContrastText}>{title}</span>
-      </Link>
+      </a>
       <NorthEast />
     </Box>
   );
