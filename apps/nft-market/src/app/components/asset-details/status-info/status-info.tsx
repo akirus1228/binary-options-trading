@@ -76,7 +76,11 @@ const BorrowerOnlyListed = ({
         <span className={style["strong"]}>{asset.name}</span>
         <span> is currently listed seeking a loan amount of </span>
         <span className={style["strong"]}>
-          {listing.term.amount} {currency?.symbol}
+          {formatCurrency(
+            listing.term.amount,
+            Number(currency?.lastPrice) < 1.1 ? 2 : 5
+          ).replaceAll("$", "")}{" "}
+          {currency?.symbol}
         </span>
         <span> at a </span>
         <span className={style["strong"]}>{listing.term.apr}% APY</span>
@@ -116,7 +120,11 @@ const BorrowerListedLoan = ({
           repayment amount of{" "}
         </span>
         <span className={style["strong"]}>
-          {formatCurrency(repaymentTotal, 2).replaceAll("$", "")} {currency?.symbol}
+          {formatCurrency(
+            repaymentTotal,
+            (Number(currency?.lastPrice) || 1) < 1.1 ? 2 : 5
+          ).replaceAll("$", "")}{" "}
+          {currency?.symbol}
         </span>
         <span> is made before </span>
         <span className={style["strong"]}>{formatDateTimeString(endTime)}</span>

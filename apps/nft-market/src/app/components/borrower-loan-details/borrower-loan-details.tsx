@@ -291,7 +291,10 @@ export const BorrowerLoanDetails = ({
                 }
               >
                 <Typography component="span">
-                  {formatCurrency(loan.term.amount, 2).replace("$", "")}
+                  {formatCurrency(
+                    loan.term.amount,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
                 </Typography>
               </Tooltip>
             </Typography>
@@ -319,7 +322,10 @@ export const BorrowerLoanDetails = ({
                 }
               >
                 <Typography component="span">
-                  {formatCurrency(loanDetails.amountDue, 2).replace("$", "")}
+                  {formatCurrency(
+                    loanDetails.amountDue,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
                 </Typography>
               </Tooltip>
             </Typography>

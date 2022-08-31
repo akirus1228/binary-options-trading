@@ -152,7 +152,10 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                 }
               >
                 <Typography className={`${style["data"]} ${style["primary"]}`}>
-                  {formatCurrency(props.listing.term.amount, 2).replace("$", "")}
+                  {formatCurrency(
+                    props.listing.term.amount,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
                 </Typography>
               </Tooltip>
             </Box>
@@ -182,7 +185,10 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
                 }
               >
                 <Typography className={`${style["data"]}`}>
-                  {formatCurrency(repaymentAmount, 2).replace("$", "")}
+                  {formatCurrency(
+                    repaymentAmount,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
                 </Typography>
               </Tooltip>
             </Box>

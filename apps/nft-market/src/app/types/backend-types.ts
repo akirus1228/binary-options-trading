@@ -72,6 +72,7 @@ export type User = Person;
 
 export type Terms = {
   id?: string;
+  usdPrice?: number;
   amount: number;
   apr: number;
   duration: number;
