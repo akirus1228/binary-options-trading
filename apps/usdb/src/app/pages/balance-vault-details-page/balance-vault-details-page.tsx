@@ -15,6 +15,7 @@ import {
   Icon,
   IconButton,
   LinearProgress,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { ethers } from "ethers";
@@ -37,6 +38,29 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
 
   const { vaultData } = useBalanceVault(vaultId as string);
   const { positionData } = useBalanceVaultPosition(vaultId as string);
+
+  const getDate = (UNIX_timestamp: any) => {
+    const a = new Date(UNIX_timestamp * 1000);
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const year = a.getFullYear();
+    const month = months[a.getMonth()];
+    const date = a.getDate();
+    const time = date + " " + month + " " + year + " " + a.toLocaleTimeString();
+    return time;
+  };
 
   const handleCopyAddress = () => {
     copyToClipboard(vaultData?.ownerWallet ?? "");
@@ -200,11 +224,21 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 </p>
                 <Box className="flex ai-c">
                   <h2 className={style["text-md"]}>Lock Duration</h2>
-                  <Icon
-                    component={InfoOutlinedIcon}
-                    fontSize={"medium"}
-                    sx={{ ml: "5px" }}
-                  />
+                  <Tooltip
+                    title={
+                      <div style={{ whiteSpace: "pre-line" }}>{`FreezeTime : ${getDate(
+                        vaultData?.freezeTimestamp
+                      )} \n RepaymentTime : ${getDate(
+                        vaultData?.repaymentTimestamp
+                      )}`}</div>
+                    }
+                  >
+                    <Icon
+                      component={InfoOutlinedIcon}
+                      fontSize={"medium"}
+                      sx={{ ml: "5px" }}
+                    />
+                  </Tooltip>
                 </Box>
                 <Box className="flex fr jf-sb ai-c" sx={{ textAlign: "center" }}>
                   <span>{vaultData?.time.completedTime}</span>
@@ -296,6 +330,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 </IconButton>
                 <IconButton
                   href={`https://etherscan.io/address/${vaultData?.ownerWallet}`}
+                  target="_blank"
                 >
                   <OpenInNew sx={{ color: "#8A99A8" }} />
                 </IconButton>
