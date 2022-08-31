@@ -51,7 +51,7 @@ export const BalanceVaultItem = ({
       </PaperTableCell>
       <PaperTableCell key="vaultAmount" className={style["offerElem"]}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box className="flex fr ai-c">${fundraisedAmount}K</Box>
+          <Box className="flex fr ai-c">${fundraisedAmount}</Box>
           <LinearProgress
             variant="determinate"
             value={Number(
@@ -59,7 +59,7 @@ export const BalanceVaultItem = ({
             )}
             sx={{ width: "60%", ml: "5%", mr: "5%" }}
           />
-          <Box className="flex fr ai-c">${fundingAmount}K</Box>
+          <Box className="flex fr ai-c">${fundingAmount}</Box>
         </Box>
       </PaperTableCell>
       <PaperTableCell key="vaultapr" className={style["offerElem"]}>
