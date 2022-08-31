@@ -72,6 +72,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   return (
     <Box className="flexCenterRow" id="content-centering-container" sx={{ mt: "100px" }}>
       <VaultActionForm
+        vaultId={vaultId as string}
         onClose={onVaultActionFormClose}
         deposit={isDeposit}
         open={vaultActionFormOpen}

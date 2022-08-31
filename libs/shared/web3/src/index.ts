@@ -19,6 +19,7 @@ export * from "./lib/slices/messages-slice";
 export * from "./lib/slices/lusd-slice";
 export * from "./lib/slices/token-price-slice";
 export * from "./lib/slices/investment-slice";
+export * from "./lib/slices/balance-vault-slice";
 export * from "./lib/slices/balance-vault-manager-slice";
 export * from "./lib/hooks/bonds";
 export * from "./lib/lib/bond";

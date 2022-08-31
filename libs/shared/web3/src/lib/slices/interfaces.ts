@@ -99,6 +99,13 @@ export interface IApproveBondAsyncThunk
   readonly address: string;
 }
 
+export interface IVaultDepositAsyncThunk extends IBaseAsyncThunk, IInteractiveAsyncThunk {
+  readonly address: string;
+  readonly vaultId: string;
+  readonly amount: BigNumber;
+  readonly token: string;
+}
+
 export interface ICalcBondDetailsAsyncThunk extends IBaseBondAsyncThunk {
   readonly value: string;
 }

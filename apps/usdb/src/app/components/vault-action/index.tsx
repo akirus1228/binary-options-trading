@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Dialog,
@@ -9,20 +9,25 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { BigNumber } from "ethers";
 import styles from "./style.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
-import { currencyInfo } from "@fantohm/shared-web3";
+import { currencyInfo, useWeb3Context, vaultDeposit } from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
 import { RootState } from "../../store";
 
 export interface VaultActionProps {
+  vaultId: string;
   onClose: (value: boolean) => void;
   deposit: boolean;
   open: boolean;
 }
 
 export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
-  const { onClose, open, deposit } = props;
+  const { vaultId, onClose, open, deposit } = props;
+
+  const { provider, address, chainId } = useWeb3Context();
+  const dispatch = useDispatch();
 
   const [isDeposit, setIsDeposit] = useState(deposit);
   const [token, setToken] = useState("USDB");
@@ -38,6 +43,23 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const handleClose = () => {
     onClose(false);
   };
+
+  const handleDeposit = async () => {
+    if (provider) {
+      dispatch(
+        vaultDeposit({
+          address,
+          vaultId,
+          amount: BigNumber.from("1000"),
+          token: "0xE827c1D2da22496A09055140c2454c953710751C",
+          provider,
+          networkId: chainId ?? 250,
+        })
+      );
+    }
+  };
+
+  const handleWithdraw = async () => {};
 
   return (
     <Dialog
@@ -180,7 +202,11 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             <Typography>$8,999.99</Typography>
           </Box>
         </FormInputWrapper>
-        <Button sx={{ marginTop: "30px" }} className={styles["button"]}>
+        <Button
+          sx={{ marginTop: "30px" }}
+          className={styles["button"]}
+          onClick={isDeposit ? handleDeposit : handleWithdraw}
+        >
           {isDeposit ? "Deposit" : "Withdraw"}
         </Button>
       </Box>
