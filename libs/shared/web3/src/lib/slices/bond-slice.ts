@@ -13,6 +13,7 @@ import {
   ICancelBondAsyncThunk,
   IInvestUsdbNftBondAsyncThunk,
   IJsonRPCError,
+  IMintNFTAsyncThunk,
   IRedeemAllBondsAsyncThunk,
   IRedeemBondAsyncThunk,
   IRedeemSingleSidedBondAsyncThunk,
@@ -243,15 +244,15 @@ export const calcBondDetails = createAsyncThunk(
         purchased,
         { valuation, bondQuote },
       ]) => [
-          fhmMarketPrice?.marketPrice || 0,
-          terms,
-          maxBondPrice / Math.pow(10, 9),
-          debtRatio / Math.pow(10, 9),
-          bondPrice / Math.pow(10, bond.decimals),
-          purchased,
-          valuation,
-          bondQuote,
-        ]
+        fhmMarketPrice?.marketPrice || 0,
+        terms,
+        maxBondPrice / Math.pow(10, 9),
+        debtRatio / Math.pow(10, 9),
+        bondPrice / Math.pow(10, bond.decimals),
+        purchased,
+        valuation,
+        bondQuote,
+      ]
     );
 
     const paymentTokenMarketPrice =
@@ -950,6 +951,168 @@ export const investUsdbNftBond = createAsyncThunk(
           if (tokenId) await mintBackedNft(tokenId);
           setTimeout(() => navigate("/my-account#nft-investments"), 2000);
         }, 5000);
+      }
+    }
+  }
+);
+
+export const mint_Whitelist_NFT = createAsyncThunk(
+  "bonding/mintPassNFT",
+  async ({ address, bond, networkId, provider }: IMintNFTAsyncThunk, { dispatch }) => {
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+    const minterAddress = address;
+
+    const signer = provider.getSigner();
+
+    const bondContractForRead = await bond.getContractForBond(networkId);
+    const bondContractForWrite = bond.getContractForBondForWrite(networkId, signer);
+
+    const overrides = {
+      value: ethers.utils.parseEther("0"),
+    };
+
+    // Deposit the bond
+    let mintTx;
+    const uaData = {
+      address: address,
+      type: "Bond",
+      bondName: bond.displayName,
+      approved: true,
+      txHash: null,
+    };
+    try {
+      mintTx = await bondContractForWrite["mint_whitelist_gh56gui"](
+        minterAddress,
+        overrides
+      );
+      dispatch(
+        fetchPendingTxns({
+          txnHash: mintTx.hash,
+          text: "Mint " + bond.displayName,
+          type: "Mint_" + bond.name,
+        })
+      );
+      uaData.txHash = mintTx.hash;
+      const minedBlock = (await mintTx.wait()).blockNumber;
+    } catch (e: any) {
+      if (e.error === undefined) {
+        let message;
+        if (e.message === "Internal JSON-RPC error.") {
+          message = e.data.message;
+        } else {
+          message = e.message;
+        }
+        if (typeof message === "string") {
+          dispatch(error(`Unknown error: ${message}`));
+        }
+      } else {
+        dispatch(error(`Unknown error: ${e.error.message}`));
+      }
+    } finally {
+      if (mintTx) {
+        segmentUA(uaData);
+        await dispatch(clearPendingTxn(mintTx.hash));
+        dispatch(info("Mint completed."));
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+    }
+  }
+);
+export const mint_Public_NFT = createAsyncThunk(
+  "bonding/mintPassNFT",
+  async ({ address, bond, networkId, provider }: IMintNFTAsyncThunk, { dispatch }) => {
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+    const minterAddress = address;
+
+    const signer = provider.getSigner();
+
+    const bondContractForRead = await bond.getContractForBond(networkId);
+    const bondContractForWrite = bond.getContractForBondForWrite(networkId, signer);
+
+    const overrides = {
+      value: ethers.utils.parseEther("0"),
+    };
+
+    // Deposit the bond
+    let mintTx;
+    const uaData = {
+      address: address,
+      type: "Bond",
+      bondName: bond.displayName,
+      approved: true,
+      txHash: null,
+    };
+    try {
+      mintTx = await bondContractForWrite["mint_public_gh56gui"](minterAddress, overrides);
+      dispatch(
+        fetchPendingTxns({
+          txnHash: mintTx.hash,
+          text: "Mint " + bond.displayName,
+          type: "Mint_" + bond.name,
+        })
+      );
+      uaData.txHash = mintTx.hash;
+      const minedBlock = (await mintTx.wait()).blockNumber;
+    } catch (e: any) {
+      if (e.error === undefined) {
+        let message;
+        if (e.message === "Internal JSON-RPC error.") {
+          message = e.data.message;
+        } else {
+          message = e.message;
+        }
+        if (typeof message === "string") {
+          dispatch(error(`Unknown error: ${message}`));
+        }
+      } else {
+        dispatch(error(`Unknown error: ${e.error.message}`));
+      }
+    } finally {
+      if (mintTx) {
+        segmentUA(uaData);
+        await dispatch(clearPendingTxn(mintTx.hash));
+        dispatch(info("Mint completed."));
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+    }
+  }
+);
+export const getNFTBalance = createAsyncThunk(
+  "bonding/getPassNFTBalance",
+  async ({ address, bond, networkId, provider }: IMintNFTAsyncThunk, { dispatch }) => {
+    const minterAddress = address;
+
+    const signer = provider.getSigner();
+
+    const bondContractForRead = await bond.getContractForBond(networkId);
+    const bondContractForWrite = bond.getContractForBondForWrite(networkId, signer);
+
+    try {
+      const supply = await bondContractForRead["totalSupply"]();
+      return supply;
+    } catch (e: any) {
+      if (e.error === undefined) {
+        let message;
+        if (e.message === "Internal JSON-RPC error.") {
+          message = e.data.message;
+        } else {
+          message = e.message;
+        }
+        if (typeof message === "string") {
+          dispatch(error(`Unknown error: ${message}`));
+        }
+      } else {
+        dispatch(error(`Unknown error: ${e.error.message}`));
       }
     }
   }

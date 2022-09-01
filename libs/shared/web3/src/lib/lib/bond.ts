@@ -30,6 +30,7 @@ export enum BondType {
   LQDR_USDB_POL = 6,
   USDB_NFT = 7,
   STAKE_NFT = 8,
+  PASS_NFT = 9,
 }
 
 export enum BondAction {

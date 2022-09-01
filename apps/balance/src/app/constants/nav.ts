@@ -35,6 +35,16 @@ export const balanceheaderPages: Page[] = [
   { title: "Liqd NFTs", href: "https://www.liqdnft.com/", params: { comingSoon: false } },
   { title: "Dex", href: "https://app.fantohm.com/#/dex", params: { comingSoon: false } },
   { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
+  {
+    title: "Balance Whitelist Mint",
+    href: "/balancewhitelistmint",
+    params: { comingSoon: false },
+  },
+  {
+    title: "Balance Pulbic Mint",
+    href: "/balancepublicmint",
+    params: { comingSoon: true },
+  },
 ];
 
 export const footerItems: FooterItem[] = [
@@ -54,6 +64,16 @@ export const footerItems: FooterItem[] = [
         params: { comingSoon: false },
       },
       { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
+      {
+        title: "Balance Whitelist Mint",
+        href: "/balancewhitelistmint",
+        params: { comingSoon: false },
+      },
+      {
+        title: "Balance Pulbic Mint",
+        href: "/balancepublicmint",
+        params: { comingSoon: true },
+      },
     ],
   },
   {
