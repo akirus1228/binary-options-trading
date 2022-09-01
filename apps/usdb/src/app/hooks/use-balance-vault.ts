@@ -1,7 +1,7 @@
 import { balanceVaultAbi, useWeb3Context } from "@fantohm/shared-web3";
 import { useQuery } from "@tanstack/react-query";
 import { BigNumber, ethers } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { calcTimeCompleted, calcUsdValue } from "./use-balance-vault-manager";
 
 export type BalanceVault = {

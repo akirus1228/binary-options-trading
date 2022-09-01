@@ -24,11 +24,11 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
 import { RootState } from "../../store";
-import VaultActionForm from "../../components/vault-action";
 import style from "./balance-vault-details-page.module.scss";
 import { ExternalLink } from "./external-link";
 import { PositionTemplate } from "./position-template";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import VaultActionForm from "../../components/vault-action/vault-action-form";
 
 export const BalanceVaultDetailsPage = (): JSX.Element => {
   const { vaultId } = useParams();
@@ -96,6 +96,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   return (
     <Box className="flexCenterRow" id="content-centering-container" sx={{ mt: "100px" }}>
       <VaultActionForm
+        vaultId={vaultId as string}
         onClose={onVaultActionFormClose}
         deposit={isDeposit}
         open={vaultActionFormOpen}
