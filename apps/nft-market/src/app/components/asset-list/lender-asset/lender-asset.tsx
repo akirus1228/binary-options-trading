@@ -18,7 +18,7 @@ import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { useTermDetails } from "../../../hooks/use-term-details";
-import { formatCurrency, isDev } from "@fantohm/shared-web3";
+import { formatCurrency, isDev, prettifySeconds } from "@fantohm/shared-web3";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
@@ -227,7 +227,9 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           </span>
         </Box>
         <Box className="flex fr fj-sb ai-c w100">
-          <span className={style["termValue"]}>{listing.term.duration} days</span>
+          <span className={style["termValue"]}>
+            {prettifySeconds(listing.term.duration, "day")}
+          </span>
           <span className={style["termValue"]}>{listing.term.apr}%</span>
         </Box>
       </Box>

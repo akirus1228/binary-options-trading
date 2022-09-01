@@ -17,6 +17,7 @@ import {
   IBondAssetAsyncThunk,
   Bond,
   IUserBond,
+  prettifySeconds,
 } from "@fantohm/shared-web3";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -200,7 +201,9 @@ export const TradFiDeposit = (): JSX.Element => {
               </Typography>
             </Box>
             <h1 className={style["title"]}>{tradfiBond.displayName}</h1>
-            <h2 className={style["subtitle"]}>{tradfiBond.days} days</h2>
+            <h2 className={style["subtitle"]}>
+              {prettifySeconds(tradfiBond.days, "day")}
+            </h2>
           </Box>
           <Grid container maxWidth="lg" columnSpacing={3}>
             <Grid item xs={12} md={4} className={` ${style["walletField"]}`}>
