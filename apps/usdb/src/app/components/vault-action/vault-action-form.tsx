@@ -23,6 +23,7 @@ import {
   useGetErc20Allowance,
   useRequestErc20Allowance,
   info,
+  vaultWithdraw,
 } from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
@@ -43,7 +44,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
 
   const [isDeposit, setIsDeposit] = useState(deposit);
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState("0");
   const [token, setToken] = useState("USDB");
   const [currency, setCurrency] = useState<Erc20Currency>();
   const [isPending, setIsPending] = useState(false);
@@ -96,16 +97,32 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
       )
         .unwrap()
         .then(() => {
-          dispatch(info("Deposit successful."));
           queryClient.invalidateQueries(["vault"]);
           queryClient.invalidateQueries(["vaultPosition"]);
           onClose(true);
+          setAmount("0");
         });
     }
   };
 
   const handleWithdraw = async () => {
-    //do something
+    if (provider) {
+      dispatch(
+        vaultWithdraw({
+          address,
+          vaultId,
+          provider,
+          networkId: chainId ?? 250,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          queryClient.invalidateQueries(["vault"]);
+          queryClient.invalidateQueries(["vaultPosition"]);
+          onClose(true);
+          setAmount("0");
+        });
+    }
   };
 
   useEffect(() => {

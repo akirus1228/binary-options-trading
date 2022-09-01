@@ -4,7 +4,7 @@ import { BigNumber, ethers } from "ethers";
 import { balanceVaultAbi } from "../abi";
 import { clearPendingTxn, fetchPendingTxns } from "./pending-txns-slice";
 import { error, info } from "./messages-slice";
-import { IVaultDepositAsyncThunk } from "./interfaces";
+import { IVaultDepositAsyncThunk, IVaultWithdrawAsyncThunk } from "./interfaces";
 
 export type BalanceVault = {
   vaultAddress: string;
@@ -105,9 +105,65 @@ export const vaultDeposit = createAsyncThunk(
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }
+      return;
     } finally {
       if (depositTx) {
+        dispatch(info("Deposit successful."));
         dispatch(clearPendingTxn(depositTx.hash));
+      }
+    }
+  }
+);
+export const vaultWithdraw = createAsyncThunk(
+  "balance-vault/vaultWithdraw",
+  async (
+    { address, vaultId, provider, networkId }: IVaultWithdrawAsyncThunk,
+    { dispatch }
+  ) => {
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+
+    const signer = provider.getSigner();
+    const vaultContract = new ethers.Contract(
+      vaultId,
+      balanceVaultAbi,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      signer
+    );
+
+    let withdrawTx;
+
+    try {
+      withdrawTx = await vaultContract["withdraw"]();
+      dispatch(
+        fetchPendingTxns({
+          txnHash: withdrawTx.hash,
+          text: "Withdrawing",
+          type: "balance_vault_withdraw",
+        })
+      );
+      await withdrawTx.wait();
+    } catch (e: any) {
+      if (e.error === undefined) {
+        let message;
+        if (e.message === "Internal JSON-RPC error.") {
+          message = e.data.message;
+        } else {
+          message = e.message;
+        }
+        if (typeof message === "string") {
+          dispatch(error(`Unknown error: ${message}`));
+        }
+      } else {
+        dispatch(error(`Unknown error: ${e.error.message}`));
+      }
+      return;
+    } finally {
+      if (withdrawTx) {
+        dispatch(info("Withdraw successful."));
+        dispatch(clearPendingTxn(withdrawTx.hash));
       }
     }
   }

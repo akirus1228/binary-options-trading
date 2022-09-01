@@ -106,6 +106,13 @@ export interface IVaultDepositAsyncThunk extends IBaseAsyncThunk, IInteractiveAs
   readonly token: string;
 }
 
+export interface IVaultWithdrawAsyncThunk
+  extends IBaseAsyncThunk,
+    IInteractiveAsyncThunk {
+  readonly address: string;
+  readonly vaultId: string;
+}
+
 export interface ICalcBondDetailsAsyncThunk extends IBaseBondAsyncThunk {
   readonly value: string;
 }
