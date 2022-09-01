@@ -468,86 +468,66 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                 label={offer.status}
                 sx={{
                   fontSize: "0.875em",
-                  marginRight: "2em",
                   backgroundColor: "#374FFF",
                   color: "#fff",
                 }}
               ></Chip>
             )}
-            {((isOwner && offer.status === OfferStatus.Ready) || isMyOffer) && (
-              <IconButton onClick={handleOpenActionClick}>
-                {!actionsOpen && <ChevronLeftIcon />}
-                {actionsOpen && <ChevronRightIcon />}
-              </IconButton>
+            {isOwner &&
+              !hasPermission &&
+              offer.status === OfferStatus.Ready &&
+              Date.parse(offer.term.expirationAt) > Date.now() &&
+              (isPending ? (
+                <Button variant="contained" className="offer slim">
+                  <CircularProgress />
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  sx={{ width: "150px" }}
+                  className="offer slim"
+                  onClick={handleRequestPermission}
+                >
+                  Accept
+                </Button>
+              ))}
+            {isOwner &&
+              hasPermission &&
+              offer.status === OfferStatus.Ready &&
+              (isPending ? (
+                <Button variant="contained" className="offer slim">
+                  <CircularProgress />
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  sx={{ width: "150px" }}
+                  className="offer slim"
+                  onClick={handleAcceptOffer}
+                >
+                  Accept
+                </Button>
+              ))}
+            {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
+              <Box sx={{ display: "flex" }}>
+                <Button
+                  variant="contained"
+                  className="offer slim"
+                  sx={{ my: "10px", mr: "10px", width: "100px" }}
+                  onClick={handleUpdateOffer}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
+                  className="offer slim"
+                  sx={{ my: "10px", width: "100px" }}
+                  onClick={() => setRemoveOfferConfirmDialogOpen(true)}
+                >
+                  Remove
+                </Button>
+              </Box>
             )}
-            <Menu
-              open={actionsOpen}
-              anchorEl={actionMenuAnchorEl}
-              onClose={handleActionMenuClose}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "center",
-                horizontal: "right",
-              }}
-              disableScrollLock={true}
-            >
-              {isOwner &&
-                !hasPermission &&
-                offer.status === OfferStatus.Ready &&
-                Date.parse(offer.term.expirationAt) > Date.now() &&
-                (isPending ? (
-                  <Button variant="contained" className="offer slim">
-                    <CircularProgress />
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    className="offer slim"
-                    onClick={handleRequestPermission}
-                  >
-                    Accept
-                  </Button>
-                ))}
-              {isOwner &&
-                hasPermission &&
-                offer.status === OfferStatus.Ready &&
-                (isPending ? (
-                  <Button variant="contained" className="offer slim">
-                    <CircularProgress />
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    className="offer slim"
-                    onClick={handleAcceptOffer}
-                  >
-                    Accept
-                  </Button>
-                ))}
-              {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
-                <Box>
-                  <Button
-                    variant="contained"
-                    className="offer slim"
-                    sx={{ my: "10px", mr: "10px", width: "100px" }}
-                    onClick={handleUpdateOffer}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    className="offer slim"
-                    sx={{ my: "10px", width: "100px" }}
-                    onClick={() => setRemoveOfferConfirmDialogOpen(true)}
-                  >
-                    Remove
-                  </Button>
-                </Box>
-              )}
-            </Menu>
           </Box>
         </PaperTableCell>
       </PaperTableRow>

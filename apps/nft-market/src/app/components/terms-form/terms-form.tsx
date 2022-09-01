@@ -42,9 +42,16 @@ import {
 } from "../../api/backend-api";
 import { BigNumber, ethers } from "ethers";
 import { addAlert } from "../../store/reducers/app-slice";
-import { currencyInfo, getSymbolFromAddress } from "../../helpers/erc20Currency";
+import {
+  currencyInfo,
+  Erc20Currency,
+  getSymbolFromAddress,
+} from "../../helpers/erc20Currency";
 import { desiredNetworkId } from "../../constants/network";
-import { selectCurrencyById } from "../../store/selectors/currency-selectors";
+import {
+  selectCurrencies,
+  selectCurrencyById,
+} from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromId } from "../../store/reducers/currency-slice";
 import ConfirmDialog from "../confirm-modal/confirm-dialog";
 
@@ -53,6 +60,7 @@ export interface TermsFormProps {
   asset: Asset;
   listing?: Listing;
   offerTerm?: Terms | null;
+  isEdit?: boolean;
   onClose: (value: boolean) => void;
 }
 
@@ -74,6 +82,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     collection: props.asset.assetContractAddress,
     tokenId: props.asset.tokenId,
   });
+  const currencies = useSelector((state: RootState) => selectCurrencies(state));
   const estimatedPrice = nftPrices?.reduce((acc, cur) => {
     return acc < parseFloat(cur.priceInUsd) ? parseFloat(cur.priceInUsd) : acc;
   }, 0);
@@ -386,7 +395,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         return;
       }
 
-      updateTerms(term);
+      await updateTerms(term);
       dispatch(addAlert({ message: "Terms have been updated." }));
       props.onClose(true);
     } catch (err) {
@@ -445,12 +454,32 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     if (!currency) {
       return;
     }
+    const match: [string, Erc20Currency] | undefined = Object.entries(currencies).find(
+      ([, entryCurrency]) =>
+        entryCurrency.currentAddress.toLowerCase() ===
+        currentTerm?.currencyAddress.toLowerCase()
+    );
+    const currentCurrencyPrice = match ? match[1]?.lastPrice : 1;
     if (
       currency.currentAddress.toLowerCase() === currentTerm?.currencyAddress.toLowerCase()
     ) {
-      handleAmountChange(currentTerm?.amount.toString() || "1");
-    } else if (preFillPrice) {
-      handleAmountChange((preFillPrice / currency.lastPrice).toString());
+      handleAmountChange(
+        (
+          (Number(currentTerm?.amount) * currentCurrencyPrice) /
+          currency.lastPrice
+        ).toString()
+      );
+    } else {
+      if (props?.offerTerm) {
+        handleAmountChange(
+          (
+            (Number(currentTerm?.amount) * currentCurrencyPrice) /
+            currency.lastPrice
+          ).toString()
+        );
+      } else if (preFillPrice) {
+        handleAmountChange((preFillPrice / currency.lastPrice).toString());
+      }
     }
   }, [currency]);
 
@@ -712,7 +741,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             onClick={() => setConfirmOpen(true)}
             disabled={!amount || !duration || amount === "0" || duration === "0" || !apr}
           >
-            {props?.offerTerm ? "Edit" : "Make"} Offer
+            {props?.isEdit ? "Edit" : "Make"} Offer
           </Button>
         )}
       {insufficientBalance && !isOwner && !isPending && (
@@ -753,7 +782,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         interest={repaymentAmount}
         duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
         setOpen={setConfirmOpen}
-        onConfirm={props?.offerTerm ? handleUpdateTerms : handleMakeOffer}
+        onConfirm={props?.isEdit ? handleUpdateTerms : handleMakeOffer}
       ></ConfirmDialog>
     </Box>
   );

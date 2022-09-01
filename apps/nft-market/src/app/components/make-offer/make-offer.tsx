@@ -47,7 +47,8 @@ export const MakeOffer = (props: MakeOfferProps): JSX.Element => {
           type="offer"
           asset={props.listing.asset}
           listing={props.listing}
-          offerTerm={props.isEdit ? props.offerTerm : null}
+          offerTerm={props.isEdit ? props.offerTerm : props.listing.term}
+          isEdit={props.isEdit}
           onClose={onClose}
         />
       </Box>

@@ -39,6 +39,7 @@ export const UpdateTerms = (props: UpdateTermsProps): JSX.Element => {
           type="borrow"
           asset={props.listing.asset}
           listing={props.listing}
+          offerTerm={props.listing.term}
           onClose={onClose}
         />
       </Box>
