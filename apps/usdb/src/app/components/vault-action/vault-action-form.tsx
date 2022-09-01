@@ -25,7 +25,7 @@ import {
   useRequestErc20Allowance,
 } from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
-import { RootState } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 
 export interface VaultActionProps {
   vaultId: string;
@@ -38,7 +38,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const { vaultId, onClose, open, deposit } = props;
 
   const { provider, address, chainId } = useWeb3Context();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const [isDeposit, setIsDeposit] = useState(deposit);
   const [amount, setAmount] = useState("");
