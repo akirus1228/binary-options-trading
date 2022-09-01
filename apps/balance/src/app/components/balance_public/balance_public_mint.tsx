@@ -384,23 +384,27 @@ export const BalancePublicMintPage = (props: BalancePublicMintProps): JSX.Elemen
             )}
 
             {!connected ? (
-              <Button
-                variant="contained"
-                onClick={onClickConnect}
-                sx={{
-                  display: { md: "flex" },
-                  width: { md: "35%", xs: "50%" },
-                  fontSize: { md: "19px", xs: "14px" },
-                  backgroundColor: "#3744e6",
-                  color: "white",
-                  fontFamily: "sora",
-                  mt: { md: "7%", xs: "15%" },
-                }}
-                className={style["heroLink"]}
-                disabled={countDown > 0 ? true : false}
-              >
-                Connect Wallet
-              </Button>
+              countDown <= 0 ? (
+                <Button
+                  variant="contained"
+                  onClick={onClickConnect}
+                  sx={{
+                    display: { md: "flex" },
+                    width: { md: "35%", xs: "50%" },
+                    fontSize: { md: "19px", xs: "14px" },
+                    backgroundColor: "#3744e6",
+                    color: "white",
+                    fontFamily: "sora",
+                    mt: { md: "7%", xs: "15%" },
+                  }}
+                  className={style["heroLink"]}
+                  disabled={countDown > 0 ? true : false}
+                >
+                  Connect Wallet
+                </Button>
+              ) : (
+                ""
+              )
             ) : (
               <>
                 <Button
