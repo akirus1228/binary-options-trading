@@ -15,7 +15,7 @@ import style from "./lend-page.module.scss";
 
 export const LendPage = (): JSX.Element => {
   const [displayAssets, setDisplayAssets] = useState<Asset[]>([]);
-  const [hasNext, setHasNext] = useState(true);
+  const [hasNext, setHasNext] = useState(false);
   const [skip, setSkip] = useState(0);
   const [take, setTake] = useState(6);
   const [query, setQuery] = useState<ListingQueryParam>({
