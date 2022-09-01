@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
@@ -10,7 +10,7 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import styles from "./vault-action-form.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
 import {
@@ -19,10 +19,10 @@ import {
   vaultDeposit,
   Erc20Currency,
   erc20Currency,
-  loadErc20Balance,
   useErc20Balance,
   useGetErc20Allowance,
   useRequestErc20Allowance,
+  info,
 } from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
@@ -81,20 +81,22 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   };
 
   const handleDeposit = async () => {
-    const key = Object.keys(currencyInfo).find(
-      (key) => currencyInfo[key].symbol === token
-    );
-    if (provider && key) {
+    if (provider) {
       dispatch(
         vaultDeposit({
           address,
           vaultId,
           amount: ethers.utils.parseUnits(amount, 18),
-          token: currencyInfo[key].addresses[chainId ?? 250],
+          token: currency?.currentAddress ?? "",
           provider,
           networkId: chainId ?? 250,
         })
-      );
+      )
+        .unwrap()
+        .then(() => {
+          dispatch(info("Deposit successful."));
+          onClose(true);
+        });
     }
   };
 
