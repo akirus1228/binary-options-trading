@@ -123,8 +123,8 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
         onRemove={() => setRemoveOfferConfirmDialogOpen(true)}
       ></OfferConfirmDialog>
       <Paper>
-        <Box className="flex fr fw" sx={{ padding: "1.5em 1.5em 1em 1.5em" }}>
-          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+        <Box className="flex fr fj-sa fw" sx={{ alignItems: "center" }}>
+          <Box className="flex fc">
             <Typography
               className={style["label"]}
               sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
@@ -160,7 +160,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               </Tooltip>
             </Box>
           </Box>
-          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+          <Box className="flex fc">
             <Typography
               className={style["label"]}
               sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
@@ -193,7 +193,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               </Tooltip>
             </Box>
           </Box>
-          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+          <Box className="flex fc">
             <Typography
               className={style["label"]}
               sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
@@ -204,7 +204,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               {props.listing.term.duration} days
             </Typography>
           </Box>
-          <Box className="flex fc" sx={{ marginRight: "80px" }}>
+          <Box className="flex fc">
             <Typography
               className={style["label"]}
               sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
@@ -215,15 +215,11 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               {props.listing.term.apr}%
             </Typography>
           </Box>
-          <Box className="flex fc" sx={{ flex: "0 0 18%", marginLeft: "auto" }}>
+          <Box className="flex fc">
             <LoanConfirmation listing={props.listing} />
           </Box>
-          <Box className="flex fc" sx={{ flex: "0 0 18%", marginLeft: "10px" }}>
-            <Button
-              variant="outlined"
-              onClick={handleMakeOffer}
-              sx={{ width: "100%", padding: "0.7rem 0" }}
-            >
+          <Box className="flex fc">
+            <Button variant="outlined" onClick={handleMakeOffer}>
               Make Offer
             </Button>
           </Box>

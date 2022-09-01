@@ -335,7 +335,7 @@ export const LoanConfirmation = ({
     <>
       <Button
         variant="contained"
-        sx={{ backgroundColor: "#374FFF", width: "100%", padding: "0.7rem 0" }}
+        sx={{ backgroundColor: "#374FFF" }}
         onClick={handleClickLend}
       >
         Lend {currency?.symbol}
