@@ -26,6 +26,7 @@ import {
 } from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface VaultActionProps {
   vaultId: string;
@@ -36,6 +37,7 @@ export interface VaultActionProps {
 
 export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const { vaultId, onClose, open, deposit } = props;
+  const queryClient = useQueryClient();
 
   const { provider, address, chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
@@ -95,6 +97,8 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         .unwrap()
         .then(() => {
           dispatch(info("Deposit successful."));
+          queryClient.invalidateQueries(["vault"]);
+          queryClient.invalidateQueries(["vaultPosition"]);
           onClose(true);
         });
     }
