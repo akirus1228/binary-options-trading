@@ -99,7 +99,7 @@ export const BorrowPage = (): JSX.Element => {
     });
     setLoansQuery({
       ...loansQuery,
-      walletAddress: address,
+      borrowerAddress: address,
     });
   }, [address]);
 
