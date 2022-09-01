@@ -95,7 +95,7 @@ export const BalancePassPage = (): JSX.Element => {
             </Typography>
             <Button
               variant="contained"
-              href="https://www.premint.xyz/balance-pass-2/"
+              href="https://opensea.io/collection/balance-pass"
               sx={{
                 display: { md: "flex", width: "35%" },
                 fontSize: "19px",
@@ -106,7 +106,7 @@ export const BalancePassPage = (): JSX.Element => {
               }}
               className={style["heroLink"]}
             >
-              Join The Waitlist
+              Buy Now
             </Button>
           </Box>
         </Grid>
@@ -410,7 +410,7 @@ export const BalancePassPage = (): JSX.Element => {
           </Typography>
           <Button
             variant="contained"
-            href="https://www.premint.xyz/balance-pass-2/"
+            href="https://opensea.io/collection/balance-pass"
             sx={{
               display: { md: "flex", width: "42%" },
               fontSize: "19px",
@@ -421,7 +421,7 @@ export const BalancePassPage = (): JSX.Element => {
             }}
             className={style["footerLink"]}
           >
-            Join The Waitlist
+            Buy Now
           </Button>
         </Grid>
         <Grid item md={3.5} sx={{ display: { xs: "none", md: "flex" } }}>
