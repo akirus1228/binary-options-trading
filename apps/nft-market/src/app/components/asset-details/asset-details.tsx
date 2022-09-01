@@ -24,7 +24,7 @@ import {
 } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { AppDispatch, RootState } from "../../store";
-import { AssetStatus, Listing } from "../../types/backend-types";
+import { AssetStatus, Listing, Loan, LoanStatus } from "../../types/backend-types";
 import AssetOwnerTag from "../asset-owner-tag/asset-owner-tag";
 import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
@@ -66,17 +66,22 @@ export const AssetDetails = ({
   const [isPending, setIsPending] = useState(false);
   const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
     useResetPartialLoanMutation();
-  const { data: loan } = useGetLoansQuery(
+  const { data: loans } = useGetLoansQuery(
     {
       skip: 0,
       take: 1,
       sortQuery: "loan.updatedAt:DESC",
+      status: LoanStatus.Active,
       assetId: asset !== null ? asset.id : "",
     },
     {
-      skip: !asset || false || !asset.id || !authSignature,
+      skip: !authSignature || !asset || !asset.id || asset.status !== AssetStatus.Locked,
     }
   );
+
+  const activeLoan = useMemo(() => {
+    return loans?.find((loan: Loan) => loan.status === LoanStatus.Active);
+  }, [loans]);
 
   const isOwner = useMemo(() => {
     return address.toLowerCase() === asset?.owner?.address.toLowerCase();
@@ -110,11 +115,11 @@ export const AssetDetails = ({
   ];
 
   const resetStatus = async () => {
-    if (!loan) {
+    if (!activeLoan) {
       return;
     }
     setIsPending(true);
-    resetPartialLoan(loan[0].id).then(() => {
+    resetPartialLoan(activeLoan.id).then(() => {
       setIsPending(false);
       resetResetPartialLoan();
       dispatch(addAlert({ message: "Locked has been cancelled." }));
@@ -275,8 +280,8 @@ export const AssetDetails = ({
               <Chip label={asset.mediaType || "Art"} className="light" />
               {isOwner &&
                 asset?.status === AssetStatus.Locked &&
-                loan &&
-                loan[0]?.contractLoanId == null &&
+                activeLoan &&
+                activeLoan?.contractLoanId == null &&
                 (isPending ? (
                   <Button variant="contained" disabled>
                     <CircularProgress />
@@ -338,11 +343,7 @@ export const AssetDetails = ({
                 )}
               </Box>
             </Box>
-            <StatusInfo
-              asset={asset}
-              listing={listing}
-              loan={loan ? loan[0] : undefined}
-            />
+            <StatusInfo asset={asset} listing={listing} loan={activeLoan} />
           </Grid>
         </Grid>
       ) : (
