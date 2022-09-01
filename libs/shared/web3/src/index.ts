@@ -22,7 +22,6 @@ export * from "./lib/slices/investment-slice";
 export * from "./lib/slices/balance-vault-slice";
 export * from "./lib/slices/balance-vault-manager-slice";
 export * from "./lib/hooks";
-export * from "./lib/hooks/bonds";
 export * from "./lib/lib/bond";
 //export * from './lib/hooks/web3-context';
 export * from "./lib/hooks/investments";

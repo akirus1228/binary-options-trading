@@ -104,7 +104,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     }
   };
 
-  const handleWithdraw = async () => {};
+  const handleWithdraw = async () => {
+    //do something
+  };
 
   useEffect(() => {
     if (isBalanceLoading || isAllowanceLoading || requestAllowance.isLoading) {
