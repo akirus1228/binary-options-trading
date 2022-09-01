@@ -6,7 +6,7 @@ import {
   useWeb3Context,
   allBonds,
   Bond,
-  mintNFT,
+  mint_Whitelist_NFT,
   isPendingTxn,
   txnButtonText,
   getNFTBalance,
@@ -40,6 +40,8 @@ export const BalanceWhitelistMintPage = (
   const { connect, disconnect, connected, address, provider, chainId } = useWeb3Context();
 
   const [balance, setBalance] = useState(0);
+  const countDownDate = 1662055200000;
+  const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
 
   const [bond, setBond] = useState(
     allBonds.filter((bond) => bond.name === "passNFTmint")[0] as Bond
@@ -80,13 +82,9 @@ export const BalanceWhitelistMintPage = (
 
       getBalance();
     }
-  }, [connected]);
+  }, [connected, balance]);
 
   const useCountdown = () => {
-    const countDownDate = 1661513679000;
-
-    const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
-
     useEffect(() => {
       const interval = setInterval(() => {
         if (countDownDate >= new Date().getTime()) {
@@ -116,7 +114,7 @@ export const BalanceWhitelistMintPage = (
 
   async function handleMint() {
     dispatch(
-      mintNFT({
+      mint_Whitelist_NFT({
         address,
         provider,
         networkId: chainId,
@@ -408,6 +406,7 @@ export const BalanceWhitelistMintPage = (
                   mt: { md: "7%", xs: "15%" },
                 }}
                 className={style["heroLink"]}
+                disabled={countDown > 0 ? true : false}
               >
                 Connect Wallet
               </Button>

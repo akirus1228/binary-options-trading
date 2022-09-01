@@ -63,7 +63,7 @@ export const App = (): JSX.Element => {
     //TODO localStorage.getItem("termsAgreed") !== "true"
   );
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  
+
   useEffect(() => {
     setTheme(themeType === "light" ? USDBLight : USDBDark);
     switch (themeType) {
@@ -150,8 +150,8 @@ export const App = (): JSX.Element => {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:id" element={<BlogPostPage />} />
           <Route path="/balancepass" element={<BalancePassPage />} />
-          <Route path="/balancewhitelistmint" element={<BalanceWhitelistMintPage  />} />
-          <Route path="/balancepublicmint" element={<BalancePublicMintPage />} />
+          <Route path="/balancewhitelistmint" element={<BalanceWhitelistMintPage />} />
+          {/* <Route path="/balancepublicmint" element={<BalancePublicMintPage />} /> */}
 
           <Route
             path="*"

@@ -43,7 +43,7 @@ export const balanceheaderPages: Page[] = [
   {
     title: "Balance Pulbic Mint",
     href: "/balancepublicmint",
-    params: { comingSoon: false },
+    params: { comingSoon: true },
   },
 ];
 
@@ -72,7 +72,7 @@ export const footerItems: FooterItem[] = [
       {
         title: "Balance Pulbic Mint",
         href: "/balancepublicmint",
-        params: { comingSoon: false },
+        params: { comingSoon: true },
       },
     ],
   },
