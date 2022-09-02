@@ -1,28 +1,32 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const balancePassApiUrl = "http://localhost:5000";
 
-export const useBPGetProof = (address: string): UseQueryResult => {
-  return useQuery(
+type ProofResponse = {
+  json: {
+    proof: string[];
+  };
+};
+
+export const useBPGetProof = (address: string): UseQueryResult<ProofResponse> => {
+  return useQuery<ProofResponse>(
     ["proof"],
     () => {
       return axios
         .get(`${balancePassApiUrl}/proof/${address}/0`, {
           validateStatus: (status) => status < 500,
         })
-        .then((res) => {
-          console.log(res);
+        .then((res: AxiosResponse) => {
           if (res.status === 200) {
             return res.data;
           } else {
-            return axios.get(`${balancePassApiUrl}/proof/${address}/1`, {
-              validateStatus: (status) => status < 500,
-            }).then((res) => res.data);
+            return axios
+              .get(`${balancePassApiUrl}/proof/${address}/1`, {
+                validateStatus: (status) => status < 500,
+              })
+              .then((res) => res.data);
           }
-        })
-        .catch((error) => {
-          console.warn(error.toJson());
         });
     },
 

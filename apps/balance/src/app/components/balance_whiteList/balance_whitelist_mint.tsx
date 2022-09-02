@@ -38,7 +38,7 @@ export const BalanceWhitelistMintPage = (
 ): JSX.Element => {
   const { connect, disconnect, connected, address, provider, chainId } = useWeb3Context();
 
-  const { data: proofData } = useBPGetProof(address);
+  const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
   useEffect(() => {
     console.log(proofData);
@@ -64,7 +64,7 @@ export const BalanceWhitelistMintPage = (
     return state?.pendingTransactions;
   });
   const isMintDisabled = useMemo(() => {
-    return !whitelist.includes(address);
+    return isProofLoading || !proofData || proofData?.json.proof.length < 1;
   }, [address]);
 
   useEffect(() => {
