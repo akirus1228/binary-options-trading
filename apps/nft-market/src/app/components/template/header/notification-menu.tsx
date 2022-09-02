@@ -68,7 +68,7 @@ export const NotificationMenu = (): JSX.Element => {
 
   if (isLoading || isUnreadNotificationsLoading)
     return (
-      <Box className="flex fr fj-c ai-c">
+      <Box sx={{ mr: "20px" }} className="flex fr fj-c ai-c">
         <CircularProgress />
       </Box>
     );
