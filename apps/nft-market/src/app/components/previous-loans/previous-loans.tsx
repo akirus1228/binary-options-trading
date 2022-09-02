@@ -15,7 +15,7 @@ import {
   TableRow,
   Theme,
 } from "@mui/material";
-import { chains } from "@fantohm/shared-web3";
+import { chains, prettifySeconds } from "@fantohm/shared-web3";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../api/backend-api";
 import store, { RootState } from "../../store";
@@ -200,7 +200,7 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
                     ).toLocaleDateString()}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "0.875em" }}>
-                    {loan.term.duration} days
+                    {prettifySeconds(loan.term.duration, "day")}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {loan.status}

@@ -19,7 +19,7 @@ import { AppDispatch, RootState } from "../../store";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { MakeOffer } from "../make-offer/make-offer";
 import LoanConfirmation from "../loan-confirmation/loan-confirmation";
-import { formatCurrency, useWeb3Context } from "@fantohm/shared-web3";
+import { formatCurrency, prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 import OfferConfirmDialog from "../offer-confirm-modal/offer-confirm-dialog";
 import { addAlert } from "../../store/reducers/app-slice";
 import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
@@ -201,7 +201,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               Duration
             </Typography>
             <Typography className={`${style["data"]}`}>
-              {props.listing.term.duration} days
+              {prettifySeconds(props.listing.term.duration, "day")}
             </Typography>
           </Box>
           <Box className="flex fc">

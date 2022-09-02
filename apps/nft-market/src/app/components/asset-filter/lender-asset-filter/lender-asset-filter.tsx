@@ -18,6 +18,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { prettifySeconds } from "@fantohm/shared-web3";
 import { ListingQueryParam, ListingSort } from "../../../store/reducers/interfaces";
 import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
@@ -66,7 +67,7 @@ export const LenderAssetFilter = ({
   };
 
   const durationValuetext = (value: number) => {
-    return `${value} days`;
+    return prettifySeconds(value, "day");
   };
 
   const getSortQuery = (status: string): string => {
@@ -371,8 +372,12 @@ export const LenderAssetFilter = ({
         />
       </Box>
       <Box className="flex fj-sb">
-        <span style={{ fontSize: "10px" }}>{durationRange[0]} days</span>
-        <span style={{ fontSize: "10px" }}>{durationRange[1]} days</span>
+        <span style={{ fontSize: "10px" }}>
+          {prettifySeconds(durationRange[0], "day")}
+        </span>
+        <span style={{ fontSize: "10px" }}>
+          {prettifySeconds(durationRange[1], "day")}
+        </span>
       </Box>
       <CollectionsFilter
         collections={collections?.filter(

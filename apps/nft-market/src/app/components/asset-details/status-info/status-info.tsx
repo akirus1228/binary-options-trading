@@ -15,7 +15,7 @@ import {
   LoanDetailsStatus,
 } from "../../../store/reducers/loan-slice";
 import { desiredNetworkId } from "../../../constants/network";
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 
 export interface StatusInfoProps {
   asset: Asset;
@@ -85,7 +85,9 @@ const BorrowerOnlyListed = ({
         <span> at a </span>
         <span className={style["strong"]}>{listing.term.apr}% APY</span>
         <span> over </span>
-        <span className={style["strong"]}>{listing.term.duration} days</span>
+        <span className={style["strong"]}>
+          {prettifySeconds(listing.term.duration, "day")}
+        </span>
       </Box>
     </Box>
   );
