@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Container,
   Grid,
   OutlinedInput,
   Paper,
@@ -11,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  Key,
   ReactChild,
   ReactFragment,
   ReactPortal,
@@ -23,24 +21,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { USDBLight, USDBDark } from "@fantohm/shared-ui-themes";
 import { RootState } from "../../store";
 import style from "./blog-post-page.module.scss";
-import {
-  BalanceHeroImage,
-  BalanceLogoDark,
-  BalanceTwitter,
-} from "@fantohm/shared/images";
-import { withDeps } from "@nrwl/workspace/src/core/project-graph";
-import css from "../../pages/trad-fi/deposit-choice/deposit-choice.module.scss";
+import { BalanceHeroImage, BalanceTwitter } from "@fantohm/shared/images";
+import css from "./deposit-choice.module.scss";
 import { useLocation, useParams } from "react-router-dom";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import BlogPost from "../../components/blog-page/blog-post";
 import { INLINES, Block, Inline, BLOCKS } from "@contentful/rich-text-types";
 import Head from "../../components/template/head";
 import { Helmet } from "react-helmet";
 import { error, info } from "@fantohm/shared-web3";
-
-/* eslint-disable-next-line */
+import { BlogPostDTO } from "@fantohm/shared-helpers";
 export interface BlogPostProps {
   className?: string;
   invertTheme?: boolean;

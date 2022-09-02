@@ -4,13 +4,8 @@ import { useSelector } from "react-redux";
 import { USDBLight, USDBDark } from "@fantohm/shared-ui-themes";
 import { RootState } from "../../store";
 import style from "./blog-featured-post.module.scss";
-import {
-  BalanceHeroImage,
-  BalanceLogoDark,
-  BalanceTwitter,
-} from "@fantohm/shared/images";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
+import { BalanceHeroImage, BalanceTwitter } from "@fantohm/shared/images";
+import { BlogPostDTO } from "@fantohm/shared-helpers";
 
 /* eslint-disable-next-line */
 export interface BlogFeaturedPostProps {

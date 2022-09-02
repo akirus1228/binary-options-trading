@@ -10,6 +10,9 @@
     "prepare": "husky install"
   },
   "private": true,
+  "engines": {
+    "node": ">=12.9.0"
+  },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.12.1",
     "@contentful/rich-text-types": "^15.12.1",
