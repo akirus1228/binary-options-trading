@@ -12,7 +12,6 @@ import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice"
 import {
   getLoanDetailsFromContract,
   LoanDetails,
-  LoanDetailsStatus,
 } from "../../../store/reducers/loan-slice";
 import { desiredNetworkId } from "../../../constants/network";
 import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";

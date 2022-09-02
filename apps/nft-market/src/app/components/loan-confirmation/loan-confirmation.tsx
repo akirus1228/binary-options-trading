@@ -198,6 +198,10 @@ export const LoanConfirmation = ({
     let createLoanResult;
     try {
       createLoanResult = await createLoan(createLoanRequest).unwrap();
+      if (!createLoanResult) {
+        dispatch(addAlert({ message: "Failed to create a loan" }));
+        return;
+      }
       const createLoanContractResult = await dispatch(
         contractCreateLoan(createLoanParams)
       ).unwrap();

@@ -216,7 +216,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       createLoanResult = await createLoan(createLoanRequest).unwrap();
       if (!createLoanResult) {
         setIsPending(false);
-        return; //todo: throw nice error
+        dispatch(addAlert({ message: "Failed to create a loan" }));
+        return;
       }
       const createLoanContractResult = await dispatch(
         contractCreateLoan(createLoanParams)
