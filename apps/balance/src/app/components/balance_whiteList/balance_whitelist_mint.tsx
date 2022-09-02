@@ -26,7 +26,6 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import style from "./balance_whitelist_mint.module.scss";
-import { whitelist } from "./whitelist";
 import { RootState } from "../../store";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
 
@@ -64,8 +63,8 @@ export const BalanceWhitelistMintPage = (
     return state?.pendingTransactions;
   });
   const isMintDisabled = useMemo(() => {
-    return isProofLoading || !proofData || proofData?.json.proof.length < 1;
-  }, [address]);
+    return isProofLoading || !proofData || proofData?.proof.length < 1;
+  }, [proofData]);
 
   useEffect(() => {
     if (connected) {

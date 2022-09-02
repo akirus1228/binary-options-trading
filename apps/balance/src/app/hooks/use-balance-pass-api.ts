@@ -4,9 +4,8 @@ import axios, { AxiosResponse } from "axios";
 const balancePassApiUrl = "http://localhost:5000";
 
 type ProofResponse = {
-  json: {
-    proof: string[];
-  };
+  wl: number;
+  proof: string[];
 };
 
 export const useBPGetProof = (address: string): UseQueryResult<ProofResponse> => {
@@ -19,13 +18,16 @@ export const useBPGetProof = (address: string): UseQueryResult<ProofResponse> =>
         })
         .then((res: AxiosResponse) => {
           if (res.status === 200) {
-            return res.data;
+            return { wl: 1, ...res.data.json };
           } else {
             return axios
               .get(`${balancePassApiUrl}/proof/${address}/1`, {
                 validateStatus: (status) => status < 500,
               })
-              .then((res) => res.data);
+              .then((res) => ({ wl: 2, ...res.data.json }))
+              .catch((err) => {
+                console.warn(err);
+              });
           }
         });
     },
