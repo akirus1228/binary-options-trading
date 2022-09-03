@@ -42,7 +42,7 @@ export const BlogFeaturedPost = (props: BlogFeaturedPostProps): JSX.Element => {
           borderRadius: "25px",
           ...props.sx,
         }}
-        className={`daiCard ${style["cardWrapper"]} ${props.className} flexCenterCol`}
+        className={`${style["cardWrapper"]} ${props.className} flexCenterCol`}
         onClick={openPost}
       >
         <Grid

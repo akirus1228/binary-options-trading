@@ -27,6 +27,7 @@ export const BlogPage = (): JSX.Element => {
   const [sortValue, setSortValue] = useState("all");
   const allBlogPosts = useSelector((state: RootState) => state.app.blogPosts);
   const [blogPosts, setBlogPosts] = useState<BlogPostDTO[]>();
+
   const dispatch = useDispatch();
   async function createContact() {
     const options = {

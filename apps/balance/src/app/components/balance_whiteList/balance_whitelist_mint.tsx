@@ -22,14 +22,12 @@ import {
   preMintImage,
 } from "@fantohm/shared/images";
 import { ethers } from "ethers";
-import { Button, Container, Grid, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import style from "./balance_whitelist_mint.module.scss";
-import { whitelist } from "./whitelist";
 import { RootState } from "../../store";
-import { AsyncThunkAction } from "@reduxjs/toolkit";
+import { useBPGetProof } from "../../hooks/use-balance-pass-api";
 
 /* eslint-disable-next-line */
 export interface BalanceWhitelistMintProps {}
@@ -38,6 +36,12 @@ export const BalanceWhitelistMintPage = (
   props: BalanceWhitelistMintProps
 ): JSX.Element => {
   const { connect, disconnect, connected, address, provider, chainId } = useWeb3Context();
+
+  const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
+
+  useEffect(() => {
+    console.log(proofData);
+  }, [proofData]);
 
   const [balance, setBalance] = useState(0);
   const countDownDate = 1662055200000;
@@ -59,8 +63,8 @@ export const BalanceWhitelistMintPage = (
     return state?.pendingTransactions;
   });
   const isMintDisabled = useMemo(() => {
-    return !whitelist.includes(address);
-  }, [address]);
+    return isProofLoading || !proofData || proofData?.proof.length < 1;
+  }, [proofData]);
 
   useEffect(() => {
     if (connected) {
