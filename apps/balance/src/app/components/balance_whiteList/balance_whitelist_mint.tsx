@@ -26,8 +26,9 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import style from "./balance_whitelist_mint.module.scss";
-import { RootState } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
+import { useBpGetTimestampsQuery } from "../../hooks/use-balance-pass-contract";
 
 /* eslint-disable-next-line */
 export interface BalanceWhitelistMintProps {}
@@ -39,19 +40,24 @@ export const BalanceWhitelistMintPage = (
 
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
-  useEffect(() => {
-    console.log(proofData);
-  }, [proofData]);
-
   const [balance, setBalance] = useState(0);
-  const countDownDate = 1662055200000;
-  const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
+
+  const [countDown, setCountDown] = useState<number>();
+
+  const { data: countdownData, isLoading: isCountdownLoading } =
+    useBpGetTimestampsQuery();
+
+  useEffect(() => {
+    console.log(countdownData);
+    if (!countdownData) return;
+    setCountDown(countdownData[0] - new Date().getTime());
+  }, [countdownData]);
 
   const [bond, setBond] = useState(
     allBonds.filter((bond) => bond.name === "passNFTmint")[0] as Bond
   );
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
   };
@@ -68,19 +74,19 @@ export const BalanceWhitelistMintPage = (
 
   useEffect(() => {
     if (connected) {
-      const getBalance = async (): Promise<any> => {
+      const getBalance = async () => {
         try {
-          const balance: any = await dispatch(
+          const balance = await dispatch(
             getNFTBalance({
               address,
               provider,
               networkId: chainId,
-              bond: bond,
+              bond,
             } as IMintNFTAsyncThunk)
           );
           setBalance(350 - ethers.BigNumber.from(balance.payload).toNumber());
         } catch (e) {
-          return;
+          console.warn("failed to retrieve balance", e);
         }
       };
 
@@ -91,15 +97,15 @@ export const BalanceWhitelistMintPage = (
   const useCountdown = () => {
     useEffect(() => {
       const interval = setInterval(() => {
-        if (countDownDate >= new Date().getTime()) {
-          setCountDown(countDownDate - new Date().getTime());
+        if (countdownData && countdownData[0] >= new Date().getTime()) {
+          setCountDown(countdownData[0] - new Date().getTime());
         } else {
           setCountDown(0);
         }
       }, 1000);
 
       return () => clearInterval(interval);
-    }, [countDownDate]);
+    }, [countdownData]);
 
     return getReturnValues(countDown);
   };
@@ -397,7 +403,7 @@ export const BalanceWhitelistMintPage = (
             )}
 
             {!connected ? (
-              countDown <= 0 ? (
+              countDown && countDown <= 0 ? (
                 <Button
                   variant="contained"
                   onClick={onClickConnect}
@@ -411,7 +417,7 @@ export const BalanceWhitelistMintPage = (
                     mt: { md: "7%", xs: "15%" },
                   }}
                   className={style["heroLink"]}
-                  disabled={countDown > 0 ? true : false}
+                  disabled={countDown && countDown > 0 ? true : false}
                 >
                   Connect Wallet
                 </Button>
