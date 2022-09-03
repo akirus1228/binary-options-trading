@@ -450,11 +450,7 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {currencyBalance &&
-                      ethers.utils.formatUnits(
-                        currencyBalance,
-                        currency?.decimals || 18
-                      )}{" "}
+                    {currencyBalance && ethers.utils.formatUnits(currencyBalance, 5)}{" "}
                     {currency?.symbol || ""}
                   </span>
                 </Box>
