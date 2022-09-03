@@ -85,9 +85,6 @@ export const LoanConfirmation = ({
     useSelector((state: RootState) => state.wallet);
 
   const handleClose = () => {
-    if (isPending) {
-      return;
-    }
     if (onClose) {
       onClose();
     }
@@ -535,7 +532,15 @@ export const LoanConfirmation = ({
             </Button>
           )}
         </Box>
-        <Box className="flex fr fj-c" onClick={handleClose} sx={{ cursor: "pointer" }}>
+        <Box
+          className="flex fr fj-c"
+          onClick={() => {
+            if (!isPending) {
+              handleClose();
+            }
+          }}
+          sx={{ cursor: "pointer" }}
+        >
           <span className="subtle">Nevermind</span>
         </Box>
       </Dialog>
