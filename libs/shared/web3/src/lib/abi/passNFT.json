@@ -277,6 +277,16 @@
       "type": "function"
     },
     {
+      "inputs": [
+        { "internalType": "bytes32[]", "name": "_merkleProof1", "type": "bytes32[]" },
+        { "internalType": "bytes32[]", "name": "_merkleProof2", "type": "bytes32[]" }
+      ],
+      "name": "mint",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
       "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "name": "mintWalletLimit",
       "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
@@ -286,31 +296,6 @@
     {
       "inputs": [],
       "name": "mint_owner",
-      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "mint_public",
-      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        { "internalType": "bytes32[]", "name": "_merkleProof", "type": "bytes32[]" }
-      ],
-      "name": "mint_whitelist1",
-      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        { "internalType": "bytes32[]", "name": "_merkleProof", "type": "bytes32[]" }
-      ],
-      "name": "mint_whitelist2",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "payable",
       "type": "function"
