@@ -104,9 +104,10 @@ export const BalancePassPage = (): JSX.Element => {
                 fontFamily: "sora",
                 mt: "40px",
               }}
+              disabled={true}
               className={style["heroLink"]}
             >
-              Buy Now
+              Mint
             </Button>
           </Box>
         </Grid>
@@ -419,9 +420,10 @@ export const BalancePassPage = (): JSX.Element => {
               fontFamily: "sora",
               mt: "40px",
             }}
+            disabled={true}
             className={style["footerLink"]}
           >
-            Buy Now
+            Mint
           </Button>
         </Grid>
         <Grid item md={3.5} sx={{ display: { xs: "none", md: "flex" } }}>
