@@ -34,8 +34,9 @@ import {
   getIlRedeemBlockNumber,
   networks,
   allBonds,
+  formatCurrency,
 } from "@fantohm/shared-web3";
-import { formatCurrency, formatSeconds } from "@fantohm/shared-helpers";
+import { formatSeconds } from "@fantohm/shared-helpers";
 import { RootState } from "../../../store";
 
 interface IStakingCardParams {

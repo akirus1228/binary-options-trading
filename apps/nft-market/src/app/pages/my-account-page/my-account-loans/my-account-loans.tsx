@@ -8,8 +8,7 @@ import MyAccountActiveLoansTable from "../my-account-active-loans-table";
 import style from "./my-account-loans.module.scss";
 
 /* eslint-disable-next-line */
-export interface MyAccountLoansProps {
-}
+export interface MyAccountLoansProps {}
 
 export function MyAccountLoans(props: MyAccountLoansProps) {
   const { address } = useWeb3Context();

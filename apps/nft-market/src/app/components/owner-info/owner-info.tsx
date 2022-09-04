@@ -13,10 +13,9 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SimpleProfile from "../simple-profile/simple-profile";
 import style from "./owner-info.module.scss";
 import ArrowRightUp from "../../../assets/icons/arrow-right-up.svg";
-import { isDev } from "@fantohm/shared-web3";
+import { isDev, formatCurrency } from "@fantohm/shared-web3";
 import { CircleGraph } from "@fantohm/shared/ui-charts";
 import { useGetWalletQuery } from "../../api/backend-api";
-import { formatCurrency } from "@fantohm/shared-helpers";
 import { useMemo } from "react";
 import ColorLabel from "./color-label";
 

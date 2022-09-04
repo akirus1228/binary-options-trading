@@ -12,8 +12,8 @@ import {
   payoutForUsdb,
   txnButtonText,
   useWeb3Context,
+  formatCurrency,
 } from "@fantohm/shared-web3";
-import { formatCurrency } from "@fantohm/shared-helpers";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

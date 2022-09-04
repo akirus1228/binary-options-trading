@@ -18,9 +18,9 @@ import {
 import style from "./notification-message.module.scss";
 import avatarPlaceholder from "../../../assets/images/profile-placeholder.svg";
 import { useTermDetails } from "../../hooks/use-term-details";
-import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
+import { addressEllipsis } from "@fantohm/shared-helpers";
 import { useNavigate } from "react-router-dom";
-import { prettifySeconds } from "@fantohm/shared-web3";
+import { formatCurrency, prettifySeconds } from "@fantohm/shared-web3";
 
 export interface NotificationMessageProps {
   notification: Notification;
