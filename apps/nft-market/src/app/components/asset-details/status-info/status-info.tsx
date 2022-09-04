@@ -13,7 +13,8 @@ import {
   LoanDetails,
 } from "../../../store/reducers/loan-slice";
 import { desiredNetworkId } from "../../../constants/network";
-import { formatCurrency, prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import { formatCurrency } from "@fantohm/shared-helpers";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 
 export interface StatusInfoProps {
   asset: Asset;

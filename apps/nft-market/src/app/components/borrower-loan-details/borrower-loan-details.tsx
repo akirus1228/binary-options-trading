@@ -1,7 +1,7 @@
+import { formatCurrency } from "@fantohm/shared-helpers";
 import {
   checkErc20Allowance,
   error,
-  formatCurrency,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   selectErc20BalanceByAddress,

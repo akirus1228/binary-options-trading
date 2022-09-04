@@ -73,3 +73,16 @@ export const formatAmount = (
     return parseInt(result);
   }
 };
+
+export function formatCurrency(c: number, precision = 0): string {
+  if (precision === 7) return "$0"; // show decimals by 6 digits at most
+  const currencyStr = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: precision,
+    minimumFractionDigits: precision,
+  }).format(c);
+  if (parseFloat(currencyStr.replace("$", "")) === 0)
+    return formatCurrency(c, precision + 1);
+  return currencyStr;
+}

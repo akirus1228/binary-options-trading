@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { addressEllipsis } from "@fantohm/shared-helpers";
+import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import {
   PaperTable,
   PaperTableCell,
@@ -15,7 +15,7 @@ import {
   TableRow,
   Theme,
 } from "@mui/material";
-import { chains, formatCurrency, prettifySeconds } from "@fantohm/shared-web3";
+import { chains, prettifySeconds } from "@fantohm/shared-web3";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../api/backend-api";
 import store, { RootState } from "../../store";

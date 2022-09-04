@@ -1,11 +1,11 @@
-import { addressEllipsis } from "@fantohm/shared-helpers";
+import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import {
   PaperTable,
   PaperTableCell,
   PaperTableHead,
   PaperTableRow,
 } from "@fantohm/shared-ui-themes";
-import { formatCurrency, prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 import {
   Avatar,
   Box,

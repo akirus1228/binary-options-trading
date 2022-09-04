@@ -10,10 +10,8 @@ import {
   Menu,
   Tooltip,
 } from "@mui/material";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
-import { addressEllipsis } from "@fantohm/shared-helpers";
+import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
 import {
   AssetStatus,
@@ -35,7 +33,6 @@ import store, { RootState } from "../../store";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { contractCreateLoan } from "../../store/reducers/loan-slice";
 import {
-  formatCurrency,
   requestNftPermission,
   useWeb3Context,
   checkNftPermission,

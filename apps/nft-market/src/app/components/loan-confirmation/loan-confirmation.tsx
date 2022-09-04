@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
   checkErc20Allowance,
-  formatCurrency,
   loadErc20Balance,
   loadPlatformFee,
   networks,
@@ -33,6 +32,7 @@ import {
   selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
+import { formatCurrency } from "@fantohm/shared-helpers";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { desiredNetworkId } from "../../constants/network";
 import { BigNumber, ethers } from "ethers";

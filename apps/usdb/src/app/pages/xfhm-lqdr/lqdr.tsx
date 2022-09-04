@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Skeleton, Typography } from "@mui/material";
-import { formatAmount, truncateDecimals } from "@fantohm/shared-helpers";
+import { formatAmount, truncateDecimals, formatCurrency } from "@fantohm/shared-helpers";
 import {
   addLiquidity,
   allAssetTokens,
@@ -12,7 +12,6 @@ import {
   payoutForUsdb,
   txnButtonText,
   useWeb3Context,
-  formatCurrency,
 } from "@fantohm/shared-web3";
 import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
 import { memo, useEffect, useState } from "react";

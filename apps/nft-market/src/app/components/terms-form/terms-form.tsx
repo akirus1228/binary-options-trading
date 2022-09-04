@@ -1,7 +1,7 @@
 import {
+  isDev,
   checkErc20Allowance,
   checkNftPermission,
-  formatCurrency,
   loadPlatformFee,
   requestErc20Allowance,
   requestNftPermission,
@@ -9,6 +9,7 @@ import {
   selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
+import { formatCurrency } from "@fantohm/shared-helpers";
 import {
   Box,
   Button,
@@ -19,7 +20,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { isDev } from "@fantohm/shared-web3";
 import { AppDispatch, RootState } from "../../store";
 import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
