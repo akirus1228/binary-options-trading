@@ -6,6 +6,7 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers } from "ethers";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
@@ -26,15 +27,15 @@ export const useBpGetTimestampsQuery =
   (): UseQueryResult<UseBpGetTimestampsQueryResut> => {
     const { address, provider } = useWeb3Context();
 
-    // useEffect(() => {
-    //   console.log("address", address);
-    //   console.log("provider", provider);
-    //   console.log("balancePassContract", balancePassContract);
-    // }, [address, provider, balancePassContract]);
+    useEffect(() => {
+      console.log("address", address);
+      console.log("provider", provider);
+    }, [address, provider]);
 
     return useQuery<UseBpGetTimestampsQueryResut>(
       ["bpTimestamps"],
       () => {
+        console.log("starting timestamp query");
         const contract = new ethers.Contract(
           contractAddress,
           passNFTAbi,
