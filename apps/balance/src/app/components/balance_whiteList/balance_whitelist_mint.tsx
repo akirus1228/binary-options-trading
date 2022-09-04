@@ -319,79 +319,82 @@ export const BalanceWhitelistMintPage = (
                 </Typography>
               </Box>
             </Box>
-            {!isProofLoading && !isCountdownLoading && totalSupply && totalSupply < 350 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  width: "100%",
-                  mt: "50px",
-                  justifyContent: "center",
-                }}
-              >
+            {!isProofLoading &&
+              !isCountdownLoading &&
+              !!totalSupply &&
+              totalSupply < 350 && (
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    mr: { md: "10%", xs: "5%" },
+                    width: "100%",
+                    mt: "50px",
+                    justifyContent: "center",
                   }}
                 >
-                  <Typography
+                  <Box
                     sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "55px", xs: "32px" },
-                      color: "#dee9ff",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      mr: { md: "10%", xs: "5%" },
                     }}
                   >
-                    {`${totalSupply ? 350 - totalSupply : "---"}/350`}
-                  </Typography>
-                  <Typography
+                    <Typography
+                      sx={{
+                        fontFamily: "MonumentExtendedRegular",
+                        fontSize: { md: "55px", xs: "32px" },
+                        color: "#dee9ff",
+                      }}
+                    >
+                      {`${totalSupply ? 350 - totalSupply : "---"}/350`}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "sequel100black-55",
+                        fontSize: { md: "14px", xs: "12px" },
+                        color: "#8fa0c3",
+                        letterSpacing: "0.3em",
+                      }}
+                    >
+                      Remaining
+                    </Typography>
+                  </Box>
+                  <img
+                    src={DownLine}
+                    alt="down line"
+                    className={style["dropLineSection"]}
+                  ></img>
+                  <Box
                     sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "12px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      ml: { md: "10%", xs: "5%" },
                     }}
                   >
-                    Remaining
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "MonumentExtendedRegular",
+                        fontSize: { md: "55px", xs: "32px" },
+                        color: "#dee9ff",
+                      }}
+                    >
+                      Free
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "sequel100black-55",
+                        fontSize: { md: "14px", xs: "12px" },
+                        color: "#8fa0c3",
+                        letterSpacing: "0.3em",
+                      }}
+                    >
+                      Price
+                    </Typography>
+                  </Box>
                 </Box>
-                <img
-                  src={DownLine}
-                  alt="down line"
-                  className={style["dropLineSection"]}
-                ></img>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    ml: { md: "10%", xs: "5%" },
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "55px", xs: "32px" },
-                      color: "#dee9ff",
-                    }}
-                  >
-                    Free
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "12px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
-                    }}
-                  >
-                    Price
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-            {totalSupply && totalSupply === 350 && (
+              )}
+            {!!totalSupply && totalSupply === 350 && (
               <Typography
                 sx={{
                   fontFamily: "MonumentExtendedRegular",

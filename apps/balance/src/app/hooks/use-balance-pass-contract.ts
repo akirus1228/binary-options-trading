@@ -9,7 +9,7 @@ import { BigNumber, ContractReceipt, ContractTransaction, ethers } from "ethers"
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
-const contractAddress = isDev() ? "0x607e2D68bc2664BF9Ab2c065ae9F65Da4bf55905" : "";
+const contractAddress = isDev() ? "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B" : "";
 
 type UseBpGetTimestampsQueryResut = {
   whitelist1Timestamp: number;
