@@ -337,7 +337,7 @@ export const BalanceWhitelistMintPage = (
                 </Typography>
               </Box>
             </Box>
-            {!isProofLoading && !isCountdownLoading && countDown < 1 && balance !== 0 && (
+            {!isProofLoading && !isCountdownLoading && balance !== 0 && (
               <Box
                 sx={{
                   display: "flex",
@@ -361,7 +361,7 @@ export const BalanceWhitelistMintPage = (
                       color: "#dee9ff",
                     }}
                   >
-                    {`${balance ? balance : ""}/350`}
+                    {`${balance ? balance : "---"}/350`}
                   </Typography>
                   <Typography
                     sx={{
