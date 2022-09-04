@@ -52,6 +52,7 @@ export const App = (): JSX.Element => {
     // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
     dispatch(loadAppDetails());
   }, []);
+
   useEffect(() => {
     if (provider && connected && address) {
       const expectedChain = isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
@@ -66,7 +67,7 @@ export const App = (): JSX.Element => {
     // if there's a cached provider, try and connect
     if (hasCachedProvider && hasCachedProvider() && !connected) {
       try {
-        connect();
+        connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
       } catch (e) {
         console.log("Connection metamask error", e);
       }
