@@ -50,10 +50,6 @@ export const BalanceWhitelistMintPage = (
   const { data: totalSupply, isLoading: isTotalSupplyLoading } =
     useBpGetTotalSupplyQuery();
 
-  useEffect(() => {
-    console.log(totalSupply);
-  }, [totalSupply]);
-
   const { mutation: mintNft } = useBpMintMutation({
     proof1: proofData?.wl === 1 ? proofData?.proof : [],
     proof2: proofData?.wl === 2 ? proofData?.proof : [],
@@ -61,17 +57,19 @@ export const BalanceWhitelistMintPage = (
 
   // using the timestamp and proof data, calculate the timestamp for the countdown
   useEffect(() => {
-    if (!timestampData || !proofData) return;
-    switch (proofData.wl) {
+    if (!timestampData) return;
+    switch (proofData?.wl) {
       case 1:
         setCountdownTimestamp(timestampData.whitelist1Timestamp * 1000);
+        console.log("whitelist1", "1");
         break;
       case 2:
         setCountdownTimestamp(timestampData.whitelist2Timestamp * 1000);
+        console.log("whitelist2", "2");
         break;
       default:
         setCountdownTimestamp(timestampData.publicTimestamp * 1000);
-      // console.log("public");
+        console.log("public");
     }
   }, [
     timestampData?.whitelist1Timestamp,
@@ -79,6 +77,10 @@ export const BalanceWhitelistMintPage = (
     timestampData?.publicTimestamp,
     proofData,
   ]);
+
+  useEffect(() => {
+    console.log(timestampData);
+  }, [timestampData]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     console.log("connect", isDev());
@@ -90,9 +92,9 @@ export const BalanceWhitelistMintPage = (
   };
 
   //
-  const isMintDisabled = useMemo(() => {
-    return isProofLoading || !proofData || proofData?.proof.length < 1;
-  }, [proofData]);
+  const isWhitelisted = useMemo(() => {
+    return !isProofLoading && proofData && proofData?.proof.length > 0;
+  }, [isProofLoading, proofData?.wl]);
 
   const useCountdown = () => {
     useEffect(() => {
@@ -485,7 +487,7 @@ export const BalanceWhitelistMintPage = (
                   countDown < 1 && (
                     <Button
                       variant="contained"
-                      disabled={mintNft.isLoading || isMintDisabled}
+                      disabled={mintNft.isLoading || countDown > 0}
                       onClick={handleMint}
                       sx={{
                         display: { md: "flex" },
@@ -528,7 +530,7 @@ export const BalanceWhitelistMintPage = (
                     View on Opensea
                   </Button>
                 )}
-                {isMintDisabled ? (
+                {!isWhitelisted ? (
                   <Typography
                     sx={{
                       fontFamily: "sora",
