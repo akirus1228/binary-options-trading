@@ -57,6 +57,8 @@ export const BalanceWhitelistMintPage = (
 
   // using the timestamp and proof data, calculate the timestamp for the countdown
   useEffect(() => {
+    console.log("timestampData", timestampData);
+    console.log("proofData", proofData);
     if (!timestampData) return;
     switch (proofData?.wl) {
       case 1:
