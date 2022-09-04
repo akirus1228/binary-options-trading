@@ -6,9 +6,6 @@ import {
   useWeb3Context,
   allBonds,
   Bond,
-  mint_Whitelist_NFT,
-  isPendingTxn,
-  txnButtonText,
   getNFTBalance,
 } from "@fantohm/shared-web3";
 import {
@@ -22,13 +19,25 @@ import {
   preMintImage,
 } from "@fantohm/shared/images";
 import { ethers } from "ethers";
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import style from "./balance_whitelist_mint.module.scss";
 import { AppDispatch, RootState } from "../../store";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
-import { useBpGetTimestampsQuery } from "../../hooks/use-balance-pass-contract";
+import {
+  useBpGetTimestampsQuery,
+  useBpGetTotalSupplyQuery,
+  useBpGetWalletBalanceQuery,
+  useBpMintMutation,
+} from "../../hooks/use-balance-pass-contract";
 
 /* eslint-disable-next-line */
 export interface BalanceWhitelistMintProps {}
@@ -41,13 +50,21 @@ export const BalanceWhitelistMintPage = (
 
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
-  const [balance, setBalance] = useState<number>();
-
   const [countDown, setCountDown] = useState<number>(0);
   const [countdownTimestamp, setCountdownTimestamp] = useState<number>(1662393600 * 1000);
 
   const { data: timestampData, isLoading: isCountdownLoading } =
     useBpGetTimestampsQuery();
+
+  const { data: walletBalance, isLoading: isWalletBalanceLoading } =
+    useBpGetWalletBalanceQuery();
+
+  const { data: totalSupply, isLoading: isSupplyLoading } = useBpGetTotalSupplyQuery();
+
+  const { mutation: mintNft } = useBpMintMutation({
+    proof1: proofData?.wl === 1 ? proofData?.proof : [],
+    proof2: proofData?.wl === 2 ? proofData?.proof : [],
+  });
 
   // using the timestamp and proof data, calculate the timestamp for the countdown
   useEffect(() => {
@@ -81,36 +98,10 @@ export const BalanceWhitelistMintPage = (
     disconnect();
   };
 
-  const pendingTransactions = useSelector((state: RootState) => {
-    return state?.pendingTransactions;
-  });
-
   //
   const isMintDisabled = useMemo(() => {
     return isProofLoading || !proofData || proofData?.proof.length < 1;
   }, [proofData]);
-
-  useEffect(() => {
-    if (connected) {
-      const getBalance = async () => {
-        try {
-          const balance = await dispatch(
-            getNFTBalance({
-              address,
-              provider,
-              networkId: chainId,
-              bond,
-            } as IMintNFTAsyncThunk)
-          );
-          setBalance(350 - ethers.BigNumber.from(balance.payload).toNumber());
-        } catch (e) {
-          console.warn("failed to retrieve balance", e);
-        }
-      };
-
-      getBalance();
-    }
-  }, [connected, balance]);
 
   const useCountdown = () => {
     useEffect(() => {
@@ -141,16 +132,7 @@ export const BalanceWhitelistMintPage = (
   const [days, hours, minutes, seconds] = useCountdown();
 
   async function handleMint() {
-    dispatch(
-      mint_Whitelist_NFT({
-        address,
-        provider,
-        networkId: chainId,
-        bond: bond,
-        proof1: proofData?.wl === 1 ? proofData?.proof : [],
-        proof2: proofData?.wl === 2 ? proofData?.proof : [],
-      } as IMintNFTAsyncThunk)
-    );
+    mintNft.mutate();
   }
 
   return (
@@ -351,7 +333,7 @@ export const BalanceWhitelistMintPage = (
                 </Typography>
               </Box>
             </Box>
-            {!isProofLoading && !isCountdownLoading && balance !== 0 && (
+            {!isProofLoading && !isCountdownLoading && totalSupply && totalSupply < 350 && (
               <Box
                 sx={{
                   display: "flex",
@@ -375,7 +357,7 @@ export const BalanceWhitelistMintPage = (
                       color: "#dee9ff",
                     }}
                   >
-                    {`${balance ? balance : "---"}/350`}
+                    {`${totalSupply ? 350 - totalSupply : "---"}/350`}
                   </Typography>
                   <Typography
                     sx={{
@@ -423,7 +405,7 @@ export const BalanceWhitelistMintPage = (
                 </Box>
               </Box>
             )}
-            {balance && balance < 1 && (
+            {totalSupply && totalSupply === 350 && (
               <Typography
                 sx={{
                   fontFamily: "MonumentExtendedRegular",
@@ -502,15 +484,14 @@ export const BalanceWhitelistMintPage = (
                 {address &&
                   !isProofLoading &&
                   !isCountdownLoading &&
-                  balance &&
-                  balance !== 0 &&
+                  !isWalletBalanceLoading &&
+                  walletBalance === 0 &&
+                  !!totalSupply &&
+                  totalSupply < 350 &&
                   countDown < 1 && (
                     <Button
                       variant="contained"
-                      disabled={
-                        isPendingTxn(pendingTransactions, "Mint_" + bond?.name) ||
-                        isMintDisabled
-                      }
+                      disabled={mintNft.isLoading || isMintDisabled}
                       onClick={handleMint}
                       sx={{
                         display: { md: "flex" },
@@ -523,9 +504,14 @@ export const BalanceWhitelistMintPage = (
                       }}
                       className={style["heroLink"]}
                     >
-                      {txnButtonText(pendingTransactions, "Mint_" + bond?.name, "Mint")}
+                      Mint {mintNft.isLoading && <CircularProgress size={20} />}
                     </Button>
                   )}
+                {!isWalletBalanceLoading && !!walletBalance && walletBalance > 0 && (
+                  <Typography sx={{ mt: "2em" }}>
+                    You have successfully minted your NFT!
+                  </Typography>
+                )}
                 {!isProofLoading && !isCountdownLoading && countDown < 1 && (
                   <Button
                     variant="contained"
@@ -537,7 +523,7 @@ export const BalanceWhitelistMintPage = (
                       backgroundColor: "#3744e6",
                       color: "white",
                       fontFamily: "sora",
-                      mt: { md: "7%", xs: "15%" },
+                      mt: { md: "2em", xs: "15%" },
                     }}
                   >
                     <img
