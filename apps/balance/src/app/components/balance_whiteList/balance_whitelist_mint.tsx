@@ -1,13 +1,5 @@
 import { addressEllipsis } from "@fantohm/shared-helpers";
-import {
-  IMintNFTAsyncThunk,
-  isDev,
-  NetworkIds,
-  useWeb3Context,
-  allBonds,
-  Bond,
-  getNFTBalance,
-} from "@fantohm/shared-web3";
+import { isDev, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import {
   AboutDivider,
   DownLine,
@@ -18,7 +10,6 @@ import {
   OpenSeaImage,
   preMintImage,
 } from "@fantohm/shared/images";
-import { ethers } from "ethers";
 import {
   Box,
   Button,
@@ -28,9 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import style from "./balance_whitelist_mint.module.scss";
-import { AppDispatch, RootState } from "../../store";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
 import {
   useBpGetTimestampsQuery,
@@ -45,8 +34,7 @@ export interface BalanceWhitelistMintProps {}
 export const BalanceWhitelistMintPage = (
   props: BalanceWhitelistMintProps
 ): JSX.Element => {
-  const dispatch: AppDispatch = useDispatch();
-  const { connect, disconnect, connected, address, provider, chainId } = useWeb3Context();
+  const { connect, disconnect, connected, address } = useWeb3Context();
 
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
@@ -59,7 +47,7 @@ export const BalanceWhitelistMintPage = (
   const { data: walletBalance, isLoading: isWalletBalanceLoading } =
     useBpGetWalletBalanceQuery();
 
-  const { data: totalSupply, isLoading: isSupplyLoading } = useBpGetTotalSupplyQuery();
+  const { data: totalSupply } = useBpGetTotalSupplyQuery();
 
   const { mutation: mintNft } = useBpMintMutation({
     proof1: proofData?.wl === 1 ? proofData?.proof : [],
@@ -87,13 +75,11 @@ export const BalanceWhitelistMintPage = (
     proofData,
   ]);
 
-  const [bond, setBond] = useState(
-    allBonds.filter((bond) => bond.name === "passNFTmint")[0] as Bond
-  );
-
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
+    console.log("connect", isDev());
     connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
   };
+
   const onClickDisconnect = () => {
     disconnect();
   };
