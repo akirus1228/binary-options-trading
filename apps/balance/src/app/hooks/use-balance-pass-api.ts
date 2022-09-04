@@ -2,7 +2,7 @@ import { isDev } from "@fantohm/shared-web3";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 
-const balancePassApiUrl = "https://balance-pass-api.herokuapp.com/";
+const balancePassApiUrl = "https://balance-pass-api.herokuapp.com";
 
 type ProofResponse = {
   wl: number;
