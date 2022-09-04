@@ -1,7 +1,15 @@
-import { allBonds, Bond, isDev, passNFTAbi, useWeb3Context } from "@fantohm/shared-web3";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { BigNumber, ethers } from "ethers";
-import { useEffect, useMemo } from "react";
+import { error, isDev, passNFTAbi, useWeb3Context } from "@fantohm/shared-web3";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
+import { BigNumber, ContractReceipt, ContractTransaction, ethers } from "ethers";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
+
+const contractAddress = isDev() ? "0x607e2D68bc2664BF9Ab2c065ae9F65Da4bf55905" : "";
 
 type UseBpGetTimestampsQueryResut = {
   whitelist1Timestamp: number;
@@ -10,26 +18,25 @@ type UseBpGetTimestampsQueryResut = {
 };
 type UseBpPromiseResut = [BigNumber, BigNumber, BigNumber];
 
+type UseBpGetWalletBalanceQueryResut = {
+  walletBalance: number;
+};
+
 export const useBpGetTimestampsQuery =
   (): UseQueryResult<UseBpGetTimestampsQueryResut> => {
     const { address, provider } = useWeb3Context();
-    const balancePassContract = useMemo(() => {
-      return allBonds.find((bond: Bond) => bond.name === "passNFTmint") as Bond;
-    }, []);
 
-    useEffect(() => {
-      console.log("address", address);
-      console.log("provider", provider);
-      console.log("balancePassContract", balancePassContract);
-    }, [address, provider, balancePassContract]);
+    // useEffect(() => {
+    //   console.log("address", address);
+    //   console.log("provider", provider);
+    //   console.log("balancePassContract", balancePassContract);
+    // }, [address, provider, balancePassContract]);
 
     return useQuery<UseBpGetTimestampsQueryResut>(
       ["bpTimestamps"],
       () => {
-        console.log("started query");
-        console.log("balancePassContract", balancePassContract);
         const contract = new ethers.Contract(
-          balancePassContract.networkAddrs[isDev() ? 4 : 1].bondAddress,
+          contractAddress,
           passNFTAbi,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           provider!
@@ -49,6 +56,104 @@ export const useBpGetTimestampsQuery =
           })
           .catch();
       },
-      { enabled: !!balancePassContract && !!provider && !!address }
+      { enabled: !!provider && !!address }
     );
   };
+
+export const useBpGetWalletBalanceQuery = (): UseQueryResult<number> => {
+  const { address, provider } = useWeb3Context();
+
+  return useQuery(
+    ["bpGetWalletBalance"],
+    () => {
+      const contract = new ethers.Contract(
+        contractAddress,
+        passNFTAbi,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        provider!
+      );
+
+      const walletBalance: number = contract["balanceOf"](address).then(
+        (balance: BigNumber) => balance.toNumber()
+      );
+
+      return walletBalance;
+    },
+    { enabled: !!provider && !!address }
+  );
+};
+
+export const useBpGetTotalSupplyQuery = (): UseQueryResult<number> => {
+  const { address, provider } = useWeb3Context();
+
+  return useQuery(
+    ["bpGetTotalSupply"],
+    () => {
+      const contract = new ethers.Contract(
+        contractAddress,
+        passNFTAbi,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        provider!
+      );
+
+      const supply: number = contract["totalSupply"]().then((balance: BigNumber) =>
+        balance.toNumber()
+      );
+
+      return supply;
+    },
+    { enabled: !!provider && !!address }
+  );
+};
+
+export const useBpMintMutation = ({
+  proof1,
+  proof2,
+}: {
+  proof1: string[];
+  proof2: string[];
+}) => {
+  const { provider, address, chainId } = useWeb3Context();
+  const dispatch: AppDispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    ["mintBalancePass"],
+    () => {
+      const signer = provider?.getSigner();
+
+      const contract = new ethers.Contract(contractAddress, passNFTAbi, signer);
+
+      try {
+        const mintTx = contract["mint"](proof1, proof2)
+          .then((txn: ContractTransaction) => txn.wait())
+          .then((receipt: ContractReceipt) => {
+            console.log(receipt);
+          });
+        return mintTx;
+      } catch (e: any) {
+        if (e.error === undefined) {
+          let message;
+          if (e.message === "Internal JSON-RPC error.") {
+            message = e.data.message;
+          } else {
+            message = e.message;
+          }
+          if (typeof message === "string") {
+            dispatch(error(`Unknown error: ${message}`));
+          }
+        } else {
+          dispatch(error(`Unknown error: ${e.error.message}`));
+        }
+      }
+    },
+    {
+      onMutate: () => {
+        queryClient.invalidateQueries(["bpGetWalletBalance"]);
+        queryClient.invalidateQueries(["bpGetTotalSupply"]);
+      },
+    }
+  );
+
+  return { mutation };
+};
