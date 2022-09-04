@@ -1089,16 +1089,11 @@ export const mint_Public_NFT = createAsyncThunk(
 );
 export const getNFTBalance = createAsyncThunk(
   "bonding/getPassNFTBalance",
-  async ({ address, bond, networkId, provider }: IMintNFTAsyncThunk, { dispatch }) => {
-    const minterAddress = address;
-
-    const signer = provider.getSigner();
-
+  async ({ bond, networkId }: IMintNFTAsyncThunk, { dispatch }) => {
     const bondContractForRead = await bond.getContractForBond(networkId);
-    const bondContractForWrite = bond.getContractForBondForWrite(networkId, signer);
 
     try {
-      const supply = await bondContractForRead["totalSupply"]();
+      const supply: number = await bondContractForRead["totalSupply"]();
       return supply;
     } catch (e: any) {
       if (e.error === undefined) {
@@ -1115,6 +1110,7 @@ export const getNFTBalance = createAsyncThunk(
         dispatch(error(`Unknown error: ${e.error.message}`));
       }
     }
+    return undefined;
   }
 );
 

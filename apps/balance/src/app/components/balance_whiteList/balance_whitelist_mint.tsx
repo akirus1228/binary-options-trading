@@ -26,8 +26,9 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import style from "./balance_whitelist_mint.module.scss";
-import { RootState } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
+import { useBpGetTimestampsQuery } from "../../hooks/use-balance-pass-contract";
 
 /* eslint-disable-next-line */
 export interface BalanceWhitelistMintProps {}
@@ -35,23 +36,49 @@ export interface BalanceWhitelistMintProps {}
 export const BalanceWhitelistMintPage = (
   props: BalanceWhitelistMintProps
 ): JSX.Element => {
+  const dispatch: AppDispatch = useDispatch();
   const { connect, disconnect, connected, address, provider, chainId } = useWeb3Context();
 
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
-  useEffect(() => {
-    console.log(proofData);
-  }, [proofData]);
+  const [balance, setBalance] = useState<number>();
 
-  const [balance, setBalance] = useState(0);
-  const countDownDate = 1662055200000;
-  const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
+  const [countDown, setCountDown] = useState<number>(0);
+  const [countdownTimestamp, setCountdownTimestamp] = useState<number>(1662393600 * 1000);
+
+  const { data: timestampData, isLoading: isCountdownLoading } =
+    useBpGetTimestampsQuery();
+
+  // using the timestamp and proof data, calculate the timestamp for the countdown
+  useEffect(() => {
+    if (!timestampData || !proofData) return;
+    switch (proofData.wl) {
+      case 1:
+        setCountDown(timestampData.whitelist1Timestamp - new Date().getTime());
+        setCountdownTimestamp(timestampData.whitelist1Timestamp * 1000);
+        console.log(1);
+        break;
+      case 2:
+        setCountDown(timestampData.whitelist2Timestamp - new Date().getTime());
+        setCountdownTimestamp(timestampData.whitelist2Timestamp * 1000);
+        console.log(2);
+        break;
+      default:
+        setCountDown(timestampData.publicTimestamp - new Date().getTime());
+        setCountdownTimestamp(timestampData.publicTimestamp * 1000);
+        console.log("public");
+    }
+  }, [
+    timestampData?.whitelist1Timestamp,
+    timestampData?.whitelist2Timestamp,
+    timestampData?.publicTimestamp,
+    proofData,
+  ]);
 
   const [bond, setBond] = useState(
     allBonds.filter((bond) => bond.name === "passNFTmint")[0] as Bond
   );
 
-  const dispatch = useDispatch();
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
   };
@@ -62,25 +89,27 @@ export const BalanceWhitelistMintPage = (
   const pendingTransactions = useSelector((state: RootState) => {
     return state?.pendingTransactions;
   });
+
+  //
   const isMintDisabled = useMemo(() => {
     return isProofLoading || !proofData || proofData?.proof.length < 1;
   }, [proofData]);
 
   useEffect(() => {
     if (connected) {
-      const getBalance = async (): Promise<any> => {
+      const getBalance = async () => {
         try {
-          const balance: any = await dispatch(
+          const balance = await dispatch(
             getNFTBalance({
               address,
               provider,
               networkId: chainId,
-              bond: bond,
+              bond,
             } as IMintNFTAsyncThunk)
           );
           setBalance(350 - ethers.BigNumber.from(balance.payload).toNumber());
         } catch (e) {
-          return;
+          console.warn("failed to retrieve balance", e);
         }
       };
 
@@ -90,21 +119,22 @@ export const BalanceWhitelistMintPage = (
 
   const useCountdown = () => {
     useEffect(() => {
+      console.log(countdownTimestamp);
       const interval = setInterval(() => {
-        if (countDownDate >= new Date().getTime()) {
-          setCountDown(countDownDate - new Date().getTime());
+        if (countdownTimestamp >= new Date().getTime()) {
+          setCountDown(countdownTimestamp - new Date().getTime());
         } else {
           setCountDown(0);
         }
       }, 1000);
 
       return () => clearInterval(interval);
-    }, [countDownDate]);
+    }, [countdownTimestamp]);
 
-    return getReturnValues(countDown);
+    return getReturnValues(countDown ?? 0);
   };
 
-  const getReturnValues = (countDown: any) => {
+  const getReturnValues = (countDown: number) => {
     // calculate time left
     const days = Math.floor(countDown / (1000 * 60 * 60 * 24));
     const hours = Math.floor((countDown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -181,137 +211,139 @@ export const BalanceWhitelistMintPage = (
                 textAlign: "center",
               }}
             >
-              {!connected ? "TIME UNTIL WHITELIST MINT" : "WHITELIST MINT"}
+              {!isProofLoading && !isCountdownLoading && countDown > 0
+                ? "TIME UNTIL WHITELIST MINT"
+                : "WHITELIST MINT"}
             </Typography>
-            {!connected ? (
-              <Box sx={{ display: "flex", justifyContent: "center", mt: "7%" }}>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "64px", xs: "30px" },
-                      color: "#dee9ff",
-                    }}
-                  >
-                    {days < 10 ? `0${days}` : days}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "8px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
-                    }}
-                  >
-                    Days
-                  </Typography>
-                </Box>
+
+            <Box sx={{ display: "flex", justifyContent: "center", mt: "7%" }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+              >
                 <Typography
                   sx={{
                     fontFamily: "MonumentExtendedRegular",
                     fontSize: { md: "64px", xs: "30px" },
                     color: "#dee9ff",
-                    ml: "4%",
-                    mr: "4%",
                   }}
                 >
-                  :
+                  {days && days < 10 ? `0${days}` : days}
                 </Typography>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "64px", xs: "30px" },
-                      color: "#dee9ff",
-                    }}
-                  >
-                    {hours < 10 ? `0${hours}` : hours}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "8px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
-                    }}
-                  >
-                    Hours
-                  </Typography>
-                </Box>
                 <Typography
                   sx={{
-                    fontFamily: "MonumentExtendedRegular",
-                    fontSize: { md: "64px", xs: "30px" },
-                    color: "#dee9ff",
-                    ml: "4%",
-                    mr: "4%",
+                    fontFamily: "sequel100black-55",
+                    fontSize: { md: "14px", xs: "8px" },
+                    color: "#8fa0c3",
+                    letterSpacing: "0.3em",
                   }}
                 >
-                  :
+                  Days
                 </Typography>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "64px", xs: "30px" },
-                      color: "#dee9ff",
-                    }}
-                  >
-                    {minutes < 10 ? `0${minutes}` : minutes}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "8px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
-                    }}
-                  >
-                    Minutes
-                  </Typography>
-                </Box>
-                <Typography
-                  sx={{
-                    fontFamily: "MonumentExtendedRegular",
-                    fontSize: { md: "64px", xs: "30px" },
-                    color: "#dee9ff",
-                    ml: "4%",
-                    mr: "4%",
-                  }}
-                >
-                  :
-                </Typography>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "64px", xs: "30px" },
-                      color: "#dee9ff",
-                    }}
-                  >
-                    {seconds < 10 ? `0${seconds}` : seconds}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "8px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
-                    }}
-                  >
-                    Seconds
-                  </Typography>
-                </Box>
               </Box>
-            ) : balance !== 0 ? (
+              <Typography
+                sx={{
+                  fontFamily: "MonumentExtendedRegular",
+                  fontSize: { md: "64px", xs: "30px" },
+                  color: "#dee9ff",
+                  ml: "4%",
+                  mr: "4%",
+                }}
+              >
+                :
+              </Typography>
+              <Box
+                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "MonumentExtendedRegular",
+                    fontSize: { md: "64px", xs: "30px" },
+                    color: "#dee9ff",
+                  }}
+                >
+                  {hours && hours < 10 ? `0${hours}` : hours}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "sequel100black-55",
+                    fontSize: { md: "14px", xs: "8px" },
+                    color: "#8fa0c3",
+                    letterSpacing: "0.3em",
+                  }}
+                >
+                  Hours
+                </Typography>
+              </Box>
+              <Typography
+                sx={{
+                  fontFamily: "MonumentExtendedRegular",
+                  fontSize: { md: "64px", xs: "30px" },
+                  color: "#dee9ff",
+                  ml: "4%",
+                  mr: "4%",
+                }}
+              >
+                :
+              </Typography>
+              <Box
+                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "MonumentExtendedRegular",
+                    fontSize: { md: "64px", xs: "30px" },
+                    color: "#dee9ff",
+                  }}
+                >
+                  {minutes && minutes < 10 ? `0${minutes}` : minutes}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "sequel100black-55",
+                    fontSize: { md: "14px", xs: "8px" },
+                    color: "#8fa0c3",
+                    letterSpacing: "0.3em",
+                  }}
+                >
+                  Minutes
+                </Typography>
+              </Box>
+              <Typography
+                sx={{
+                  fontFamily: "MonumentExtendedRegular",
+                  fontSize: { md: "64px", xs: "30px" },
+                  color: "#dee9ff",
+                  ml: "4%",
+                  mr: "4%",
+                }}
+              >
+                :
+              </Typography>
+              <Box
+                sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "MonumentExtendedRegular",
+                    fontSize: { md: "64px", xs: "30px" },
+                    color: "#dee9ff",
+                  }}
+                >
+                  {seconds && seconds < 10 ? `0${seconds}` : seconds}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "sequel100black-55",
+                    fontSize: { md: "14px", xs: "8px" },
+                    color: "#8fa0c3",
+                    letterSpacing: "0.3em",
+                  }}
+                >
+                  Seconds
+                </Typography>
+              </Box>
+            </Box>
+            {!isProofLoading && !isCountdownLoading && countDown < 1 && balance !== 0 && (
               <Box
                 sx={{
                   display: "flex",
@@ -335,7 +367,7 @@ export const BalanceWhitelistMintPage = (
                       color: "#dee9ff",
                     }}
                   >
-                    {`${balance}/350`}
+                    {`${balance ? balance : ""}/350`}
                   </Typography>
                   <Typography
                     sx={{
@@ -382,7 +414,8 @@ export const BalanceWhitelistMintPage = (
                   </Typography>
                 </Box>
               </Box>
-            ) : (
+            )}
+            {balance && balance < 1 && (
               <Typography
                 sx={{
                   fontFamily: "MonumentExtendedRegular",
@@ -396,8 +429,18 @@ export const BalanceWhitelistMintPage = (
               </Typography>
             )}
 
-            {!connected ? (
-              countDown <= 0 ? (
+            {connected && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  mt: { md: "7%", xs: "15%" },
+                }}
+              >
+                <Typography>Connect to verify your whitelist status</Typography>
                 <Button
                   variant="contained"
                   onClick={onClickConnect}
@@ -408,42 +451,32 @@ export const BalanceWhitelistMintPage = (
                     backgroundColor: "#3744e6",
                     color: "white",
                     fontFamily: "sora",
-                    mt: { md: "7%", xs: "15%" },
+                    mt: "1em",
                   }}
                   className={style["heroLink"]}
-                  disabled={countDown > 0 ? true : false}
                 >
                   Connect Wallet
                 </Button>
-              ) : (
-                ""
-              )
-            ) : (
+              </Box>
+            )}
+            {connected && (
               <>
-                <Button
-                  variant="contained"
-                  onClick={onClickDisconnect}
+                <Box
                   sx={{
-                    display: { md: "flex" },
-                    width: { md: "35%", xs: "50%" },
-                    fontSize: { md: "19px", xs: "14px" },
-                    backgroundColor: "#3744e6",
-                    color: "white",
-                    fontFamily: "sora",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
                     mt: { md: "7%", xs: "15%" },
                   }}
-                  className={style["heroLink"]}
                 >
-                  Disconnect : {addressEllipsis(address)}
-                </Button>
-                {balance !== 0 ? (
+                  {proofData && proofData?.wl > 0 && (
+                    <Typography>You are on whitelist {proofData?.wl}</Typography>
+                  )}
                   <Button
                     variant="contained"
-                    disabled={
-                      isPendingTxn(pendingTransactions, "Mint_" + bond?.name) ||
-                      isMintDisabled
-                    }
-                    onClick={handleMint}
+                    onClick={onClickDisconnect}
                     sx={{
                       display: { md: "flex" },
                       width: { md: "35%", xs: "50%" },
@@ -451,13 +484,41 @@ export const BalanceWhitelistMintPage = (
                       backgroundColor: "#3744e6",
                       color: "white",
                       fontFamily: "sora",
-                      mt: { md: "7%", xs: "15%" },
+                      mt: "1em",
                     }}
                     className={style["heroLink"]}
                   >
-                    {txnButtonText(pendingTransactions, "Mint_" + bond?.name, "Mint")}
+                    Disconnect : {addressEllipsis(address)}
                   </Button>
-                ) : (
+                </Box>
+                {address &&
+                  !isProofLoading &&
+                  !isCountdownLoading &&
+                  balance &&
+                  balance !== 0 &&
+                  countDown < 1 && (
+                    <Button
+                      variant="contained"
+                      disabled={
+                        isPendingTxn(pendingTransactions, "Mint_" + bond?.name) ||
+                        isMintDisabled
+                      }
+                      onClick={handleMint}
+                      sx={{
+                        display: { md: "flex" },
+                        width: { md: "35%", xs: "50%" },
+                        fontSize: { md: "19px", xs: "14px" },
+                        backgroundColor: "#3744e6",
+                        color: "white",
+                        fontFamily: "sora",
+                        mt: { md: "7%", xs: "15%" },
+                      }}
+                      className={style["heroLink"]}
+                    >
+                      {txnButtonText(pendingTransactions, "Mint_" + bond?.name, "Mint")}
+                    </Button>
+                  )}
+                {!isProofLoading && !isCountdownLoading && countDown < 1 && (
                   <Button
                     variant="contained"
                     href="https://Opensea.io"
