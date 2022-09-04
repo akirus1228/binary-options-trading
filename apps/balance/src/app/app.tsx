@@ -4,14 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Box, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { USDBLight, USDBDark } from "@fantohm/shared-ui-themes";
-import { useWeb3Context, isDev, NetworkIds } from "@fantohm/shared-web3";
 import { Footer } from "./components/template";
 import { ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
 import { Messages } from "./components/messages/messages";
 import { BalanceHomePage } from "./pages/home/balance-home-page";
 import { BalancePassPage } from "./pages/balance-pass-page/balance-pass-page";
 import { RootState } from "./store";
-import { loadAppDetails, setCheckedConnection } from "./store/reducers/app-slice";
+import { loadAppDetails } from "./store/reducers/app-slice";
 import BalanceAboutPage from "./pages/balance-about-page/balance-about-page";
 import { HomeHeader } from "./components/template/header/home-header";
 import FhmPage from "./pages/fhm/fhm-page";
@@ -25,15 +24,6 @@ export const App = (): JSX.Element => {
 
   const themeType = useSelector((state: RootState) => state.app.theme);
   const [theme, setTheme] = useState(USDBDark);
-  const {
-    address,
-    chainId,
-    connected,
-    connect,
-    switchEthereumChain,
-    provider,
-    hasCachedProvider,
-  } = useWeb3Context();
 
   useEffect(() => {
     setTheme(themeType === "light" ? USDBLight : USDBDark);
@@ -52,33 +42,6 @@ export const App = (): JSX.Element => {
     // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
     dispatch(loadAppDetails());
   }, []);
-  useEffect(() => {
-    if (provider && connected && address) {
-      const expectedChain = isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum;
-      if (switchEthereumChain && chainId !== expectedChain) {
-        switchEthereumChain(expectedChain);
-      }
-    }
-  }, [provider, address, connected]);
-
-  // check for cached wallet connection
-  useEffect(() => {
-    // if there's a cached provider, try and connect
-    if (hasCachedProvider && hasCachedProvider() && !connected) {
-      try {
-        connect();
-      } catch (e) {
-        console.log("Connection metamask error", e);
-      }
-    }
-    // if there's a cached provider and it has connected, connection check is good.
-    if (hasCachedProvider && hasCachedProvider() && connected)
-      dispatch(setCheckedConnection(true));
-
-    // if there's not a cached provider and we're not connected, connection check is good
-    if (hasCachedProvider && !hasCachedProvider() && !connected)
-      dispatch(setCheckedConnection(true));
-  }, [connected, hasCachedProvider, connect]);
 
   return (
     <ThemeProvider theme={theme}>

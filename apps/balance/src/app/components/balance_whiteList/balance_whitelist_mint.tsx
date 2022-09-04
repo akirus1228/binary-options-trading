@@ -1,13 +1,5 @@
 import { addressEllipsis } from "@fantohm/shared-helpers";
-import {
-  IMintNFTAsyncThunk,
-  isDev,
-  NetworkIds,
-  useWeb3Context,
-  allBonds,
-  Bond,
-  getNFTBalance,
-} from "@fantohm/shared-web3";
+import { isDev, NetworkIds, useWeb3Context } from "@fantohm/shared-web3";
 import {
   AboutDivider,
   DownLine,
@@ -18,7 +10,6 @@ import {
   OpenSeaImage,
   preMintImage,
 } from "@fantohm/shared/images";
-import { ethers } from "ethers";
 import {
   Box,
   Button,
@@ -28,9 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 import { MouseEvent, useMemo, useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import style from "./balance_whitelist_mint.module.scss";
-import { AppDispatch, RootState } from "../../store";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
 import {
   useBpGetTimestampsQuery,
@@ -45,8 +34,7 @@ export interface BalanceWhitelistMintProps {}
 export const BalanceWhitelistMintPage = (
   props: BalanceWhitelistMintProps
 ): JSX.Element => {
-  const dispatch: AppDispatch = useDispatch();
-  const { connect, disconnect, connected, address, provider, chainId } = useWeb3Context();
+  const { connect, disconnect, connected, address } = useWeb3Context();
 
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
@@ -59,7 +47,8 @@ export const BalanceWhitelistMintPage = (
   const { data: walletBalance, isLoading: isWalletBalanceLoading } =
     useBpGetWalletBalanceQuery();
 
-  const { data: totalSupply, isLoading: isSupplyLoading } = useBpGetTotalSupplyQuery();
+  const { data: totalSupply, isLoading: isTotalSupplyLoading } =
+    useBpGetTotalSupplyQuery();
 
   const { mutation: mintNft } = useBpMintMutation({
     proof1: proofData?.wl === 1 ? proofData?.proof : [],
@@ -68,17 +57,19 @@ export const BalanceWhitelistMintPage = (
 
   // using the timestamp and proof data, calculate the timestamp for the countdown
   useEffect(() => {
-    if (!timestampData || !proofData) return;
-    switch (proofData.wl) {
+    if (!timestampData) return;
+    switch (proofData?.wl) {
       case 1:
         setCountdownTimestamp(timestampData.whitelist1Timestamp * 1000);
+        console.log("whitelist1", "1");
         break;
       case 2:
         setCountdownTimestamp(timestampData.whitelist2Timestamp * 1000);
+        console.log("whitelist2", "2");
         break;
       default:
         setCountdownTimestamp(timestampData.publicTimestamp * 1000);
-      // console.log("public");
+        console.log("public");
     }
   }, [
     timestampData?.whitelist1Timestamp,
@@ -87,21 +78,23 @@ export const BalanceWhitelistMintPage = (
     proofData,
   ]);
 
-  const [bond, setBond] = useState(
-    allBonds.filter((bond) => bond.name === "passNFTmint")[0] as Bond
-  );
+  useEffect(() => {
+    console.log(timestampData);
+  }, [timestampData]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
+    console.log("connect", isDev());
     connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
   };
+
   const onClickDisconnect = () => {
     disconnect();
   };
 
   //
-  const isMintDisabled = useMemo(() => {
-    return isProofLoading || !proofData || proofData?.proof.length < 1;
-  }, [proofData]);
+  const isWhitelisted = useMemo(() => {
+    return !isProofLoading && proofData && proofData?.proof.length > 0;
+  }, [isProofLoading, proofData?.wl]);
 
   const useCountdown = () => {
     useEffect(() => {
@@ -333,79 +326,82 @@ export const BalanceWhitelistMintPage = (
                 </Typography>
               </Box>
             </Box>
-            {!isProofLoading && !isCountdownLoading && totalSupply && totalSupply < 350 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  width: "100%",
-                  mt: "50px",
-                  justifyContent: "center",
-                }}
-              >
+            {!isProofLoading &&
+              !isCountdownLoading &&
+              !isTotalSupplyLoading &&
+              (totalSupply ?? 0) < 350 && (
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    mr: { md: "10%", xs: "5%" },
+                    width: "100%",
+                    mt: "50px",
+                    justifyContent: "center",
                   }}
                 >
-                  <Typography
+                  <Box
                     sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "55px", xs: "32px" },
-                      color: "#dee9ff",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      mr: { md: "10%", xs: "5%" },
                     }}
                   >
-                    {`${totalSupply ? 350 - totalSupply : "---"}/350`}
-                  </Typography>
-                  <Typography
+                    <Typography
+                      sx={{
+                        fontFamily: "MonumentExtendedRegular",
+                        fontSize: { md: "55px", xs: "32px" },
+                        color: "#dee9ff",
+                      }}
+                    >
+                      {350 - (totalSupply ?? 0)}/350
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "sequel100black-55",
+                        fontSize: { md: "14px", xs: "12px" },
+                        color: "#8fa0c3",
+                        letterSpacing: "0.3em",
+                      }}
+                    >
+                      Remaining
+                    </Typography>
+                  </Box>
+                  <img
+                    src={DownLine}
+                    alt="down line"
+                    className={style["dropLineSection"]}
+                  ></img>
+                  <Box
                     sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "12px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      ml: { md: "10%", xs: "5%" },
                     }}
                   >
-                    Remaining
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "MonumentExtendedRegular",
+                        fontSize: { md: "55px", xs: "32px" },
+                        color: "#dee9ff",
+                      }}
+                    >
+                      Free
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "sequel100black-55",
+                        fontSize: { md: "14px", xs: "12px" },
+                        color: "#8fa0c3",
+                        letterSpacing: "0.3em",
+                      }}
+                    >
+                      Price
+                    </Typography>
+                  </Box>
                 </Box>
-                <img
-                  src={DownLine}
-                  alt="down line"
-                  className={style["dropLineSection"]}
-                ></img>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    ml: { md: "10%", xs: "5%" },
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: "MonumentExtendedRegular",
-                      fontSize: { md: "55px", xs: "32px" },
-                      color: "#dee9ff",
-                    }}
-                  >
-                    Free
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "sequel100black-55",
-                      fontSize: { md: "14px", xs: "12px" },
-                      color: "#8fa0c3",
-                      letterSpacing: "0.3em",
-                    }}
-                  >
-                    Price
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-            {totalSupply && totalSupply === 350 && (
+              )}
+            {!!totalSupply && totalSupply === 350 && (
               <Typography
                 sx={{
                   fontFamily: "MonumentExtendedRegular",
@@ -485,13 +481,13 @@ export const BalanceWhitelistMintPage = (
                   !isProofLoading &&
                   !isCountdownLoading &&
                   !isWalletBalanceLoading &&
+                  !isTotalSupplyLoading &&
                   walletBalance === 0 &&
-                  !!totalSupply &&
-                  totalSupply < 350 &&
+                  (totalSupply ?? 0) < 350 &&
                   countDown < 1 && (
                     <Button
                       variant="contained"
-                      disabled={mintNft.isLoading || isMintDisabled}
+                      disabled={mintNft.isLoading || countDown > 0}
                       onClick={handleMint}
                       sx={{
                         display: { md: "flex" },
@@ -534,7 +530,7 @@ export const BalanceWhitelistMintPage = (
                     View on Opensea
                   </Button>
                 )}
-                {isMintDisabled ? (
+                {!isWhitelisted ? (
                   <Typography
                     sx={{
                       fontFamily: "sora",
