@@ -287,7 +287,7 @@ export const passNFTMint = new StableBond({
       reserveAddress: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
     },
     [NetworkIds.Rinkeby]: {
-      bondAddress: "0x2336C28bBD3CAF09e273097C6c2112C433282090",
+      bondAddress: "0x607e2D68bc2664BF9Ab2c065ae9F65Da4bf55905",
       reserveAddress: "0xfa1FBb8Ef55A4855E5688C0eE13aC3f202486286",
     },
     [NetworkIds.FantomOpera]: {

@@ -958,7 +958,10 @@ export const investUsdbNftBond = createAsyncThunk(
 
 export const mint_Whitelist_NFT = createAsyncThunk(
   "bonding/mintPassNFT",
-  async ({ address, bond, networkId, provider }: IMintNFTAsyncThunk, { dispatch }) => {
+  async (
+    { address, bond, networkId, provider, proof1, proof2 }: IMintNFTAsyncThunk,
+    { dispatch }
+  ) => {
     if (!provider) {
       dispatch(error("Please connect your wallet!"));
       return;
@@ -967,7 +970,6 @@ export const mint_Whitelist_NFT = createAsyncThunk(
 
     const signer = provider.getSigner();
 
-    const bondContractForRead = await bond.getContractForBond(networkId);
     const bondContractForWrite = bond.getContractForBondForWrite(networkId, signer);
 
     const overrides = {
@@ -984,10 +986,7 @@ export const mint_Whitelist_NFT = createAsyncThunk(
       txHash: null,
     };
     try {
-      mintTx = await bondContractForWrite["mint_whitelist_gh56gui"](
-        minterAddress,
-        overrides
-      );
+      mintTx = await bondContractForWrite["mint"](proof1, proof2);
       dispatch(
         fetchPendingTxns({
           txnHash: mintTx.hash,
@@ -996,7 +995,6 @@ export const mint_Whitelist_NFT = createAsyncThunk(
         })
       );
       uaData.txHash = mintTx.hash;
-      const minedBlock = (await mintTx.wait()).blockNumber;
     } catch (e: any) {
       if (e.error === undefined) {
         let message;
@@ -1051,7 +1049,10 @@ export const mint_Public_NFT = createAsyncThunk(
       txHash: null,
     };
     try {
-      mintTx = await bondContractForWrite["mint_public_gh56gui"](minterAddress, overrides);
+      mintTx = await bondContractForWrite["mint_public_gh56gui"](
+        minterAddress,
+        overrides
+      );
       dispatch(
         fetchPendingTxns({
           txnHash: mintTx.hash,

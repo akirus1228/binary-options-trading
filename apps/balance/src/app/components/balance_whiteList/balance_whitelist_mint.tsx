@@ -61,7 +61,7 @@ export const BalanceWhitelistMintPage = (
         break;
       default:
         setCountdownTimestamp(timestampData.publicTimestamp * 1000);
-        // console.log("public");
+      // console.log("public");
     }
   }, [
     timestampData?.whitelist1Timestamp,
@@ -147,6 +147,8 @@ export const BalanceWhitelistMintPage = (
         provider,
         networkId: chainId,
         bond: bond,
+        proof1: proofData?.wl === 1 ? proofData?.proof : [],
+        proof2: proofData?.wl === 2 ? proofData?.proof : [],
       } as IMintNFTAsyncThunk)
     );
   }
@@ -205,9 +207,21 @@ export const BalanceWhitelistMintPage = (
                 textAlign: "center",
               }}
             >
-              {!isProofLoading && !isCountdownLoading && countDown > 0
-                ? "TIME UNTIL WHITELIST MINT"
-                : "WHITELIST MINT"}
+              {!isProofLoading &&
+                !isCountdownLoading &&
+                countDown > 0 &&
+                proofData &&
+                `TIME UNTIL WHITELIST ${proofData?.wl} MINT`}
+              {!isProofLoading &&
+                !isCountdownLoading &&
+                countDown > 0 &&
+                !proofData &&
+                "TIME UNTIL PUBLIC MINT"}
+              {!connected && "TIME UNTIL MINTING OPENS"}
+              {!isProofLoading &&
+                !isCountdownLoading &&
+                countDown <= 0 &&
+                "MINTING OPEN NOW"}
             </Typography>
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: "7%" }}>
