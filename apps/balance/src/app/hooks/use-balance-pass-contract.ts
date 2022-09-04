@@ -148,7 +148,7 @@ export const useBpMintMutation = ({
       }
     },
     {
-      onMutate: () => {
+      onSuccess: () => {
         queryClient.invalidateQueries(["bpGetWalletBalance"]);
         queryClient.invalidateQueries(["bpGetTotalSupply"]);
       },

@@ -47,7 +47,12 @@ export const BalanceWhitelistMintPage = (
   const { data: walletBalance, isLoading: isWalletBalanceLoading } =
     useBpGetWalletBalanceQuery();
 
-  const { data: totalSupply } = useBpGetTotalSupplyQuery();
+  const { data: totalSupply, isLoading: isTotalSupplyLoading } =
+    useBpGetTotalSupplyQuery();
+
+  useEffect(() => {
+    console.log(totalSupply);
+  }, [totalSupply]);
 
   const { mutation: mintNft } = useBpMintMutation({
     proof1: proofData?.wl === 1 ? proofData?.proof : [],
@@ -321,8 +326,8 @@ export const BalanceWhitelistMintPage = (
             </Box>
             {!isProofLoading &&
               !isCountdownLoading &&
-              !!totalSupply &&
-              totalSupply < 350 && (
+              !isTotalSupplyLoading &&
+              (totalSupply ?? 0) < 350 && (
                 <Box
                   sx={{
                     display: "flex",
@@ -346,7 +351,7 @@ export const BalanceWhitelistMintPage = (
                         color: "#dee9ff",
                       }}
                     >
-                      {`${totalSupply ? 350 - totalSupply : "---"}/350`}
+                      {350 - (totalSupply ?? 0)}/350
                     </Typography>
                     <Typography
                       sx={{
@@ -474,9 +479,9 @@ export const BalanceWhitelistMintPage = (
                   !isProofLoading &&
                   !isCountdownLoading &&
                   !isWalletBalanceLoading &&
+                  !isTotalSupplyLoading &&
                   walletBalance === 0 &&
-                  !!totalSupply &&
-                  totalSupply < 350 &&
+                  (totalSupply ?? 0) < 350 &&
                   countDown < 1 && (
                     <Button
                       variant="contained"
