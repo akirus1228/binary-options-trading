@@ -1,4 +1,5 @@
-import { formatCurrency, useWeb3Context } from "@fantohm/shared-web3";
+import { formatCurrency } from "@fantohm/shared-helpers";
+import { useWeb3Context } from "@fantohm/shared-web3";
 import {
   Box,
   Button,

@@ -32,6 +32,7 @@ import {
   selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
+import { formatCurrency } from "@fantohm/shared-helpers";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { desiredNetworkId } from "../../constants/network";
 import { BigNumber, ethers } from "ethers";
@@ -42,7 +43,6 @@ import {
   useGetCollectionsQuery,
   useResetPartialLoanMutation,
 } from "../../api/backend-api";
-import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { addAlert } from "../../store/reducers/app-slice";
@@ -165,7 +165,7 @@ export const LoanConfirmation = ({
   // click accept term button
   const handleAcceptTerms = useCallback(async () => {
     if (!allowance || allowance.lt(minRequiredBalanceGwei)) {
-      console.warn("Insufficiant allownace. Trigger request");
+      console.warn("Insufficient allowance. Trigger request");
       return;
     }
     if (!provider || !user.address || !listing) {
@@ -447,7 +447,7 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {currencyBalance && ethers.utils.formatUnits(currencyBalance, 5)}{" "}
+                    {currencyBalance && ethers.utils.formatUnits(currencyBalance, 18)}{" "}
                     {currency?.symbol || ""}
                   </span>
                 </Box>
@@ -457,7 +457,7 @@ export const LoanConfirmation = ({
           <Paper sx={{ my: "1em" }}>
             <Box className="flex fc" sx={{ mr: "1em" }}>
               <span className="strong" style={{ fontSize: "0.875em", color: "#aaa" }}>
-                You will recieve repayment of
+                You will receive repayment of
               </span>
               <Box className="flex fr fj-sb ai-c">
                 <span className="flex fr ai-c">
