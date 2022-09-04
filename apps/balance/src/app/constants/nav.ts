@@ -36,15 +36,20 @@ export const balanceheaderPages: Page[] = [
   { title: "Dex", href: "https://app.fantohm.com/#/dex", params: { comingSoon: false } },
   { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
   {
-    title: "Balance Whitelist Mint",
-    href: "/balancewhitelistmint",
-    params: { comingSoon: false },
-  },
-  {
-    title: "Balance Public Mint",
-    href: "/balancepublicmint",
+    title: "Balance Pass Mint",
+    href: "/balancemint",
     params: { comingSoon: true },
   },
+  // {
+  //   title: "Balance Whitelist Mint",
+  //   href: "/balancewhitelistmint",
+  //   params: { comingSoon: false },
+  // },
+  // {
+  //   title: "Balance Public Mint",
+  //   href: "/balancepublicmint",
+  //   params: { comingSoon: true },
+  // },
 ];
 
 export const footerItems: FooterItem[] = [
@@ -65,15 +70,20 @@ export const footerItems: FooterItem[] = [
       },
       { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
       {
-        title: "Balance Whitelist Mint",
-        href: "/balancewhitelistmint",
-        params: { comingSoon: false },
-      },
-      {
-        title: "Balance Public Mint",
-        href: "/balancepublicmint",
+        title: "Balance Mint",
+        href: "/balancemint",
         params: { comingSoon: true },
       },
+      // {
+      //   title: "Balance Whitelist Mint",
+      //   href: "/balancewhitelistmint",
+      //   params: { comingSoon: false },
+      // },
+      // {
+      //   title: "Balance Public Mint",
+      //   href: "/balancepublicmint",
+      //   params: { comingSoon: true },
+      // },
     ],
   },
   {
