@@ -41,8 +41,15 @@ export const BalanceWhitelistMintPage = (
   const [countDown, setCountDown] = useState<number>(0);
   const [countdownTimestamp, setCountdownTimestamp] = useState<number>(1662393600 * 1000);
 
-  const { data: timestampData, isLoading: isCountdownLoading } =
-    useBpGetTimestampsQuery();
+  const {
+    data: timestampData,
+    isLoading: isCountdownLoading,
+    error: tsError,
+  } = useBpGetTimestampsQuery();
+
+  useEffect(() => {
+    console.log("tsError", tsError);
+  }, [tsError]);
 
   const { data: walletBalance, isLoading: isWalletBalanceLoading } =
     useBpGetWalletBalanceQuery();
