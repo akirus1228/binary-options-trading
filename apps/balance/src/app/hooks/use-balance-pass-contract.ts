@@ -17,17 +17,15 @@ export const useBpGetTimestampsQuery =
       return allBonds.find((bond: Bond) => bond.name === "passNFTmint") as Bond;
     }, []);
 
-    useEffect(() => {
-      console.log("address", address);
-      console.log("provider", provider);
-      console.log("balancePassContract", balancePassContract);
-    }, [address, provider, balancePassContract]);
+    // useEffect(() => {
+    //   console.log("address", address);
+    //   console.log("provider", provider);
+    //   console.log("balancePassContract", balancePassContract);
+    // }, [address, provider, balancePassContract]);
 
     return useQuery<UseBpGetTimestampsQueryResut>(
       ["bpTimestamps"],
       () => {
-        console.log("started query");
-        console.log("balancePassContract", balancePassContract);
         const contract = new ethers.Contract(
           balancePassContract.networkAddrs[isDev() ? 4 : 1].bondAddress,
           passNFTAbi,

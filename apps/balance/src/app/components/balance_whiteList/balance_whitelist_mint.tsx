@@ -54,19 +54,14 @@ export const BalanceWhitelistMintPage = (
     if (!timestampData || !proofData) return;
     switch (proofData.wl) {
       case 1:
-        setCountDown(timestampData.whitelist1Timestamp - new Date().getTime());
         setCountdownTimestamp(timestampData.whitelist1Timestamp * 1000);
-        console.log(1);
         break;
       case 2:
-        setCountDown(timestampData.whitelist2Timestamp - new Date().getTime());
         setCountdownTimestamp(timestampData.whitelist2Timestamp * 1000);
-        console.log(2);
         break;
       default:
-        setCountDown(timestampData.publicTimestamp - new Date().getTime());
         setCountdownTimestamp(timestampData.publicTimestamp * 1000);
-        console.log("public");
+        // console.log("public");
     }
   }, [
     timestampData?.whitelist1Timestamp,
@@ -119,7 +114,6 @@ export const BalanceWhitelistMintPage = (
 
   const useCountdown = () => {
     useEffect(() => {
-      console.log(countdownTimestamp);
       const interval = setInterval(() => {
         if (countdownTimestamp >= new Date().getTime()) {
           setCountDown(countdownTimestamp - new Date().getTime());
@@ -429,7 +423,7 @@ export const BalanceWhitelistMintPage = (
               </Typography>
             )}
 
-            {connected && (
+            {!connected && (
               <Box
                 sx={{
                   display: "flex",
