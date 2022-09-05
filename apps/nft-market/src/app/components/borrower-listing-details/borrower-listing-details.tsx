@@ -160,7 +160,7 @@ export const BorrowerListingDetails = (
           <Box className="flex fc">
             <Typography className={style["label"]}>Duration</Typography>
             <Typography className={`${style["data"]}`}>
-              {prettifySeconds(listing.term.duration, "day")}
+              {prettifySeconds(listing.term.duration * 86400, "day")}
             </Typography>
           </Box>
           <Box className="flex fc">

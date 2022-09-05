@@ -200,7 +200,7 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
                     ).toLocaleDateString()}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "0.875em" }}>
-                    {prettifySeconds(loan.term.duration, "day")}
+                    {prettifySeconds(loan.term.duration * 86400, "day")}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {loan.status}

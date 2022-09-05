@@ -123,7 +123,9 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
         </Box>
       </PaperTableCell>
       <PaperTableCell>{loan.term.apr}%</PaperTableCell>
-      <PaperTableCell>{prettifySeconds(loan.term.duration, "day")}</PaperTableCell>
+      <PaperTableCell>
+        {prettifySeconds(loan.term.duration * 86400, "day")}
+      </PaperTableCell>
       <PaperTableCell>{loanDetails?.endDateTime.toLocaleString()}</PaperTableCell>
       <PaperTableCell>
         {loan.borrower.address === user.address

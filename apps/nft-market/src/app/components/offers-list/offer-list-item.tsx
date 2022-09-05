@@ -399,7 +399,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       case OffersListFields.APR:
         return `${offer.term.apr}%`;
       case OffersListFields.DURATION:
-        return prettifySeconds(offer.term.duration, "day");
+        return prettifySeconds(offer.term.duration * 86400, "day");
       case OffersListFields.EXPIRATION:
         return offerExpires;
       case OffersListFields.ASSET:
