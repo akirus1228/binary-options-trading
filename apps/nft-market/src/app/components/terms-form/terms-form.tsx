@@ -125,6 +125,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const [durationType, setDurationType] = useState(
     currentTerm?.duration ? calcDurationType(currentTerm?.duration) : "days"
   );
+  const [now, setNow] = useState(Date.now());
   const [apr, setApr] = useState(
     currentTerm?.apr != null ? currentTerm?.apr.toString() : "25"
   );
@@ -147,6 +148,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   useEffect(() => {
     dispatch(loadCurrencyFromId(`${selectedCurrency.toUpperCase()}_ADDRESS`));
   }, [selectedCurrency]);
+
+  useEffect(() => {
+    setInterval(() => setNow(Date.now()), 1000);
+  }, []);
 
   // create offer api call
   const [
@@ -314,7 +319,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     } else {
       asset = { ...props.asset, status: AssetStatus.Listed };
     }
-    const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
+    const expirationAt = new Date(now + 86400 * 1000 * 7);
     // const message =
     //   "Please sign this transaction to post your NFT as collateral. This won't incur a gas fee.";
     const term: Terms = {
@@ -366,7 +371,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     } else {
       asset = props.asset;
     }
-    const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
+    const expirationAt = new Date(now + 86400 * 1000 * 7);
     const term: Terms = {
       ...currentTerm,
       amount: Number(amount),
@@ -422,7 +427,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    setDuration(event.target.value);
+    const re = /^[0-9\b]+$/;
+    if (event.target.value === "" || re.test(event.target.value)) {
+      setDuration(event.target.value);
+    }
   };
 
   const handleDurationTypeChange = (event: SelectChangeEvent) => {
@@ -496,7 +504,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // make offer logic
   const handleMakeOffer = useCallback(async () => {
     if (!props.listing || !provider || !props.asset.owner) return;
-    const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
+    const expirationAt = new Date(now + 86400 * 1000 * 7);
     const { id, ...listingTerm } = props.listing.term;
     const preSigTerm: Terms = {
       ...listingTerm,
@@ -780,7 +788,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         platformfee={(platformFees[currency?.currentAddress] / 10000) * Number(amount)}
         currencySymbol={currency?.symbol}
         interest={repaymentAmount}
-        duedata={new Date(Date.now() + 86400 * 1000 * 7).toLocaleString()}
+        duedata={new Date(
+          now + 86400 * 1000 * termTypes[durationType] * Number(duration)
+        ).toLocaleString()}
         setOpen={setConfirmOpen}
         onConfirm={props?.isEdit ? handleUpdateTerms : handleMakeOffer}
       ></ConfirmDialog>
