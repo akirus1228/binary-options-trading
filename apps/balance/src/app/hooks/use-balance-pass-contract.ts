@@ -12,7 +12,7 @@ import { AppDispatch } from "../store";
 
 const bpContractAddress = isDev()
   ? "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B"
-  : "0xnotreallyanaddressbutforatestanyway";
+  : "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B";
 
 type UseBpGetTimestampsQueryResut = {
   whitelist1Timestamp: number;
