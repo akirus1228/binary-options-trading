@@ -39,7 +39,7 @@ export const BalanceWhitelistMintPage = (
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
   const [countDown, setCountDown] = useState<number>(0);
-  const [countdownTimestamp, setCountdownTimestamp] = useState<number>(1662393600 * 1000);
+  const [countdownTimestamp, setCountdownTimestamp] = useState<number>(1662400800 * 1000);
 
   const {
     data: timestampData,
