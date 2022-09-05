@@ -422,7 +422,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    setDuration(event.target.value);
+    const re = /^[0-9\b]+$/;
+    if (event.target.value === "" || re.test(event.target.value)) {
+      setDuration(event.target.value);
+    }
   };
 
   const handleDurationTypeChange = (event: SelectChangeEvent) => {
