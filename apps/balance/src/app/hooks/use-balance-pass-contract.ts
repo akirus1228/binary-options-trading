@@ -11,8 +11,8 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
 const bpContractAddress = isDev()
-  ? "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B"
-  : "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B";
+  ? "0xD69e023bfC1408b3202c79667253B0b6b68C60c0"
+  : "0xD69e023bfC1408b3202c79667253B0b6b68C60c0";
 
 type UseBpGetTimestampsQueryResut = {
   whitelist1Timestamp: number;
