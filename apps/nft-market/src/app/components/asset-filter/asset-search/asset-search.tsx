@@ -35,13 +35,18 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 
 export interface AssetSearchProps {
   setCollection: (collection: Collection) => void;
+  keyword: string;
+  setKeyword: (keyword: string) => void;
 }
 
-export const AssetSearch = ({ setCollection }: AssetSearchProps): JSX.Element => {
+export const AssetSearch = ({
+  setCollection,
+  keyword,
+  setKeyword,
+}: AssetSearchProps): JSX.Element => {
   const ref = useRef<HTMLElement>(null);
   const [triggerListings, searchedListings] = useLazyGetListingsQuery();
   const [triggerCollections, searchedCollections] = useLazyGetCollectionsQuery();
-  const [keyword, setKeyword] = useState("");
   const [isFocus, setIsFocus] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -62,22 +67,24 @@ export const AssetSearch = ({ setCollection }: AssetSearchProps): JSX.Element =>
 
   const onChangeKeyword = (value: string) => {
     setKeyword(value);
+  };
 
-    if (value !== "") {
+  useEffect(() => {
+    if (keyword !== "") {
       triggerListings({
-        keyword: value,
+        keyword,
         status: ListingStatus.Listed,
       });
 
       triggerCollections({
-        keyword: value,
+        keyword,
         sortQuery: "collection.openListingCount:DESC",
       });
     } else {
       setAssets([]);
       setCollections([]);
     }
-  };
+  }, [keyword]);
 
   const handleClickOutside = () => {
     setIsDropdown(false);

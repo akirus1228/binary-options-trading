@@ -52,6 +52,7 @@ export const LenderAssetFilter = ({
   const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);
   const [collection, setCollection] = useState<Collection>({} as Collection);
   const [sort, setSort] = useState<string>(ListingSort.Recently);
+  const [keyword, setKeyword] = useState<string>("");
   const collectionAddresses = useSelector((state: RootState) =>
     Object.values(state.listings.listings).map(
       (listing) => listing.asset.assetContractAddress
@@ -161,6 +162,7 @@ export const LenderAssetFilter = ({
     handleDurationRangeChangeCommitted({ target: {} } as Event, initialDurationRange);
     handleSortChange({ target: { value: "Recent" } } as SelectChangeEvent<string>);
     setCollection({} as Collection);
+    setKeyword("");
   };
   const followersMarks = [
     {
@@ -222,7 +224,11 @@ export const LenderAssetFilter = ({
 
   return (
     <Box sx={{ ml: "auto" }}>
-      <AssetSearch setCollection={setCollection} />
+      <AssetSearch
+        keyword={keyword}
+        setKeyword={setKeyword}
+        setCollection={setCollection}
+      />
       <Select
         labelId="asset-sort-by"
         label="Sort by"
