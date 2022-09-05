@@ -17,7 +17,6 @@ import FhmPage from "./pages/fhm/fhm-page";
 import BlogPage from "./pages/blog/blog-page";
 import BlogPostPage from "./pages/blog/blog-post-page";
 import BalanceWhitelistMintPage from "./components/balance_whiteList/balance_whitelist_mint";
-// import BalancePublicMintPage from "./components/balance_public/balance_public_mint";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -58,8 +57,7 @@ export const App = (): JSX.Element => {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:id" element={<BlogPostPage />} />
           <Route path="/balancepass" element={<BalancePassPage />} />
-          <Route path="/balancewhitelistmint" element={<BalanceWhitelistMintPage />} />
-          {/* <Route path="/balancepublicmint" element={<BalancePublicMintPage />} /> */}
+          <Route path="/balancepass-mint" element={<BalanceWhitelistMintPage />} />
 
           <Route
             path="*"

@@ -37,13 +37,8 @@ export const balanceheaderPages: Page[] = [
   { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
   {
     title: "Balance Whitelist Mint",
-    href: "/balancewhitelistmint",
+    href: "/balancepass-mint",
     params: { comingSoon: false },
-  },
-  {
-    title: "Balance Public Mint",
-    href: "/balancepublicmint",
-    params: { comingSoon: true },
   },
 ];
 
@@ -66,13 +61,8 @@ export const footerItems: FooterItem[] = [
       { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
       {
         title: "Balance Whitelist Mint",
-        href: "/balancewhitelistmint",
+        href: "/balancepass-mint",
         params: { comingSoon: false },
-      },
-      {
-        title: "Balance Public Mint",
-        href: "/balancepublicmint",
-        params: { comingSoon: true },
       },
     ],
   },
