@@ -556,7 +556,7 @@ export const BalanceWhitelistMintPage = (
                     mt: "30px",
                   }}
                 >
-                  MAX 1 NFT PER WALLET. PRICE 0.00 ETH + GAS WL MINT IS LIVE FOR 10
+                  MAX 1 NFT PER WALLET. PRICE 0.00 ETH + GAS WL MINT IS LIVE FOR 60
                   MINUTES
                 </Typography>
               </>
