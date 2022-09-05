@@ -228,7 +228,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         </Box>
         <Box className="flex fr fj-sb ai-c w100">
           <span className={style["termValue"]}>
-            {prettifySeconds(listing.term.duration, "day")}
+            {prettifySeconds(listing.term.duration * 86400, "day")}
           </span>
           <span className={style["termValue"]}>{listing.term.apr}%</span>
         </Box>

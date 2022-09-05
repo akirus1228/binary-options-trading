@@ -202,7 +202,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               Duration
             </Typography>
             <Typography className={`${style["data"]}`}>
-              {prettifySeconds(props.listing.term.duration, "day")}
+              {prettifySeconds(props.listing.term.duration * 86400, "day")}
             </Typography>
           </Box>
           <Box className="flex fc">

@@ -85,7 +85,7 @@ const BorrowerOnlyListed = ({
         <span className={style["strong"]}>{listing.term.apr}% APY</span>
         <span> over </span>
         <span className={style["strong"]}>
-          {prettifySeconds(listing.term.duration, "day")}
+          {prettifySeconds(listing.term.duration * 86400, "day")}
         </span>
       </Box>
     </Box>

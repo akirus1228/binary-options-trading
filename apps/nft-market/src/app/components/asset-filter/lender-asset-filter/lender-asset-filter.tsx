@@ -67,7 +67,7 @@ export const LenderAssetFilter = ({
   };
 
   const durationValuetext = (value: number) => {
-    return prettifySeconds(value, "day");
+    return prettifySeconds(value * 86400, "day");
   };
 
   const getSortQuery = (status: string): string => {
@@ -361,7 +361,7 @@ export const LenderAssetFilter = ({
           Duration
         </ListSubheader>
         <Slider
-          getAriaLabel={() => "Duratioun range"}
+          getAriaLabel={() => "Duration range"}
           value={durationRange}
           onChange={handleDurationRangeChange}
           onChangeCommitted={handleDurationRangeChangeCommitted}
@@ -372,12 +372,8 @@ export const LenderAssetFilter = ({
         />
       </Box>
       <Box className="flex fj-sb">
-        <span style={{ fontSize: "10px" }}>
-          {prettifySeconds(durationRange[0], "day")}
-        </span>
-        <span style={{ fontSize: "10px" }}>
-          {prettifySeconds(durationRange[1], "day")}
-        </span>
+        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[0])}</span>
+        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[1])}</span>
       </Box>
       <CollectionsFilter
         collections={collections?.filter(
