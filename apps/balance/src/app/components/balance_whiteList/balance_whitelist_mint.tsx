@@ -513,7 +513,7 @@ export const BalanceWhitelistMintPage = (
                 {!isProofLoading && !isCountdownLoading && countDown < 1 && (
                   <Button
                     variant="contained"
-                    href="https://Opensea.io"
+                    href="https://opensea.io/account"
                     sx={{
                       display: { md: "flex" },
                       width: { md: "40%", xs: "65%" },
