@@ -6,10 +6,13 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers } from "ethers";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
-const contractAddress = isDev() ? "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B" : "";
+const bpContractAddress = isDev()
+  ? "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B"
+  : "0xnotreallyanaddressbutforatestanyway";
 
 type UseBpGetTimestampsQueryResut = {
   whitelist1Timestamp: number;
@@ -26,17 +29,19 @@ export const useBpGetTimestampsQuery =
   (): UseQueryResult<UseBpGetTimestampsQueryResut> => {
     const { address, provider } = useWeb3Context();
 
-    // useEffect(() => {
-    //   console.log("address", address);
-    //   console.log("provider", provider);
-    //   console.log("balancePassContract", balancePassContract);
-    // }, [address, provider, balancePassContract]);
+    useEffect(() => {
+      console.log("address", address);
+      console.log("provider", provider);
+      console.log("isDev", isDev());
+      console.log("bpContractAddress", bpContractAddress);
+    }, [address, provider]);
 
     return useQuery<UseBpGetTimestampsQueryResut>(
       ["bpTimestamps"],
       () => {
+        console.log("starting timestamp query");
         const contract = new ethers.Contract(
-          contractAddress,
+          bpContractAddress,
           passNFTAbi,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           provider!
@@ -67,7 +72,7 @@ export const useBpGetWalletBalanceQuery = (): UseQueryResult<number> => {
     ["bpGetWalletBalance"],
     () => {
       const contract = new ethers.Contract(
-        contractAddress,
+        bpContractAddress,
         passNFTAbi,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         provider!
@@ -90,7 +95,7 @@ export const useBpGetTotalSupplyQuery = (): UseQueryResult<number> => {
     ["bpGetTotalSupply"],
     () => {
       const contract = new ethers.Contract(
-        contractAddress,
+        bpContractAddress,
         passNFTAbi,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         provider!
@@ -122,7 +127,7 @@ export const useBpMintMutation = ({
     () => {
       const signer = provider?.getSigner();
 
-      const contract = new ethers.Contract(contractAddress, passNFTAbi, signer);
+      const contract = new ethers.Contract(bpContractAddress, passNFTAbi, signer);
 
       try {
         const mintTx = contract["mint"](proof1, proof2)

@@ -8,7 +8,14 @@ import store from "./store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const Root = (): JSX.Element => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        staleTime: 1000 & 60, // 1 minute
+      },
+    },
+  });
 
   return (
     <Web3ContextProvider>

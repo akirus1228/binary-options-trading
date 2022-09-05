@@ -41,8 +41,15 @@ export const BalanceWhitelistMintPage = (
   const [countDown, setCountDown] = useState<number>(0);
   const [countdownTimestamp, setCountdownTimestamp] = useState<number>(1662393600 * 1000);
 
-  const { data: timestampData, isLoading: isCountdownLoading } =
-    useBpGetTimestampsQuery();
+  const {
+    data: timestampData,
+    isLoading: isCountdownLoading,
+    error: tsError,
+  } = useBpGetTimestampsQuery();
+
+  useEffect(() => {
+    console.log("tsError", tsError);
+  }, [tsError]);
 
   const { data: walletBalance, isLoading: isWalletBalanceLoading } =
     useBpGetWalletBalanceQuery();
@@ -57,30 +64,25 @@ export const BalanceWhitelistMintPage = (
 
   // using the timestamp and proof data, calculate the timestamp for the countdown
   useEffect(() => {
+    console.log("timestampData", timestampData);
+    console.log("proofData", proofData);
     if (!timestampData) return;
     switch (proofData?.wl) {
       case 1:
         setCountdownTimestamp(timestampData.whitelist1Timestamp * 1000);
-        console.log("whitelist1", "1");
         break;
       case 2:
         setCountdownTimestamp(timestampData.whitelist2Timestamp * 1000);
-        console.log("whitelist2", "2");
         break;
       default:
         setCountdownTimestamp(timestampData.publicTimestamp * 1000);
-        console.log("public");
     }
   }, [
     timestampData?.whitelist1Timestamp,
     timestampData?.whitelist2Timestamp,
     timestampData?.publicTimestamp,
-    proofData,
+    proofData?.wl,
   ]);
-
-  useEffect(() => {
-    console.log(timestampData);
-  }, [timestampData]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     console.log("connect", isDev());
