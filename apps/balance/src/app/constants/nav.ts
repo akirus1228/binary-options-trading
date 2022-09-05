@@ -36,7 +36,7 @@ export const balanceheaderPages: Page[] = [
   { title: "Dex", href: "https://app.fantohm.com/#/dex", params: { comingSoon: false } },
   { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
   {
-    title: "Balance Whitelist Mint",
+    title: "Balance Pass Mint",
     href: "/balancepass-mint",
     params: { comingSoon: false },
   },
@@ -60,7 +60,7 @@ export const footerItems: FooterItem[] = [
       },
       { title: "Balance Pass", href: "/balancepass", params: { comingSoon: false } },
       {
-        title: "Balance Whitelist Mint",
+        title: "Balance Pass Mint",
         href: "/balancepass-mint",
         params: { comingSoon: false },
       },
