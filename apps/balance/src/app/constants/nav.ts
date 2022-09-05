@@ -44,6 +44,16 @@ export const balanceheaderPages: Page[] = [
     href: "/balancepass-mint",
     params: { comingSoon: false },
   },
+  // {
+  //   title: "Balance Whitelist Mint",
+  //   href: "/balancewhitelistmint",
+  //   params: { comingSoon: false },
+  // },
+  // {
+  //   title: "Balance Public Mint",
+  //   href: "/balancepublicmint",
+  //   params: { comingSoon: true },
+  // },
 ];
 
 export const footerItems: FooterItem[] = [
@@ -72,6 +82,16 @@ export const footerItems: FooterItem[] = [
         href: "/balancepass-mint",
         params: { comingSoon: false },
       },
+      // {
+      //   title: "Balance Whitelist Mint",
+      //   href: "/balancewhitelistmint",
+      //   params: { comingSoon: false },
+      // },
+      // {
+      //   title: "Balance Public Mint",
+      //   href: "/balancepublicmint",
+      //   params: { comingSoon: true },
+      // },
     ],
   },
   {

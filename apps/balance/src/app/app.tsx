@@ -58,7 +58,6 @@ export const App = (): JSX.Element => {
           <Route path="/blog/:id" element={<BlogPostPage />} />
           <Route path="/balancepass" element={<BalancePassPage />} />
           <Route path="/balancepass-mint" element={<BalanceWhitelistMintPage />} />
-
           <Route
             path="*"
             element={
