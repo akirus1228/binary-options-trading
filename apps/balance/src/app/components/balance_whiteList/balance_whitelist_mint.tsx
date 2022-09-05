@@ -22,6 +22,7 @@ import { MouseEvent, useMemo, useState, useEffect } from "react";
 import style from "./balance_whitelist_mint.module.scss";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
 import {
+  bpContractAddress,
   useBpGetTimestampsQuery,
   useBpGetTotalSupplyQuery,
   useBpGetWalletBalanceQuery,
@@ -34,7 +35,7 @@ export interface BalanceWhitelistMintProps {}
 export const BalanceWhitelistMintPage = (
   props: BalanceWhitelistMintProps
 ): JSX.Element => {
-  const { connect, disconnect, connected, address } = useWeb3Context();
+  const { connect, disconnect, connected, address, chainId } = useWeb3Context();
 
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
@@ -465,6 +466,11 @@ export const BalanceWhitelistMintPage = (
                 >
                   {proofData && proofData?.wl > 0 && (
                     <Typography>You are on whitelist {proofData?.wl}</Typography>
+                  )}
+                  {chainId && !bpContractAddress.get(chainId) && (
+                    <Typography sx={{ color: "red" }}>
+                      You must be connected to the Ethereum Mainnet to Mint.
+                    </Typography>
                   )}
                   <Button
                     variant="contained"

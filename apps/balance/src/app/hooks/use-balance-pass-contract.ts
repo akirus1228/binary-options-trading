@@ -10,9 +10,9 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
-const bpContractAddress = isDev()
-  ? "0xD69e023bfC1408b3202c79667253B0b6b68C60c0"
-  : "0x3707CFddaE348F05bAEFD42406ffBa4B74Ec8D91";
+export const bpContractAddress = new Map<number, string>();
+bpContractAddress.set(4, "0xD69e023bfC1408b3202c79667253B0b6b68C60c0");
+bpContractAddress.set(1, "0x3707CFddaE348F05bAEFD42406ffBa4B74Ec8D91");
 
 type UseBpGetTimestampsQueryResut = {
   whitelist1Timestamp: number;
@@ -27,7 +27,7 @@ type UseBpGetWalletBalanceQueryResut = {
 
 export const useBpGetTimestampsQuery =
   (): UseQueryResult<UseBpGetTimestampsQueryResut> => {
-    const { address, provider } = useWeb3Context();
+    const { address, provider, chainId } = useWeb3Context();
 
     useEffect(() => {
       console.log("address", address);
@@ -41,7 +41,7 @@ export const useBpGetTimestampsQuery =
       () => {
         console.log("starting timestamp query");
         const contract = new ethers.Contract(
-          bpContractAddress,
+          bpContractAddress.get(chainId ?? 1) ?? "",
           passNFTAbi,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           provider!
@@ -66,13 +66,13 @@ export const useBpGetTimestampsQuery =
   };
 
 export const useBpGetWalletBalanceQuery = (): UseQueryResult<number> => {
-  const { address, provider } = useWeb3Context();
+  const { address, provider, chainId } = useWeb3Context();
 
   return useQuery(
     ["bpGetWalletBalance"],
     () => {
       const contract = new ethers.Contract(
-        bpContractAddress,
+        bpContractAddress.get(chainId ?? 1) ?? "",
         passNFTAbi,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         provider!
@@ -89,13 +89,13 @@ export const useBpGetWalletBalanceQuery = (): UseQueryResult<number> => {
 };
 
 export const useBpGetTotalSupplyQuery = (): UseQueryResult<number> => {
-  const { address, provider } = useWeb3Context();
+  const { address, provider, chainId } = useWeb3Context();
 
   return useQuery(
     ["bpGetTotalSupply"],
     () => {
       const contract = new ethers.Contract(
-        bpContractAddress,
+        bpContractAddress.get(chainId ?? 1) ?? "",
         passNFTAbi,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         provider!
@@ -127,7 +127,11 @@ export const useBpMintMutation = ({
     () => {
       const signer = provider?.getSigner();
 
-      const contract = new ethers.Contract(bpContractAddress, passNFTAbi, signer);
+      const contract = new ethers.Contract(
+        bpContractAddress.get(chainId ?? 1) ?? "",
+        passNFTAbi,
+        signer
+      );
 
       try {
         const mintTx = contract["mint"](proof1, proof2)
