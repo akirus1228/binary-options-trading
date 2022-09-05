@@ -132,7 +132,7 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
           </Box>
           {isOwner && !isPending && props.listing && (
             <Button variant="contained" onClick={handleCancelListing}>
-              Cancel Listing (no cost)
+              Cancel Listing
             </Button>
           )}
           {isPending && (
