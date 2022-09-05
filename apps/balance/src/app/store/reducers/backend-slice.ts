@@ -3,7 +3,6 @@ import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit"
 import { loadState } from "../localstorage";
 import { RootState } from "..";
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
 
 // export const loadBlogPosts = createAsyncThunk("app/loadBlogPosts", async () => {
 //   const posts: BlogPostDTO[] = [];

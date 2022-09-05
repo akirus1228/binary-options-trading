@@ -27,36 +27,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import MenuLink from "./menu-link";
 import { RootState } from "../../../store";
-import { setTheme } from "../../../store/reducers/app-slice";
+import { setCheckedConnection, setTheme } from "../../../store/reducers/app-slice";
 import USDBLogoLight from "../../../../assets/images/USDB-logo.png";
 import USDBLogoDark from "../../../../assets/images/USDB-logo-dark.png";
 import styles from "./header.module.scss";
 import { NetworkMenu } from "./network-menu";
 import { headerPages, Page } from "../../../constants/nav";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { setCheckedConnection } from "../../../../../../usdb/src/app/store/reducers/app-slice";
 
 export const Header = (): JSX.Element => {
-  const { connect, disconnect, connected, address, hasCachedProvider, chainId } =
-    useWeb3Context();
   const dispatch = useDispatch();
-  const allowedChain = chainId && enabledNetworkIds.includes(chainId);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElProductsMenu, setAnchorElProductsMenu] = useState<null | HTMLElement>(
     null
   );
-  const [connectButtonText, setConnectButtonText] = useState<string>("Connect Wallet");
   const [accountBondsLoading, setAccountBondsLoading] = useState<boolean>(true);
   const [totalBalances, setTotalBalances] = useState<number>(0);
 
   const themeType = useSelector((state: RootState) => state.app.theme);
-  const { bonds } = useBonds(chainId ?? defaultNetworkId);
-  const accountBonds = useSelector((state: RootState) => {
-    return state.account.bonds;
-  });
-  const allBondsLoaded = useSelector((state: RootState) => {
-    return state.account.allBondsLoaded;
-  });
+
   const accountLoading = useSelector((state: RootState) => {
     return state.account.loading;
   });
@@ -67,46 +55,6 @@ export const Header = (): JSX.Element => {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
-  const handleConnect = useCallback(async () => {
-    if (connected) {
-      await disconnect();
-    } else {
-      try {
-        await connect();
-      } catch (e) {
-        console.log("Connection metamask error", e);
-      }
-    }
-  }, [connected, disconnect, connect]);
-
-  useEffect(() => {
-    dispatch(setWalletConnected(connected));
-    dispatch(getBalances({ address: address, networkId: chainId || defaultNetworkId }));
-    if (connected) {
-      setConnectButtonText("Disconnect");
-    } else {
-      setConnectButtonText("Connect Wallet");
-    }
-  }, [connected, address, dispatch]);
-
-  useEffect(() => {
-    // if there's a cached provider, try and connect
-    if (hasCachedProvider && hasCachedProvider() && !connected) {
-      try {
-        connect();
-      } catch (e) {
-        console.log("Connection metamask error", e);
-      }
-    }
-    // if there's a cached provider and it has connected, connection check is good.
-    if (hasCachedProvider && hasCachedProvider && connected)
-      dispatch(setCheckedConnection(true));
-
-    // if there's not a cached provider and we're not connected, connection check is good
-    if (hasCachedProvider && !hasCachedProvider() && !connected)
-      dispatch(setCheckedConnection(true));
-  }, [connected, hasCachedProvider, connect]);
 
   const toggleTheme = useCallback(() => {
     const type = themeType === "light" ? "dark" : "light";
@@ -122,29 +70,6 @@ export const Header = (): JSX.Element => {
   const handleCloseProductsMenu = () => {
     setAnchorElProductsMenu(null);
   };
-
-  useEffect(() => {
-    // FIXME hack
-    // if (Object.keys(accountBonds).length < allBonds.length) {
-    //   return;
-    // }
-    if (allBondsLoaded) {
-      const balances = bonds.reduce((prevBalance, bond) => {
-        const bondName = bond.name;
-        const accountBond = accountBonds[bondName];
-        if (accountBond) {
-          const userBonds = accountBond.userBonds;
-          return (
-            prevBalance +
-            userBonds.reduce((balance, bond) => balance + Number(bond.amount), 0)
-          );
-        }
-        return prevBalance;
-      }, 0);
-      setTotalBalances(balances);
-      setAccountBondsLoading(false);
-    }
-  }, [address, allBondsLoaded, accountLoading]);
 
   return (
     <AppBar position="static" color="transparent" elevation={0} style={{ margin: 0 }}>
@@ -213,15 +138,6 @@ export const Header = (): JSX.Element => {
                 </MenuLink>
               ))}
 
-              <MenuItem
-                sx={{ display: "flex", justifyContent: "start", padding: "0" }}
-                onClick={handleCloseNavMenu}
-                className={`${styles["mobileConnect"]}`}
-              >
-                <Typography textAlign="center">
-                  <Button onClick={handleConnect}>{connectButtonText}</Button>
-                </Typography>
-              </MenuItem>
               <MenuItem
                 sx={{ display: "flex", justifyContent: "start", padding: "0" }}
                 onClick={handleCloseNavMenu}
@@ -331,46 +247,7 @@ export const Header = (): JSX.Element => {
           <Box mr="1em">
             <NetworkMenu />
           </Box>
-          {connected && (
-            <Tooltip title={`My Portfolio: $${totalBalances}`}>
-              <Link to="/my-account">
-                <Button
-                  className="portfolio"
-                  sx={{ display: { xs: "none", md: "flex" } }}
-                >
-                  <Box display="flex" alignItems="center" mr="10px">
-                    <SvgIcon component={AnalyticsIcon} fontSize="large" />
-                  </Box>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    mt="2px"
-                    sx={{ display: { xs: "none", lg: "flex" } }}
-                  >
-                    My Portfolio:&nbsp;
-                  </Box>
-                  {!accountBondsLoading ? (
-                    <Box display="flex" alignItems="center" mt="2px">
-                      ${trim(totalBalances, 2)}
-                    </Box>
-                  ) : (
-                    <Skeleton width="100px" />
-                  )}
-                </Button>
-              </Link>
-            </Tooltip>
-          )}
 
-          <Tooltip title="Connect Wallet">
-            <Button
-              onClick={handleConnect}
-              sx={{ px: "3em", display: { xs: "none", md: "flex" } }}
-              color="primary"
-              className="menuButton"
-            >
-              {connectButtonText}
-            </Button>
-          </Tooltip>
           <Tooltip title="Toggle Light/Dark Mode">
             <Button
               onClick={toggleTheme}
@@ -383,11 +260,6 @@ export const Header = (): JSX.Element => {
           </Tooltip>
         </Toolbar>
       </Container>
-      {!allowedChain && connected && (
-        <div className={styles["errorNav"]}>
-          Network unsupported. Please change to one of: [Fantom, Ethereum]
-        </div>
-      )}
     </AppBar>
   );
 };

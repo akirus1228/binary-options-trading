@@ -240,4 +240,6 @@ export interface IMintNFTAsyncThunk extends IBaseAsyncThunk {
   readonly address: string;
   readonly provider: JsonRpcProvider;
   readonly bond: Bond;
+  readonly proof1: string[];
+  readonly proof2: string[];
 }

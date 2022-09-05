@@ -4,15 +4,9 @@ import { useSelector } from "react-redux";
 import { USDBLight, USDBDark } from "@fantohm/shared-ui-themes";
 import { RootState } from "../../store";
 import style from "./blog-post.module.scss";
-import {
-  BalanceHeroImage,
-  BalanceLogoDark,
-  BalanceTwitter,
-} from "@fantohm/shared/images";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
+import { BalanceHeroImage, BalanceTwitter } from "@fantohm/shared/images";
+import { BlogPostDTO } from "@fantohm/shared-helpers";
 
-/* eslint-disable-next-line */
 export interface BlogPostProps {
   children: JSX.Element | Array<JSX.Element>;
   className?: string;
@@ -47,7 +41,7 @@ export const BlogPost = (props: BlogPostProps): JSX.Element => {
           borderRadius: "25px",
           ...props.sx,
         }}
-        className={`daiCard ${style["cardWrapper"]} ${props.className} flexCenterCol`}
+        className={`${style["cardWrapper"]} ${props.className} flexCenterCol`}
         onClick={openPost}
       >
         <Grid

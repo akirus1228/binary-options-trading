@@ -7,8 +7,8 @@ import {
 } from "@reduxjs/toolkit";
 import { loadState } from "../localstorage";
 import { RootState } from "..";
+import { BlogPostDTO } from "@fantohm/shared-helpers";
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const contentful = require("contentful");
 
@@ -37,8 +37,8 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async () =>
         } catch (e) {
           category = "";
         }
-        console.log(entryResult.fields.getInTouch.fields.content);
-        console.log("entryResult", entryResult);
+        // console.log(entryResult.fields.getInTouch.fields.content);
+        // console.log("entryResult", entryResult);
         posts.push({
           id: entryResult.fields.slug,
           date: entryResult.sys.createdAt,

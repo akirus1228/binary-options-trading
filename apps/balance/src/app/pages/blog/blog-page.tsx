@@ -4,38 +4,30 @@ import {
   Container,
   FormControl,
   FormControlLabel,
-  FormLabel,
   Grid,
-  Icon,
   OutlinedInput,
   Paper,
   Radio,
   RadioGroup,
-  SxProps,
-  Theme,
   Typography,
 } from "@mui/material";
 import style from "./blog-page.module.scss";
-import { BalanceEmailBanner, BlogBanner, BalanceHeroImage } from "@fantohm/shared/images";
+import { BlogBanner, BalanceHeroImage } from "@fantohm/shared/images";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { error, info } from "@fantohm/shared-web3";
 import { useEffect, useState } from "react";
 import BlogPost from "../../components/blog-page/blog-post";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
-import { NftDark, NftLight } from "@fantohm/shared-ui-themes";
 import Head from "../../components/template/head";
 import BlogFeaturedPost from "../../components/blog-featured-page/blog-featured-post";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const contentful = require("contentful");
+import { BlogPostDTO } from "@fantohm/shared-helpers";
 
 export const BlogPage = (): JSX.Element => {
   const [email, setEmail] = useState("");
   const [sortValue, setSortValue] = useState("all");
   const allBlogPosts = useSelector((state: RootState) => state.app.blogPosts);
   const [blogPosts, setBlogPosts] = useState<BlogPostDTO[]>();
-  const themeType = useSelector((state: RootState) => state.app.theme);
+
   const dispatch = useDispatch();
   async function createContact() {
     const options = {
