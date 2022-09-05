@@ -22,6 +22,7 @@ import { MouseEvent, useMemo, useState, useEffect } from "react";
 import style from "./balance_whitelist_mint.module.scss";
 import { useBPGetProof } from "../../hooks/use-balance-pass-api";
 import {
+  bpContractAddress,
   useBpGetTimestampsQuery,
   useBpGetTotalSupplyQuery,
   useBpGetWalletBalanceQuery,
@@ -462,7 +463,7 @@ export const BalanceWhitelistMintPage = (
                   {proofData && proofData?.wl > 0 && (
                     <Typography>You are on whitelist {proofData?.wl}</Typography>
                   )}
-                  {chainId && chainId !== (isDev() ? 4 : 1) && (
+                  {chainId && !bpContractAddress.get(chainId) && (
                     <Typography sx={{ color: "red" }}>
                       You must be connected to the Ethereum Mainnet to Mint.
                     </Typography>

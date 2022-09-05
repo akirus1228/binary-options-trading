@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
-const bpContractAddress = new Map<number, string>();
+export const bpContractAddress = new Map<number, string>();
 bpContractAddress.set(4, "0xD69e023bfC1408b3202c79667253B0b6b68C60c0");
 bpContractAddress.set(1, "0x3707CFddaE348F05bAEFD42406ffBa4B74Ec8D91");
 
