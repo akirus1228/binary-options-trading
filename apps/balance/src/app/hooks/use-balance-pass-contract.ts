@@ -10,7 +10,9 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
 
-const bpContractAddress = isDev() ? "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B" : "";
+const bpContractAddress = isDev()
+  ? "0x328b186Ba8beFccB2f7F85DC57084F2cd464fe1B"
+  : "0xnotreallyanaddressbutforatest";
 
 type UseBpGetTimestampsQueryResut = {
   whitelist1Timestamp: number;
@@ -31,7 +33,7 @@ export const useBpGetTimestampsQuery =
       console.log("address", address);
       console.log("provider", provider);
       console.log("isDev", isDev());
-      console.log("isDev", bpContractAddress);
+      console.log("bpContractAddress", bpContractAddress);
     }, [address, provider]);
 
     return useQuery<UseBpGetTimestampsQueryResut>(
