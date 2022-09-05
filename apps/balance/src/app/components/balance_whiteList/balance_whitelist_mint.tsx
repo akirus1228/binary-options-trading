@@ -445,6 +445,10 @@ export const BalanceWhitelistMintPage = (
                 >
                   Connect Wallet
                 </Button>
+                <Typography sx={{ width: { md: "50%", xs: "50%" }, color: "#8fa0c3" }}>
+                  Hint: If you don't see your wallet whitelisted and it should be, try to
+                  switch to different wallet and return back in MetaMask.
+                </Typography>
               </Box>
             )}
             {connected && (
