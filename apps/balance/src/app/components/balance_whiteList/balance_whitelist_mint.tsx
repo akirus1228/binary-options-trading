@@ -34,7 +34,7 @@ export interface BalanceWhitelistMintProps {}
 export const BalanceWhitelistMintPage = (
   props: BalanceWhitelistMintProps
 ): JSX.Element => {
-  const { connect, disconnect, connected, address } = useWeb3Context();
+  const { connect, disconnect, connected, address, chainId } = useWeb3Context();
 
   const { data: proofData, isLoading: isProofLoading } = useBPGetProof(address);
 
@@ -461,6 +461,11 @@ export const BalanceWhitelistMintPage = (
                 >
                   {proofData && proofData?.wl > 0 && (
                     <Typography>You are on whitelist {proofData?.wl}</Typography>
+                  )}
+                  {chainId && chainId !== (isDev() ? 4 : 1) && (
+                    <Typography sx={{ color: "red" }}>
+                      You must be connected to the Ethereum Mainnet to Mint.
+                    </Typography>
                   )}
                   <Button
                     variant="contained"
