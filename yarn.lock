@@ -15109,7 +15109,7 @@ nx@13.9.5:
     v8-compile-cache "2.3.0"
     yargs-parser "20.0.0"
 
-nx@14.6.4, nx@^14.6.4:
+nx@14.6.4:
   version "14.6.4"
   resolved "https://registry.yarnpkg.com/nx/-/nx-14.6.4.tgz#471379334efc8258a47ec80db0915667d29aace3"
   integrity sha512-AbUH3xQVL6faSXSMB7kPFcRtnz+FNUt4xR0UtfBBCqNSItq5kMOlHK10G7aN+VWtw8ScNy7qkWIeQ6VezvUW8A==
