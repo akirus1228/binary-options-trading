@@ -95,9 +95,9 @@ export const BalancePassPage = (): JSX.Element => {
             </Typography>
             <Button
               variant="contained"
-              // href="https://opensea.io/collection/balance-pass"
-              // target={"_blank"}
-              href={"https://www.balance.capital/balancepass-mint"}
+              href="https://opensea.io/collection/balance-pass"
+              target={"_blank"}
+              // href={"https://www.balance.capital/balancepass-mint"}
               sx={{
                 display: { md: "flex", width: "35%" },
                 fontSize: "19px",
@@ -108,7 +108,7 @@ export const BalancePassPage = (): JSX.Element => {
               }}
               className={style["heroLink"]}
             >
-              Mint
+              Buy
             </Button>
           </Box>
         </Grid>
@@ -412,9 +412,9 @@ export const BalancePassPage = (): JSX.Element => {
           </Typography>
           <Button
             variant="contained"
-            // href="https://opensea.io/collection/balance-pass"
-            // target={"_blank"}
-            href={"https://www.balance.capital/balancepass-mint"}
+            href="https://opensea.io/collection/balance-pass"
+            target={"_blank"}
+            // href={"https://www.balance.capital/balancepass-mint"}
             sx={{
               display: { md: "flex", width: "42%" },
               fontSize: "19px",
@@ -425,7 +425,7 @@ export const BalancePassPage = (): JSX.Element => {
             }}
             className={style["footerLink"]}
           >
-            Mint
+            Buy
           </Button>
         </Grid>
         <Grid item md={3.5} sx={{ display: { xs: "none", md: "flex" } }}>
