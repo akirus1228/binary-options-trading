@@ -390,7 +390,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       if (!term.signature || term.signature === "") {
         // user rejected signature
         // error message being dispatched from another catch
-        // dispatch(addAlert({ message: "Signature rejected. Terms not updated." }));
+        // dispatch(addAlert({ message: "Signature rejected. Terms not updated.", severity: "error" }));
         props.onClose(true);
         return;
       }
