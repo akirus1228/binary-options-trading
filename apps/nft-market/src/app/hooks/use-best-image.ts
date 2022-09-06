@@ -63,6 +63,7 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
   }, [asset?.osData?.image_url, asset?.thumbUrl, asset?.imageUrl, asset?.frameUrl]);
 
   useEffect(() => {
+    let isSubscribed = true;
     // do any of the images contain googleusercontent?
     // if so this is what we want to use
     const img = imageLoadOrder.find((imageString) =>
@@ -83,15 +84,20 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
         (imageDetails) => !!imageDetails
       ) as AxiosResponse[];
       validImages.sort((imageA, imageB) => sortImageBySize(imageA, imageB));
-      if (validImages.length < 1) {
-        setUrl(previewNotAvailable);
-      } else {
-        setUrl(
-          (preferredWidth < 1024
-            ? validImages[0].config.url
-            : validImages[validImages.length - 1].config.url) || loadingGradient
-        );
+      if (isSubscribed) {
+        if (validImages.length < 1) {
+          setUrl(previewNotAvailable);
+        } else {
+          setUrl(
+            (preferredWidth < 1024
+              ? validImages[0].config.url
+              : validImages[validImages.length - 1].config.url) || loadingGradient
+          );
+        }
       }
+      return () => {
+        isSubscribed = false;
+      };
     });
   }, [imageLoadOrder]);
 

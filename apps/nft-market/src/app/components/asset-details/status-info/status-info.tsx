@@ -15,23 +15,13 @@ import {
 import { desiredNetworkId } from "../../../constants/network";
 import { formatCurrency } from "@fantohm/shared-helpers";
 import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import { formatDateTimeString } from "@fantohm/shared-helpers";
 
 export interface StatusInfoProps {
   asset: Asset;
   listing?: Listing;
   loan?: Loan;
 }
-
-const formatDateTimeString = (time: Date) => {
-  const items = new Date(time).toString().split(" ");
-  return (
-    new Date(time).toLocaleTimeString() +
-    ", " +
-    new Date(time).toDateString().slice(4) +
-    " " +
-    items[items.length - 1]
-  );
-};
 
 const BorrowerNotListed = ({ asset }: { asset: Asset }): JSX.Element => {
   return (

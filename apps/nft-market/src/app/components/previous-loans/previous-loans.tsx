@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
+import {
+  addressEllipsis,
+  formatCurrency,
+  formatDateTimeString,
+} from "@fantohm/shared-helpers";
 import {
   PaperTable,
   PaperTableCell,
@@ -195,9 +199,10 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
                     {loan.term.apr}%
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "0.875em" }}>
-                    {new Date(
-                      Date.parse(loan.createdAt || "yesterday")
-                    ).toLocaleDateString()}
+                    {formatDateTimeString(
+                      new Date(Date.parse(loan.createdAt || "yesterday")),
+                      true
+                    )}
                   </PaperTableCell>
                   <PaperTableCell sx={{ fontSize: "0.875em" }}>
                     {prettifySeconds(loan.term.duration * 86400, "day")}
