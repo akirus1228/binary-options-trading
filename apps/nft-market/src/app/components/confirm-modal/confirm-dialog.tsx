@@ -10,7 +10,7 @@ export type ConfirmDialogProps = {
   platformfee: number;
   currencySymbol: string;
   interest: number;
-  duedata: string;
+  dueDate: string;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   onConfirm: () => void;
@@ -23,7 +23,7 @@ const ConfirmDialog = (props: ConfirmDialogProps): JSX.Element => {
     platformfee,
     currencySymbol,
     interest,
-    duedata,
+    dueDate,
     open,
     setOpen,
     onConfirm,
@@ -48,7 +48,7 @@ const ConfirmDialog = (props: ConfirmDialogProps): JSX.Element => {
         <Typography>
           Total repayment: {(principal + interest).toFixed(5)} {currencySymbol}
         </Typography>
-        <Typography>Offer Expires: {duedata}</Typography>
+        <Typography>Offer Expires: {dueDate}</Typography>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={() => setOpen(false)}>
