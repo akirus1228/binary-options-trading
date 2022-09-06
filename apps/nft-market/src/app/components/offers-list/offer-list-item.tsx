@@ -214,7 +214,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       createLoanResult = await createLoan(createLoanRequest).unwrap();
       if (!createLoanResult) {
         setIsPending(false);
-        dispatch(addAlert({ message: "Failed to create a loan" }));
+        dispatch(addAlert({ message: "Failed to create a loan", severity: "error" }));
         return;
       }
       const createLoanContractResult = await dispatch(
@@ -244,6 +244,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         dispatch(
           addAlert({
             message: e?.data?.message,
+            severity: "error",
           })
         );
       }

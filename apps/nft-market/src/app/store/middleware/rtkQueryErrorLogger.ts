@@ -17,6 +17,7 @@ export const rtkQueryErrorLogger: Middleware =
       api.dispatch(
         addAlert({
           message: "Sorry, we're experiencing delays. Please try again shortly.",
+          severity: "error",
         })
       );
     }
