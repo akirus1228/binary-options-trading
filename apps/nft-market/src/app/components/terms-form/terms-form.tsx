@@ -783,7 +783,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         platformfee={(platformFees[currency?.currentAddress] / 10000) * Number(amount)}
         currencySymbol={currency?.symbol}
         interest={repaymentAmount}
-        duedata={formatDateTimeString(new Date(Date.now() + 86400 * 1000 * 7))}
+        dueDate={formatDateTimeString(
+          new Date(Date.now() + 86400 * 1000 * termTypes[durationType] * Number(duration))
+        )}
         setOpen={setConfirmOpen}
         onConfirm={props?.isEdit ? handleUpdateTerms : handleMakeOffer}
       ></ConfirmDialog>
