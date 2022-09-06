@@ -154,7 +154,7 @@ export const LenderAssetFilter = ({
     };
     if (updatedQuery.contractAddress === query.contractAddress) return;
     setQuery(updatedQuery);
-  }, [collection, query, setQuery]);
+  }, [collection, JSON.stringify(query), setQuery]);
 
   const handleResetFilters = () => {
     handlePriceRangeChangeCommitted({ target: {} } as Event, initialPriceRange);
