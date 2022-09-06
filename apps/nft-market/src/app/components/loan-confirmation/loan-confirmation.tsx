@@ -377,7 +377,8 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {listing.term.amount} {currency?.symbol}{" "}
+                    {formatCurrency(listing.term.amount, 4).replace("$", "")}{" "}
+                    {currency?.symbol}{" "}
                     <span className="subtle" style={{ marginLeft: "1em" }}>
                       (to borrower)
                     </span>
@@ -398,7 +399,8 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {platformFeeAmt} {currency?.symbol}{" "}
+                    {formatCurrency(platformFeeAmt, 4).replace("$", "")}{" "}
+                    {currency?.symbol}{" "}
                     <span className="subtle" style={{ marginLeft: "1em" }}>
                       (platform fee)
                     </span>
@@ -423,7 +425,7 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {totalAmt?.toFixed(5)} {currency?.symbol}
+                    {formatCurrency(totalAmt, 4).replace("$", "")} {currency?.symbol}
                   </span>
                   <span className="subtle">
                     ~{formatCurrency(totalAmt * currency?.lastPrice)}
@@ -471,7 +473,8 @@ export const LoanConfirmation = ({
                       marginBottom: "2px",
                     }}
                   />
-                  {repaymentTotal.toFixed(5)} {currency?.symbol || ""}
+                  {formatCurrency(repaymentTotal, 4).replace("$", "")}{" "}
+                  {currency?.symbol || ""}
                 </span>
                 <span className="subtle">
                   ~{formatCurrency(repaymentTotal * currency?.lastPrice || 0, 2)}
