@@ -32,7 +32,7 @@ import {
   selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
-import { formatCurrency } from "@fantohm/shared-helpers";
+import { formatCurrency, formatDateTimeString } from "@fantohm/shared-helpers";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { desiredNetworkId } from "../../constants/network";
 import { BigNumber, ethers } from "ethers";
@@ -484,7 +484,7 @@ export const LoanConfirmation = ({
             <span className="strong" style={{ color: "#aaa" }}>
               If the loan is not repaid by
               <strong className={style["repayDate"]}>
-                {` ${estRepaymentDate.toLocaleString()} `}
+                {` ${formatDateTimeString(estRepaymentDate)} `}
               </strong>
               you are entitled to:
             </span>

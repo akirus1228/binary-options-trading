@@ -1,4 +1,8 @@
-import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
+import {
+  addressEllipsis,
+  formatCurrency,
+  formatDateTimeString,
+} from "@fantohm/shared-helpers";
 import {
   PaperTable,
   PaperTableCell,
@@ -126,7 +130,11 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
       <PaperTableCell>
         {prettifySeconds(loan.term.duration * 86400, "day")}
       </PaperTableCell>
-      <PaperTableCell>{loanDetails?.endDateTime.toLocaleString()}</PaperTableCell>
+      <PaperTableCell>
+        {formatDateTimeString(
+          new Date(Date.parse(loanDetails?.endDateTime.toString() || "yesterday"))
+        )}
+      </PaperTableCell>
       <PaperTableCell>
         {loan.borrower.address === user.address
           ? "You"

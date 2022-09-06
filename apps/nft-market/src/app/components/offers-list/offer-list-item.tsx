@@ -477,12 +477,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
               offer.status === OfferStatus.Ready &&
               Date.parse(offer.term.expirationAt) > Date.now() &&
               (isPending ? (
-                <Button variant="contained" className="offer slim">
+                <Button variant="outlined" className="offer slim">
                   <CircularProgress />
                 </Button>
               ) : (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   sx={{ width: "150px" }}
                   className="offer slim"
                   onClick={handleRequestPermission}
@@ -494,12 +494,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
               hasPermission &&
               offer.status === OfferStatus.Ready &&
               (isPending ? (
-                <Button variant="contained" className="offer slim">
+                <Button variant="outlined" className="offer slim">
                   <CircularProgress />
                 </Button>
               ) : (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   sx={{ width: "150px" }}
                   className="offer slim"
                   onClick={handleAcceptOffer}
