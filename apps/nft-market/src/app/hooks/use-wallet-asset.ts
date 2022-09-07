@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { Asset } from "../types/backend-types";
 import { selectAssetByAddress } from "../store/selectors/asset-selectors";
-import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../api/opensea";
 import { useGetAssetsQuery } from "../api/backend-api";
+import { useGetNftPortAssetQuery } from "../api/nftport";
 
 export const useWalletAsset = (
   contractAddress: string,
@@ -15,13 +15,11 @@ export const useWalletAsset = (
     selectAssetByAddress(state, { tokenId, contractAddress })
   );
   const { address } = useWeb3Context();
-  // load asset data from opensea
-  const { data: osAssets, isLoading: isAssetLoading } = useGetOpenseaAssetsQuery(
+  // load asset data from nftport
+  const { data: npResponse, isLoading: isAssetLoading } = useGetNftPortAssetQuery(
     {
-      owner: address,
-      token_ids: [tokenId],
-      asset_contract_address: contractAddress,
-      limit: 1,
+      token_id: tokenId,
+      contract_address: contractAddress,
     },
     { skip: !!asset || !address }
   );
@@ -30,11 +28,10 @@ export const useWalletAsset = (
     {
       skip: 0,
       take: 1,
-      openseaIds: osAssets
-        ? osAssets.assets?.map((asset: OpenseaAsset) => asset.id.toString())
-        : [],
+      contractAddress,
+      tokenId,
     },
-    { skip: !osAssets || isAssetLoading || !authSignature }
+    { skip: !npResponse || isAssetLoading || !authSignature }
   );
 
   return asset || ({} as Asset);

@@ -55,19 +55,9 @@ export const selectAssetsByQuery = createSelector(
   (assets, query) => {
     const matches: [string, Asset][] = Object.entries(assets).filter(
       ([assetId, asset]) => {
-        // for each asset, loop over the query and check if there's anything that doesnt match
-        let openseaIds: string[];
-        if (query.openseaIds) {
-          openseaIds = query.openseaIds;
-        } else {
-          openseaIds = [];
-        }
         const entries = Object.entries(query).map(([key, matchValue]) => {
           if (matchValue === undefined) return true;
           // does the value of this query parameter match the value of the asset for this field?
-          if (key === "openseaIds")
-            // look in the list of opensea id's for a match
-            return openseaIds.includes(asset?.openseaId || "");
           if (key === "status" && matchValue === "All") {
             return true;
           }

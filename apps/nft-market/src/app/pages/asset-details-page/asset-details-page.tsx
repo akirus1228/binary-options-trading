@@ -9,7 +9,7 @@ import {
   useGetOffersQuery,
   useValidateNFTQuery,
 } from "../../api/backend-api";
-import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
+import { useGetNftPortAssetQuery } from "../../api/nftport";
 import { AssetDetails } from "../../components/asset-details/asset-details";
 import { BorrowerCreateListing } from "../../components/borrower-create-listing/borrower-create-listing";
 import { BorrowerListingDetails } from "../../components/borrower-listing-details/borrower-listing-details";
@@ -51,14 +51,13 @@ export const AssetDetailsPage = (): JSX.Element => {
     })
   );
 
-  // load asset data from opensea
-  const { data: osResponse, isLoading: isAssetLoading } = useGetOpenseaAssetsQuery(
+  // load asset data from nftport
+  const { data: npResponse, isLoading: isAssetLoading } = useGetNftPortAssetQuery(
     {
-      asset_contract_address: params["contractAddress"],
-      token_ids: [params["tokenId"] || ""],
-      limit: 1,
+      contract_address: params["contractAddress"] || "",
+      token_id: params["tokenId"] || "",
     },
-    { skip: !params["contractAddress"] }
+    { skip: !params["contractAddress"] || !params["tokenId"] }
   );
 
   // load listing data from backend
@@ -66,9 +65,10 @@ export const AssetDetailsPage = (): JSX.Element => {
     {
       skip: 0,
       take: 50,
-      openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      contractAddress: npResponse?.nft.contract_address || "",
+      tokenId: npResponse?.nft.token_id || "",
     },
-    { skip: !osResponse || !authSignature }
+    { skip: !npResponse || !authSignature }
   );
 
   const { error: isValidNFTError, isLoading: isValidating } = useValidateNFTQuery(

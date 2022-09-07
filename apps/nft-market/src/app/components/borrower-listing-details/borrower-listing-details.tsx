@@ -49,7 +49,8 @@ export const BorrowerListingDetails = (
     {
       skip: 0,
       take: 50,
-      openseaIds: props.asset.openseaId ? [props.asset?.openseaId] : [],
+      contractAddress: props.asset.assetContractAddress,
+      tokenId: props.asset.tokenId,
     },
     { skip: !authSignature || !user.address }
   );

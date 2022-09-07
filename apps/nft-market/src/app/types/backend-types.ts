@@ -1,3 +1,4 @@
+import { NftPortAsset } from "../api/nftport";
 import { OpenseaAsset } from "../api/opensea";
 import { ReservoirToken } from "../api/reservoir";
 
@@ -111,11 +112,9 @@ export enum NftPriceProvider {
 export type BackendAsset = {
   status: AssetStatus;
   cacheExpire?: number;
-  openseaLoaded?: number;
   hasPermission?: boolean;
   id?: string;
   tokenId: string;
-  openseaId?: string;
   name: Nullable<string>;
   description: Nullable<string>;
   mediaType: CollectibleMediaType;
@@ -136,44 +135,22 @@ export type BackendAsset = {
   wallet: string;
 } & StandardBackendObject;
 
-export type Asset = BackendAsset & {
-  collection: OpenseaCollection;
-  osData?: OpenseaAsset;
-  reservoirData?: ReservoirToken;
+export type AssetCollection = {
+  name: string;
+  symbol: string;
+  safelist_request_status: string; // "verified"
+  description?: string;
+  thumbnail_url?: string;
+  cached_thumbnail_url?: string;
+  banner_url?: string;
+  cached_banner_url?: string;
 };
 
-export type OpenseaCollection = {
-  banner_image_url?: string;
-  chat_url?: string;
-  created_date?: string;
-  default_to_fiat?: boolean;
-  description?: string;
-  dev_buyer_fee_basis_points?: number;
-  dev_seller_fee_basis_points?: number;
-  discord_url?: string;
-  display_data?: { card_display_style: string; images: string[] };
-  external_url?: string;
-  featured?: boolean;
-  featured_image_url?: string;
-  hidden?: boolean;
-  image_url: string;
-  instagram_username?: string;
-  is_nsfw?: boolean;
-  is_subject_to_whitelist?: boolean;
-  large_image_url?: string;
-  medium_username?: string;
-  name: string;
-  only_proxied_transfers?: boolean;
-  opensea_buyer_fee_basis_points?: number;
-  opensea_seller_fee_basis_points?: number;
-  payout_address?: string;
-  require_email?: boolean;
-  safelist_request_status?: string;
-  short_description?: string;
-  slug: string;
-  telegram_url?: string;
-  twitter_username?: string;
-  wiki_url?: string;
+export type Asset = BackendAsset & {
+  collection: AssetCollection;
+  osData?: OpenseaAsset;
+  npData?: NftPortAsset;
+  reservoirData?: ReservoirToken;
 };
 
 export type Nullable<T> = T | null;
@@ -318,7 +295,6 @@ export type BackendStandardQuery = {
 };
 
 export type FrontendAssetFilterQuery = Omit<Partial<Asset>, "status"> & {
-  openseaIds?: string[];
   status: AssetStatus | "All";
 };
 
@@ -326,6 +302,7 @@ export type BackendAssetQueryParams = {
   status?: AssetStatus;
   openseaIds?: string[];
   contractAddress?: string;
+  tokenId?: string;
   mediaType?: CollectibleMediaType;
 } & BackendStandardQuery;
 

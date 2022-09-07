@@ -70,7 +70,6 @@ export type ListingQueryParam = {
   skip: number;
   take: number;
   status?: string;
-  openseaIds?: string[];
   contractAddress?: string;
   tokenId?: string;
   borrower?: string;
