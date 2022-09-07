@@ -144,7 +144,7 @@ export const nftPortApi = createApi({
           const { data }: { data: NftPortAssetQueryResponse } = await queryFulfilled;
           dispatch(updateAssetsFromNftPort([data.nft]));
         } catch (e) {
-          console.info("Opensea failing. Reverting to backup");
+          console.info("NftPort failing. Reverting to backup");
         }
       },
     }),
@@ -167,7 +167,7 @@ export const nftPortApi = createApi({
           const { data }: { data: NftPortAssetsQueryResponse } = await queryFulfilled;
           dispatch(updateAssetsFromNftPort(data.nfts));
         } catch (e) {
-          console.info("Opensea failing. Reverting to backup");
+          console.info("NftPort failing. Reverting to backup");
         }
       },
     }),
