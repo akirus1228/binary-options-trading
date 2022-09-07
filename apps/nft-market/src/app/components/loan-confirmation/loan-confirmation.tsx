@@ -32,6 +32,7 @@ import {
   selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
+import { formatCurrency, formatDateTimeString } from "@fantohm/shared-helpers";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { desiredNetworkId } from "../../constants/network";
 import { BigNumber, ethers } from "ethers";
@@ -42,7 +43,6 @@ import {
   useGetCollectionsQuery,
   useResetPartialLoanMutation,
 } from "../../api/backend-api";
-import { formatCurrency } from "@fantohm/shared-helpers";
 import { Link } from "react-router-dom";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { addAlert } from "../../store/reducers/app-slice";
@@ -85,9 +85,6 @@ export const LoanConfirmation = ({
     useSelector((state: RootState) => state.wallet);
 
   const handleClose = () => {
-    if (isPending) {
-      return;
-    }
     if (onClose) {
       onClose();
     }
@@ -168,7 +165,7 @@ export const LoanConfirmation = ({
   // click accept term button
   const handleAcceptTerms = useCallback(async () => {
     if (!allowance || allowance.lt(minRequiredBalanceGwei)) {
-      console.warn("Insufficiant allownace. Trigger request");
+      console.warn("Insufficient allowance. Trigger request");
       return;
     }
     if (!provider || !user.address || !listing) {
@@ -198,6 +195,10 @@ export const LoanConfirmation = ({
     let createLoanResult;
     try {
       createLoanResult = await createLoan(createLoanRequest).unwrap();
+      if (!createLoanResult) {
+        dispatch(addAlert({ message: "Failed to create a loan", severity: "error" }));
+        return;
+      }
       const createLoanContractResult = await dispatch(
         contractCreateLoan(createLoanParams)
       ).unwrap();
@@ -376,7 +377,8 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {listing.term.amount} {currency?.symbol}{" "}
+                    {formatCurrency(listing.term.amount, 4).replace("$", "")}{" "}
+                    {currency?.symbol}{" "}
                     <span className="subtle" style={{ marginLeft: "1em" }}>
                       (to borrower)
                     </span>
@@ -397,7 +399,8 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {platformFeeAmt} {currency?.symbol}{" "}
+                    {formatCurrency(platformFeeAmt, 4).replace("$", "")}{" "}
+                    {currency?.symbol}{" "}
                     <span className="subtle" style={{ marginLeft: "1em" }}>
                       (platform fee)
                     </span>
@@ -422,7 +425,7 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {totalAmt?.toFixed(5)} {currency?.symbol}
+                    {formatCurrency(totalAmt, 4).replace("$", "")} {currency?.symbol}
                   </span>
                   <span className="subtle">
                     ~{formatCurrency(totalAmt * currency?.lastPrice)}
@@ -446,11 +449,7 @@ export const LoanConfirmation = ({
                         marginBottom: "2px",
                       }}
                     />
-                    {currencyBalance &&
-                      ethers.utils.formatUnits(
-                        currencyBalance,
-                        currency?.decimals || 18
-                      )}{" "}
+                    {currencyBalance && ethers.utils.formatUnits(currencyBalance, 18)}{" "}
                     {currency?.symbol || ""}
                   </span>
                 </Box>
@@ -460,7 +459,7 @@ export const LoanConfirmation = ({
           <Paper sx={{ my: "1em" }}>
             <Box className="flex fc" sx={{ mr: "1em" }}>
               <span className="strong" style={{ fontSize: "0.875em", color: "#aaa" }}>
-                You will recieve repayment of
+                You will receive repayment of
               </span>
               <Box className="flex fr fj-sb ai-c">
                 <span className="flex fr ai-c">
@@ -474,7 +473,8 @@ export const LoanConfirmation = ({
                       marginBottom: "2px",
                     }}
                   />
-                  {repaymentTotal.toFixed(5)} {currency?.symbol || ""}
+                  {formatCurrency(repaymentTotal, 4).replace("$", "")}{" "}
+                  {currency?.symbol || ""}
                 </span>
                 <span className="subtle">
                   ~{formatCurrency(repaymentTotal * currency?.lastPrice || 0, 2)}
@@ -487,7 +487,7 @@ export const LoanConfirmation = ({
             <span className="strong" style={{ color: "#aaa" }}>
               If the loan is not repaid by
               <strong className={style["repayDate"]}>
-                {` ${estRepaymentDate.toLocaleString()} `}
+                {` ${formatDateTimeString(estRepaymentDate)} `}
               </strong>
               you are entitled to:
             </span>
@@ -535,7 +535,15 @@ export const LoanConfirmation = ({
             </Button>
           )}
         </Box>
-        <Box className="flex fr fj-c" onClick={handleClose} sx={{ cursor: "pointer" }}>
+        <Box
+          className="flex fr fj-c"
+          onClick={() => {
+            if (!isPending) {
+              handleClose();
+            }
+          }}
+          sx={{ cursor: "pointer" }}
+        >
           <span className="subtle">Nevermind</span>
         </Box>
       </Dialog>

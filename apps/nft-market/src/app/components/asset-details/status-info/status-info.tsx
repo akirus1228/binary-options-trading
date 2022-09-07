@@ -3,7 +3,6 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import style from "./status-info.module.scss";
 import { Asset, Listing, Loan } from "../../../types/backend-types";
 import { useTermDetails } from "../../../hooks/use-term-details";
-import { formatCurrency } from "@fantohm/shared-helpers";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
@@ -12,27 +11,17 @@ import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice"
 import {
   getLoanDetailsFromContract,
   LoanDetails,
-  LoanDetailsStatus,
 } from "../../../store/reducers/loan-slice";
 import { desiredNetworkId } from "../../../constants/network";
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { formatCurrency } from "@fantohm/shared-helpers";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import { formatDateTimeString } from "@fantohm/shared-helpers";
 
 export interface StatusInfoProps {
   asset: Asset;
   listing?: Listing;
   loan?: Loan;
 }
-
-const formatDateTimeString = (time: Date) => {
-  const items = new Date(time).toString().split(" ");
-  return (
-    new Date(time).toLocaleTimeString() +
-    ", " +
-    new Date(time).toDateString().slice(4) +
-    " " +
-    items[items.length - 1]
-  );
-};
 
 const BorrowerNotListed = ({ asset }: { asset: Asset }): JSX.Element => {
   return (
@@ -85,7 +74,9 @@ const BorrowerOnlyListed = ({
         <span> at a </span>
         <span className={style["strong"]}>{listing.term.apr}% APY</span>
         <span> over </span>
-        <span className={style["strong"]}>{listing.term.duration} days</span>
+        <span className={style["strong"]}>
+          {prettifySeconds(listing.term.duration * 86400, "day")}
+        </span>
       </Box>
     </Box>
   );

@@ -18,6 +18,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { prettifySeconds } from "@fantohm/shared-web3";
 import { ListingQueryParam, ListingSort } from "../../../store/reducers/interfaces";
 import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
@@ -51,6 +52,7 @@ export const LenderAssetFilter = ({
   const [durationRange, setDurationRange] = useState<number[]>(initialDurationRange);
   const [collection, setCollection] = useState<Collection>({} as Collection);
   const [sort, setSort] = useState<string>(ListingSort.Recently);
+  const [keyword, setKeyword] = useState<string>("");
   const collectionAddresses = useSelector((state: RootState) =>
     Object.values(state.listings.listings).map(
       (listing) => listing.asset.assetContractAddress
@@ -66,7 +68,7 @@ export const LenderAssetFilter = ({
   };
 
   const durationValuetext = (value: number) => {
-    return `${value} days`;
+    return prettifySeconds(value * 86400, "day");
   };
 
   const getSortQuery = (status: string): string => {
@@ -152,7 +154,7 @@ export const LenderAssetFilter = ({
     };
     if (updatedQuery.contractAddress === query.contractAddress) return;
     setQuery(updatedQuery);
-  }, [collection, query, setQuery]);
+  }, [collection, JSON.stringify(query), setQuery]);
 
   const handleResetFilters = () => {
     handlePriceRangeChangeCommitted({ target: {} } as Event, initialPriceRange);
@@ -160,6 +162,7 @@ export const LenderAssetFilter = ({
     handleDurationRangeChangeCommitted({ target: {} } as Event, initialDurationRange);
     handleSortChange({ target: { value: "Recent" } } as SelectChangeEvent<string>);
     setCollection({} as Collection);
+    setKeyword("");
   };
   const followersMarks = [
     {
@@ -221,7 +224,11 @@ export const LenderAssetFilter = ({
 
   return (
     <Box sx={{ ml: "auto" }}>
-      <AssetSearch setCollection={setCollection} />
+      <AssetSearch
+        keyword={keyword}
+        setKeyword={setKeyword}
+        setCollection={setCollection}
+      />
       <Select
         labelId="asset-sort-by"
         label="Sort by"
@@ -360,7 +367,7 @@ export const LenderAssetFilter = ({
           Duration
         </ListSubheader>
         <Slider
-          getAriaLabel={() => "Duratioun range"}
+          getAriaLabel={() => "Duration range"}
           value={durationRange}
           onChange={handleDurationRangeChange}
           onChangeCommitted={handleDurationRangeChangeCommitted}
@@ -371,8 +378,8 @@ export const LenderAssetFilter = ({
         />
       </Box>
       <Box className="flex fj-sb">
-        <span style={{ fontSize: "10px" }}>{durationRange[0]} days</span>
-        <span style={{ fontSize: "10px" }}>{durationRange[1]} days</span>
+        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[0])}</span>
+        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[1])}</span>
       </Box>
       <CollectionsFilter
         collections={collections?.filter(

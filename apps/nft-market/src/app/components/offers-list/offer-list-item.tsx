@@ -10,8 +10,6 @@ import {
   Menu,
   Tooltip,
 } from "@mui/material";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -216,7 +214,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       createLoanResult = await createLoan(createLoanRequest).unwrap();
       if (!createLoanResult) {
         setIsPending(false);
-        return; //todo: throw nice error
+        dispatch(addAlert({ message: "Failed to create a loan", severity: "error" }));
+        return;
       }
       const createLoanContractResult = await dispatch(
         contractCreateLoan(createLoanParams)
@@ -245,6 +244,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         dispatch(
           addAlert({
             message: e?.data?.message,
+            severity: "error",
           })
         );
       }
@@ -400,7 +400,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       case OffersListFields.APR:
         return `${offer.term.apr}%`;
       case OffersListFields.DURATION:
-        return `${offer.term.duration} days`;
+        return prettifySeconds(offer.term.duration * 86400, "day");
       case OffersListFields.EXPIRATION:
         return offerExpires;
       case OffersListFields.ASSET:
@@ -478,12 +478,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
               offer.status === OfferStatus.Ready &&
               Date.parse(offer.term.expirationAt) > Date.now() &&
               (isPending ? (
-                <Button variant="contained" className="offer slim">
+                <Button variant="outlined" className="offer slim">
                   <CircularProgress />
                 </Button>
               ) : (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   sx={{ width: "150px" }}
                   className="offer slim"
                   onClick={handleRequestPermission}
@@ -495,12 +495,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
               hasPermission &&
               offer.status === OfferStatus.Ready &&
               (isPending ? (
-                <Button variant="contained" className="offer slim">
+                <Button variant="outlined" className="offer slim">
                   <CircularProgress />
                 </Button>
               ) : (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   sx={{ width: "150px" }}
                   className="offer slim"
                   onClick={handleAcceptOffer}

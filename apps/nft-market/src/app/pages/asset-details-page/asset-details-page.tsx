@@ -115,6 +115,7 @@ export const AssetDetailsPage = (): JSX.Element => {
 
   const { data: offers, isLoading: isOffersLoading } = useGetOffersQuery({
     assetId: assetId || "",
+    sortQuery: "offer.updatedAt:DESC",
   });
 
   const activeLoan = useMemo(() => {

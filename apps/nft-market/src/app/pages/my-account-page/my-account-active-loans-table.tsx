@@ -1,11 +1,15 @@
-import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
+import {
+  addressEllipsis,
+  formatCurrency,
+  formatDateTimeString,
+} from "@fantohm/shared-helpers";
 import {
   PaperTable,
   PaperTableCell,
   PaperTableHead,
   PaperTableRow,
 } from "@fantohm/shared-ui-themes";
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 import {
   Avatar,
   Box,
@@ -123,8 +127,14 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
         </Box>
       </PaperTableCell>
       <PaperTableCell>{loan.term.apr}%</PaperTableCell>
-      <PaperTableCell>{loan.term.duration} days</PaperTableCell>
-      <PaperTableCell>{loanDetails?.endDateTime.toLocaleString()}</PaperTableCell>
+      <PaperTableCell>
+        {prettifySeconds(loan.term.duration * 86400, "day")}
+      </PaperTableCell>
+      <PaperTableCell>
+        {formatDateTimeString(
+          new Date(Date.parse(loanDetails?.endDateTime.toString() || "yesterday"))
+        )}
+      </PaperTableCell>
       <PaperTableCell>
         {loan.borrower.address === user.address
           ? "You"

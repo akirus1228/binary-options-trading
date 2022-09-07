@@ -38,9 +38,15 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 
 export interface AssetSearchProps {
   setCollection: (collection: Collection) => void;
+  keyword: string;
+  setKeyword: (keyword: string) => void;
 }
 
-export const BorrowerAssetSearch = ({ setCollection }: AssetSearchProps): JSX.Element => {
+export const BorrowerAssetSearch = ({
+  setCollection,
+  keyword,
+  setKeyword,
+}: AssetSearchProps): JSX.Element => {
   const { address } = useWeb3Context();
   const ref = useRef<HTMLElement>(null);
   const [triggerOpenseaSearch, searchedOwnedCollections] =
@@ -61,7 +67,6 @@ export const BorrowerAssetSearch = ({ setCollection }: AssetSearchProps): JSX.El
       ?.map((loan) => loan.assetListing.asset)
       .filter((asset) => asset.status === AssetStatus.Locked) || [];
 
-  const [keyword, setKeyword] = useState("");
   const [isFocus, setIsFocus] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
   const [assets, setAssets] = useState<
@@ -91,16 +96,18 @@ export const BorrowerAssetSearch = ({ setCollection }: AssetSearchProps): JSX.El
 
   const onChangeKeyword = (value: string) => {
     setKeyword(value);
+  };
 
-    if (value !== "") {
+  useEffect(() => {
+    if (keyword !== "") {
       triggerCollections({
-        keyword: value,
+        keyword,
       });
     } else {
       setAssets([]);
       setCollections([]);
     }
-  };
+  }, [keyword]);
 
   useEffect(() => {
     if (!searchedCollections.isSuccess) return;

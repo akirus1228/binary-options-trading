@@ -46,7 +46,7 @@ export const LendPage = (): JSX.Element => {
     setSkip(0);
     trigger({ ...query, skip: 0, take });
     setDisplayAssets([]);
-  }, [query]);
+  }, [JSON.stringify(query)]);
 
   useEffect(() => {
     if (!listingsResult.isSuccess) return;

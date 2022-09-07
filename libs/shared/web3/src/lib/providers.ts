@@ -125,6 +125,7 @@ export const chains: AllChainDetails = {
     symbol: "ETH",
     decimals: 18,
     blockExplorerUrls: ["https://rinkeby.etherscan.io/"],
+    multicallAddress: "0x5ba1e12693dc8f9c48aad8770482f4739beed696",
   }),
   [NetworkIds.Avalanche]: new ChainDetails({
     networkName: "Avalanche Network",

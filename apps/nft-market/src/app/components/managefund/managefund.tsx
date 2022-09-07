@@ -124,7 +124,7 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
       if (result) {
         await dispatch(
           addAlert({
-            message: `Allownace for ${currency?.symbol} has been updated!`,
+            message: `Allowance for ${currency?.symbol} has been updated!`,
           })
         );
         handleClose();

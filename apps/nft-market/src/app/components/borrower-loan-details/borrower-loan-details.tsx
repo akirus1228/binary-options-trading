@@ -1,6 +1,7 @@
+import { formatCurrency } from "@fantohm/shared-helpers";
 import {
   checkErc20Allowance,
-  formatCurrency,
+  error,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   selectErc20BalanceByAddress,
@@ -32,6 +33,7 @@ import style from "./borrower-loan-details.module.scss";
 import { desiredNetworkId } from "../../constants/network";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
+import { addAlert } from "../../store/reducers/app-slice";
 
 export interface BorrowerLoanDetailsProps {
   asset: Asset;
@@ -149,8 +151,25 @@ export const BorrowerLoanDetails = ({
           status: LoanStatus.Complete,
         };
         updateLoan(updateLoanRequest);
-      } catch (e) {
-        console.log(e);
+      } catch (e: any) {
+        if (e.error === undefined) {
+          let message;
+          if (e.message === "Internal JSON-RPC error.") {
+            message = e.data.message;
+          } else {
+            message = e.message;
+          }
+          if (typeof message === "string") {
+            dispatch(
+              addAlert({ message: `Unknown error: ${message}`, severity: "error" })
+            );
+          }
+        } else {
+          dispatch(
+            addAlert({ message: `Unknown error: ${e.error.message}`, severity: "error" })
+          );
+        }
+        return;
       }
     } else {
       console.warn(`insufficient allowance: ${erc20Allowance}`);

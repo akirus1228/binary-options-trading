@@ -1,7 +1,7 @@
 import {
+  isDev,
   checkErc20Allowance,
   checkNftPermission,
-  formatCurrency,
   loadPlatformFee,
   requestErc20Allowance,
   requestNftPermission,
@@ -9,6 +9,7 @@ import {
   selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
+import { formatCurrency, formatDateTimeString } from "@fantohm/shared-helpers";
 import {
   Box,
   Button,
@@ -19,7 +20,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { isDev } from "@fantohm/shared-web3";
 import { AppDispatch, RootState } from "../../store";
 import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -321,7 +321,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       amount: Number(amount),
       apr: Number(apr),
       duration: termTypes[durationType] * Number(duration),
-      expirationAt: expirationAt.toJSON(),
+      expirationAt: expirationAt.toISOString(),
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
@@ -372,7 +372,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       amount: Number(amount),
       apr: Number(apr),
       duration: termTypes[durationType] * Number(duration),
-      expirationAt: expirationAt.toJSON(),
+      expirationAt: expirationAt.toISOString(),
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
@@ -390,7 +390,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       if (!term.signature || term.signature === "") {
         // user rejected signature
         // error message being dispatched from another catch
-        // dispatch(addAlert({ message: "Signature rejected. Terms not updated." }));
+        // dispatch(addAlert({ message: "Signature rejected. Terms not updated.", severity: "error" }));
         props.onClose(true);
         return;
       }
@@ -422,7 +422,10 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [isTermsUpdateLoading, updateTermsResponse, props.listing]);
 
   const handleDurationChange = (event: BaseSyntheticEvent) => {
-    setDuration(event.target.value);
+    const re = /^[0-9\b]+$/;
+    if (event.target.value === "" || re.test(event.target.value)) {
+      setDuration(event.target.value);
+    }
   };
 
   const handleDurationTypeChange = (event: SelectChangeEvent) => {
@@ -503,7 +506,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       amount: Number(amount),
       duration: termTypes[durationType] * Number(duration),
       apr: Number(apr),
-      expirationAt: expirationAt.toJSON(),
+      expirationAt: expirationAt.toISOString(),
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
@@ -780,7 +783,11 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         platformfee={(platformFees[currency?.currentAddress] / 10000) * Number(amount)}
         currencySymbol={currency?.symbol}
         interest={repaymentAmount}
-        duedata={new Date(Date.now() + 86400 * 1000 * 7).toUTCString()}
+        dueDate={formatDateTimeString(
+          new Date(
+            Date.now() + 86400 * 1000 * termTypes[durationType] * Number(duration)
+          ).toUTCString()
+        )}
         setOpen={setConfirmOpen}
         onConfirm={props?.isEdit ? handleUpdateTerms : handleMakeOffer}
       ></ConfirmDialog>

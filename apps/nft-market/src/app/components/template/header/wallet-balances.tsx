@@ -1,4 +1,3 @@
-import { formatCurrency } from "@fantohm/shared-helpers";
 import { selectErc20Balance } from "@fantohm/shared-web3";
 import { Box, Button, Container, Paper } from "@mui/material";
 import { ethers } from "ethers";

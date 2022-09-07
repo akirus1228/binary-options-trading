@@ -12,13 +12,13 @@ import { Link as RouterLink } from "react-router-dom";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
 import { useEffect, useMemo, useState } from "react";
-import { capitalizeFirstLetter } from "@fantohm/shared-helpers";
+import { formatCurrency, capitalizeFirstLetter } from "@fantohm/shared-helpers";
 import { Asset, AssetStatus } from "../../../types/backend-types";
 import { AppDispatch, RootState } from "../../../store";
 import { selectListingFromAsset } from "../../../store/selectors/listing-selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { useTermDetails } from "../../../hooks/use-term-details";
-import { formatCurrency, isDev } from "@fantohm/shared-web3";
+import { isDev, prettifySeconds } from "@fantohm/shared-web3";
 import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice";
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
@@ -227,7 +227,9 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           </span>
         </Box>
         <Box className="flex fr fj-sb ai-c w100">
-          <span className={style["termValue"]}>{listing.term.duration} days</span>
+          <span className={style["termValue"]}>
+            {prettifySeconds(listing.term.duration * 86400, "day")}
+          </span>
           <span className={style["termValue"]}>{listing.term.apr}%</span>
         </Box>
       </Box>

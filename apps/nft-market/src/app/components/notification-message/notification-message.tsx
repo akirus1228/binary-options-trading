@@ -243,6 +243,44 @@ const OfferAcceptedBorrower = ({ asset, short, terms }: MessageProp): JSX.Elemen
   );
 };
 
+const OfferUpdatedLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
+  const { repaymentAmount, currency } = useTermDetails(terms);
+  const shortMsg = <span>You offer has been updated on {getBlueText(asset.name)}</span>;
+  const longMsg = (
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      You offer has been updated on {getBlueText(asset.name)} for{" "}
+      {formatCurrency(terms?.amount || 0, 2)} {currency.symbol} over {terms?.duration}{" "}
+      days, with a total repayment of {formatCurrency(repaymentAmount || 0, 2)}{" "}
+      {currency.symbol}.
+    </span>
+  );
+  return (
+    <Box className="flex fc">
+      {shortMsg}
+      {!short && longMsg}
+    </Box>
+  );
+};
+
+const OfferUpdatedBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
+  const { repaymentAmount, currency } = useTermDetails(terms);
+  const shortMsg = <span>The offer on {getBlueText(asset.name)} has been updated</span>;
+  const longMsg = (
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      The offer on {getBlueText(asset.name)} has been updated for{" "}
+      {formatCurrency(terms?.amount || 0, 2)} {currency.symbol} over {terms?.duration}{" "}
+      days, with a total repayment of {formatCurrency(repaymentAmount || 0, 2)}{" "}
+      {currency.symbol}.
+    </span>
+  );
+  return (
+    <Box className="flex fc">
+      {shortMsg}
+      {!short && longMsg}
+    </Box>
+  );
+};
+
 const ListingCancelledLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
   // const { repaymentAmount, currencyPrice } = useTermDetails(terms);
   const shortMsg = <span>The listing for {getBlueText(asset.name)} was cancelled</span>;
@@ -293,11 +331,11 @@ export const NotificationMessage = ({
   const [borrower, setBorrower] = useState<User>();
   const navigate = useNavigate();
   const [updateNotification] = useUpdateUserNotificationMutation();
-  const createdAgo = useMemo(() => {
-    if (!notification || !notification.createdAt) return "";
-    const createdAtTimestamp = Date.parse(notification?.createdAt);
-    return prettifySeconds((Date.now() - createdAtTimestamp) / 1000);
-  }, [notification.createdAt]);
+  const updatedAgo = useMemo(() => {
+    if (!notification || !notification.updatedAt) return "";
+    const updatedAtTimestamp = Date.parse(notification?.updatedAt);
+    return prettifySeconds((Date.now() - updatedAtTimestamp) / 1000);
+  }, [notification.updatedAt]);
 
   const { data: listing } = useGetListingQuery(assetListingId, {
     skip: !assetListingId,
@@ -324,6 +362,10 @@ export const NotificationMessage = ({
         setContextType("listing");
         break;
       case NotificationContext.OfferAccepted:
+        setOfferId(notification.contextId);
+        setContextType("offer");
+        break;
+      case NotificationContext.OfferUpdated:
         setOfferId(notification.contextId);
         setContextType("offer");
         break;
@@ -405,6 +447,12 @@ export const NotificationMessage = ({
             ? OfferAcceptedLender
             : OfferAcceptedBorrower;
         break;
+      case NotificationContext.OfferUpdated:
+        MsgType =
+          notification.userType === UserType.Lender
+            ? OfferUpdatedLender
+            : OfferUpdatedBorrower;
+        break;
     }
     return <MsgType {...msgParams} />;
   }, [notification.context, asset, borrower, lender, terms, short]);
@@ -443,7 +491,7 @@ export const NotificationMessage = ({
                 fontSize: "0.8rem",
               }}
             >
-              {createdAgo} ago
+              {updatedAgo} ago
             </Box>
           )}
         </div>

@@ -37,7 +37,7 @@ import {
   networks,
   allBonds,
 } from "@fantohm/shared-web3";
-import { formatCurrency, formatSeconds } from "@fantohm/shared-helpers";
+import { formatSeconds, formatCurrency } from "@fantohm/shared-helpers";
 import { useNavigate } from "react-router-dom";
 
 import { RootState } from "../../../store";

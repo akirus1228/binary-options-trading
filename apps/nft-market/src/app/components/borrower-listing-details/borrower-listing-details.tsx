@@ -20,7 +20,8 @@ import style from "./borrower-listing-details.module.scss";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import CancelListing from "../cancel-listing/cancel-listing";
-import { formatCurrency } from "@fantohm/shared-web3";
+import { formatCurrency } from "@fantohm/shared-helpers";
+import { prettifySeconds } from "@fantohm/shared-web3";
 
 export interface BorrowerListingDetailsProps {
   asset: Asset;
@@ -159,7 +160,7 @@ export const BorrowerListingDetails = (
           <Box className="flex fc">
             <Typography className={style["label"]}>Duration</Typography>
             <Typography className={`${style["data"]}`}>
-              {listing.term.duration} days
+              {prettifySeconds(listing.term.duration * 86400, "day")}
             </Typography>
           </Box>
           <Box className="flex fc">

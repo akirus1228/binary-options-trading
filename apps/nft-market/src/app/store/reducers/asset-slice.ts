@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { isAssetValid } from "@fantohm/shared/fetch-nft";
-import { isDev, loadState } from "@fantohm/shared-web3";
+import { isDev, loadState, ierc721Abi, chains } from "@fantohm/shared-web3";
 import { Asset, AssetStatus, BackendLoadingStatus } from "../../types/backend-types";
 import { OpenseaAsset } from "../../api/opensea";
 import {
@@ -8,6 +8,9 @@ import {
   reservoirTokenToAsset,
 } from "../../helpers/data-translations";
 import { ReservoirToken } from "../../api/reservoir";
+import { desiredNetworkId } from "../../constants/network";
+import { Contract, Provider } from "ethers-multicall";
+import { StaticJsonRpcProvider } from "@ethersproject/providers";
 
 export const assetToAssetId = (asset: Asset) =>
   `${asset.tokenId}:::${asset.assetContractAddress.toLowerCase()}`;
@@ -39,10 +42,27 @@ export const updateAssetsFromOpensea = createAsyncThunk(
     const newAssetAry = await openseaAssetToAsset(
       openseaAssets.filter((asset: OpenseaAsset) => isAssetValid(asset))
     );
+
+    const ethcallProvider = new Provider(await chains[desiredNetworkId].provider);
+    await ethcallProvider.init();
+    const owners = await ethcallProvider.all(
+      newAssetAry.map((asset) => {
+        const nftContract = new Contract(asset.assetContractAddress, ierc721Abi);
+        return nftContract["ownerOf"](asset.tokenId);
+      })
+    );
+
     const newAssets: Assets = {};
-    newAssetAry.forEach((asset: Asset) => {
-      newAssets[assetToAssetId(asset)] = asset;
+    newAssetAry.forEach((asset: Asset, index: number) => {
+      newAssets[assetToAssetId(asset)] = {
+        ...asset,
+        owner: {
+          ...asset.owner,
+          address: owners[index],
+        },
+      };
     });
+
     dispatch(updateAssets(newAssets));
   }
 );

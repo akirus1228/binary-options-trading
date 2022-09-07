@@ -43,6 +43,7 @@ export const BorrowerAssetFilter = ({
       wallet: address,
     })
   );
+  const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState<string>("All");
   const [collection, setCollection] = useState<Collection>({} as Collection);
 
@@ -72,7 +73,7 @@ export const BorrowerAssetFilter = ({
       };
       setQuery(updatedQuery);
     },
-    [query]
+    [JSON.stringify(query)]
   );
 
   useEffect(() => {
@@ -87,12 +88,17 @@ export const BorrowerAssetFilter = ({
   const handleResetFilters = () => {
     handleStatusChange({ target: { value: "All" } } as SelectChangeEvent<string>);
     setCollection({} as Collection);
+    setKeyword("");
   };
   const isWalletConnected = address && authSignature;
 
   return (
     <Box sx={{ ml: "auto" }}>
-      <BorrowerAssetSearch setCollection={setCollection} />
+      <BorrowerAssetSearch
+        keyword={keyword}
+        setKeyword={setKeyword}
+        setCollection={setCollection}
+      />
       <Select
         labelId="asset-sort-by"
         label="Sort by"
