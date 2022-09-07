@@ -145,7 +145,7 @@ export const AssetDetails = ({
                 )
                 .map((collection, index) => (
                   <Typography
-                    sx={{ color: "#374FFF", display: "flex" }}
+                    sx={{ color: "#374FFF", display: "flex", marginTop: "20px" }}
                     key={`${collection.slug}_${index}`}
                   >
                     {collection.slug}

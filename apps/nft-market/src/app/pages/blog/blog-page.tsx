@@ -188,7 +188,7 @@ export const BlogPage = (): JSX.Element => {
               <img src={AboutDivider as string} alt="divider" style={{ width: "100%" }} />
             </Grid>
           </Grid>
-          <Grid
+          {/* <Grid
             item
             md={12}
             order={{ lg: 1 }}
@@ -236,7 +236,7 @@ export const BlogPage = (): JSX.Element => {
                 />
               </RadioGroup>
             </FormControl>
-            {/* <Search className={style["searchDiv"]}>
+            <Search className={style["searchDiv"]}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -244,8 +244,8 @@ export const BlogPage = (): JSX.Element => {
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
               />
-            </Search> */}
-          </Grid>
+            </Search>
+          </Grid> */}
           <Grid
             item
             md={12}
