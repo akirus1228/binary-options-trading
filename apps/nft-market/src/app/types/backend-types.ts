@@ -162,6 +162,7 @@ export enum NotificationContext {
   Liquidation = "LIQUIDATION",
   NewOffer = "NEW_OFFER",
   OfferAccepted = "OFFER_ACCEPTED",
+  OfferUpdated = "OFFER_UPDATED",
   ListingCancelled = "LISTING_CANCELLED",
 }
 

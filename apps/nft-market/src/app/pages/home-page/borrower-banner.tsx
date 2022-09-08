@@ -143,7 +143,7 @@ export const BorrowerBanner = ({ isDark }: { isDark: boolean }): JSX.Element => 
                     transform="translate(-7.512 8.652)"
                     fill="none"
                     stroke="#374fff"
-                    stroke-width="2"
+                    strokeWidth="2"
                   />
                   <path
                     id="Path_2947"
@@ -152,7 +152,7 @@ export const BorrowerBanner = ({ isDark }: { isDark: boolean }): JSX.Element => 
                     transform="translate(5.543 -5)"
                     fill="none"
                     stroke="#374fff"
-                    stroke-width="2"
+                    strokeWidth="2"
                   />
                 </g>
               </svg>

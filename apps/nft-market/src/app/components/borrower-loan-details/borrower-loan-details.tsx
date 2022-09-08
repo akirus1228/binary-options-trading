@@ -160,10 +160,14 @@ export const BorrowerLoanDetails = ({
             message = e.message;
           }
           if (typeof message === "string") {
-            dispatch(addAlert({ message: `Unknown error: ${message}` }));
+            dispatch(
+              addAlert({ message: `Unknown error: ${message}`, severity: "error" })
+            );
           }
         } else {
-          dispatch(addAlert({ message: `Unknown error: ${e.error.message}` }));
+          dispatch(
+            addAlert({ message: `Unknown error: ${e.error.message}`, severity: "error" })
+          );
         }
         return;
       }

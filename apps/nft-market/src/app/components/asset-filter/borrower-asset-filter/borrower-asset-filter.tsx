@@ -73,7 +73,7 @@ export const BorrowerAssetFilter = ({
       };
       setQuery(updatedQuery);
     },
-    [query]
+    [JSON.stringify(query)]
   );
 
   useEffect(() => {
