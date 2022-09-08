@@ -73,7 +73,7 @@ export const useRequestErc20Allowance = (
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
-    ["requestErc2Allowance"],
+    ["requestErc20Allowance"],
     () => {
       console.log("erc20Address", erc20Address);
       console.log("spender", spender);

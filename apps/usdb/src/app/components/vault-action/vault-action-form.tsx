@@ -55,17 +55,13 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
 
   const themeType = useSelector((state: RootState) => state.app.theme);
 
-  const {
-    balance: currencyBalance,
-    isLoading: isBalanceLoading,
-    error: loadBalanceError,
-  } = useErc20Balance(currency?.currentAddress ?? "", address);
+  const { balance: currencyBalance, isLoading: isBalanceLoading } = useErc20Balance(
+    currency?.currentAddress ?? "",
+    address
+  );
 
-  const {
-    allowance: erc20Allowance,
-    isLoading: isAllowanceLoading,
-    error: allowanceLoadError,
-  } = useGetErc20Allowance(currency?.currentAddress ?? "", address, vaultId);
+  const { allowance: erc20Allowance, isLoading: isAllowanceLoading } =
+    useGetErc20Allowance(currency?.currentAddress ?? "", address, vaultId);
 
   const { mutation: requestAllowance } = useRequestErc20Allowance(
     currency?.currentAddress ?? "",
