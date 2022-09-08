@@ -28,6 +28,7 @@ import {
   vaultWithdraw,
   prettifySeconds,
 } from "@fantohm/shared-web3";
+import { useBalanceVault } from "../../hooks/use-balance-vault";
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -37,12 +38,12 @@ export interface VaultActionProps {
   onClose: (value: boolean) => void;
   deposit: boolean;
   open: boolean;
-  lockDuration: number;
 }
 
 export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
-  const { vaultId, onClose, open, deposit, lockDuration } = props;
+  const { vaultId, onClose, open, deposit } = props;
   const queryClient = useQueryClient();
+  const { vaultData } = useBalanceVault(vaultId as string);
 
   const { provider, address, chainId } = useWeb3Context();
   const dispatch: AppDispatch = useDispatch();
@@ -155,8 +156,16 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     return ethers.utils.parseUnits(amount || "0", 18).lte(currencyBalance);
   }, [amount, currencyBalance]);
   const shouldDisabled = useMemo(() => {
-    return isPending || (!isDeposit && lockDuration > 0);
-  }, [isPending, isDeposit, lockDuration]);
+    if (isPending) return true;
+    const curTime = Math.round(new Date().getTime() / 1000);
+    if (!vaultData?.shouldBeFrozen) return false;
+    if (!isDeposit && !vaultData?.frozen && curTime > vaultData?.repaymentTimestamp)
+      return false;
+    return true;
+  }, [isPending, isDeposit, vaultData]);
+  const shouldOverlay = useMemo(() => {
+    return !isDeposit && shouldDisabled;
+  }, [isDeposit, shouldDisabled]);
 
   return (
     <Dialog
@@ -347,7 +356,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
           </Button>
         )}
       </Box>
-      {!isDeposit && lockDuration > 0 && (
+      {shouldOverlay && (
         <Box
           className="flex fr"
           style={{
@@ -388,7 +397,12 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
               <Icon component={InfoOutlinedIcon} fontSize={"large"} sx={{ ml: "5px" }} />
               <span style={{ width: "10px" }} />
               <h2 className={styles["text-md"]}>
-                Funding is locked for {prettifySeconds(lockDuration ?? 0)} more
+                {vaultData?.frozen
+                  ? "Vault is frozen"
+                  : `Funding is locked for ${prettifySeconds(
+                      vaultData?.repaymentTimestamp ??
+                        0 - Math.round(new Date().getTime() / 1000)
+                    )} more`}
               </h2>
             </Box>
           </Box>

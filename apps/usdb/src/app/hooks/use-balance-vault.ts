@@ -20,6 +20,7 @@ export type BalanceVault = {
   apr: number;
   shouldBeFrozen: boolean;
   lockDuration: number;
+  frozen: boolean;
   time: { completedTime: string; percentComplete: number };
 };
 
@@ -80,6 +81,7 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
       const freezeTimestamp = contract["freezeTimestamp"]();
       const repaymentTimestamp = contract["repaymentTimestamp"]();
       const shouldBeFrozen = contract["shouldBeFrozen"]();
+      const frozen = contract["frozen"]();
 
       return Promise.all([
         vaultName,
@@ -95,6 +97,7 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
         freezeTimestamp,
         repaymentTimestamp,
         shouldBeFrozen,
+        frozen,
       ]).then((res) => {
         return {
           vaultAddress: contractAddress,
@@ -113,6 +116,7 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
           shouldBeFrozen: res[12] as boolean,
           lockDuration:
             (res[11] as BigNumber).toNumber() - (res[10] as BigNumber).toNumber(),
+          frozen: res[13] as boolean,
           time: calcTimeCompleted(
             (res[10] as BigNumber).toNumber(),
             (res[11] as BigNumber).toNumber()
