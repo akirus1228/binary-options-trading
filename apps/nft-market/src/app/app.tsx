@@ -32,6 +32,7 @@ import PrivacyPage from "./components/Privacy/privacy";
 import TermsPage from "./components/Terms-Condition/terms";
 import { NewHomePage } from "./pages/home-page";
 import HelpPage from "./components/help/help";
+import { InfoBtn } from "./components/template/info/info";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -231,6 +232,7 @@ export const App = (): JSX.Element => {
       ) : (
         <Box paddingTop={5} paddingBottom={12} sx={{ height: "100vh" }}>
           <Header />
+          <InfoBtn />
           <Growl />
           <Box sx={{ minHeight: "calc(100% - 194px)" }} className={"mainContent"}>
             <Routes>

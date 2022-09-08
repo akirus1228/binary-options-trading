@@ -45,9 +45,9 @@ type Page = {
 const pages: Page[] = [
   { title: "Lend", href: "/lend", tooltip: "Earn interest" },
   { title: "Borrow", href: "/borrow", tooltip: "Get liquidity" },
-  { title: "Account", href: "/my-account" },
-  { title: "Feedback & Issues", href: "https://liqd.nolt.io/", external: true },
-  { title: "About", href: "/", hash: "#about-section" },
+  // { title: "Account", href: "/my-account" },
+  // { title: "Feedback & Issues", href: "https://liqd.nolt.io/", external: true },
+  // { title: "About", href: "/", hash: "#about-section" },
   { title: "Blog", href: "/blog" },
 ];
 
