@@ -100,7 +100,6 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
         onClose={onVaultActionFormClose}
         deposit={isDeposit}
         open={vaultActionFormOpen}
-        lockDuration={vaultData?.lockDuration ?? 0}
       />
       <Box className="grid g-x-2" sx={{ m: "2em" }} maxWidth="xl" id="grid-container">
         <Box
