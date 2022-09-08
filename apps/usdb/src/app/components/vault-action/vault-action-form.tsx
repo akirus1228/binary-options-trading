@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Dialog,
+  Icon,
   TextField,
   Typography,
   Button,
@@ -10,6 +11,7 @@ import {
   MenuItem,
   CircularProgress,
 } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { ethers } from "ethers";
 import styles from "./vault-action-form.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
@@ -24,6 +26,7 @@ import {
   useRequestErc20Allowance,
   info,
   vaultWithdraw,
+  prettifySeconds,
 } from "@fantohm/shared-web3";
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
@@ -34,10 +37,11 @@ export interface VaultActionProps {
   onClose: (value: boolean) => void;
   deposit: boolean;
   open: boolean;
+  lockDuration: number;
 }
 
 export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
-  const { vaultId, onClose, open, deposit } = props;
+  const { vaultId, onClose, open, deposit, lockDuration } = props;
   const queryClient = useQueryClient();
 
   const { provider, address, chainId } = useWeb3Context();
@@ -51,17 +55,13 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
 
   const themeType = useSelector((state: RootState) => state.app.theme);
 
-  const {
-    balance: currencyBalance,
-    isLoading: isBalanceLoading,
-    error: loadBalanceError,
-  } = useErc20Balance(currency?.currentAddress ?? "", address);
+  const { balance: currencyBalance, isLoading: isBalanceLoading } = useErc20Balance(
+    currency?.currentAddress ?? "",
+    address
+  );
 
-  const {
-    allowance: erc20Allowance,
-    isLoading: isAllowanceLoading,
-    error: allowanceLoadError,
-  } = useGetErc20Allowance(currency?.currentAddress ?? "", address, vaultId);
+  const { allowance: erc20Allowance, isLoading: isAllowanceLoading } =
+    useGetErc20Allowance(currency?.currentAddress ?? "", address, vaultId);
 
   const { mutation: requestAllowance } = useRequestErc20Allowance(
     currency?.currentAddress ?? "",
@@ -154,6 +154,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     if (!currencyBalance) return false;
     return ethers.utils.parseUnits(amount || "0", 18).lte(currencyBalance);
   }, [amount, currencyBalance]);
+  const shouldDisabled = useMemo(() => {
+    return isPending || (!isDeposit && lockDuration > 0);
+  }, [isPending, isDeposit, lockDuration]);
 
   return (
     <Dialog
@@ -198,7 +201,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         </Box>
       </Box>
       <Box
-        className={`flex fc ${styles["body"]}`}
+        className="flex fc"
         sx={{ borderTop: "1px solid #aaaaaa", paddingTop: "40px" }}
       >
         <FormInputWrapper title="My wallet">
@@ -306,8 +309,8 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         {isPending && (
           <Button
             sx={{ marginTop: "30px" }}
-            className={styles["button"]}
-            disabled={isPending}
+            className={styles[shouldDisabled ? "disabled" : "button"]}
+            disabled={shouldDisabled}
           >
             <CircularProgress size="1.5em" />
           </Button>
@@ -315,9 +318,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         {!isPending && hasBalance && !hasAllowance && (
           <Button
             sx={{ marginTop: "30px" }}
-            className={styles["button"]}
+            className={styles[shouldDisabled ? "disabled" : "button"]}
             onClick={handleRequestAllowance}
-            disabled={isPending}
+            disabled={shouldDisabled}
           >
             Request Allowance
             {isPending && <CircularProgress size="1.5em" />}
@@ -326,8 +329,8 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         {!isPending && !hasBalance && (
           <Button
             sx={{ marginTop: "30px" }}
-            className={styles["button"]}
-            disabled={isPending}
+            className={styles[shouldDisabled ? "disabled" : "button"]}
+            disabled={shouldDisabled}
           >
             Insufficient Balance
           </Button>
@@ -335,15 +338,62 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         {!isPending && hasAllowance && hasBalance && (
           <Button
             sx={{ marginTop: "30px" }}
-            className={styles["button"]}
+            className={styles[shouldDisabled ? "disabled" : "button"]}
             onClick={isDeposit ? handleDeposit : handleWithdraw}
-            disabled={isPending}
+            disabled={shouldDisabled}
           >
             {isDeposit ? "Deposit" : "Withdraw"}
             {isPending && <CircularProgress size="1.5em" />}
           </Button>
         )}
       </Box>
+      {!isDeposit && lockDuration > 0 && (
+        <Box
+          className="flex fr"
+          style={{
+            flex: 1,
+            backgroundColor: "#47494b88",
+            backdropFilter: "blur(6px)",
+            position: "absolute",
+            top: "150px",
+            bottom: "20px",
+            left: "20px",
+            right: "20px",
+            zIndex: 99,
+            borderRadius: "53px",
+          }}
+        >
+          <Box
+            className="flex"
+            style={{
+              flex: 1,
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              className="flex fr"
+              style={{
+                flex: 1,
+                marginLeft: "100px",
+                marginRight: "100px",
+                padding: "5px",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#161616",
+                borderRadius: "30px",
+              }}
+            >
+              <Icon component={InfoOutlinedIcon} fontSize={"large"} sx={{ ml: "5px" }} />
+              <span style={{ width: "10px" }} />
+              <h2 className={styles["text-md"]}>
+                Funding is locked for {prettifySeconds(lockDuration ?? 0)} more
+              </h2>
+            </Box>
+          </Box>
+        </Box>
+      )}
     </Dialog>
   );
 };
