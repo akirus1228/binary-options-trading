@@ -237,13 +237,8 @@ export const reservoirTokenToAsset = (token: ReservoirToken): Asset => {
     reservoirData: token,
     collection: {
       name: token.collection.name || "",
-      symbol: "",
-      safelist_request_status: "verified",
-      description: token.collection.description,
-      thumbnail_url: "",
-      cached_thumbnail_url: "",
-      banner_url: token.collection.banner,
-      cached_banner_url: token.collection.banner,
+      image_url: token.collection.image || "",
+      slug: token.collection.slug || "",
     },
   };
   return updatedAsset;

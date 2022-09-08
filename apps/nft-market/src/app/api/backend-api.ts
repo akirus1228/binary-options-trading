@@ -40,9 +40,11 @@ import {
   updateAsset,
   updateAssets,
   updateAssetsFromListings,
+  updateAssetsFromOpensea,
 } from "../store/reducers/asset-slice";
 import { updateListing, updateListings } from "../store/reducers/listing-slice";
 import { isDev } from "@fantohm/shared-web3";
+import { OpenseaAsset } from "./opensea";
 
 export const WEB3_SIGN_MESSAGE =
   "Welcome to Liqdnft!\n\nTo get started, click Sign In and accept our Terms of Service: <https://liqdnft.com/term> \n\nThis request will not trigger a blockchain transaction or cost any gas fees.";
@@ -549,6 +551,56 @@ export const backendApi = createApi({
       }),
       providesTags: ["Asset"],
     }),
+    // Nft Proxy
+    getNftAssets: builder.query<
+      {
+        count: number;
+        data: OpenseaAsset[];
+      },
+      {
+        skip: number;
+        take: number;
+        erc20Address: string;
+      }
+    >({
+      query: (queryParams) => ({
+        url: `nft/fetch`,
+        params: queryParams,
+      }),
+      transformResponse: (
+        response: {
+          count: number;
+          data: OpenseaAsset[];
+        },
+        meta,
+        arg
+      ) => {
+        const assets = response.data.map((asset: OpenseaAsset) => {
+          let wallet;
+          if (asset.owner && asset.owner.address) {
+            wallet = asset.owner.address;
+          } else {
+            wallet = "";
+          }
+          return {
+            ...asset,
+            wallet,
+          };
+        });
+        return {
+          data: assets,
+          count: response.count,
+        };
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateAssetsFromOpensea(data.data));
+        } catch (e) {
+          console.info("Opensea failing. Reverting to backup");
+        }
+      },
+    }),
   }),
 });
 
@@ -584,4 +636,5 @@ export const {
   useGetUserQuery,
   useUpdateUserNotificationMutation,
   useGetNftPriceQuery,
+  useGetNftAssetsQuery,
 } = backendApi;

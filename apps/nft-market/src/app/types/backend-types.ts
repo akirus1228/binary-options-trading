@@ -1,5 +1,5 @@
 import { NftPortAsset } from "../api/nftport";
-import { OpenseaAsset } from "../api/opensea";
+import { OpenseaAsset, OpenseaCollection } from "../api/opensea";
 import { ReservoirToken } from "../api/reservoir";
 
 // request types
@@ -112,9 +112,11 @@ export enum NftPriceProvider {
 export type BackendAsset = {
   status: AssetStatus;
   cacheExpire?: number;
+  openseaLoaded?: number;
   hasPermission?: boolean;
   id?: string;
   tokenId: string;
+  openseaId?: string;
   name: Nullable<string>;
   description: Nullable<string>;
   mediaType: CollectibleMediaType;
@@ -135,19 +137,8 @@ export type BackendAsset = {
   wallet: string;
 } & StandardBackendObject;
 
-export type AssetCollection = {
-  name: string;
-  symbol: string;
-  safelist_request_status: string; // "verified"
-  description?: string;
-  thumbnail_url?: string;
-  cached_thumbnail_url?: string;
-  banner_url?: string;
-  cached_banner_url?: string;
-};
-
 export type Asset = BackendAsset & {
-  collection: AssetCollection;
+  collection: OpenseaCollection;
   osData?: OpenseaAsset;
   npData?: NftPortAsset;
   reservoirData?: ReservoirToken;
@@ -295,6 +286,7 @@ export type BackendStandardQuery = {
 };
 
 export type FrontendAssetFilterQuery = Omit<Partial<Asset>, "status"> & {
+  openseaIds?: string[];
   status: AssetStatus | "All";
 };
 

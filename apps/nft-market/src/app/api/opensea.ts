@@ -87,30 +87,30 @@ export type OpenseaGetAssetsResponse = {
 export type OpenseaCollection = {
   banner_image_url?: string;
   chat_url?: string;
-  created_date: string;
-  default_to_fiat: boolean;
+  created_date?: string;
+  default_to_fiat?: boolean;
   description?: string;
-  dev_buyer_fee_basis_points: string;
-  dev_seller_fee_basis_points: string;
+  dev_buyer_fee_basis_points?: string;
+  dev_seller_fee_basis_points?: string;
   discord_url?: string;
-  display_data: OpenseaDisplayData;
+  display_data?: OpenseaDisplayData;
   external_url?: string;
-  featured: boolean;
+  featured?: boolean;
   featured_image_url?: string;
-  hidden: boolean;
-  image_url?: string;
+  hidden?: boolean;
+  image_url: string;
   instagram_username?: string;
-  is_nsfw: boolean;
-  is_subject_to_whitelist: boolean;
+  is_nsfw?: boolean;
+  is_subject_to_whitelist?: boolean;
   large_image_url?: string;
   medium_username?: string;
   name: string;
-  only_proxied_transfers: boolean;
-  opensea_buyer_fee_basis_points: string;
-  opensea_seller_fee_basis_points: string;
+  only_proxied_transfers?: boolean;
+  opensea_buyer_fee_basis_points?: string;
+  opensea_seller_fee_basis_points?: string;
   payout_address?: string;
-  require_email: boolean;
-  safelist_request_status: string;
+  require_email?: boolean;
+  safelist_request_status?: string;
   short_description?: string;
   slug: string;
   telegram_url?: string;
@@ -166,7 +166,7 @@ const staggeredBaseQuery = retry(
   }
 );
 
-type OpenseaAssetResponse = {
+export type OpenseaAssetResponse = {
   assets: OpenseaAsset[];
   next: string;
 };
