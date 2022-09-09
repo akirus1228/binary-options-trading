@@ -141,8 +141,11 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
   return (
     <Box className="flex fc fj-fs" sx={{ mb: "5em", ...sx }}>
       <h2 style={{ marginBottom: "0" }}>Previous Loans</h2>
-      <TableContainer>
-        <PaperTable aria-label="Active investments" sx={{ borderSpacing: "0" }}>
+      <TableContainer sx={{ padding: "10px" }}>
+        <PaperTable
+          aria-label="Active investments"
+          sx={{ minWidth: "700px", borderSpacing: "0" }}
+        >
           <PaperTableHead>
             <TableRow>
               <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>

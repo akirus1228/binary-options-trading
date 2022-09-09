@@ -11,5 +11,15 @@ export const formatDateTimeString = (time: Date, isOnlyDate = false) => {
   const year = time.toLocaleString("default", { year: "2-digit" });
   const month = time.toLocaleString("default", { month: "short" });
   const day = time.toLocaleString("default", { day: "numeric" });
-  return `${day}-${month}-${year}${isOnlyDate ? "" : ", " + time.toUTCString()}`;
+  return `${day}-${month}-${year}${
+    isOnlyDate
+      ? ""
+      : ", " +
+        time.getUTCHours() +
+        ":" +
+        time.getUTCMinutes() +
+        ":" +
+        time.getUTCSeconds() +
+        " UTC"
+  }`;
 };
