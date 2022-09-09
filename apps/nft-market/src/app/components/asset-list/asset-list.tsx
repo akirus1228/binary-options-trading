@@ -35,6 +35,7 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
         }
         className="flex fr fw w100"
         endMessage={<Box className="flex fw fr fj-c ai-c w100"></Box>}
+        scrollableTarget={document.body}
       >
         {props.assets &&
           props.assets.map((asset: Asset, index: number) => (
