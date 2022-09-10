@@ -33,26 +33,26 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
     return (
       <>
         <ul>
-          <li>By continuing, you agree and accept the below terms and conditions.</li>
+          By continuing, you agree and accept the below terms and conditions.
           <li>
-            You agree and accept to grant Liqd the full management and control access to
-            your NFT posted as collateral.
+            To grant Liqd the full management and control access to your NFT posted as
+            collateral.
           </li>
           <li>
-            You agree and accept to pay the full interest amount on the acquired loan even
-            when its repayment is completed within the agreed upon terms.
+            To pay the full interest amount on the acquired loan even when its repayment
+            is completed within the agreed upon terms.
           </li>
           <li>
-            You agree and accept to repay the loan with interest only with the wallet
-            address used to sign the loan contract.
+            To repay the loan with interest only with the wallet address used to sign the
+            loan contract.
           </li>
           <li>
-            You agree and accept that the lender becomes the sole owner of your NFT should
-            your loan has been defaulted on.
+            That the lender becomes the sole owner of your NFT should your loan has been
+            defaulted on.
           </li>
           <li>
-            You agree and accept that you cannot repay any loans and negotiate new loan
-            terms after the loans have been defaulted on.
+            You cannot repay any loans and negotiate new loan terms after the loans have
+            been defaulted on.
           </li>
         </ul>
         <Button onClick={onAcceptTerms} variant="contained">
