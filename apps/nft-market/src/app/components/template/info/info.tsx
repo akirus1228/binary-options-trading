@@ -2,8 +2,9 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
+import { Link } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import { HashLink as Link } from "react-router-hash-link";
+import { HashLink } from "react-router-hash-link";
 
 import infoSvg from "../../../../assets/icons/info.svg";
 import infoClosePng from "../../../../assets/images/info-close.png";
@@ -96,9 +97,13 @@ export const InfoBtn = (): JSX.Element => {
             />
             <Typography sx={{ fontSize: "14px" }}>
               Need help getting started? Click{" "}
-              <Link to="/lend" style={{ color: "#fff", borderBottom: "1px solid #fff" }}>
+              <HashLink
+                to="/lend"
+                onClick={handleClose}
+                style={{ color: "#fff", borderBottom: "1px solid #fff" }}
+              >
                 here
-              </Link>
+              </HashLink>
             </Typography>
           </Box>
           <Box
@@ -116,14 +121,14 @@ export const InfoBtn = (): JSX.Element => {
             />
             <Typography sx={{ fontSize: "14px" }}>
               Report an issue or bug{" "}
-              <a
+              <Link
+                href="https://liqd.nolt.io"
                 style={{ color: "#fff", borderBottom: "1px solid #fff" }}
-                href="https://liqd.nolt.io/"
                 target="_blank"
-                rel="noreffer noreferrer"
+                onClick={handleClose}
               >
                 here
-              </a>
+              </Link>
             </Typography>
           </Box>
         </Box>
