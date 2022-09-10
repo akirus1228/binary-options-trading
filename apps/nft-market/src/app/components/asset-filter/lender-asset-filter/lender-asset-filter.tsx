@@ -18,7 +18,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { prettifySeconds } from "@fantohm/shared-web3";
 import { ListingQueryParam, ListingSort } from "../../../store/reducers/interfaces";
 import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
@@ -35,7 +34,7 @@ export interface LenderAssetFilterProps {
 
 const initialPriceRange = [0, 100];
 const initialAprRange = [0, 400];
-const initialDurationRange = [0, 365];
+const initialDurationRange = [0, 100];
 
 export const LenderAssetFilter = ({
   query,
@@ -68,7 +67,7 @@ export const LenderAssetFilter = ({
   };
 
   const durationValuetext = (value: number) => {
-    return prettifySeconds(value * 86400, "day");
+    return `${Math.floor(value * 365)} ${Math.floor(value * 365) > 0 ? "days" : "days"}`;
   };
 
   const getSortQuery = (status: string): string => {
@@ -133,7 +132,7 @@ export const LenderAssetFilter = ({
 
   const handleDurationRangeChange = (event: Event, newValue: number | number[]) => {
     if (!event || typeof newValue === "number") return;
-    setDurationRange([newValue[0], newValue[1]]);
+    setDurationRange([newValue[0] * 365, newValue[1]]);
   };
 
   const handleDurationRangeChangeCommitted = (
@@ -144,7 +143,11 @@ export const LenderAssetFilter = ({
     setDurationRange([newValue[0], newValue[1]]);
 
     //trigger query update
-    setQuery({ ...query, minDuration: newValue[0], maxDuration: newValue[1] });
+    setQuery({
+      ...query,
+      minDuration: Math.ceil(newValue[0] * 365),
+      maxDuration: Math.ceil(newValue[1] * 365),
+    });
   };
 
   useMemo(() => {
@@ -191,6 +194,34 @@ export const LenderAssetFilter = ({
       label: "1M",
     },
   ];
+
+  const followersMarksForDuration = [
+    {
+      value: 0,
+      scaledValue: 0,
+      label: "0 year",
+    },
+    {
+      value: 25,
+      scaledValue: 25,
+      label: "25 years",
+    },
+    {
+      value: 50,
+      scaledValue: 50,
+      label: "50 years",
+    },
+    {
+      value: 75,
+      scaledValue: 75,
+      label: "75 years",
+    },
+    {
+      value: 100,
+      scaledValue: 100,
+      label: "100 years",
+    },
+  ];
   const scaleValues = (valueArray: any) => {
     return [scale(valueArray[0]), scale(valueArray[1])];
   };
@@ -212,6 +243,18 @@ export const LenderAssetFilter = ({
     return remainder * increment + previousMark.scaledValue;
   };
 
+  const scaleForDuration = (value: any) => {
+    const previousMarkIndex = Math.floor(value / 25);
+    const previousMark = followersMarksForDuration[previousMarkIndex];
+    const remainder = value % 25;
+    if (remainder === 0) {
+      return previousMark.scaledValue;
+    }
+    const nextMark = followersMarksForDuration[previousMarkIndex + 1];
+    const increment = (nextMark.scaledValue - previousMark.scaledValue) / 25;
+    return remainder * increment + previousMark.scaledValue;
+  };
+
   function numFormatter(num: any) {
     if (num > 999 && num < 1000000) {
       return (num / 1000).toFixed(0) + "K"; // convert to K for number from > 1000 < 1 million
@@ -219,6 +262,19 @@ export const LenderAssetFilter = ({
       return (num / 1000000).toFixed(0) + "M"; // convert to M for number from > 1 million
     } else if (num < 900) {
       return num; // if value < 1000, nothing to do
+    }
+  }
+
+  function numFormatterForDuration(num: any) {
+    const intValue = Math.ceil(num * 365);
+    if (intValue > 0 && intValue < 365) {
+      return `${intValue} days`;
+    } else if (intValue >= 365) {
+      return `${Math.ceil(intValue / 365)} years ${
+        intValue % 365 > 0 ? (intValue % 365) + "days" : ""
+      }`;
+    } else {
+      return "0 day";
     }
   }
 
@@ -368,18 +424,24 @@ export const LenderAssetFilter = ({
         </ListSubheader>
         <Slider
           getAriaLabel={() => "Duration range"}
+          min={0}
+          step={1}
+          max={100}
+          valueLabelFormat={numFormatterForDuration}
+          marks={followersMarksForDuration}
+          scale={scaleForDuration}
           value={durationRange}
           onChange={handleDurationRangeChange}
           onChangeCommitted={handleDurationRangeChangeCommitted}
           valueLabelDisplay="auto"
           getAriaValueText={durationValuetext}
-          min={0}
-          max={365}
+          sx={{
+            margin: {
+              xs: "0",
+              sm: "10px 0",
+            },
+          }}
         />
-      </Box>
-      <Box className="flex fj-sb">
-        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[0])}</span>
-        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[1])}</span>
       </Box>
       <CollectionsFilter
         collections={collections?.filter(
