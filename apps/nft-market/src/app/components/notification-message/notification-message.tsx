@@ -281,6 +281,43 @@ const OfferUpdatedBorrower = ({ asset, short, terms }: MessageProp): JSX.Element
   );
 };
 
+const OfferRemovedLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
+  const { repaymentAmount, currency } = useTermDetails(terms);
+  const shortMsg = <span>You offer has been removed on {getBlueText(asset.name)}</span>;
+  const longMsg = (
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      You offer for {formatCurrency(terms?.amount || 0, 2)} {currency.symbol} over{" "}
+      {terms?.duration} days, with a total repayment of{" "}
+      {formatCurrency(repaymentAmount || 0, 2)} {currency.symbol} has been removed on{" "}
+      {getBlueText(asset.name)}.
+    </span>
+  );
+  return (
+    <Box className="flex fc">
+      {shortMsg}
+      {!short && longMsg}
+    </Box>
+  );
+};
+
+const OfferRemovedBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
+  const { repaymentAmount, currency } = useTermDetails(terms);
+  const shortMsg = <span>The offer on {getBlueText(asset.name)} has been removed</span>;
+  const longMsg = (
+    <span style={{ marginTop: "10px", fontSize: "0.85rem" }}>
+      The offer on {getBlueText(asset.name)} for {formatCurrency(terms?.amount || 0, 2)}{" "}
+      {currency.symbol} over {terms?.duration} days, with a total repayment of{" "}
+      {formatCurrency(repaymentAmount || 0, 2)} {currency.symbol} has been removed.
+    </span>
+  );
+  return (
+    <Box className="flex fc">
+      {shortMsg}
+      {!short && longMsg}
+    </Box>
+  );
+};
+
 const ListingCancelledLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
   // const { repaymentAmount, currencyPrice } = useTermDetails(terms);
   const shortMsg = <span>The listing for {getBlueText(asset.name)} was cancelled</span>;
@@ -369,6 +406,10 @@ export const NotificationMessage = ({
         setOfferId(notification.contextId);
         setContextType("offer");
         break;
+      case NotificationContext.OfferRemoved:
+        setOfferId(notification.contextId);
+        setContextType("offer");
+        break;
     }
   }, [notification.context]);
 
@@ -452,6 +493,12 @@ export const NotificationMessage = ({
           notification.userType === UserType.Lender
             ? OfferUpdatedLender
             : OfferUpdatedBorrower;
+        break;
+      case NotificationContext.OfferRemoved:
+        MsgType =
+          notification.userType === UserType.Lender
+            ? OfferRemovedLender
+            : OfferRemovedBorrower;
         break;
     }
     return <MsgType {...msgParams} />;
