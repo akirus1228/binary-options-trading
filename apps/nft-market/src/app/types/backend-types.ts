@@ -195,6 +195,7 @@ export enum NotificationContext {
   NewOffer = "NEW_OFFER",
   OfferAccepted = "OFFER_ACCEPTED",
   OfferUpdated = "OFFER_UPDATED",
+  OfferRemoved = "OFFER_REMOVED",
   ListingCancelled = "LISTING_CANCELLED",
 }
 
