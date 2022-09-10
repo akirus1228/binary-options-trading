@@ -147,14 +147,34 @@ export const App = (): JSX.Element => {
   // when a user connects their wallet login to the backend api
   useEffect(() => {
     if (provider && connected && address) {
-      if (switchEthereumChain && chainId !== desiredNetworkId) {
+      const focused = localStorage.getItem("tabFocused") === "true";
+      if (focused && switchEthereumChain && chainId !== desiredNetworkId) {
         switchEthereumChain(desiredNetworkId);
       }
     }
   }, [provider, address, connected]);
+
+  // User has switched back to the tab
+  const onFocus = () => {
+    localStorage.setItem("tabFocused", "true");
+  };
+
+  // User has switched away from the tab (AKA tab is hidden)
+  const onBlur = () => {
+    localStorage.setItem("tabFocused", "false");
+  };
+
   useEffect(() => {
     // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
     dispatch(loadAppDetails());
+
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("blur", onBlur);
+    // Specify how to clean up after this effect:
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("blur", onBlur);
+    };
   }, []);
 
   const handleAgree = () => {
