@@ -164,7 +164,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
       open={open}
       PaperProps={{
         style: {
-          background: "black",
+          background: themeType === "light" ? "white" : "black",
           border: "1px solid #101112",
           maxWidth: "800px",
         },
@@ -381,11 +381,16 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                 padding: "5px",
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: "#161616",
+                backgroundColor: themeType === "light" ? "#d9d9d9" : "#161616",
                 borderRadius: "30px",
               }}
             >
-              <Icon component={InfoOutlinedIcon} fontSize={"large"} sx={{ ml: "5px" }} />
+              <Icon
+                component={InfoOutlinedIcon}
+                color="inherit"
+                fontSize={"large"}
+                sx={{ ml: "5px" }}
+              />
               <span style={{ width: "10px" }} />
               <h2 className={styles["text-md"]}>
                 Funding is locked for {prettifySeconds(lockDuration ?? 0)} more
