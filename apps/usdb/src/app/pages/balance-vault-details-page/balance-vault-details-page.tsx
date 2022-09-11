@@ -296,17 +296,29 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             id="right-box-header"
           >
             <h2 className={`${style["text-lg"]}`}>About</h2>
-            <Button
-              variant="contained"
-              disabled={true}
-              className="thinSquaredButton"
-              sx={{
-                backgroundColor: "#0D1014",
-                color: "#8A99A8",
-              }}
-            >
-              + Edit
-            </Button>
+            <Box className="flex fr">
+              <Button
+                variant="contained"
+                className="thinSquaredButton"
+                sx={{
+                  backgroundColor: "#c22010",
+                  color: "#8A99A8",
+                }}
+              >
+                Freeze
+              </Button>
+              <Button
+                variant="contained"
+                disabled={true}
+                className="thinSquaredButton"
+                sx={{
+                  backgroundColor: "#0D1014",
+                  color: "#8A99A8",
+                }}
+              >
+                + Edit
+              </Button>
+            </Box>
           </Box>
           <Box sx={{ p: "2em" }}>
             <Box className="flex ai-c">

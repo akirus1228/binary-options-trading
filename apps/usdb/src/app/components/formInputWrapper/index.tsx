@@ -1,4 +1,6 @@
+import { useSelector } from "react-redux";
 import { Box, Typography } from "@mui/material";
+import { RootState } from "../../store";
 import style from "./style.module.scss";
 
 export interface Props {
@@ -9,6 +11,7 @@ export interface Props {
 
 export const FormInputWrapper = (props: Props): JSX.Element => {
   const { title, className, children } = props;
+  const themeType = useSelector((state: RootState) => state.app.theme);
 
   return (
     <Box className={className}>
@@ -16,7 +19,7 @@ export const FormInputWrapper = (props: Props): JSX.Element => {
         <Box
           sx={{
             display: "flex",
-            backgroundColor: "black",
+            backgroundColor: themeType === "light" ? "white" : "black",
             width: "fit-content",
             marginLeft: "20px",
             zIndex: "10",
