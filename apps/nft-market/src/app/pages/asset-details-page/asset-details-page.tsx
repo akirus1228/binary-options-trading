@@ -6,10 +6,10 @@ import { useParams } from "react-router-dom";
 import {
   useGetListingsQuery,
   useGetLoansQuery,
+  useGetNftAssetQuery,
   useGetOffersQuery,
   useValidateNFTQuery,
 } from "../../api/backend-api";
-import { useGetNftPortAssetQuery } from "../../api/nftport";
 import { AssetDetails } from "../../components/asset-details/asset-details";
 import { BorrowerCreateListing } from "../../components/borrower-create-listing/borrower-create-listing";
 import { BorrowerListingDetails } from "../../components/borrower-listing-details/borrower-listing-details";
@@ -51,11 +51,11 @@ export const AssetDetailsPage = (): JSX.Element => {
     })
   );
 
-  // load asset data from nftport
-  const { data: npResponse, isLoading: isAssetLoading } = useGetNftPortAssetQuery(
+  // load asset data from backend
+  const { data: npResponse, isLoading: isAssetLoading } = useGetNftAssetQuery(
     {
-      contract_address: params["contractAddress"] || "",
-      token_id: params["tokenId"] || "",
+      contractAddress: params["contractAddress"] || "",
+      tokenId: params["tokenId"] || "",
     },
     { skip: !params["contractAddress"] || !params["tokenId"] }
   );
@@ -65,10 +65,10 @@ export const AssetDetailsPage = (): JSX.Element => {
     {
       skip: 0,
       take: 50,
-      contractAddress: npResponse?.nft.contract_address || "",
-      tokenId: npResponse?.nft.token_id || "",
+      contractAddress: params["contractAddress"] || "",
+      tokenId: params["tokenId"] || "",
     },
-    { skip: !npResponse || !authSignature }
+    { skip: !params["contractAddress"] || !params["tokenId"] }
   );
 
   const { error: isValidNFTError, isLoading: isValidating } = useValidateNFTQuery(

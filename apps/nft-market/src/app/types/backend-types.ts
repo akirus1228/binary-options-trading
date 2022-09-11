@@ -357,3 +357,15 @@ export type NftPrice = {
   priceInUsd: string;
   originalProviderResponse: string;
 };
+
+export type BackendNftAssetsQueryParams = {
+  erc20Address: string;
+  limit: number;
+  continuation?: string;
+};
+
+export type BackendNftAssetsQueryResponse = {
+  continuation: string;
+  count: number;
+  assets: Asset[];
+};

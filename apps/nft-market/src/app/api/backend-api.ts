@@ -27,6 +27,8 @@ import {
   BackendCollectionQuery,
   User,
   NftPrice,
+  BackendNftAssetsQueryParams,
+  BackendNftAssetsQueryResponse,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -39,12 +41,13 @@ import {
 import {
   updateAsset,
   updateAssets,
+  updateAssetsFromBackend,
   updateAssetsFromListings,
   updateAssetsFromOpensea,
 } from "../store/reducers/asset-slice";
 import { updateListing, updateListings } from "../store/reducers/listing-slice";
 import { isDev } from "@fantohm/shared-web3";
-import { OpenseaAsset } from "./opensea";
+import { OpenseaAsset, OpenseaCollection } from "./opensea";
 
 export const WEB3_SIGN_MESSAGE =
   "Welcome to Liqdnft!\n\nTo get started, click Sign In and accept our Terms of Service: <https://liqdnft.com/term> \n\nThis request will not trigger a blockchain transaction or cost any gas fees.";
@@ -553,29 +556,23 @@ export const backendApi = createApi({
     }),
     // Nft Proxy
     getNftAssets: builder.query<
-      {
-        count: number;
-        data: OpenseaAsset[];
-      },
-      {
-        skip: number;
-        take: number;
-        erc20Address: string;
-      }
+      BackendNftAssetsQueryResponse,
+      BackendNftAssetsQueryParams
     >({
       query: (queryParams) => ({
-        url: `nft/fetch`,
+        url: `nft/fetchAll`,
         params: queryParams,
       }),
       transformResponse: (
         response: {
+          continuation: string;
           count: number;
-          data: OpenseaAsset[];
+          data: Asset[];
         },
         meta,
         arg
       ) => {
-        const assets = response.data.map((asset: OpenseaAsset) => {
+        const assets = response.data.map((asset: Asset) => {
           let wallet;
           if (asset.owner && asset.owner.address) {
             wallet = asset.owner.address;
@@ -588,18 +585,60 @@ export const backendApi = createApi({
           };
         });
         return {
-          data: assets,
+          assets,
           count: response.count,
+          continuation: response.continuation,
         };
       },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(updateAssetsFromOpensea(data.data));
+          dispatch(updateAssetsFromBackend(data.assets));
         } catch (e) {
           console.info("Opensea failing. Reverting to backup");
         }
       },
+    }),
+    getNftAsset: builder.query<
+      OpenseaAsset,
+      {
+        contractAddress: string;
+        tokenId: string;
+      }
+    >({
+      query: (queryParams) => ({
+        url: `nft/detail/${queryParams.contractAddress}/${queryParams.tokenId}`,
+      }),
+      transformResponse: (asset: OpenseaAsset, meta, arg) => {
+        let wallet;
+        if (asset.owner && asset.owner.address) {
+          wallet = asset.owner.address;
+        } else {
+          wallet = "";
+        }
+        return {
+          ...asset,
+          wallet,
+        };
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateAssetsFromOpensea([data]));
+        } catch (e) {
+          console.info("Opensea failing. Reverting to backup");
+        }
+      },
+    }),
+    getNftCollections: builder.query<
+      Collection[],
+      {
+        wallet: string;
+      }
+    >({
+      query: (queryParams) => ({
+        url: `collection/fetchAllByWallet/${queryParams.wallet}`,
+      }),
     }),
   }),
 });
@@ -637,4 +676,7 @@ export const {
   useUpdateUserNotificationMutation,
   useGetNftPriceQuery,
   useGetNftAssetsQuery,
+  useGetNftAssetQuery,
+  useLazyGetNftCollectionsQuery,
+  useGetNftCollectionsQuery,
 } = backendApi;

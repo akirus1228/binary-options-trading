@@ -3,8 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { Asset } from "../types/backend-types";
 import { selectAssetByAddress } from "../store/selectors/asset-selectors";
-import { useGetAssetsQuery } from "../api/backend-api";
-import { useGetNftPortAssetQuery } from "../api/nftport";
+import { useGetAssetsQuery, useGetNftAssetQuery } from "../api/backend-api";
 
 export const useWalletAsset = (
   contractAddress: string,
@@ -16,10 +15,10 @@ export const useWalletAsset = (
   );
   const { address } = useWeb3Context();
   // load asset data from nftport
-  const { data: npResponse, isLoading: isAssetLoading } = useGetNftPortAssetQuery(
+  const { data: npResponse, isLoading: isAssetLoading } = useGetNftAssetQuery(
     {
-      token_id: tokenId,
-      contract_address: contractAddress,
+      tokenId,
+      contractAddress,
     },
     { skip: !!asset || !address }
   );

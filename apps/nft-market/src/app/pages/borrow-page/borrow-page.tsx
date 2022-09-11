@@ -2,19 +2,23 @@ import { useWeb3Context } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetListingsQuery, useGetLoansQuery } from "../../api/backend-api";
+import {
+  useGetListingsQuery,
+  useGetLoansQuery,
+  useGetNftAssetsQuery,
+} from "../../api/backend-api";
 import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
 import BorrowerAssetFilter from "../../components/asset-filter/borrower-asset-filter/borrower-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
 import { RootState } from "../../store";
-import { OpenseaAssetQueryParam } from "../../store/reducers/interfaces";
 import { selectAssetsByQuery } from "../../store/selectors/asset-selectors";
 import {
   Asset,
   AssetStatus,
   BackendAssetQueryParams,
   BackendLoanQueryParams,
+  BackendNftAssetsQueryParams,
   FrontendAssetFilterQuery,
   LoanStatus,
 } from "../../types/backend-types";
@@ -26,12 +30,12 @@ export const BorrowPage = (): JSX.Element => {
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
-  const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
+  const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
     limit: take,
-    owner: user.address,
+    erc20Address: user.address,
   });
 
-  const [osNext, setOsNext] = useState("");
+  const [continuation, setContinuation] = useState("");
   const [hasNext, setHasNext] = useState(true);
 
   // query to use on frontend to filter cached results and ultimately display
@@ -55,10 +59,20 @@ export const BorrowPage = (): JSX.Element => {
   });
 
   // load assets from opensea api
-  const { data: osResponse, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(
-    osQuery,
+  const { data: npResponse, isLoading: assetsLoading } = useGetNftAssetsQuery(osQuery, {
+    skip: !osQuery.erc20Address || !isOpenseaUp,
+  });
+
+  // load assets from opensea api
+  const { data: osResponse } = useGetOpenseaAssetsQuery(
     {
-      skip: !osQuery.owner || !isOpenseaUp,
+      asset_contract_addresses: npResponse?.assets.map(
+        (item) => item.assetContractAddress
+      ),
+      token_ids: npResponse?.assets.map((item) => item.tokenId),
+    },
+    {
+      skip: !npResponse?.assets || assetsLoading,
     }
   );
 
@@ -81,9 +95,9 @@ export const BorrowPage = (): JSX.Element => {
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
-    if (osResponse && osResponse.next) {
-      setOsNext(osResponse?.next || "");
-    } else if (osResponse && osResponse.next === null) {
+    if (npResponse && npResponse.continuation) {
+      setContinuation(npResponse?.continuation || "");
+    } else if (npResponse && npResponse.continuation === null) {
       setHasNext(false);
     }
   }, [osResponse]);
@@ -91,7 +105,7 @@ export const BorrowPage = (): JSX.Element => {
   useEffect(() => {
     setOsQuery({
       ...osQuery,
-      owner: address,
+      erc20Address: address,
     });
     setFeQuery({
       ...feQuery,
@@ -129,7 +143,8 @@ export const BorrowPage = (): JSX.Element => {
   const isWalletConnected = address && authSignature;
 
   const fetchMoreData = () => {
-    setOsQuery({ ...osQuery, cursor: osNext });
+    console.log("fetchMoreData", { ...osQuery, continuation: continuation });
+    setOsQuery({ ...osQuery, continuation: continuation });
   };
 
   return (
