@@ -33,6 +33,7 @@ export const BorrowPage = (): JSX.Element => {
   const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
     limit: take,
     erc20Address: user.address,
+    contractAddress: "0x0c790b0b5f362868d7641c5cb953ae03ef53b451",
   });
 
   const [continuation, setContinuation] = useState("");

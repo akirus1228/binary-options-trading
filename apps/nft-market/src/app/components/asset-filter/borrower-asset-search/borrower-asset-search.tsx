@@ -11,17 +11,18 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { AssetStatus, Collection, LoanStatus } from "../../../types/backend-types";
+import { Asset, AssetStatus, Collection, LoanStatus } from "../../../types/backend-types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { useGetLoansQuery, useLazyGetCollectionsQuery } from "../../../api/backend-api";
+import {
+  useGetLoansQuery,
+  useLazyGetCollectionsQuery,
+  useLazyGetNftAssetsQuery,
+  useLazyGetNftCollectionsQuery,
+} from "../../../api/backend-api";
 import { Link } from "react-router-dom";
 import { useWeb3Context } from "@fantohm/shared-web3";
-import {
-  useLazyGetRawOpenseaAssetsQuery,
-  useLazyGetOpenseaCollectionsQuery,
-  Nullable,
-} from "../../../api/opensea";
+import { selectAssetsByQuery } from "../../../store/selectors/asset-selectors";
 
 export const StyledTextField = styled(TextField)(({ theme }) => ({
   marginBottom: "25px",
@@ -49,8 +50,8 @@ export const BorrowerAssetSearch = ({
 }: AssetSearchProps): JSX.Element => {
   const { address } = useWeb3Context();
   const ref = useRef<HTMLElement>(null);
-  const [triggerOpenseaSearch, searchedOwnedCollections] =
-    useLazyGetOpenseaCollectionsQuery();
+  const [triggerOwnedCollections, searchedOwnedCollections] =
+    useLazyGetNftCollectionsQuery();
   const { data: loans } = useGetLoansQuery(
     {
       skip: 0,
@@ -69,16 +70,7 @@ export const BorrowerAssetSearch = ({
 
   const [isFocus, setIsFocus] = useState(false);
   const [isDropdown, setIsDropdown] = useState(false);
-  const [assets, setAssets] = useState<
-    {
-      assetContractAddress?: Nullable<string>;
-      tokenId: string;
-      name: Nullable<string>;
-      imageUrl?: Nullable<string>;
-      frameUrl?: Nullable<string>;
-      thumbUrl?: Nullable<string>;
-    }[]
-  >([]);
+  const [assets, setAssets] = useState<Asset[]>([]);
   const [collections, setCollections] = useState<
     (Collection & {
       ownedCount: number;
@@ -86,12 +78,28 @@ export const BorrowerAssetSearch = ({
   >([]);
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const [triggerCollections, searchedCollections] = useLazyGetCollectionsQuery();
-  const [triggerAssets, searchedAssets] = useLazyGetRawOpenseaAssetsQuery();
+  const [triggerAssets, searchedAssets] = useLazyGetNftAssetsQuery();
+  const myAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      wallet: address,
+      status: "All",
+    })
+  );
+  const filteredAssets = myAssets.filter((asset) => {
+    return (
+      asset.status !== AssetStatus.Locked &&
+      collections.findIndex(
+        (collection) =>
+          asset.assetContractAddress.toLowerCase() ===
+          collection.contractAddress.toLowerCase()
+      ) !== -1
+    );
+  });
 
   useEffect(() => {
     if (!address) return;
 
-    triggerOpenseaSearch({ asset_owner: address });
+    triggerOwnedCollections({ wallet: address });
   }, [address]);
 
   const onChangeKeyword = (value: string) => {
@@ -115,9 +123,10 @@ export const BorrowerAssetSearch = ({
 
     const filteredCollections = searchedCollections.data
       .map((item) => {
-        const ownedCount =
-          searchedOwnedCollections.data.find((sub) => sub.slug === item.slug)
-            ?.owned_asset_count || 0;
+        // todo: fix owned count of collection
+        const ownedCount = 0;
+        // searchedOwnedCollections.data.find((sub) => sub.slug === item.slug)
+        //   ?.openLoanCount || 0;
         return {
           ...item,
           ownedCount:
@@ -135,30 +144,20 @@ export const BorrowerAssetSearch = ({
 
     setCollections(filteredCollections);
 
-    triggerAssets({
-      owner: address,
-      asset_contract_addresses: filteredCollections.map((item) => item.contractAddress),
-    });
+    for (let i = 0; i < filteredCollections.length; i++) {
+      triggerAssets({
+        limit: 3,
+        erc20Address: address,
+        contractAddress: filteredCollections[i].contractAddress,
+      });
+    }
   }, [searchedCollections.data, searchedCollections.fulfilledTimeStamp]);
 
   useEffect(() => {
     if (!searchedAssets.isSuccess) return;
 
     const assets =
-      collections.length > 0
-        ? searchedAssets.data.assets
-            .filter((_, index) => index <= 2)
-            .map((item) => {
-              return {
-                assetContractAddress: item.asset_contract?.address,
-                tokenId: item.token_id,
-                name: item.name,
-                imageUrl: item.image_url,
-                frameUrl: item.animation_url,
-                thumbUrl: item.image_thumbnail_url,
-              };
-            })
-        : [];
+      collections.length > 0 ? filteredAssets.filter((_, index) => index <= 2) : [];
 
     if (assets.length < 3) {
       for (let i = 0; i < assetsInEscrow.length && assets.length < 3; i++) {
@@ -174,7 +173,7 @@ export const BorrowerAssetSearch = ({
     }
 
     setAssets(assets);
-  }, [searchedAssets.data, searchedAssets.fulfilledTimeStamp]);
+  }, [searchedAssets, searchedAssets.fulfilledTimeStamp]);
 
   const handleClickOutside = () => {
     setIsDropdown(false);

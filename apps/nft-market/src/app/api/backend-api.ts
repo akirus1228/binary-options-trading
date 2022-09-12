@@ -47,7 +47,7 @@ import {
 } from "../store/reducers/asset-slice";
 import { updateListing, updateListings } from "../store/reducers/listing-slice";
 import { isDev } from "@fantohm/shared-web3";
-import { OpenseaAsset, OpenseaCollection } from "./opensea";
+import { OpenseaAsset } from "./opensea";
 
 export const WEB3_SIGN_MESSAGE =
   "Welcome to Liqdnft!\n\nTo get started, click Sign In and accept our Terms of Service: <https://liqdnft.com/term> \n\nThis request will not trigger a blockchain transaction or cost any gas fees.";
@@ -676,6 +676,7 @@ export const {
   useUpdateUserNotificationMutation,
   useGetNftPriceQuery,
   useGetNftAssetsQuery,
+  useLazyGetNftAssetsQuery,
   useGetNftAssetQuery,
   useLazyGetNftCollectionsQuery,
   useGetNftCollectionsQuery,
