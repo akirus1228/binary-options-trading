@@ -18,7 +18,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { prettifySeconds } from "@fantohm/shared-web3";
 import { ListingQueryParam, ListingSort } from "../../../store/reducers/interfaces";
 import { Collection } from "../../../types/backend-types";
 import CollectionsFilter from "../../collections-filter/collections-filter";
@@ -35,7 +34,7 @@ export interface LenderAssetFilterProps {
 
 const initialPriceRange = [0, 100];
 const initialAprRange = [0, 400];
-const initialDurationRange = [0, 365];
+const initialDurationRange = [0, 100];
 
 export const LenderAssetFilter = ({
   query,
@@ -68,7 +67,7 @@ export const LenderAssetFilter = ({
   };
 
   const durationValuetext = (value: number) => {
-    return prettifySeconds(value * 86400, "day");
+    return `${value} ${value > 1 ? "days" : "day"}`;
   };
 
   const getSortQuery = (status: string): string => {
@@ -140,11 +139,18 @@ export const LenderAssetFilter = ({
     event: Event | SyntheticEvent,
     newValue: number | number[]
   ) => {
-    if (!event || typeof newValue === "number") return;
+    if (!event || typeof newValue === "number") {
+      return;
+    }
+
     setDurationRange([newValue[0], newValue[1]]);
 
     //trigger query update
-    setQuery({ ...query, minDuration: newValue[0], maxDuration: newValue[1] });
+    setQuery({
+      ...query,
+      minDuration: Math.floor(scaleForDuration(newValue[0])),
+      maxDuration: Math.floor(scaleForDuration(newValue[1])),
+    });
   };
 
   useMemo(() => {
@@ -191,6 +197,39 @@ export const LenderAssetFilter = ({
       label: "1M",
     },
   ];
+
+  const followersMarksForDuration = [
+    {
+      value: 0,
+      scaledValue: 0,
+      label: "0 day",
+    },
+    {
+      value: 20,
+      scaledValue: 10,
+      label: "10 days",
+    },
+    {
+      value: 40,
+      scaledValue: 30,
+      label: "1 month",
+    },
+    {
+      value: 60,
+      scaledValue: 180,
+      label: "6 months",
+    },
+    {
+      value: 80,
+      scaledValue: 365,
+      label: "1 year",
+    },
+    {
+      value: 100,
+      scaledValue: 3650,
+      label: "10 years",
+    },
+  ];
   const scaleValues = (valueArray: any) => {
     return [scale(valueArray[0]), scale(valueArray[1])];
   };
@@ -200,6 +239,7 @@ export const LenderAssetFilter = ({
   const scaleValuesMin = (valueArray: any) => {
     return scale(valueArray[0]);
   };
+
   const scale = (value: any) => {
     const previousMarkIndex = Math.floor(value / 25);
     const previousMark = followersMarks[previousMarkIndex];
@@ -212,6 +252,18 @@ export const LenderAssetFilter = ({
     return remainder * increment + previousMark.scaledValue;
   };
 
+  const scaleForDuration = (value: any) => {
+    const previousMarkIndex = Math.floor(value / 20);
+    const previousMark = followersMarksForDuration[previousMarkIndex];
+    const remainder = value % 20;
+    if (remainder === 0) {
+      return previousMark.scaledValue;
+    }
+    const nextMark = followersMarksForDuration[previousMarkIndex + 1];
+    const increment = (nextMark.scaledValue - previousMark.scaledValue) / 20;
+    return remainder * increment + previousMark.scaledValue;
+  };
+
   function numFormatter(num: any) {
     if (num > 999 && num < 1000000) {
       return (num / 1000).toFixed(0) + "K"; // convert to K for number from > 1000 < 1 million
@@ -219,6 +271,30 @@ export const LenderAssetFilter = ({
       return (num / 1000000).toFixed(0) + "M"; // convert to M for number from > 1 million
     } else if (num < 900) {
       return num; // if value < 1000, nothing to do
+    }
+  }
+
+  function numFormatterForDuration(num: any) {
+    if (num > 0 && num < 30) {
+      return `${Math.floor(num)} ${Math.floor(num) > 1 ? "days" : "day"}`;
+    } else if (num >= 30 && num < 365) {
+      return `${Math.floor(num / 30)} ${Math.floor(num / 30) > 1 ? "months" : "month"} ${
+        Math.floor(num % 30) > 0
+          ? Math.floor(num % 30) > 1
+            ? Math.floor(num % 30) + "days"
+            : Math.floor(num % 30) + "day"
+          : ""
+      }`;
+    } else if (num >= 365) {
+      return `${Math.floor(num / 365)} ${Math.floor(num / 365) > 1 ? "years" : "year"} ${
+        Math.floor(num % 365) > 0
+          ? Math.floor(num % 365) > 1
+            ? Math.floor(num % 365) + "days"
+            : Math.floor(num % 365) + "day"
+          : ""
+      }`;
+    } else {
+      return "0 day";
     }
   }
 
@@ -368,18 +444,24 @@ export const LenderAssetFilter = ({
         </ListSubheader>
         <Slider
           getAriaLabel={() => "Duration range"}
+          min={0}
+          step={1}
+          max={100}
+          valueLabelFormat={numFormatterForDuration}
+          marks={followersMarksForDuration}
+          scale={scaleForDuration}
           value={durationRange}
           onChange={handleDurationRangeChange}
           onChangeCommitted={handleDurationRangeChangeCommitted}
           valueLabelDisplay="auto"
           getAriaValueText={durationValuetext}
-          min={0}
-          max={365}
+          sx={{
+            margin: {
+              xs: "0",
+              sm: "10px 0",
+            },
+          }}
         />
-      </Box>
-      <Box className="flex fj-sb">
-        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[0])}</span>
-        <span style={{ fontSize: "10px" }}>{durationValuetext(durationRange[1])}</span>
       </Box>
       <CollectionsFilter
         collections={collections?.filter(
