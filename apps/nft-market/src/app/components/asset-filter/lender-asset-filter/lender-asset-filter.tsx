@@ -67,7 +67,7 @@ export const LenderAssetFilter = ({
   };
 
   const durationValuetext = (value: number) => {
-    return `${Math.floor(value * 365)} ${Math.floor(value * 365) > 0 ? "days" : "days"}`;
+    return `${value} ${value > 1 ? "days" : "day"}`;
   };
 
   const getSortQuery = (status: string): string => {
@@ -132,21 +132,24 @@ export const LenderAssetFilter = ({
 
   const handleDurationRangeChange = (event: Event, newValue: number | number[]) => {
     if (!event || typeof newValue === "number") return;
-    setDurationRange([newValue[0] * 365, newValue[1]]);
+    setDurationRange([newValue[0], newValue[1]]);
   };
 
   const handleDurationRangeChangeCommitted = (
     event: Event | SyntheticEvent,
     newValue: number | number[]
   ) => {
-    if (!event || typeof newValue === "number") return;
+    if (!event || typeof newValue === "number") {
+      return;
+    }
+
     setDurationRange([newValue[0], newValue[1]]);
 
     //trigger query update
     setQuery({
       ...query,
-      minDuration: Math.ceil(newValue[0] * 365),
-      maxDuration: Math.ceil(newValue[1] * 365),
+      minDuration: Math.floor(scaleForDuration(newValue[0])),
+      maxDuration: Math.floor(scaleForDuration(newValue[1])),
     });
   };
 
@@ -199,27 +202,32 @@ export const LenderAssetFilter = ({
     {
       value: 0,
       scaledValue: 0,
-      label: "0 year",
+      label: "0 day",
     },
     {
-      value: 25,
-      scaledValue: 25,
-      label: "25 years",
+      value: 20,
+      scaledValue: 10,
+      label: "10 days",
     },
     {
-      value: 50,
-      scaledValue: 50,
-      label: "50 years",
+      value: 40,
+      scaledValue: 30,
+      label: "1 month",
     },
     {
-      value: 75,
-      scaledValue: 75,
-      label: "75 years",
+      value: 60,
+      scaledValue: 180,
+      label: "6 months",
+    },
+    {
+      value: 80,
+      scaledValue: 365,
+      label: "1 year",
     },
     {
       value: 100,
-      scaledValue: 100,
-      label: "100 years",
+      scaledValue: 3650,
+      label: "10 years",
     },
   ];
   const scaleValues = (valueArray: any) => {
@@ -231,6 +239,7 @@ export const LenderAssetFilter = ({
   const scaleValuesMin = (valueArray: any) => {
     return scale(valueArray[0]);
   };
+
   const scale = (value: any) => {
     const previousMarkIndex = Math.floor(value / 25);
     const previousMark = followersMarks[previousMarkIndex];
@@ -244,14 +253,14 @@ export const LenderAssetFilter = ({
   };
 
   const scaleForDuration = (value: any) => {
-    const previousMarkIndex = Math.floor(value / 25);
+    const previousMarkIndex = Math.floor(value / 20);
     const previousMark = followersMarksForDuration[previousMarkIndex];
-    const remainder = value % 25;
+    const remainder = value % 20;
     if (remainder === 0) {
       return previousMark.scaledValue;
     }
     const nextMark = followersMarksForDuration[previousMarkIndex + 1];
-    const increment = (nextMark.scaledValue - previousMark.scaledValue) / 25;
+    const increment = (nextMark.scaledValue - previousMark.scaledValue) / 20;
     return remainder * increment + previousMark.scaledValue;
   };
 
@@ -266,12 +275,23 @@ export const LenderAssetFilter = ({
   }
 
   function numFormatterForDuration(num: any) {
-    const intValue = Math.ceil(num * 365);
-    if (intValue > 0 && intValue < 365) {
-      return `${intValue} days`;
-    } else if (intValue >= 365) {
-      return `${Math.ceil(intValue / 365)} years ${
-        intValue % 365 > 0 ? (intValue % 365) + "days" : ""
+    if (num > 0 && num < 30) {
+      return `${Math.floor(num)} ${Math.floor(num) > 1 ? "days" : "day"}`;
+    } else if (num >= 30 && num < 365) {
+      return `${Math.floor(num / 30)} ${Math.floor(num / 30) > 1 ? "months" : "month"} ${
+        Math.floor(num % 30) > 0
+          ? Math.floor(num % 30) > 1
+            ? Math.floor(num % 30) + "days"
+            : Math.floor(num % 30) + "day"
+          : ""
+      }`;
+    } else if (num >= 365) {
+      return `${Math.floor(num / 365)} ${Math.floor(num / 365) > 1 ? "years" : "year"} ${
+        Math.floor(num % 365) > 0
+          ? Math.floor(num % 365) > 1
+            ? Math.floor(num % 365) + "days"
+            : Math.floor(num % 365) + "day"
+          : ""
       }`;
     } else {
       return "0 day";
