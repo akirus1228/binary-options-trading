@@ -86,6 +86,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
 
   const handleDeposit = async () => {
     if (provider) {
+      setIsPending(true);
       dispatch(
         vaultDeposit({
           address,
@@ -102,12 +103,14 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
           queryClient.invalidateQueries(["vaultPosition"]);
           onClose(true);
           setAmount("0");
+          setIsPending(false);
         });
     }
   };
 
   const handleWithdraw = async () => {
     if (provider) {
+      setIsPending(true);
       dispatch(
         vaultWithdraw({
           address,
@@ -122,6 +125,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
           queryClient.invalidateQueries(["vaultPosition"]);
           onClose(true);
           setAmount("0");
+          setIsPending(false);
         });
     }
   };
@@ -155,17 +159,19 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     if (!currencyBalance) return false;
     return ethers.utils.parseUnits(amount || "0", 18).lte(currencyBalance);
   }, [amount, currencyBalance]);
+
   const shouldDisabled = useMemo(() => {
     if (isPending) return true;
     const curTime = Math.round(new Date().getTime() / 1000);
-    if (!vaultData?.shouldBeFrozen) return false;
-    if (!isDeposit && !vaultData?.frozen && curTime > vaultData?.repaymentTimestamp)
+    if (
+      vaultData?.shouldBeFrozen &&
+      !isDeposit &&
+      !vaultData?.frozen &&
+      curTime > vaultData?.repaymentTimestamp
+    )
       return false;
     return true;
   }, [isPending, isDeposit, vaultData]);
-  const shouldOverlay = useMemo(() => {
-    return !isDeposit && shouldDisabled;
-  }, [isDeposit, shouldDisabled]);
 
   return (
     <Dialog
@@ -213,7 +219,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         className="flex fc"
         sx={{ borderTop: "1px solid #aaaaaa", paddingTop: "40px" }}
       >
-        <FormInputWrapper title="My wallet">
+        <FormInputWrapper title={isDeposit ? "My wallet" : "Amount to withdraw"}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box
               className="flex fr ai-c"
@@ -283,38 +289,40 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             <Typography>${amount || 0}</Typography>
           </Box>
         </FormInputWrapper>
-        <FormInputWrapper title="Estimated yield" className={styles["inputWrapper"]}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+        {isDeposit && (
+          <FormInputWrapper title="Estimated yield" className={styles["inputWrapper"]}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box
+                className="flex fr ai-c"
+                sx={{
+                  padding: "10px 20px",
+                  border: "1px solid #101112",
+                  borderRadius: "10px",
+                }}
+              >
+                <img
+                  style={{ height: "26px", width: "26px", marginRight: 10 }}
+                  src={USDBToken}
+                  alt="USDB Token Icon"
+                />
+                <Typography sx={{ fontSize: 16 }}>USDB</Typography>
+              </Box>
+              <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>9,000.00</Typography>
+            </Box>
             <Box
-              className="flex fr ai-c"
-              sx={{
-                padding: "10px 20px",
-                border: "1px solid #101112",
-                borderRadius: "10px",
-              }}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
             >
-              <img
-                style={{ height: "26px", width: "26px", marginRight: 10 }}
-                src={USDBToken}
-                alt="USDB Token Icon"
-              />
-              <Typography sx={{ fontSize: 16 }}>USDB</Typography>
+              <Box display="flex">
+                <Typography>Yield:&nbsp;</Typography>
+                <Typography sx={{ color: "#69D9C8" }}>30%</Typography>
+              </Box>
+              <Typography>$8,999.99</Typography>
             </Box>
-            <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>9,000.00</Typography>
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
-          >
-            <Box display="flex">
-              <Typography>Yield:&nbsp;</Typography>
-              <Typography sx={{ color: "#69D9C8" }}>30%</Typography>
-            </Box>
-            <Typography>$8,999.99</Typography>
-          </Box>
-        </FormInputWrapper>
+          </FormInputWrapper>
+        )}
         {isPending && (
           <Button
             sx={{ marginTop: "30px" }}
@@ -356,7 +364,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
           </Button>
         )}
       </Box>
-      {shouldOverlay && (
+      {shouldDisabled && (
         <Box
           className="flex fr"
           style={{
@@ -404,9 +412,11 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
               <h2 className={styles["text-md"]}>
                 {vaultData?.frozen
                   ? "Vault is frozen"
+                  : vaultData?.shouldBeFrozen
+                  ? "Vault should be frozen"
                   : `Funding is locked for ${prettifySeconds(
-                      vaultData?.repaymentTimestamp ??
-                        0 - Math.round(new Date().getTime() / 1000)
+                      (vaultData?.repaymentTimestamp ?? 0) -
+                        Math.round(new Date().getTime() / 1000)
                     )} more`}
               </h2>
             </Box>
