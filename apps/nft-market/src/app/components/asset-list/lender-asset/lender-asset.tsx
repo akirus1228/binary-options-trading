@@ -202,7 +202,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         className="flex"
         style={{ flexGrow: "1" }}
       >
-        {asset.openseaId && (
+        {asset.tokenId && (
           <PreviewImage
             url={imageUrl}
             name={asset.name || "placeholder name"}

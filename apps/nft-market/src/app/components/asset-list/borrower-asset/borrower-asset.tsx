@@ -185,7 +185,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           ))}
         </Popover>
       </Box>
-      {(asset.thumbUrl || asset.imageUrl) && asset.openseaId && (
+      {(asset.thumbUrl || asset.imageUrl) && asset.tokenId && (
         <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
             url={imageUrl}

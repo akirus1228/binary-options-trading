@@ -94,7 +94,7 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
           <TermsForm
             asset={props.asset}
             onClose={onClose}
-            key={`list-terms-${props.asset.openseaId}`}
+            key={`list-terms-${props.asset.tokenId}`}
             type="borrow"
           />
         )}

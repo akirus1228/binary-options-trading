@@ -1,4 +1,5 @@
-import { OpenseaAsset } from "../api/opensea";
+import { NftPortAsset } from "../api/nftport";
+import { OpenseaAsset, OpenseaCollection } from "../api/opensea";
 import { ReservoirToken } from "../api/reservoir";
 
 // request types
@@ -139,41 +140,8 @@ export type BackendAsset = {
 export type Asset = BackendAsset & {
   collection: OpenseaCollection;
   osData?: OpenseaAsset;
+  npData?: NftPortAsset;
   reservoirData?: ReservoirToken;
-};
-
-export type OpenseaCollection = {
-  banner_image_url?: string;
-  chat_url?: string;
-  created_date?: string;
-  default_to_fiat?: boolean;
-  description?: string;
-  dev_buyer_fee_basis_points?: number;
-  dev_seller_fee_basis_points?: number;
-  discord_url?: string;
-  display_data?: { card_display_style: string; images: string[] };
-  external_url?: string;
-  featured?: boolean;
-  featured_image_url?: string;
-  hidden?: boolean;
-  image_url: string;
-  instagram_username?: string;
-  is_nsfw?: boolean;
-  is_subject_to_whitelist?: boolean;
-  large_image_url?: string;
-  medium_username?: string;
-  name: string;
-  only_proxied_transfers?: boolean;
-  opensea_buyer_fee_basis_points?: number;
-  opensea_seller_fee_basis_points?: number;
-  payout_address?: string;
-  require_email?: boolean;
-  safelist_request_status?: string;
-  short_description?: string;
-  slug: string;
-  telegram_url?: string;
-  twitter_username?: string;
-  wiki_url?: string;
 };
 
 export type Nullable<T> = T | null;
@@ -328,6 +296,7 @@ export type BackendAssetQueryParams = {
   status?: AssetStatus;
   openseaIds?: string[];
   contractAddress?: string;
+  tokenId?: string;
   mediaType?: CollectibleMediaType;
 } & BackendStandardQuery;
 
@@ -388,4 +357,17 @@ export type NftPrice = {
   priceInEth: string;
   priceInUsd: string;
   originalProviderResponse: string;
+};
+
+export type BackendNftAssetsQueryParams = {
+  walletAddress: string;
+  limit: number;
+  contractAddress?: string;
+  continuation?: string;
+};
+
+export type BackendNftAssetsQueryResponse = {
+  continuation: string;
+  count: number;
+  assets: Asset[];
 };

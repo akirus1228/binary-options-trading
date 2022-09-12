@@ -17,10 +17,13 @@ const OPENSEA_VIDEO_EXTENSIONS = [
   "mov",
 ];
 
-const SUPPORTED_VIDEO_EXTENSIONS = ["webm", "mp4", "ogv", "ogg", "mov"];
-const SUPPORTED_3D_EXTENSIONS = ["gltf", "glb"];
+export const SUPPORTED_VIDEO_EXTENSIONS = ["webm", "mp4", "ogv", "ogg", "mov"];
+export const SUPPORTED_3D_EXTENSIONS = ["gltf", "glb"];
 
-const NON_IMAGE_EXTENSIONS = [...OPENSEA_VIDEO_EXTENSIONS, ...OPENSEA_AUDIO_EXTENSIONS];
+export const NON_IMAGE_EXTENSIONS = [
+  ...OPENSEA_VIDEO_EXTENSIONS,
+  ...OPENSEA_AUDIO_EXTENSIONS,
+];
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
