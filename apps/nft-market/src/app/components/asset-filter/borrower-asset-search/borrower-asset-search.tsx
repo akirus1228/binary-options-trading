@@ -120,7 +120,6 @@ export const BorrowerAssetSearch = ({
   useEffect(() => {
     if (!searchedCollections.isSuccess) return;
     if (!searchedOwnedCollections.isSuccess) return;
-    console.log("searchedOwnedCollections = ", searchedOwnedCollections);
 
     const filteredCollections = searchedCollections.data
       .map((item) => {
