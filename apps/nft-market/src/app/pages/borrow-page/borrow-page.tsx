@@ -32,8 +32,7 @@ export const BorrowPage = (): JSX.Element => {
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
     limit: take,
-    erc20Address: user.address,
-    contractAddress: "0x0c790b0b5f362868d7641c5cb953ae03ef53b451",
+    walletAddress: user.address,
   });
 
   const [continuation, setContinuation] = useState("");
@@ -61,7 +60,7 @@ export const BorrowPage = (): JSX.Element => {
 
   // load assets from opensea api
   const { data: npResponse, isLoading: assetsLoading } = useGetNftAssetsQuery(osQuery, {
-    skip: !osQuery.erc20Address || !isOpenseaUp,
+    skip: !osQuery.walletAddress || !isOpenseaUp,
   });
 
   // load assets from opensea api
@@ -101,12 +100,12 @@ export const BorrowPage = (): JSX.Element => {
     } else if (npResponse && npResponse.continuation === null) {
       setHasNext(false);
     }
-  }, [osResponse]);
+  }, [osResponse, osResponse?.assets]);
 
   useEffect(() => {
     setOsQuery({
       ...osQuery,
-      erc20Address: address,
+      walletAddress: address,
     });
     setFeQuery({
       ...feQuery,
@@ -144,7 +143,6 @@ export const BorrowPage = (): JSX.Element => {
   const isWalletConnected = address && authSignature;
 
   const fetchMoreData = () => {
-    console.log("fetchMoreData", { ...osQuery, continuation: continuation });
     setOsQuery({ ...osQuery, continuation: continuation });
   };
 

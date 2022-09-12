@@ -227,6 +227,7 @@ export const openseaApi = createApi({
 
 export const {
   useGetOpenseaAssetsQuery,
+  useLazyGetOpenseaAssetsQuery,
   useGetRawOpenseaAssetsQuery,
   useGetOpenseaCollectionsQuery,
   useLazyGetRawOpenseaAssetsQuery,

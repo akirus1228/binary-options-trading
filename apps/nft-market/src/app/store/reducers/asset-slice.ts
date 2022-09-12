@@ -86,7 +86,7 @@ export const updateAssetsFromBackend = createAsyncThunk(
       };
     });
 
-    dispatch(updateAssets(newAssets));
+    dispatch(updateOwnedAssets(newAssets));
   }
 );
 
@@ -178,6 +178,20 @@ const assetsSlice = createSlice({
       });
       state.assets = { ...state.assets, ...mergedAssets };
     },
+    updateOwnedAssets: (state, action: PayloadAction<Assets>) => {
+      const mergedAssets: Assets = {};
+      Object.entries(action.payload).forEach(([assetId, asset]) => {
+        const newStatus = state?.assets[assetId]?.status // if there is osData, it's from opensea, save backend data if available
+          ? state?.assets[assetId]?.status
+          : asset.status;
+        mergedAssets[assetId] = {
+          ...state.assets[assetId], // spread any existing object in store
+          ...asset, // spread new object
+          status: newStatus,
+        };
+      });
+      state.assets = { ...state.assets, ...mergedAssets };
+    },
     updateAssetsFromListings: (state, action: PayloadAction<Assets>) => {
       const mergedAssets: Assets = state.assets;
       Object.entries(action.payload).forEach(([assetId, asset]) => {
@@ -200,5 +214,5 @@ const assetsSlice = createSlice({
 
 export const assetsReducer = assetsSlice.reducer;
 // actions are automagically generated and exported by the builder/thunk
-export const { updateAsset, updateAssets, updateAssetsFromListings } =
+export const { updateAsset, updateAssets, updateOwnedAssets, updateAssetsFromListings } =
   assetsSlice.actions;

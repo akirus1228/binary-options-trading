@@ -120,13 +120,14 @@ export const BorrowerAssetSearch = ({
   useEffect(() => {
     if (!searchedCollections.isSuccess) return;
     if (!searchedOwnedCollections.isSuccess) return;
+    console.log("searchedOwnedCollections = ", searchedOwnedCollections);
 
     const filteredCollections = searchedCollections.data
       .map((item) => {
         // todo: fix owned count of collection
-        const ownedCount = 0;
-        // searchedOwnedCollections.data.find((sub) => sub.slug === item.slug)
-        //   ?.openLoanCount || 0;
+        const ownedCount =
+          searchedOwnedCollections.data.find((sub) => sub.slug === item.slug)
+            ?.numNftsOwned || 0;
         return {
           ...item,
           ownedCount:
@@ -147,7 +148,7 @@ export const BorrowerAssetSearch = ({
     for (let i = 0; i < filteredCollections.length; i++) {
       triggerAssets({
         limit: 3,
-        erc20Address: address,
+        walletAddress: address,
         contractAddress: filteredCollections[i].contractAddress,
       });
     }

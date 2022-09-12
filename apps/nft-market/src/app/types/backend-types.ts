@@ -359,7 +359,7 @@ export type NftPrice = {
 };
 
 export type BackendNftAssetsQueryParams = {
-  erc20Address: string;
+  walletAddress: string;
   limit: number;
   contractAddress?: string;
   continuation?: string;

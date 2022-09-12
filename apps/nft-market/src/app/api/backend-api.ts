@@ -631,7 +631,13 @@ export const backendApi = createApi({
       },
     }),
     getNftCollections: builder.query<
-      Collection[],
+      {
+        name: string;
+        slug: string;
+        imageUrl: string;
+        contractAddress: string;
+        numNftsOwned: 105;
+      }[],
       {
         wallet: string;
       }
