@@ -301,8 +301,8 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 variant="contained"
                 className="thinSquaredButton"
                 sx={{
-                  backgroundColor: "#c22010",
-                  color: "#8A99A8",
+                  backgroundColor: "#10c210",
+                  color: "white",
                 }}
               >
                 Freeze
@@ -361,6 +361,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                       key={index}
                       href={item.split("~!_")[1]}
                       title={item.split("~!_")[0]}
+                      target="_blank"
                     />
                   )
               )}

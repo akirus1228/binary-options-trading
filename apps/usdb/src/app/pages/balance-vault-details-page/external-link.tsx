@@ -8,9 +8,10 @@ import style from "./balance-vault-details-page.module.scss";
 export type ExternalLinkProps = {
   href: string;
   title: string;
+  target: string;
 };
 
-export const ExternalLink = ({ href, title }: ExternalLinkProps) => {
+export const ExternalLink = ({ href, title, target }: ExternalLinkProps) => {
   const themeType = useSelector((state: RootState) => state.app.theme);
   const lowContrastBg =
     themeType === "light"
@@ -30,7 +31,7 @@ export const ExternalLink = ({ href, title }: ExternalLinkProps) => {
       sx={{ p: "0.75em" }}
       className={`flex fr jf-c ai-c rounded ${lowContrastBg} ${lowContrastText}`}
     >
-      <a href={href}>
+      <a href={href} target={target}>
         <span className={lowContrastText}>{title}</span>
       </a>
       <NorthEast />
