@@ -24,7 +24,6 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
   return (
     <Box className="flex w100">
       <InfiniteScroll
-        scrollableTarget={document.body}
         dataLength={props.assets.length} //This is important field to render the next data
         next={props.fetchData || defaultFn}
         hasMore={props.hasMore || false}
