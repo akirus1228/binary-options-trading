@@ -88,6 +88,7 @@ export const useRequestErc20Allowance = (
         .then((txn: ContractTransaction) => txn.wait())
         .then((response: ContractReceipt) => {
           console.log(response);
+          queryClient.invalidateQueries(["getErc20Allowance"]);
         });
     },
     {

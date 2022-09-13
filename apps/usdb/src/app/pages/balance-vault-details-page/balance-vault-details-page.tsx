@@ -304,6 +304,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                   backgroundColor: "#10c210",
                   color: "white",
                 }}
+                disabled={vaultData?.frozen || !vaultData?.shouldBeFrozen}
               >
                 Freeze
               </Button>

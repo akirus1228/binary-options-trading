@@ -15,6 +15,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { ethers } from "ethers";
 import styles from "./vault-action-form.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
+import { formatCurrency } from "@fantohm/shared-helpers";
 import {
   currencyInfo,
   useWeb3Context,
@@ -24,11 +25,10 @@ import {
   useErc20Balance,
   useGetErc20Allowance,
   useRequestErc20Allowance,
-  info,
   vaultWithdraw,
   prettifySeconds,
 } from "@fantohm/shared-web3";
-import { useBalanceVault } from "../../hooks/use-balance-vault";
+import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -53,8 +53,11 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const [token, setToken] = useState("USDB");
   const [currency, setCurrency] = useState<Erc20Currency>();
   const [isPending, setIsPending] = useState(false);
-
   const themeType = useSelector((state: RootState) => state.app.theme);
+
+  const { positionData, isLoading: isPositionLoading } = useBalanceVaultPosition(
+    vaultId as string
+  );
 
   const { balance: currencyBalance, isLoading: isBalanceLoading } = useErc20Balance(
     currency?.currentAddress ?? "",
@@ -108,6 +111,8 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const doNothing = () => {};
   const handleWithdraw = async () => {
     if (provider) {
       setIsPending(true);
@@ -131,12 +136,22 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   };
 
   useEffect(() => {
-    if (isBalanceLoading || isAllowanceLoading || requestAllowance.isLoading) {
+    if (
+      isPositionLoading ||
+      isBalanceLoading ||
+      isAllowanceLoading ||
+      requestAllowance.isLoading
+    ) {
       setIsPending(true);
     } else {
       setIsPending(false);
     }
-  }, [isBalanceLoading, isAllowanceLoading, requestAllowance.isLoading]);
+  }, [
+    isPositionLoading,
+    isBalanceLoading,
+    isAllowanceLoading,
+    requestAllowance.isLoading,
+  ]);
 
   useEffect(() => {
     const currencyObj = Object.entries(currencyInfo).find(
@@ -160,18 +175,21 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     return ethers.utils.parseUnits(amount || "0", 18).lte(currencyBalance);
   }, [amount, currencyBalance]);
 
-  const shouldDisabled = useMemo(() => {
-    if (isPending) return true;
+  const shouldOverlay = useMemo(() => {
     const curTime = Math.round(new Date().getTime() / 1000);
-    if (
-      vaultData?.shouldBeFrozen &&
-      !isDeposit &&
-      !vaultData?.frozen &&
-      curTime > vaultData?.repaymentTimestamp
-    )
+    if (!vaultData?.shouldBeFrozen) return false;
+    if (!isDeposit && !vaultData?.frozen && curTime > vaultData?.repaymentTimestamp)
       return false;
     return true;
   }, [isPending, isDeposit, vaultData]);
+
+  const shouldDisabled = useMemo(() => {
+    return (
+      isPending ||
+      shouldOverlay ||
+      (isDeposit ? !hasBalance || amount === "0" : positionData?.totalUsdValue === 0)
+    );
+  }, [isPending, shouldOverlay, isDeposit, hasBalance, amount, positionData]);
 
   return (
     <Dialog
@@ -219,152 +237,153 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         className="flex fc"
         sx={{ borderTop: "1px solid #aaaaaa", paddingTop: "40px" }}
       >
-        <FormInputWrapper title={isDeposit ? "My wallet" : "Amount to withdraw"}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Box
-              className="flex fr ai-c"
-              sx={{
-                padding: "10px 20px",
-                border: "1px solid #101112",
-                borderRadius: "10px",
-              }}
-            >
-              <Select
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                variant="standard"
-                sx={{ background: "transparent" }}
-                className="borderless"
-                disableUnderline
-                disabled
-              >
-                {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
-                  <MenuItem
-                    value={currencyDetails.symbol}
-                    key={`currency-option-item-${tokenId}`}
+        {isDeposit ? (
+          <>
+            <FormInputWrapper title="My wallet">
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box
+                  className="flex fr ai-c"
+                  sx={{
+                    padding: "10px 20px",
+                    border: "1px solid #101112",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Select
+                    value={token}
+                    onChange={(e) => setToken(e.target.value)}
+                    variant="standard"
+                    sx={{ background: "transparent" }}
+                    className="borderless"
+                    disableUnderline
+                    disabled
                   >
-                    <Box className="flex fr ai-c">
-                      <img
-                        style={{ height: "26px", width: "26px", marginRight: 10 }}
-                        src={currencyDetails.icon}
-                        alt={`${currencyDetails.symbol} Token Icon`}
-                      />
-                      <Typography sx={{ fontSize: 16 }}>
-                        {currencyDetails.symbol}
-                      </Typography>
-                    </Box>
-                  </MenuItem>
-                ))}
-              </Select>
-            </Box>
-            <TextField
-              variant="standard"
-              type="number"
-              InputProps={{
-                disableUnderline: true,
-                style: {
-                  flexGrow: 1,
-                  fontSize: "30px",
-                },
-              }}
-              inputProps={{ style: { textAlign: "right" } }}
-              sx={{
-                width: "100%",
-                marginLeft: "20px",
-              }}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-          </Box>
+                    {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
+                      <MenuItem
+                        value={currencyDetails.symbol}
+                        key={`currency-option-item-${tokenId}`}
+                      >
+                        <Box className="flex fr ai-c">
+                          <img
+                            style={{ height: "26px", width: "26px", marginRight: 10 }}
+                            src={currencyDetails.icon}
+                            alt={`${currencyDetails.symbol} Token Icon`}
+                          />
+                          <Typography sx={{ fontSize: 16 }}>
+                            {currencyDetails.symbol}
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+                <TextField
+                  variant="standard"
+                  type="number"
+                  InputProps={{
+                    disableUnderline: true,
+                    style: {
+                      flexGrow: 1,
+                      fontSize: "30px",
+                    },
+                  }}
+                  inputProps={{ style: { textAlign: "right" } }}
+                  sx={{
+                    width: "100%",
+                    marginLeft: "20px",
+                  }}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
+              >
+                <Typography>
+                  Wallet balance:{" "}
+                  {currencyBalance &&
+                    ethers.utils.formatUnits(currencyBalance, currency?.decimals ?? 18)}
+                </Typography>
+                <Typography>${amount || 0}</Typography>
+              </Box>
+            </FormInputWrapper>
+            <FormInputWrapper title="Estimated yield" className={styles["inputWrapper"]}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box
+                  className="flex fr ai-c"
+                  sx={{
+                    padding: "10px 20px",
+                    border: "1px solid #101112",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <img
+                    style={{ height: "26px", width: "26px", marginRight: 10 }}
+                    src={USDBToken}
+                    alt="USDB Token Icon"
+                  />
+                  <Typography sx={{ fontSize: 16 }}>USDB</Typography>
+                </Box>
+                <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>9,000.00</Typography>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
+              >
+                <Box display="flex">
+                  <Typography>Yield:&nbsp;</Typography>
+                  <Typography sx={{ color: "#69D9C8" }}>30%</Typography>
+                </Box>
+                <Typography>$8,999.99</Typography>
+              </Box>
+            </FormInputWrapper>
+          </>
+        ) : (
           <Box
             display="flex"
-            justifyContent="space-between"
+            justifyContent="space-around"
             alignItems="center"
-            sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
+            sx={{ fontSize: "18px", color: "#8A99A8" }}
           >
             <Typography>
-              Wallet balance:{" "}
-              {currencyBalance &&
-                ethers.utils.formatUnits(currencyBalance, currency?.decimals ?? 18)}
+              My Position: {formatCurrency(positionData?.totalUsdValue ?? 0)}
             </Typography>
-            <Typography>${amount || 0}</Typography>
           </Box>
-        </FormInputWrapper>
-        {isDeposit && (
-          <FormInputWrapper title="Estimated yield" className={styles["inputWrapper"]}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Box
-                className="flex fr ai-c"
-                sx={{
-                  padding: "10px 20px",
-                  border: "1px solid #101112",
-                  borderRadius: "10px",
-                }}
-              >
-                <img
-                  style={{ height: "26px", width: "26px", marginRight: 10 }}
-                  src={USDBToken}
-                  alt="USDB Token Icon"
-                />
-                <Typography sx={{ fontSize: 16 }}>USDB</Typography>
-              </Box>
-              <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>9,000.00</Typography>
-            </Box>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ marginTop: "30px", fontSize: "18px", color: "#8A99A8" }}
-            >
-              <Box display="flex">
-                <Typography>Yield:&nbsp;</Typography>
-                <Typography sx={{ color: "#69D9C8" }}>30%</Typography>
-              </Box>
-              <Typography>$8,999.99</Typography>
-            </Box>
-          </FormInputWrapper>
         )}
-        {isPending && (
-          <Button
-            sx={{ marginTop: "30px" }}
-            className={styles[shouldDisabled ? "disabled" : "button"]}
-            disabled={shouldDisabled}
-          >
+        <Button
+          sx={{ marginTop: "30px" }}
+          className={styles[shouldDisabled ? "disabled" : "button"]}
+          onClick={
+            isPending
+              ? doNothing
+              : !isDeposit
+              ? handleWithdraw
+              : !hasBalance
+              ? doNothing
+              : !hasAllowance
+              ? handleRequestAllowance
+              : handleDeposit
+          }
+          disabled={shouldDisabled}
+        >
+          {isPending ? (
             <CircularProgress size="1.5em" />
-          </Button>
-        )}
-        {!isPending && hasBalance && !hasAllowance && (
-          <Button
-            sx={{ marginTop: "30px" }}
-            className={styles[shouldDisabled ? "disabled" : "button"]}
-            onClick={handleRequestAllowance}
-            disabled={shouldDisabled}
-          >
-            Request Allowance
-            {isPending && <CircularProgress size="1.5em" />}
-          </Button>
-        )}
-        {!isPending && !hasBalance && (
-          <Button
-            sx={{ marginTop: "30px" }}
-            className={styles[shouldDisabled ? "disabled" : "button"]}
-            disabled={shouldDisabled}
-          >
-            Insufficient Balance
-          </Button>
-        )}
-        {!isPending && hasAllowance && hasBalance && (
-          <Button
-            sx={{ marginTop: "30px" }}
-            className={styles[shouldDisabled ? "disabled" : "button"]}
-            onClick={isDeposit ? handleDeposit : handleWithdraw}
-            disabled={shouldDisabled}
-          >
-            {isDeposit ? "Deposit" : "Withdraw"}
-            {isPending && <CircularProgress size="1.5em" />}
-          </Button>
-        )}
+          ) : !isDeposit ? (
+            "Withdraw"
+          ) : !hasBalance ? (
+            "Insufficient Balance"
+          ) : !hasAllowance ? (
+            "Request Allowance"
+          ) : (
+            "Deposit"
+          )}
+        </Button>
       </Box>
-      {shouldDisabled && (
+      {shouldOverlay && (
         <Box
           className="flex fr"
           style={{
