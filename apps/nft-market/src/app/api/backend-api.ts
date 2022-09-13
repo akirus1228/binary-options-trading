@@ -600,7 +600,7 @@ export const backendApi = createApi({
       },
     }),
     getNftAsset: builder.query<
-      OpenseaAsset,
+      Asset,
       {
         contractAddress: string;
         tokenId: string;
@@ -609,7 +609,7 @@ export const backendApi = createApi({
       query: (queryParams) => ({
         url: `nft/detail/${queryParams.contractAddress}/${queryParams.tokenId}`,
       }),
-      transformResponse: (asset: OpenseaAsset, meta, arg) => {
+      transformResponse: (asset: Asset, meta, arg) => {
         let wallet;
         if (asset.owner && asset.owner.address) {
           wallet = asset.owner.address;
@@ -624,7 +624,7 @@ export const backendApi = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(updateAssetsFromOpensea([data]));
+          dispatch(updateAssetsFromBackend([data]));
         } catch (e) {
           console.info("Opensea failing. Reverting to backup");
         }
