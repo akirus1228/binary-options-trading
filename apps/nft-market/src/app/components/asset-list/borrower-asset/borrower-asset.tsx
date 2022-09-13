@@ -5,7 +5,7 @@ import { Link as RouterLink } from "react-router-dom";
 import style from "./borrower-asset.module.scss";
 import PreviewImage from "../preview-image/preview-image";
 import { Asset, AssetStatus } from "../../../types/backend-types";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { isDev } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
@@ -185,7 +185,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           ))}
         </Popover>
       </Box>
-      {(asset.thumbUrl || asset.imageUrl) && asset.tokenId && (
+      {asset.tokenId && (
         <RouterLink to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}>
           <PreviewImage
             url={imageUrl}

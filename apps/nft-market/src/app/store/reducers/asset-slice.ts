@@ -65,24 +65,11 @@ export const updateAssetsFromOpensea = createAsyncThunk(
 export const updateAssetsFromBackend = createAsyncThunk(
   "asset/updateAssetsFromBackend",
   async (backendAssets: Asset[], { dispatch }) => {
-    const ethcallProvider = new Provider(await chains[desiredNetworkId].provider);
-    await ethcallProvider.init();
-    const owners = await ethcallProvider.all(
-      backendAssets.map((asset) => {
-        const nftContract = new Contract(asset.assetContractAddress, ierc721Abi);
-        return nftContract["ownerOf"](asset.tokenId);
-      })
-    );
-
     const newAssets: Assets = {};
     backendAssets.forEach((asset: Asset, index: number) => {
       newAssets[assetToAssetId(asset)] = {
         ...asset,
         status: AssetStatus.New,
-        owner: {
-          ...asset.owner,
-          address: owners[index],
-        },
       };
     });
 
