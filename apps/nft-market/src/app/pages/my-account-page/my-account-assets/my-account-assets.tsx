@@ -8,17 +8,21 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetListingsQuery, useGetLoansQuery } from "../../../api/backend-api";
+import {
+  useGetListingsQuery,
+  useGetLoansQuery,
+  useGetNftAssetsQuery,
+} from "../../../api/backend-api";
 import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../../api/opensea";
 import AssetList from "../../../components/asset-list/asset-list";
 import { RootState } from "../../../store";
-import { OpenseaAssetQueryParam } from "../../../store/reducers/interfaces";
 import { selectAssetsByQuery } from "../../../store/selectors/asset-selectors";
 import {
   Asset,
   AssetStatus,
   BackendAssetQueryParams,
   BackendLoanQueryParams,
+  BackendNftAssetsQueryParams,
   FrontendAssetFilterQuery,
   LoanStatus,
 } from "../../../types/backend-types";
@@ -32,13 +36,14 @@ export interface MyAccountAssetsProps {
 export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   const take = 20;
   const [status, setStatus] = useState<string>("All");
-  const [osNext, setOsNext] = useState("");
+  const [continuation, setContinuation] = useState("");
   const [hasNext, setHasNext] = useState(true);
+  const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
 
   // query to pass to opensea to pull data
-  const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
+  const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
     limit: take,
-    owner: address,
+    walletAddress: address,
   });
 
   // query to use on frontend to filter cached results and ultimately display
@@ -65,12 +70,23 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
-  const { data: osResponse, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(
-    osQuery,
+  const { data: npResponse, isLoading: assetsLoading } = useGetNftAssetsQuery(osQuery, {
+    skip: !osQuery.walletAddress || !isOpenseaUp,
+  });
+
+  // load assets from opensea api
+  const { data: osResponse } = useGetOpenseaAssetsQuery(
     {
-      skip: !osQuery.owner,
+      asset_contract_addresses: npResponse?.assets.map(
+        (item) => item.assetContractAddress
+      ),
+      token_ids: npResponse?.assets.map((item) => item.tokenId),
+    },
+    {
+      skip: !npResponse?.assets || assetsLoading,
     }
   );
+
   const { data: loans } = useGetLoansQuery(loansQuery, {});
 
   // using the opensea assets, crosscheck with backend api for correlated data
@@ -113,9 +129,9 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
       openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
     };
     setBeQuery(newQuery);
-    if (osResponse && osResponse.next) {
-      setOsNext(osResponse?.next || "");
-    } else if (osResponse && osResponse.next === null) {
+    if (npResponse && npResponse.continuation) {
+      setContinuation(npResponse?.continuation || "");
+    } else if (npResponse && npResponse.continuation === null) {
       setHasNext(false);
     }
   }, [osResponse]);
@@ -123,7 +139,7 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   useEffect(() => {
     setOsQuery({
       ...osQuery,
-      owner: address,
+      walletAddress: address,
     });
     setFeQuery({
       ...feQuery,
@@ -141,7 +157,7 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
       : myAssets;
 
   const fetchMoreData = () => {
-    setOsQuery({ ...osQuery, cursor: osNext });
+    setOsQuery({ ...osQuery, continuation: continuation });
   };
 
   return (
