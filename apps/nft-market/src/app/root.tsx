@@ -2,7 +2,7 @@ import { Web3ContextProvider } from "@fantohm/shared-web3";
 import { useLayoutEffect } from "react";
 import { Provider } from "react-redux";
 // eslint-disable-next-line node/no-extraneous-import
-import { useLocation } from "react-router";
+import { useLocation } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 
 import { App } from "./app";
@@ -17,7 +17,7 @@ const ScrollToTop = (props: any) => {
     });
   }, [location]);
 
-  return <>{props?.children}</>;
+  return null;
 };
 
 const Root = (): JSX.Element => {
@@ -25,9 +25,8 @@ const Root = (): JSX.Element => {
     <Web3ContextProvider>
       <Provider store={store}>
         <BrowserRouter>
-          <ScrollToTop>
-            <App />
-          </ScrollToTop>
+          <ScrollToTop />
+          <App />
         </BrowserRouter>
       </Provider>
     </Web3ContextProvider>
