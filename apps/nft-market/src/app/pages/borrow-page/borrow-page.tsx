@@ -23,8 +23,12 @@ import {
   LoanStatus,
 } from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
+import { useBestImage } from "../../hooks/use-best-image";
 
 export const BorrowPage = (): JSX.Element => {
+  useEffect(() => {
+    console.count("BorrowPage rendered");
+  });
   const take = 20;
   const { address } = useWeb3Context();
   const { impersonateAddress, isImpersonating } = useImpersonateAccount();
@@ -138,10 +142,12 @@ export const BorrowPage = (): JSX.Element => {
     setOsQuery({ ...osQuery, continuation: continuation });
   };
 
+  const blurImageUrl = useBestImage(myAssets[0] ?? null, 300);
+
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
-        url={myAssets.length > 0 ? myAssets[0].imageUrl : undefined}
+        url={myAssets.length > 0 ? blurImageUrl : undefined}
         height="300px"
       />
       <Box className="flex fr fj-sb ai-c">
