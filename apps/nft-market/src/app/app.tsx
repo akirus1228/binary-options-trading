@@ -150,7 +150,10 @@ export const App = (): JSX.Element => {
       const focused = localStorage.getItem("tabFocused") === "true";
       if (focused && switchEthereumChain && chainId !== desiredNetworkId) {
         switchEthereumChain(desiredNetworkId).then((result) => {
-          if (!result) disconnect();
+          if (!result) {
+            disconnect();
+            dispatch(logout());
+          }
         });
       }
     }
