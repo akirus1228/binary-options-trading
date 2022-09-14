@@ -4,7 +4,12 @@ import { BigNumber, ethers } from "ethers";
 import { balanceVaultAbi } from "../abi";
 import { clearPendingTxn, fetchPendingTxns } from "./pending-txns-slice";
 import { error, info } from "./messages-slice";
-import { IVaultDepositAsyncThunk, IVaultWithdrawAsyncThunk } from "./interfaces";
+import {
+  IVaultDepositAsyncThunk,
+  IVaultWithdrawAsyncThunk,
+  IVaultRoiAsyncThunk,
+  IVaultRedeemAsyncThunk,
+} from "./interfaces";
 
 export type BalanceVault = {
   vaultAddress: string;
@@ -114,6 +119,7 @@ export const vaultDeposit = createAsyncThunk(
     }
   }
 );
+
 export const vaultWithdraw = createAsyncThunk(
   "balance-vault/vaultWithdraw",
   async (
@@ -166,5 +172,89 @@ export const vaultWithdraw = createAsyncThunk(
         dispatch(clearPendingTxn(withdrawTx.hash));
       }
     }
+  }
+);
+
+export const vaultRedeem = createAsyncThunk(
+  "balance-vault/vaultRedeem",
+  async (
+    { address, vaultId, provider, networkId }: IVaultWithdrawAsyncThunk,
+    { dispatch }
+  ) => {
+    if (!provider) {
+      dispatch(error("Please connect your wallet!"));
+      return;
+    }
+
+    const signer = provider.getSigner();
+    const vaultContract = new ethers.Contract(
+      vaultId,
+      balanceVaultAbi,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      signer
+    );
+
+    let redeemTx;
+
+    try {
+      redeemTx = await vaultContract["redeem"]();
+      dispatch(
+        fetchPendingTxns({
+          txnHash: redeemTx.hash,
+          text: "Redeeming",
+          type: "balance_vault_redeem",
+        })
+      );
+      await redeemTx.wait();
+    } catch (e: any) {
+      if (e.error === undefined) {
+        let message;
+        if (e.message === "Internal JSON-RPC error.") {
+          message = e.data.message;
+        } else {
+          message = e.message;
+        }
+        if (typeof message === "string") {
+          dispatch(error(`Unknown error: ${message}`));
+        }
+      } else {
+        dispatch(error(`Unknown error: ${e.error.message}`));
+      }
+      return;
+    } finally {
+      if (redeemTx) {
+        dispatch(info("Redeem successful."));
+        dispatch(clearPendingTxn(redeemTx.hash));
+      }
+    }
+  }
+);
+
+export const getRoiAmount = createAsyncThunk(
+  "balance-vault/getRoiAmount",
+  async ({ vaultId, amount, provider }: IVaultRoiAsyncThunk) => {
+    const vaultContract = new ethers.Contract(
+      vaultId,
+      balanceVaultAbi,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      provider
+    );
+    // call the contract
+    return await vaultContract["roi"](amount);
+  }
+);
+
+export const getRedeemAmount = createAsyncThunk(
+  "balance-vault/getRedeemAmount",
+  async ({ vaultId, address, provider }: IVaultRedeemAsyncThunk) => {
+    const vaultContract = new ethers.Contract(
+      vaultId,
+      balanceVaultAbi,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      provider
+    );
+    const positions = await vaultContract["balanceOf(address)"](address);
+    const roi = await vaultContract["roi"](positions[0][0]);
+    return (positions[0][0] as BigNumber).add(roi).toString();
   }
 );

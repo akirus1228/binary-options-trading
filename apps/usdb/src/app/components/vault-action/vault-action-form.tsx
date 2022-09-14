@@ -12,7 +12,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import styles from "./vault-action-form.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
 import { formatCurrency } from "@fantohm/shared-helpers";
@@ -27,6 +27,10 @@ import {
   useRequestErc20Allowance,
   vaultWithdraw,
   prettifySeconds,
+  vaultRedeem,
+  getRoiAmount,
+  getTokenPrice,
+  getRedeemAmount,
 } from "@fantohm/shared-web3";
 import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
 import FormInputWrapper from "../formInputWrapper";
@@ -38,10 +42,11 @@ export interface VaultActionProps {
   onClose: (value: boolean) => void;
   deposit: boolean;
   open: boolean;
+  redeemPrepared: boolean;
 }
 
 export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
-  const { vaultId, onClose, open, deposit } = props;
+  const { vaultId, onClose, open, deposit, redeemPrepared } = props;
   const queryClient = useQueryClient();
   const { vaultData } = useBalanceVault(vaultId as string);
 
@@ -53,6 +58,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const [token, setToken] = useState("USDB");
   const [currency, setCurrency] = useState<Erc20Currency>();
   const [isPending, setIsPending] = useState(false);
+  const [yieldAmount, setYieldAmount] = useState("0");
+  const [dollarAmount, setDollarAmount] = useState("0");
+  const [redeemAmount, setRedeemAmount] = useState("0");
   const themeType = useSelector((state: RootState) => state.app.theme);
 
   const { positionData, isLoading: isPositionLoading } = useBalanceVaultPosition(
@@ -87,6 +95,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     onClose(false);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const doNothing = () => {};
+
   const handleDeposit = async () => {
     if (provider) {
       setIsPending(true);
@@ -111,13 +122,33 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const doNothing = () => {};
   const handleWithdraw = async () => {
     if (provider) {
       setIsPending(true);
       dispatch(
         vaultWithdraw({
+          address,
+          vaultId,
+          provider,
+          networkId: chainId ?? 250,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          queryClient.invalidateQueries(["vault"]);
+          queryClient.invalidateQueries(["vaultPosition"]);
+          onClose(true);
+          setAmount("0");
+          setIsPending(false);
+        });
+    }
+  };
+
+  const handleRedeem = async () => {
+    if (provider) {
+      setIsPending(true);
+      dispatch(
+        vaultRedeem({
           address,
           vaultId,
           provider,
@@ -161,6 +192,47 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     setCurrency(new erc20Currency(currencyObj[0], chainId ?? 4));
   }, [token]);
 
+  useEffect(() => {
+    const fetchRoi = async () => {
+      if (provider === null || amount.trim() === "" || parseFloat(amount) === 0) {
+        setYieldAmount("0");
+        setDollarAmount("0");
+      } else {
+        const roi: BigNumber = await dispatch(
+          getRoiAmount({
+            vaultId,
+            amount: ethers.utils.parseUnits(amount, 18),
+            provider,
+          })
+        ).unwrap();
+        setYieldAmount(ethers.utils.formatUnits(roi, currency?.decimals ?? 18));
+        // const dollar = await getTokenPrice(token.toLowerCase());
+        setDollarAmount(ethers.utils.formatUnits(roi, currency?.decimals ?? 18));
+      }
+    };
+
+    fetchRoi();
+  }, [amount]);
+
+  useEffect(() => {
+    const fetchRedeem = async () => {
+      if (provider === null) {
+        setRedeemAmount("0");
+      } else {
+        const redeem = await dispatch(
+          getRedeemAmount({
+            vaultId,
+            address,
+            provider,
+          })
+        ).unwrap();
+        setRedeemAmount(ethers.utils.formatUnits(redeem, currency?.decimals ?? 18));
+      }
+    };
+
+    fetchRedeem();
+  }, [address]);
+
   const hasAllowance = useMemo(() => {
     console.log(
       "erc20Allowance",
@@ -184,6 +256,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   }, [isPending, isDeposit, vaultData]);
 
   const shouldDisabled = useMemo(() => {
+    if (redeemPrepared) return parseFloat(redeemAmount) === 0;
     return (
       isPending ||
       shouldOverlay ||
@@ -191,7 +264,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     );
   }, [isPending, shouldOverlay, isDeposit, hasBalance, amount, positionData]);
 
-  return (
+  return !redeemPrepared ? (
     <Dialog
       onClose={handleClose}
       open={open}
@@ -326,7 +399,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                   />
                   <Typography sx={{ fontSize: 16 }}>USDB</Typography>
                 </Box>
-                <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>9,000.00</Typography>
+                <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>
+                  {yieldAmount}
+                </Typography>
               </Box>
               <Box
                 display="flex"
@@ -336,9 +411,11 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
               >
                 <Box display="flex">
                   <Typography>Yield:&nbsp;</Typography>
-                  <Typography sx={{ color: "#69D9C8" }}>30%</Typography>
+                  <Typography sx={{ color: "#69D9C8" }}>
+                    {(vaultData?.apr ?? 0) / 100}%
+                  </Typography>
                 </Box>
-                <Typography>$8,999.99</Typography>
+                <Typography>${dollarAmount}</Typography>
               </Box>
             </FormInputWrapper>
           </>
@@ -442,6 +519,57 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
           </Box>
         </Box>
       )}
+    </Dialog>
+  ) : (
+    <Dialog
+      onClose={handleClose}
+      open={open}
+      PaperProps={{
+        style: {
+          background: themeType === "light" ? "white" : "black",
+          border: "1px solid #101112",
+          maxWidth: "800px",
+        },
+      }}
+      sx={{ padding: "3em" }}
+      fullWidth
+    >
+      <Box className="flex fr fj-c" sx={{ display: "flex", justifyContent: "center" }}>
+        <Box
+          className={styles["tapButton"]}
+          sx={{
+            borderBottom: `${
+              isDeposit
+                ? `solid 3px ${themeType === "light" ? "black" : "white"}`
+                : "none"
+            }`,
+            cursor: "default",
+          }}
+        >
+          Redeem
+        </Box>
+      </Box>
+      <Box
+        className="flex fc"
+        sx={{ borderTop: "1px solid #aaaaaa", paddingTop: "40px" }}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-around"
+          alignItems="center"
+          sx={{ fontSize: "18px", color: "#8A99A8" }}
+        >
+          <Typography>My Position: {redeemAmount}</Typography>
+        </Box>
+        <Button
+          sx={{ marginTop: "30px" }}
+          className={styles[shouldDisabled ? "disabled" : "button"]}
+          onClick={handleRedeem}
+          disabled={shouldDisabled}
+        >
+          {isPending ? <CircularProgress size="1.5em" /> : "Redeem"}
+        </Button>
+      </Box>
     </Dialog>
   );
 };

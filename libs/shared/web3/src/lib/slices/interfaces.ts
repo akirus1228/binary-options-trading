@@ -113,6 +113,16 @@ export interface IVaultWithdrawAsyncThunk
   readonly vaultId: string;
 }
 
+export interface IVaultRoiAsyncThunk extends IInteractiveAsyncThunk {
+  readonly vaultId: string;
+  readonly amount: BigNumber;
+}
+
+export interface IVaultRedeemAsyncThunk extends IInteractiveAsyncThunk {
+  readonly vaultId: string;
+  readonly address: string;
+}
+
 export interface ICalcBondDetailsAsyncThunk extends IBaseBondAsyncThunk {
   readonly value: string;
 }
