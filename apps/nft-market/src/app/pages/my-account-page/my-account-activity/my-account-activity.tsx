@@ -1,5 +1,6 @@
 import { Box, CircularProgress, Container } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useImpersonateAccount } from "@fantohm/shared-web3";
 import { useGetUserNotificationsQuery } from "../../../api/backend-api";
 import { RootState } from "../../../store";
 import { Notification, NotificationStatus } from "../../../types/backend-types";
@@ -8,15 +9,17 @@ import { NotificationEntry } from "./notification-entry";
 
 export const MyAccountActivity = (): JSX.Element => {
   const { user } = useSelector((state: RootState) => state.backend);
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+  const userAddress = isImpersonating ? impersonateAddress : user.address;
   const { data: unreadNotifications, isLoading: isUnreadNotificationsLoading } =
     useGetUserNotificationsQuery({
-      userAddress: user.address,
+      userAddress,
       status: NotificationStatus.Unread,
     });
 
   const { data: readNotifications, isLoading: isReadNotificationsLoading } =
     useGetUserNotificationsQuery({
-      userAddress: user.address,
+      userAddress,
       status: NotificationStatus.Read,
     });
 

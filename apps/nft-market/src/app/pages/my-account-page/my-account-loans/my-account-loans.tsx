@@ -1,4 +1,4 @@
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { useWeb3Context, useImpersonateAccount } from "@fantohm/shared-web3";
 import { Box, Container, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../../api/backend-api";
@@ -7,48 +7,47 @@ import { LoanStatus } from "../../../types/backend-types";
 import MyAccountActiveLoansTable from "../my-account-active-loans-table";
 import style from "./my-account-loans.module.scss";
 
-/* eslint-disable-next-line */
-export interface MyAccountLoansProps {}
-
-export function MyAccountLoans(props: MyAccountLoansProps) {
+export function MyAccountLoans() {
   const { address } = useWeb3Context();
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const { authSignature } = useSelector((state: RootState) => state.backend);
+  const actualAddress = isImpersonating ? impersonateAddress : address;
 
   const { data: activeBorrowerLoans } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
       status: LoanStatus.Active,
-      borrowerAddress: address,
+      borrowerAddress: actualAddress,
     },
-    { skip: !address || !authSignature }
+    { skip: !actualAddress || !authSignature }
   );
   const { data: activeLenderLoans } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
       status: LoanStatus.Active,
-      lenderAddress: address,
+      lenderAddress: actualAddress,
     },
-    { skip: !address || !authSignature }
+    { skip: !actualAddress || !authSignature }
   );
   const { data: historicalBorrowerLoans } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
       status: LoanStatus.Complete,
-      borrowerAddress: address,
+      borrowerAddress: actualAddress,
     },
-    { skip: !address || !authSignature }
+    { skip: !actualAddress || !authSignature }
   );
   const { data: historicalLenderLoans } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
       status: LoanStatus.Complete,
-      lenderAddress: address,
+      lenderAddress: actualAddress,
     },
-    { skip: !address || !authSignature }
+    { skip: !actualAddress || !authSignature }
   );
   return (
     <Container className={style["myAccountContainer"]} sx={{ mt: "50px" }} maxWidth="xl">

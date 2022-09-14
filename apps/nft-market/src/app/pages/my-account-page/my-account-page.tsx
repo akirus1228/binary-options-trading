@@ -1,9 +1,10 @@
 //import style from "./my-account-page.module.scss";
 import { Box, Container, Tab, Tabs } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useImpersonateAccount } from "@fantohm/shared-web3";
 import { RootState } from "../../store";
 import { AccountProfile } from "./account-profile/account-profile";
-import { ReactNode, SyntheticEvent, useMemo, useState } from "react";
+import { ReactNode, SyntheticEvent, useMemo } from "react";
 import MyAccountLoans from "./my-account-loans/my-account-loans";
 import MyAccountDetails from "./my-account-details/my-account-details";
 import MyAccountOffers from "./my-account-offers/my-account-offers";
@@ -54,6 +55,7 @@ type TabContent = {
 };
 
 export const MyAccountPage = (): JSX.Element => {
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const params = useParams();
   const { user } = useSelector((state: RootState) => state.backend);
   const location = useLocation();
@@ -64,12 +66,13 @@ export const MyAccountPage = (): JSX.Element => {
       ? params["walletAddress"]
       : user.address ?? "";
   }, [user, params["walletAddress"]]);
+  const userAddress = isImpersonating ? impersonateAddress : address;
 
   const tabs: TabContent[] = [
     {
       title: "Details",
       path: "detail",
-      component: <MyAccountDetails address={address} />,
+      component: <MyAccountDetails address={userAddress} />,
       isGlobal: true,
     },
     {
@@ -87,7 +90,7 @@ export const MyAccountPage = (): JSX.Element => {
     {
       title: "Assets",
       path: "assets",
-      component: <MyAccountAssets address={address} />,
+      component: <MyAccountAssets address={userAddress} />,
       isGlobal: true,
     },
     {
@@ -112,7 +115,7 @@ export const MyAccountPage = (): JSX.Element => {
     } else {
       newPath = location.pathname;
     }
-    navigate(`${newPath}/${tabs[newValue].path}`);
+    navigate(`${newPath}/${tabs[newValue].path}${location.search}`);
   };
 
   if (typeof address === "undefined" || !address) {
@@ -127,7 +130,7 @@ export const MyAccountPage = (): JSX.Element => {
   return (
     <Box>
       <Container>
-        <AccountProfile address={address} />
+        <AccountProfile address={userAddress} />
       </Container>
       <Box sx={{ borderBottom: 2, borderColor: "rgba(126, 154, 169, 0.20)", mb: "5em" }}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
