@@ -8,10 +8,15 @@ export const minutesAgo = (x: number) => {
 };
 
 export const formatDateTimeString = (time: Date, isOnlyDate = false) => {
-  const year = time.toLocaleString("default", { year: "2-digit" });
+  const locale = navigator.language;
+
+  const year = time.toLocaleString("default", { year: "numeric" });
   const month = time.toLocaleString("default", { month: "short" });
   const day = time.toLocaleString("default", { day: "numeric" });
-  return `${day}-${month}-${year}${
+
+  const formatedDate = locale !== "en-US" ? `${day}-${month}-${year}` : `${month}-${day}-${year}`;
+  
+  return `${formatedDate}${
     isOnlyDate
       ? ""
       : ", " +
