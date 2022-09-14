@@ -144,13 +144,20 @@ const LenderListedLoanDefaulted = ({ asset }: { asset: Asset }): JSX.Element => 
 
 export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const { provider } = useWeb3Context();
+  const { provider, chainId } = useWeb3Context();
   const [loanDetails, setLoanDetails] = useState<LoanDetails>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
-    if (!loan || loan.contractLoanId == null || !provider) {
+    if (
+      !loan ||
+      loan.contractLoanId == null ||
+      !provider ||
+      ![1, 4].includes(chainId ?? 0)
+    ) {
+      setIsLoading(false);
       return;
     }
+    setIsLoading(true);
     dispatch(
       getLoanDetailsFromContract({
         loan,
@@ -163,7 +170,7 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
         setLoanDetails(loanDetails);
         setIsLoading(false);
       });
-  }, [loan]);
+  }, [loan, chainId]);
 
   if (listing) {
     return <BorrowerOnlyListed asset={asset} listing={listing} />;
