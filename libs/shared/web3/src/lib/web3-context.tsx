@@ -52,7 +52,7 @@ export const useImpersonateAccount = () => {
 
   return {
     impersonateAddress: address,
-    isImpersonating: isDev && utils.isAddress(address),
+    isImpersonating: utils.isAddress(address),
   };
 };
 
