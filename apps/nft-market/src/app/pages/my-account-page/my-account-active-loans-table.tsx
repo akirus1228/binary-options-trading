@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { desiredNetworkId } from "../../constants/network";
+import { useBestImage } from "../../hooks/use-best-image";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { AppDispatch, RootState } from "../../store";
 import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
@@ -72,13 +73,15 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
       .then((loanDetails: LoanDetails) => setLoanDetails(loanDetails));
   }, [loan]);
 
+  const bestImageUrl = useBestImage(loan.assetListing.asset, 150);
+
   return (
     <PaperTableRow>
       <PaperTableCell>
         <Avatar
           className="squared"
           alt={loan.assetListing.asset.name || ""}
-          src={loan.assetListing.asset.frameUrl || ""}
+          src={bestImageUrl || ""}
         />
       </PaperTableCell>
       <PaperTableCell>
