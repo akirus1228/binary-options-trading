@@ -4,6 +4,24 @@ import { Asset } from "../types/backend-types";
 import loadingGradient from "../../assets/images/loading.png";
 import previewNotAvailable from "../../assets/images/preview-not-available.png";
 
+export const getIpfsUrl = (url: string | null = "") => {
+  if (!url?.includes("ipfs")) return url || "";
+
+  const IPFS_URL = "https://ipfs.io/";
+
+  if (!url) {
+    return url;
+  }
+
+  const [, item] = url.split("ipfs/");
+
+  if (item) {
+    return IPFS_URL + "ipfs/" + item;
+  }
+
+  return url;
+};
+
 const getHeaders = (url: string): Promise<AxiosResponse | void> => {
   return axios
     .head(url)
@@ -86,7 +104,7 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
       validImages.sort((imageA, imageB) => sortImageBySize(imageA, imageB));
       if (isSubscribed) {
         if (validImages.length < 1) {
-          setUrl(previewNotAvailable);
+          setUrl("");
         } else {
           setUrl(
             (preferredWidth < 1024
@@ -101,5 +119,11 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
     });
   }, [imageLoadOrder]);
 
-  return url;
+  return (
+    url ||
+    getIpfsUrl(asset?.gifUrl) ||
+    getIpfsUrl(asset?.threeDUrl) ||
+    getIpfsUrl(asset?.videoUrl) ||
+    previewNotAvailable
+  );
 };
