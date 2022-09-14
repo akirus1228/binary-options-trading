@@ -1,9 +1,10 @@
 //import style from "./my-account-page.module.scss";
 import { Box, Container, Tab, Tabs } from "@mui/material";
 import { useSelector } from "react-redux";
+import { useImpersonateAccount } from "@fantohm/shared-web3";
 import { RootState } from "../../store";
 import { AccountProfile } from "./account-profile/account-profile";
-import { ReactNode, SyntheticEvent, useMemo, useState } from "react";
+import { ReactNode, SyntheticEvent, useMemo } from "react";
 import MyAccountLoans from "./my-account-loans/my-account-loans";
 import MyAccountDetails from "./my-account-details/my-account-details";
 import MyAccountOffers from "./my-account-offers/my-account-offers";
@@ -48,14 +49,15 @@ function TabPanel(props: TabPanelProps) {
 
 type TabContent = {
   title: string;
+  path: string;
   component: JSX.Element;
   isGlobal: boolean;
 };
 
 export const MyAccountPage = (): JSX.Element => {
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const params = useParams();
   const { user } = useSelector((state: RootState) => state.backend);
-  const [activeTab, setActiveTab] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -64,27 +66,62 @@ export const MyAccountPage = (): JSX.Element => {
       ? params["walletAddress"]
       : user.address ?? "";
   }, [user, params["walletAddress"]]);
-
-  useMemo(() => {
-    setActiveTab(+location.hash.substring(1));
-  }, [location]);
-
-  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
-    navigate(`#${newValue.toString()}`);
-    //setActiveTab(newValue);
-  };
+  const userAddress = isImpersonating ? impersonateAddress : address;
 
   const tabs: TabContent[] = [
     {
       title: "Details",
-      component: <MyAccountDetails address={address} />,
+      path: "detail",
+      component: <MyAccountDetails address={userAddress} />,
       isGlobal: true,
     },
-    { title: "Loans", component: <MyAccountLoans />, isGlobal: false },
-    { title: "Offers", component: <MyAccountOffers />, isGlobal: false },
-    { title: "Assets", component: <MyAccountAssets address={address} />, isGlobal: true },
-    { title: "Activity", component: <MyAccountActivity />, isGlobal: false },
+    {
+      title: "Loans",
+      path: "loans",
+      component: <MyAccountLoans />,
+      isGlobal: false,
+    },
+    {
+      title: "Offers",
+      path: "offers",
+      component: <MyAccountOffers />,
+      isGlobal: false,
+    },
+    {
+      title: "Assets",
+      path: "assets",
+      component: <MyAccountAssets address={userAddress} />,
+      isGlobal: true,
+    },
+    {
+      title: "Activity",
+      path: "activity",
+      component: <MyAccountActivity />,
+      isGlobal: false,
+    },
   ];
+
+  const filteredTabs = tabs.filter(
+    (tab: TabContent) => tab.isGlobal || (!!user && !params["walletAddress"])
+  );
+
+  const tab = params["tab"] || "detail";
+  const activeTab = filteredTabs.findIndex((_tab) => _tab.path === tab);
+
+  if (activeTab === -1) {
+    const newPath = location.pathname.split("/").slice(0, -1).join("/");
+    navigate(`${newPath}${location.search}`);
+  }
+
+  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
+    let newPath: string;
+    if (params["tab"]) {
+      newPath = location.pathname.split("/").slice(0, -1).join("/");
+    } else {
+      newPath = location.pathname;
+    }
+    navigate(`${newPath}/${filteredTabs[newValue].path}${location.search}`);
+  };
 
   if (typeof address === "undefined" || !address) {
     return (
@@ -98,7 +135,7 @@ export const MyAccountPage = (): JSX.Element => {
   return (
     <Box>
       <Container>
-        <AccountProfile address={address} />
+        <AccountProfile address={userAddress} />
       </Container>
       <Box sx={{ borderBottom: 2, borderColor: "rgba(126, 154, 169, 0.20)", mb: "5em" }}>
         <Tabs value={activeTab} onChange={handleTabChange} centered>
@@ -129,13 +166,11 @@ export const MyAccountPage = (): JSX.Element => {
             ))}
         </Tabs>
       </Box>
-      {tabs
-        .filter((tab: TabContent) => tab.isGlobal || (!!user && !params["walletAddress"]))
-        .map((tab: TabContent, tabIndex: number) => (
-          <TabPanel value={activeTab} index={tabIndex} key={`tabPanel-${tabIndex}`}>
-            {tab.component}
-          </TabPanel>
-        ))}
+      {filteredTabs.map((tab: TabContent, tabIndex: number) => (
+        <TabPanel value={activeTab} index={tabIndex} key={`tabPanel-${tabIndex}`}>
+          {tab.component}
+        </TabPanel>
+      ))}
     </Box>
   );
 };
