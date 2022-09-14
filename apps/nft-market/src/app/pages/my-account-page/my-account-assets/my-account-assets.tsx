@@ -13,7 +13,6 @@ import {
   useGetLoansQuery,
   useGetNftAssetsQuery,
 } from "../../../api/backend-api";
-import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../../api/opensea";
 import AssetList from "../../../components/asset-list/asset-list";
 import { RootState } from "../../../store";
 import { selectAssetsByQuery } from "../../../store/selectors/asset-selectors";
@@ -74,19 +73,6 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
     skip: !osQuery.walletAddress || !isOpenseaUp,
   });
 
-  // load assets from opensea api
-  const { data: osResponse } = useGetOpenseaAssetsQuery(
-    {
-      asset_contract_addresses: npResponse?.assets.map(
-        (item) => item.assetContractAddress
-      ),
-      token_ids: npResponse?.assets.map((item) => item.tokenId),
-    },
-    {
-      skip: !npResponse?.assets || assetsLoading,
-    }
-  );
-
   const { data: loans } = useGetLoansQuery(loansQuery, {});
 
   // using the opensea assets, crosscheck with backend api for correlated data
@@ -126,7 +112,9 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      openseaIds: npResponse?.assets?.map((asset: Asset) =>
+        (asset.openseaId || "").toString()
+      ),
     };
     setBeQuery(newQuery);
     if (npResponse && npResponse.continuation) {
@@ -134,7 +122,7 @@ export function MyAccountAssets({ address }: MyAccountAssetsProps) {
     } else if (npResponse && npResponse.continuation === null) {
       setHasNext(false);
     }
-  }, [osResponse]);
+  }, [npResponse, npResponse?.assets]);
 
   useEffect(() => {
     setOsQuery({
