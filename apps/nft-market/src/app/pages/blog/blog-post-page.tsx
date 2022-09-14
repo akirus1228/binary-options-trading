@@ -140,7 +140,8 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
         <meta property="og:title" content={post?.blogTitle} />
         <meta property="og:description" content={post?.seoDescription} />
         <meta property="og:url" content={window.location.href} />
-        <meta property="og:image" content={post?.image} />
+        <meta property="og:image" content={`http:${post?.image}`} />
+        <meta property="og:image:secure_url" content={`https:${post?.image}`} />
         <meta property="twitter:card" content="summary" />
         <meta property="twitter:title" content={post?.blogTitle} />
         <meta property="twitter:description" content={post?.seoDescription} />
