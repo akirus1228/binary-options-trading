@@ -1,7 +1,8 @@
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { useWeb3Context, useImpersonateAccount, isDev } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { utils } from "ethers";
 import {
   useGetListingsQuery,
   useGetLoansQuery,
@@ -27,13 +28,16 @@ import style from "./borrow-page.module.scss";
 export const BorrowPage = (): JSX.Element => {
   const take = 20;
   const { address } = useWeb3Context();
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
     limit: take,
-    walletAddress: user.address,
+    walletAddress: isImpersonating ? impersonateAddress : user.address,
   });
+
+  const actualAddress = isImpersonating ? impersonateAddress : address;
 
   const [continuation, setContinuation] = useState("");
   const [hasNext, setHasNext] = useState(true);
@@ -41,7 +45,7 @@ export const BorrowPage = (): JSX.Element => {
   // query to use on frontend to filter cached results and ultimately display
   const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
     status: "All",
-    wallet: address,
+    wallet: actualAddress,
   });
 
   // query to use on backend api call, to pull data we have
@@ -54,7 +58,7 @@ export const BorrowPage = (): JSX.Element => {
   const [loansQuery, setLoansQuery] = useState<BackendLoanQueryParams>({
     skip: 0,
     take: 50,
-    walletAddress: address,
+    walletAddress: actualAddress,
     status: LoanStatus.Active,
   });
 
@@ -105,17 +109,17 @@ export const BorrowPage = (): JSX.Element => {
   useEffect(() => {
     setOsQuery({
       ...osQuery,
-      walletAddress: address,
+      walletAddress: actualAddress,
     });
     setFeQuery({
       ...feQuery,
-      wallet: address,
+      wallet: actualAddress,
     });
     setLoansQuery({
       ...loansQuery,
-      borrowerAddress: address,
+      borrowerAddress: actualAddress,
     });
-  }, [address]);
+  }, [address, actualAddress]);
 
   const assetsInEscrow =
     loans
@@ -129,7 +133,7 @@ export const BorrowPage = (): JSX.Element => {
         : feQuery.status === "All"
         ? [
             ...myAssets,
-            ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
+            ...assetsInEscrow.filter((asset) => asset.owner.address !== actualAddress),
           ]
         : myAssets
     ).sort((assetA: Asset, assetB: Asset) =>

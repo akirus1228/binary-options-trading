@@ -6,6 +6,7 @@ import { IFrameEthereumProvider } from "@ledgerhq/iframe-provider";
 import * as UAuthWeb3Modal from "@uauth/web3modal";
 import { IUAuthOptions } from "@uauth/web3modal";
 import UAuthSPA from "@uauth/js";
+import { utils } from "ethers";
 import { Web3ContextData } from "./types/types";
 import { enabledNetworkIds, NetworkId, NetworkIds } from "./networks";
 import { chains } from "./providers";
@@ -43,6 +44,16 @@ export const useWeb3Context = () => {
   return useMemo(() => {
     return { ...onChainProvider };
   }, [web3Context]);
+};
+
+export const useImpersonateAccount = () => {
+  const params = new URLSearchParams(window.location.search);
+  const address = params.get("impersonate-account") || "";
+
+  return {
+    impersonateAddress: address,
+    isImpersonating: isDev && utils.isAddress(address),
+  };
 };
 
 export const saveNetworkId = (NetworkId: NetworkId) => {
