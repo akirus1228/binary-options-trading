@@ -49,6 +49,7 @@ import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import { addAlert } from "../../store/reducers/app-slice";
 import MakeOffer from "../make-offer/make-offer";
 import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
+import { useBestImage } from "../../hooks/use-best-image";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -285,6 +286,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     setActionMenuAnchorEl(null);
   };
 
+  const bestImageUrl = useBestImage(offer.assetListing.asset, 150);
+
   const getFieldData = (field: OffersListFields): JSX.Element | string => {
     switch (field) {
       case OffersListFields.LENDER_PROFILE:
@@ -404,7 +407,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       case OffersListFields.EXPIRATION:
         return offerExpires;
       case OffersListFields.ASSET:
-        return <Avatar src={offer.assetListing.asset.imageUrl || ""} />;
+        return <Avatar src={bestImageUrl || ""} />;
       case OffersListFields.NAME:
         return (
           <Link
