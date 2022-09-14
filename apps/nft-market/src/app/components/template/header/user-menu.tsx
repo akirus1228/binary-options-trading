@@ -116,8 +116,12 @@ export const UserMenu = (): JSX.Element => {
     );
   };
 
+  const isWalletConnected = useMemo(() => {
+    return address && authSignature && connected && [1, 4].includes(chainId ?? 0);
+  }, [address, authSignature, connected, chainId]);
+
   useEffect(() => {
-    if (currencies) {
+    if (currencies && isWalletConnected) {
       Object.values(currencies).forEach((currency) => {
         return dispatch(
           loadErc20Balance({
@@ -128,11 +132,7 @@ export const UserMenu = (): JSX.Element => {
         );
       });
     }
-  }, [currencies]);
-
-  const isWalletConnected = useMemo(() => {
-    return address && authSignature && connected && [1, 4].includes(chainId ?? 0);
-  }, [address, authSignature, connected, chainId]);
+  }, [currencies, isWalletConnected]);
 
   return isWalletConnected ? (
     <>

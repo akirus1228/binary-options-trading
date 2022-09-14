@@ -149,7 +149,9 @@ export const App = (): JSX.Element => {
     if (provider && connected && address) {
       const focused = localStorage.getItem("tabFocused") === "true";
       if (focused && switchEthereumChain && chainId !== desiredNetworkId) {
-        switchEthereumChain(desiredNetworkId);
+        switchEthereumChain(desiredNetworkId).then((result) => {
+          if (!result) disconnect();
+        });
       }
     }
   }, [provider, address, connected]);
