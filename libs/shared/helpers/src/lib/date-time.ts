@@ -10,9 +10,9 @@ export const minutesAgo = (x: number) => {
 export const formatDateTimeString = (time: Date, isOnlyDate = false) => {
   const locale = navigator.language;
 
-  const year = time.toLocaleString("default", { year: "numeric" });
-  const month = time.toLocaleString("default", { month: "short" });
-  const day = time.toLocaleString("default", { day: "numeric" });
+  const year = time.toLocaleString("en-US", { year: "numeric" });
+  const month = time.toLocaleString("en-US", { month: "short" });
+  const day = time.toLocaleString("en-US", { day: "numeric" });
 
   const formatedDate =
     locale !== "en-US" ? `${day}-${month}-${year}` : `${month}-${day}-${year}`;
