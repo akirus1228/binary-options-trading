@@ -7,7 +7,6 @@ import {
   useGetLoansQuery,
   useGetNftAssetsQuery,
 } from "../../api/backend-api";
-import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
 import BorrowerAssetFilter from "../../components/asset-filter/borrower-asset-filter/borrower-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
@@ -63,19 +62,6 @@ export const BorrowPage = (): JSX.Element => {
     skip: !osQuery.walletAddress || !isOpenseaUp,
   });
 
-  // load assets from opensea api
-  const { data: osResponse } = useGetOpenseaAssetsQuery(
-    {
-      asset_contract_addresses: npResponse?.assets.map(
-        (item) => item.assetContractAddress
-      ),
-      token_ids: npResponse?.assets.map((item) => item.tokenId),
-    },
-    {
-      skip: !npResponse?.assets || assetsLoading,
-    }
-  );
-
   const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {
     skip: !address || (feQuery.status !== AssetStatus.Locked && feQuery.status !== "All"),
   });
@@ -91,7 +77,9 @@ export const BorrowPage = (): JSX.Element => {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      openseaIds: npResponse?.assets?.map((asset: Asset) =>
+        (asset.openseaId || "").toString()
+      ),
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
@@ -100,7 +88,7 @@ export const BorrowPage = (): JSX.Element => {
     } else if (npResponse && npResponse.continuation === null) {
       setHasNext(false);
     }
-  }, [osResponse, osResponse?.assets]);
+  }, [npResponse, npResponse?.assets]);
 
   useEffect(() => {
     setOsQuery({
