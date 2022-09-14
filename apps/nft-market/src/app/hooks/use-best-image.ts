@@ -119,11 +119,5 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
     });
   }, [imageLoadOrder]);
 
-  return (
-    url ||
-    getIpfsUrl(asset?.gifUrl) ||
-    getIpfsUrl(asset?.threeDUrl) ||
-    getIpfsUrl(asset?.videoUrl) ||
-    previewNotAvailable
-  );
+  return url || getIpfsUrl(asset?.gifUrl) || previewNotAvailable;
 };

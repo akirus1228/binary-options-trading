@@ -36,7 +36,7 @@ import etherScan from "../../../assets/icons/etherscan.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import BlueChip from "../../../assets/icons/blue-chip.svg";
 import PriceInfo from "./price-info/price-info";
-import { useBestImage } from "../../hooks/use-best-image";
+import { getIpfsUrl, useBestImage } from "../../hooks/use-best-image";
 import { addAlert } from "../../store/reducers/app-slice";
 
 export interface AssetDetailsProps {
@@ -133,7 +133,20 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={imageUrl} alt={asset.name || "unknown"} />
+              {asset.mediaType === "VIDEO" && asset.videoUrl ? (
+                <video
+                  controls
+                  autoPlay
+                  controlsList="nodownload"
+                  preload="metadata"
+                  loop
+                  playsInline
+                >
+                  <source src={getIpfsUrl(asset.videoUrl)} type="video/mp4" />
+                </video>
+              ) : (
+                <img src={imageUrl} alt={asset.name || "unknown"} />
+              )}
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
