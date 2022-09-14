@@ -132,7 +132,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
               <Box className="flex fr">
                 <Button
                   variant="contained"
-                  className="thinSquaredButton"
+                  className={`thinSquaredButton ${style["btn-action"]}`}
                   sx={{
                     backgroundColor: themeType === "light" ? "#0a0c0f0a" : "#0D1014",
                     color: themeType === "light" ? "#000" : "#8A99A8",
@@ -143,10 +143,10 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 </Button>
                 <Button
                   variant="contained"
-                  className="thinSquaredButton"
+                  className={`thinSquaredButton ${style["btn-action"]}`}
                   sx={{
                     backgroundColor: themeType === "light" ? "#0a0c0f0a" : "#0D1014",
-                    color: themeType === "light" ? "#000" : "#8A99A859",
+                    color: themeType === "light" ? "#000" : "#8A99A8",
                   }}
                   onClick={onWithdraw}
                 >

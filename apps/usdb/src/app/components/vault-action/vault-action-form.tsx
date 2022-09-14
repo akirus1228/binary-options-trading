@@ -15,7 +15,6 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { BigNumber, ethers } from "ethers";
 import styles from "./vault-action-form.module.scss";
 import { USDBToken } from "@fantohm/shared/images";
-import { formatCurrency } from "@fantohm/shared-helpers";
 import {
   currencyInfo,
   useWeb3Context,
@@ -31,8 +30,10 @@ import {
   getRoiAmount,
   getTokenPrice,
   getRedeemAmount,
+  getErc20CurrencyFromAddress,
 } from "@fantohm/shared-web3";
 import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
+import { PositionTemplate } from "../../pages/balance-vault-details-page/position-template";
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -216,22 +217,18 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
 
   useEffect(() => {
     const fetchRedeem = async () => {
-      if (provider === null) {
+      if (provider === null || !redeemPrepared) {
         setRedeemAmount("0");
       } else {
         const redeem = await dispatch(
-          getRedeemAmount({
-            vaultId,
-            address,
-            provider,
-          })
+          getRedeemAmount({ vaultId, address, provider })
         ).unwrap();
         setRedeemAmount(ethers.utils.formatUnits(redeem, currency?.decimals ?? 18));
       }
     };
 
     fetchRedeem();
-  }, [address]);
+  }, [address, redeemPrepared]);
 
   const hasAllowance = useMemo(() => {
     console.log(
@@ -262,7 +259,16 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
       shouldOverlay ||
       (isDeposit ? !hasBalance || amount === "0" : positionData?.totalUsdValue === 0)
     );
-  }, [isPending, shouldOverlay, isDeposit, hasBalance, amount, positionData]);
+  }, [
+    isPending,
+    shouldOverlay,
+    isDeposit,
+    hasBalance,
+    amount,
+    positionData,
+    redeemPrepared,
+    redeemAmount,
+  ]);
 
   return !redeemPrepared ? (
     <Dialog
@@ -426,9 +432,32 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             alignItems="center"
             sx={{ fontSize: "18px", color: "#8A99A8" }}
           >
-            <Typography>
-              My Position: {formatCurrency(positionData?.totalUsdValue ?? 0)}
-            </Typography>
+            <FormInputWrapper title="My positions" className="w100">
+              <Box
+                display="flex fc"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ padding: "20px" }}
+              >
+                {!positionData ||
+                  (positionData.positionEntries.length === 0 && (
+                    <Typography sx={{ color: "gray", fontStyle: "italic" }}>
+                      Nothing to withdraw
+                    </Typography>
+                  ))}
+                {positionData &&
+                  positionData.positionEntries.map((position) => (
+                    <PositionTemplate
+                      key={position.tokenId}
+                      currency={getErc20CurrencyFromAddress(
+                        position.tokenId,
+                        chainId || 4
+                      )}
+                      amount={position.amount}
+                    />
+                  ))}
+              </Box>
+            </FormInputWrapper>
           </Box>
         )}
         <Button
@@ -559,7 +588,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
           alignItems="center"
           sx={{ fontSize: "18px", color: "#8A99A8" }}
         >
-          <Typography>My Position: {redeemAmount}</Typography>
+          <Typography>
+            My Position: {redeemAmount} {token}
+          </Typography>
         </Box>
         <Button
           sx={{ marginTop: "30px" }}

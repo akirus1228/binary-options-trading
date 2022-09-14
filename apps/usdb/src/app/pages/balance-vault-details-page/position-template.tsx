@@ -19,7 +19,9 @@ export const PositionTemplate = ({ currency, amount }: PositionTemplateProps) =>
         />
         {currency.symbol}
       </Box>
-      <span>{amount && formatCurrency(+ethers.utils.formatUnits(amount, 18))}</span>
+      <span>
+        {amount && formatCurrency(+ethers.utils.formatUnits(amount, 18)).replace("$", "")}
+      </span>
     </Box>
   );
 };

@@ -247,12 +247,13 @@ export const getRoiAmount = createAsyncThunk(
 export const getRedeemAmount = createAsyncThunk(
   "balance-vault/getRedeemAmount",
   async ({ vaultId, address, provider }: IVaultRedeemAsyncThunk) => {
-    const vaultContract = new ethers.Contract(
-      vaultId,
-      balanceVaultAbi,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      provider
-    );
+    const signer = provider.getSigner();
+    let vaultContract = new ethers.Contract(vaultId, balanceVaultAbi, signer);
+    const redeem = await vaultContract.callStatic["redeem()"]();
+    if (redeem.length > 0) return redeem[0];
+
+    // TODO: remove this later, temporary fix for vaults with no returning redeem function
+    vaultContract = new ethers.Contract(vaultId, balanceVaultAbi, provider);
     const positions = await vaultContract["balanceOf(address)"](address);
     const roi = await vaultContract["roi"](positions[0][0]);
     return (positions[0][0] as BigNumber).add(roi).toString();
