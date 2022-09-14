@@ -14,8 +14,9 @@ export const formatDateTimeString = (time: Date, isOnlyDate = false) => {
   const month = time.toLocaleString("default", { month: "short" });
   const day = time.toLocaleString("default", { day: "numeric" });
 
-  const formatedDate = locale !== "en-US" ? `${day}-${month}-${year}` : `${month}-${day}-${year}`;
-  
+  const formatedDate =
+    locale !== "en-US" ? `${day}-${month}-${year}` : `${month}-${day}-${year}`;
+
   return `${formatedDate}${
     isOnlyDate
       ? ""
