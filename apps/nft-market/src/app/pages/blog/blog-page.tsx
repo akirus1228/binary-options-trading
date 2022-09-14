@@ -2,18 +2,10 @@ import {
   Box,
   Button,
   Container,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   Grid,
-  Icon,
   InputBase,
   OutlinedInput,
   Paper,
-  Radio,
-  RadioGroup,
-  SxProps,
-  Theme,
   Typography,
 } from "@mui/material";
 import style from "./blog-page.module.scss";
@@ -25,17 +17,13 @@ import { BlogPostDTO } from "../../types/backend-types";
 import BlogFeaturedPost from "../../components/blog-featured-page/blog-featured-post";
 import BlogPost from "../../components/blog-page/blog-post";
 import { AboutDivider } from "@fantohm/shared/images";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import TextField from "@mui/material/TextField";
-import { alpha, styled } from "@material-ui/core";
+import { styled } from "@material-ui/core";
 
 export const BlogPage = (): JSX.Element => {
   const [email, setEmail] = useState("");
   const [sortValue, setSortValue] = useState("tutorials");
   const allBlogPosts = useSelector((state: RootState) => state.app.blogPosts);
   const [blogPosts, setBlogPosts] = useState<BlogPostDTO[]>();
-  const themeType = useSelector((state: RootState) => state.app.theme);
   const dispatch = useDispatch();
   const DisplayBlogPosts = allBlogPosts?.blogPosts[0];
 

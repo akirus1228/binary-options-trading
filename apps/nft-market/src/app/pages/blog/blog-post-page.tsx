@@ -55,12 +55,11 @@ export type ContentfulLink = {
 
 export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
   const themeType = useSelector((state: RootState) => state.app.theme);
-  const { name } = useParams();
+  const { id } = useParams();
   const [post, setPost] = useState<BlogPostDTO | undefined>();
 
   const blogPosts = useSelector((state: RootState) => state.app.blogPosts);
-  const location = useLocation();
-  const id = location.pathname.substring(location.pathname.indexOf("blog/") + 5);
+
   const theme = useCallback(() => {
     if (props.invertTheme) {
       return themeType === "light" ? USDBDark : USDBLight;
@@ -77,7 +76,6 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
     }
   }, [blogPosts]);
 
-  const website_url = "https://www.balance.capital/";
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
   const onSubmitEmail = async () => {
@@ -85,22 +83,6 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
       // eslint-disable-next-line no-alert
       return dispatch(error("Please enter a valid email!"));
     }
-    // await createContact();
-    // const options = {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //     "api-key":
-    //       "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",
-    //   },
-    //   body: JSON.stringify({ emails: [email] }),
-    // };
-
-    // await fetch("https://api.sendinblue.com/v3/contacts/lists/2/contacts/add", options)
-    //   .then((response) => response.json())
-    //   .then((response) => console.log(response))
-    //   .catch((err) => console.error(err));
 
     const xhr = new XMLHttpRequest();
     const url =
@@ -118,18 +100,6 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
     xhr.open("POST", url);
     // Sets the value of the 'Content-Type' HTTP request headers to 'application/json'
     xhr.setRequestHeader("Content-Type", "application/json");
-
-    // xhr.onreadystatechange = function () {
-    //   if (xhr.readyState == 4 && xhr.status == 200) {
-    //     alert(xhr.responseText); // Returns a 200 response if the submission is successful.
-    //   } else if (xhr.readyState == 4 && xhr.status == 400) {
-    //     alert(xhr.responseText); // Returns a 400 error the submission is rejected.
-    //   } else if (xhr.readyState == 4 && xhr.status == 403) {
-    //     alert(xhr.responseText); // Returns a 403 error if the portal isn't allowed to post submissions.
-    //   } else if (xhr.readyState == 4 && xhr.status == 404) {
-    //     alert(xhr.responseText); //Returns a 404 error if the formGuid isn't found
-    //   }
-    // };
 
     // Sends the request
     xhr.send(final_data);
@@ -479,55 +449,6 @@ export const BlogPostPage = (props: BlogPostProps): JSX.Element => {
                       </BlogPost>
                     </Grid>
                   ))}
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              md={12}
-              order={{ lg: 1 }}
-              sx={{
-                width: { xs: "80%", md: "100%" },
-                marginLeft: { xs: "10%", md: "12.5%" },
-                alignItems: "center",
-              }}
-            >
-              <Grid container columnSpacing={2} rowSpacing={{ xs: 4, md: 0 }}>
-                {/*<Grid*/}
-                {/*  item*/}
-                {/*  className="email-div"*/}
-                {/*  xs={12}*/}
-                {/*  md={3}*/}
-                {/*  order={{ lg: 1 }}*/}
-                {/*  style={{ width: "100%" }}*/}
-                {/*>*/}
-                {/*  <BlogPost>*/}
-                {/*    <h2 className={style["daiAPR"]}>Blog posts</h2>*/}
-                {/*  </BlogPost>*/}
-                {/*</Grid>*/}
-                {/*<Grid*/}
-                {/*  item*/}
-                {/*  className="email-div"*/}
-                {/*  xs={12}*/}
-                {/*  md={3}*/}
-                {/*  order={{ lg: 1 }}*/}
-                {/*  style={{ width: "100%" }}*/}
-                {/*>*/}
-                {/*  <BlogPost>*/}
-                {/*    <h2 className={style["daiAPR"]}>Blog posts</h2>*/}
-                {/*  </BlogPost>*/}
-                {/*</Grid>*/}
-                {/*<Grid*/}
-                {/*  item*/}
-                {/*  className="email-div"*/}
-                {/*  xs={12}*/}
-                {/*  md={3}*/}
-                {/*  order={{ lg: 1 }}*/}
-                {/*  style={{ width: "100%" }}*/}
-                {/*>*/}
-                {/*  <BlogPost>*/}
-                {/*    <h2 className={style["daiAPR"]}>Blog posts</h2>*/}
-                {/*  </BlogPost>*/}
-                {/*</Grid>*/}
               </Grid>
             </Grid>
             <Grid
