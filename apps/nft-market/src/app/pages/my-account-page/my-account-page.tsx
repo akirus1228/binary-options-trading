@@ -48,6 +48,7 @@ function TabPanel(props: TabPanelProps) {
 
 type TabContent = {
   title: string;
+  path: string;
   component: JSX.Element;
   isGlobal: boolean;
 };
@@ -55,7 +56,6 @@ type TabContent = {
 export const MyAccountPage = (): JSX.Element => {
   const params = useParams();
   const { user } = useSelector((state: RootState) => state.backend);
-  const [activeTab, setActiveTab] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -65,26 +65,55 @@ export const MyAccountPage = (): JSX.Element => {
       : user.address ?? "";
   }, [user, params["walletAddress"]]);
 
-  useMemo(() => {
-    setActiveTab(+location.hash.substring(1));
-  }, [location]);
-
-  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
-    navigate(`#${newValue.toString()}`);
-    //setActiveTab(newValue);
-  };
-
   const tabs: TabContent[] = [
     {
       title: "Details",
+      path: "detail",
       component: <MyAccountDetails address={address} />,
       isGlobal: true,
     },
-    { title: "Loans", component: <MyAccountLoans />, isGlobal: false },
-    { title: "Offers", component: <MyAccountOffers />, isGlobal: false },
-    { title: "Assets", component: <MyAccountAssets address={address} />, isGlobal: true },
-    { title: "Activity", component: <MyAccountActivity />, isGlobal: false },
+    {
+      title: "Loans",
+      path: "loans",
+      component: <MyAccountLoans />,
+      isGlobal: false,
+    },
+    {
+      title: "Offers",
+      path: "offers",
+      component: <MyAccountOffers />,
+      isGlobal: false,
+    },
+    {
+      title: "Assets",
+      path: "assets",
+      component: <MyAccountAssets address={address} />,
+      isGlobal: true,
+    },
+    {
+      title: "Activity",
+      path: "activity",
+      component: <MyAccountActivity />,
+      isGlobal: false,
+    },
   ];
+
+  const tab = params["tab"] || "detail";
+  const activeTab = tabs.findIndex((_tab) => _tab.path === tab);
+
+  if (activeTab === -1) {
+    navigate("/my-account");
+  }
+
+  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
+    let newPath: string;
+    if (params["tab"]) {
+      newPath = location.pathname.split("/").slice(0, -1).join("/");
+    } else {
+      newPath = location.pathname;
+    }
+    navigate(`${newPath}/${tabs[newValue].path}`);
+  };
 
   if (typeof address === "undefined" || !address) {
     return (

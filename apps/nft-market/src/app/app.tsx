@@ -264,7 +264,9 @@ export const App = (): JSX.Element => {
                 element={<AssetDetailsPage />}
               />
               <Route path="/my-account" element={<MyAccountPage />} />
+              <Route path="/my-account/:tab" element={<MyAccountPage />} />
               <Route path="/account/:walletAddress" element={<MyAccountPage />} />
+              <Route path="/account/:walletAddress/:tab" element={<MyAccountPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogPostPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
