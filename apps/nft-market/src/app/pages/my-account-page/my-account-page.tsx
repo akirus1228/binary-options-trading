@@ -101,11 +101,16 @@ export const MyAccountPage = (): JSX.Element => {
     },
   ];
 
+  const filteredTabs = tabs.filter(
+    (tab: TabContent) => tab.isGlobal || (!!user && !params["walletAddress"])
+  );
+
   const tab = params["tab"] || "detail";
-  const activeTab = tabs.findIndex((_tab) => _tab.path === tab);
+  const activeTab = filteredTabs.findIndex((_tab) => _tab.path === tab);
 
   if (activeTab === -1) {
-    navigate("/my-account");
+    const newPath = location.pathname.split("/").slice(0, -1).join("/");
+    navigate(`${newPath}${location.search}`);
   }
 
   const handleTabChange = (event: SyntheticEvent, newValue: number) => {
@@ -115,7 +120,7 @@ export const MyAccountPage = (): JSX.Element => {
     } else {
       newPath = location.pathname;
     }
-    navigate(`${newPath}/${tabs[newValue].path}${location.search}`);
+    navigate(`${newPath}/${filteredTabs[newValue].path}${location.search}`);
   };
 
   if (typeof address === "undefined" || !address) {
@@ -161,13 +166,11 @@ export const MyAccountPage = (): JSX.Element => {
             ))}
         </Tabs>
       </Box>
-      {tabs
-        .filter((tab: TabContent) => tab.isGlobal || (!!user && !params["walletAddress"]))
-        .map((tab: TabContent, tabIndex: number) => (
-          <TabPanel value={activeTab} index={tabIndex} key={`tabPanel-${tabIndex}`}>
-            {tab.component}
-          </TabPanel>
-        ))}
+      {filteredTabs.map((tab: TabContent, tabIndex: number) => (
+        <TabPanel value={activeTab} index={tabIndex} key={`tabPanel-${tabIndex}`}>
+          {tab.component}
+        </TabPanel>
+      ))}
     </Box>
   );
 };
