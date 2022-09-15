@@ -17,7 +17,7 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -65,7 +65,7 @@ export const UserMenu = (): JSX.Element => {
   ];
 
   // web3 wallet
-  const { connect, disconnect, address } = useWeb3Context();
+  const { connect, disconnect, address, connected, chainId } = useWeb3Context();
 
   const currencies = useSelector((state: RootState) => selectCurrencies(state));
   const { authSignature } = useSelector((state: RootState) => state.backend);
@@ -82,7 +82,11 @@ export const UserMenu = (): JSX.Element => {
   }, [address]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
-    connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+    try {
+      connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+    } catch (e: unknown) {
+      console.warn(e);
+    }
   };
 
   const onClickDisconnect = () => {
@@ -112,8 +116,12 @@ export const UserMenu = (): JSX.Element => {
     );
   };
 
+  const isWalletConnected = useMemo(() => {
+    return address && authSignature && connected && [1, 4].includes(chainId ?? 0);
+  }, [address, authSignature, connected, chainId]);
+
   useEffect(() => {
-    if (currencies) {
+    if (currencies && isWalletConnected) {
       Object.values(currencies).forEach((currency) => {
         return dispatch(
           loadErc20Balance({
@@ -124,9 +132,8 @@ export const UserMenu = (): JSX.Element => {
         );
       });
     }
-  }, [currencies]);
+  }, [currencies, isWalletConnected]);
 
-  const isWalletConnected = address && authSignature;
   return isWalletConnected ? (
     <>
       <Button
