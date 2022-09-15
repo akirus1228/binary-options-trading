@@ -21,6 +21,7 @@ import { useTermDetails } from "../../hooks/use-term-details";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useNavigate } from "react-router-dom";
 import { prettifySeconds } from "@fantohm/shared-web3";
+import { useBestImage } from "../../hooks/use-best-image";
 
 export interface NotificationMessageProps {
   notification: Notification;
@@ -413,6 +414,8 @@ export const NotificationMessage = ({
     }
   }, [notification.context]);
 
+  const bestImageUrl = useBestImage(asset ?? null, 150);
+
   // loan is loaded
   const avatarSrc = useMemo(() => {
     switch (contextType) {
@@ -519,7 +522,7 @@ export const NotificationMessage = ({
         style={{ width: "100%", justifyContent: "space-between" }}
       >
         <Avatar
-          src={avatarSrc}
+          src={bestImageUrl}
           sx={{ mr: "1em", borderRadius: "50%" }}
           variant="circular"
         />
