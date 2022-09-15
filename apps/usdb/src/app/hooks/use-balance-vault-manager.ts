@@ -31,9 +31,9 @@ export type UseBvmGetPositionsResponse = {
 };
 
 /**
- * Returns vault poisitions from the BalanceVaultManager contract.
+ * Returns vault positions from the BalanceVaultManager contract.
  *
- * @param userAddress Address of user to lookiup positions for.
+ * @param userAddress Address of user to lookup positions for.
  * @param skip Skip this many positions.
  * @param take Positions per page to return.
  *
