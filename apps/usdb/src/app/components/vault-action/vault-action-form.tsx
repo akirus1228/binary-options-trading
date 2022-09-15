@@ -31,6 +31,7 @@ import {
   getTokenPrice,
   getRedeemAmount,
   getErc20CurrencyFromAddress,
+  getMaxDepositAmount,
 } from "@fantohm/shared-web3";
 import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
 import { PositionTemplate } from "../../pages/balance-vault-details-page/position-template";
@@ -62,6 +63,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const [yieldAmount, setYieldAmount] = useState("0");
   const [dollarAmount, setDollarAmount] = useState("0");
   const [redeemAmount, setRedeemAmount] = useState("0");
+  const [maxDepositAmount, setMaxDepositAmount] = useState(BigNumber.from(0));
   const themeType = useSelector((state: RootState) => state.app.theme);
 
   const { positionData, isLoading: isPositionLoading } = useBalanceVaultPosition(
@@ -212,7 +214,19 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
       }
     };
 
+    const fetchMaxDepositAmount = async () => {
+      if (provider === null) {
+        setMaxDepositAmount(BigNumber.from(0));
+      } else {
+        const maxAmount: BigNumber = await dispatch(
+          getMaxDepositAmount({ vaultId, provider })
+        ).unwrap();
+        setMaxDepositAmount(maxAmount);
+      }
+    };
+
     fetchRoi();
+    fetchMaxDepositAmount();
   }, [amount]);
 
   useEffect(() => {
@@ -257,7 +271,11 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     return (
       isPending ||
       shouldOverlay ||
-      (isDeposit ? !hasBalance || amount === "0" : positionData?.totalUsdValue === 0)
+      (isDeposit
+        ? !hasBalance ||
+          amount === "0" ||
+          ethers.utils.parseUnits(amount, 18).gt(maxDepositAmount)
+        : positionData?.totalUsdValue === 0)
     );
   }, [
     isPending,
@@ -371,8 +389,22 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                     width: "100%",
                     marginLeft: "20px",
                   }}
-                  onChange={(e) => setAmount(e.target.value)}
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value || "0")}
                 />
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                className="w100"
+                sx={{ fontSize: "18px", color: "#8A99A8", cursor: "pointer" }}
+                onClick={() => setAmount(ethers.utils.formatEther(maxDepositAmount))}
+              >
+                <Typography>
+                  Max Amount:{" "}
+                  {maxDepositAmount &&
+                    ethers.utils.formatUnits(maxDepositAmount, currency?.decimals ?? 18)}
+                </Typography>
               </Box>
               <Box
                 display="flex"
@@ -462,7 +494,15 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
         )}
         <Button
           sx={{ marginTop: "30px" }}
-          className={styles[shouldDisabled ? "disabled" : "button"]}
+          className={
+            styles[
+              shouldDisabled
+                ? ethers.utils.parseUnits(amount, 18).gt(maxDepositAmount)
+                  ? "exceed"
+                  : "disabled"
+                : "button"
+            ]
+          }
           onClick={
             isPending
               ? doNothing
@@ -482,6 +522,8 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             "Withdraw"
           ) : !hasBalance ? (
             "Insufficient Balance"
+          ) : ethers.utils.parseUnits(amount, 18).gt(maxDepositAmount) ? (
+            "Exceed Max Amount"
           ) : !hasAllowance ? (
             "Request Allowance"
           ) : (
