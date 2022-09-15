@@ -133,10 +133,9 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              {asset.mediaType === "VIDEO" && asset.videoUrl ? (
+              {/* {asset.mediaType === "VIDEO" && asset.videoUrl ? (
                 <video
                   controls
-                  autoPlay
                   controlsList="nodownload"
                   preload="metadata"
                   loop
@@ -146,7 +145,8 @@ export const AssetDetails = ({
                 </video>
               ) : (
                 <img src={imageUrl} alt={asset.name || "unknown"} />
-              )}
+              )} */}
+              <img src={imageUrl} alt={asset.name || "unknown"} />
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
