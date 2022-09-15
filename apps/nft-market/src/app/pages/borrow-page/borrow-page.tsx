@@ -118,6 +118,7 @@ export const BorrowPage = (): JSX.Element => {
       ?.map((loan) => loan.assetListing.asset)
       .filter((asset) => asset.status === AssetStatus.Locked) || [];
 
+  console.log("myAssets = ", myAssets);
   const assetsToShow: Asset[] = useMemo(() => {
     return (
       feQuery.status === AssetStatus.Locked && loans
@@ -164,36 +165,30 @@ export const BorrowPage = (): JSX.Element => {
                 <h1>Please connect your wallet.</h1>
               </Box>
             )}
-            {isWalletConnected && (
-              <>
-                {assetsLoading || isAssetLoading || isLoansLoaing || isAssetLoading ? (
-                  <Box className="flex fr fj-c">
-                    <CircularProgress />
-                  </Box>
-                ) : (
-                  assetsToShow.length === 0 && (
-                    <Box
-                      className="flex fr fj-c"
-                      sx={{
-                        mt: "5rem",
-                        fontWeight: "400",
-                        fontSize: "1.5rem",
-                      }}
-                    >
-                      No assets have been found in your wallet
-                    </Box>
-                  )
-                )}
-                {isAssetLoadSuccess && (
-                  <AssetList
-                    assets={assetsToShow}
-                    type="borrow"
-                    fetchData={fetchMoreData}
-                    hasMore={hasNext}
-                  />
-                )}
-              </>
-            )}
+            {isWalletConnected &&
+              (assetsLoading || isAssetLoading || isLoansLoaing || isAssetLoading ? (
+                <Box className="flex fr fj-c">
+                  <CircularProgress />
+                </Box>
+              ) : assetsToShow.length === 0 ? (
+                <Box
+                  className="flex fr fj-c"
+                  sx={{
+                    mt: "5rem",
+                    fontWeight: "400",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  No assets have been found in your wallet
+                </Box>
+              ) : (
+                <AssetList
+                  assets={assetsToShow}
+                  type="borrow"
+                  fetchData={fetchMoreData}
+                  hasMore={hasNext}
+                />
+              ))}
           </Grid>
         </Grid>
       </Box>
