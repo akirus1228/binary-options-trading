@@ -497,9 +497,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   // make offer logic
   const handleMakeOffer = async () => {
     if (!props.listing || !provider || !props.asset.owner) return;
-    const expirationAt = new Date(
-      Date.now() + 86400 * 1000 * termTypes[durationType] * Number(duration)
-    );
+    const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     const { id, ...listingTerm } = props.listing.term;
     const preSigTerm: Terms = {
       ...listingTerm,
