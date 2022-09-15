@@ -35,27 +35,6 @@ const sortImageBySize = (imageA: AxiosResponse, imageB: AxiosResponse) => {
   return 0;
 };
 
-const validateImage = (url: string, timeout = 5000): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const timer = setTimeout(() => {
-      img.src = "";
-      reject(false);
-    }, timeout);
-
-    img.onerror = img.onabort = () => {
-      clearTimeout(timer);
-      reject(false);
-    };
-
-    img.onload = () => {
-      clearTimeout(timer);
-      resolve(url);
-    };
-    img.src = url;
-  });
-};
-
 const getGucUrl = (img_url: string): Promise<string> => {
   return axios
     .get<ImageConvertResponse>(
@@ -110,6 +89,15 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
     );
     if (img) {
       setUrl(`${img.split("=")[0]}=w${preferredWidth}`);
+      return;
+    }
+
+    // don't worry about base64 encoded images, max size should be around 32kb.
+    const base64Img = imageLoadOrder.find((imageString) =>
+      imageString?.includes("data:image")
+    );
+    if (base64Img) {
+      setUrl(base64Img);
       return;
     }
 
