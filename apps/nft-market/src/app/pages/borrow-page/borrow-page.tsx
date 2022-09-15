@@ -1,13 +1,13 @@
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { useWeb3Context, useImpersonateAccount } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { utils } from "ethers";
 import {
   useGetListingsQuery,
   useGetLoansQuery,
   useGetNftAssetsQuery,
 } from "../../api/backend-api";
-import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
 import BorrowerAssetFilter from "../../components/asset-filter/borrower-asset-filter/borrower-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
@@ -23,17 +23,24 @@ import {
   LoanStatus,
 } from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
+import { useBestImage } from "../../hooks/use-best-image";
 
 export const BorrowPage = (): JSX.Element => {
+  useEffect(() => {
+    console.count("BorrowPage rendered");
+  });
   const take = 20;
   const { address } = useWeb3Context();
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
     limit: take,
-    walletAddress: user.address,
+    walletAddress: isImpersonating ? impersonateAddress : user.address,
   });
+
+  const actualAddress = isImpersonating ? impersonateAddress : address;
 
   const [continuation, setContinuation] = useState("");
   const [hasNext, setHasNext] = useState(true);
@@ -41,7 +48,7 @@ export const BorrowPage = (): JSX.Element => {
   // query to use on frontend to filter cached results and ultimately display
   const [feQuery, setFeQuery] = useState<FrontendAssetFilterQuery>({
     status: "All",
-    wallet: address,
+    wallet: actualAddress,
   });
 
   // query to use on backend api call, to pull data we have
@@ -54,7 +61,7 @@ export const BorrowPage = (): JSX.Element => {
   const [loansQuery, setLoansQuery] = useState<BackendLoanQueryParams>({
     skip: 0,
     take: 50,
-    walletAddress: address,
+    walletAddress: actualAddress,
     status: LoanStatus.Active,
   });
 
@@ -62,19 +69,6 @@ export const BorrowPage = (): JSX.Element => {
   const { data: npResponse, isLoading: assetsLoading } = useGetNftAssetsQuery(osQuery, {
     skip: !osQuery.walletAddress || !isOpenseaUp,
   });
-
-  // load assets from opensea api
-  const { data: osResponse } = useGetOpenseaAssetsQuery(
-    {
-      asset_contract_addresses: npResponse?.assets.map(
-        (item) => item.assetContractAddress
-      ),
-      token_ids: npResponse?.assets.map((item) => item.tokenId),
-    },
-    {
-      skip: !npResponse?.assets || assetsLoading,
-    }
-  );
 
   const { data: loans, isLoading: isLoansLoaing } = useGetLoansQuery(loansQuery, {
     skip: !address || (feQuery.status !== AssetStatus.Locked && feQuery.status !== "All"),
@@ -91,7 +85,9 @@ export const BorrowPage = (): JSX.Element => {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: osResponse?.assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      openseaIds: npResponse?.assets?.map((asset: Asset) =>
+        (asset.openseaId || "").toString()
+      ),
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
@@ -100,22 +96,22 @@ export const BorrowPage = (): JSX.Element => {
     } else if (npResponse && npResponse.continuation === null) {
       setHasNext(false);
     }
-  }, [osResponse, osResponse?.assets]);
+  }, [npResponse, npResponse?.assets]);
 
   useEffect(() => {
     setOsQuery({
       ...osQuery,
-      walletAddress: address,
+      walletAddress: actualAddress,
     });
     setFeQuery({
       ...feQuery,
-      wallet: address,
+      wallet: actualAddress,
     });
     setLoansQuery({
       ...loansQuery,
-      borrowerAddress: address,
+      borrowerAddress: actualAddress,
     });
-  }, [address]);
+  }, [address, actualAddress]);
 
   const assetsInEscrow =
     loans
@@ -129,7 +125,7 @@ export const BorrowPage = (): JSX.Element => {
         : feQuery.status === "All"
         ? [
             ...myAssets,
-            ...assetsInEscrow.filter((asset) => asset.owner.address !== address),
+            ...assetsInEscrow.filter((asset) => asset.owner.address !== actualAddress),
           ]
         : myAssets
     ).sort((assetA: Asset, assetB: Asset) =>
@@ -146,10 +142,12 @@ export const BorrowPage = (): JSX.Element => {
     setOsQuery({ ...osQuery, continuation: continuation });
   };
 
+  const blurImageUrl = useBestImage(myAssets[0] ?? null, 300);
+
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
-        url={myAssets.length > 0 ? myAssets[0].imageUrl : undefined}
+        url={myAssets.length > 0 ? blurImageUrl : undefined}
         height="300px"
       />
       <Box className="flex fr fj-sb ai-c">

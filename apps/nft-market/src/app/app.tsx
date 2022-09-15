@@ -149,7 +149,12 @@ export const App = (): JSX.Element => {
     if (provider && connected && address) {
       const focused = localStorage.getItem("tabFocused") === "true";
       if (focused && switchEthereumChain && chainId !== desiredNetworkId) {
-        switchEthereumChain(desiredNetworkId);
+        switchEthereumChain(desiredNetworkId).then((result) => {
+          if (!result) {
+            disconnect();
+            dispatch(logout());
+          }
+        });
       }
     }
   }, [provider, address, connected]);
@@ -264,7 +269,9 @@ export const App = (): JSX.Element => {
                 element={<AssetDetailsPage />}
               />
               <Route path="/my-account" element={<MyAccountPage />} />
+              <Route path="/my-account/:tab" element={<MyAccountPage />} />
               <Route path="/account/:walletAddress" element={<MyAccountPage />} />
+              <Route path="/account/:walletAddress/:tab" element={<MyAccountPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogPostPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />

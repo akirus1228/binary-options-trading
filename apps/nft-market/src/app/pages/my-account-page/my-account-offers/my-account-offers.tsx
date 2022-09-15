@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { useImpersonateAccount } from "@fantohm/shared-web3";
 import { useGetOffersQuery } from "../../../api/backend-api";
 import OffersList, {
   OffersListFields,
@@ -9,23 +10,22 @@ import { RootState } from "../../../store";
 import { Offer, OfferStatus } from "../../../types/backend-types";
 import style from "./my-account-offers.module.scss";
 
-/* eslint-disable-next-line */
-export type MyAccountOffersProps = {};
-
-export function MyAccountOffers(props: MyAccountOffersProps) {
+export function MyAccountOffers() {
   const { user } = useSelector((state: RootState) => state.backend);
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+  const userAddress = isImpersonating ? impersonateAddress : user.address;
 
   const { data: offersAsBorrower, isLoading: isOffersAsBorrowerLoading } =
     useGetOffersQuery(
       {
-        borrowerAddress: user.address,
+        borrowerAddress: userAddress,
       },
       { skip: !user }
     );
 
   const { data: offersAsLender, isLoading: isOffersAsLenderLoading } = useGetOffersQuery(
     {
-      lenderAddress: user.address,
+      lenderAddress: userAddress,
     },
     { skip: !user }
   );

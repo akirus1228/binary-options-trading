@@ -202,32 +202,32 @@ export const LenderAssetFilter = ({
     {
       value: 0,
       scaledValue: 0,
-      label: "0 day",
+      label: "0d",
     },
     {
       value: 20,
       scaledValue: 10,
-      label: "10 days",
+      label: "10d",
     },
     {
       value: 40,
       scaledValue: 30,
-      label: "1 month",
+      label: "1m",
     },
     {
       value: 60,
       scaledValue: 180,
-      label: "6 months",
+      label: "6m",
     },
     {
       value: 80,
       scaledValue: 365,
-      label: "1 year",
+      label: "1y",
     },
     {
       value: 100,
       scaledValue: 3650,
-      label: "10 years",
+      label: "10y",
     },
   ];
   const scaleValues = (valueArray: any) => {
