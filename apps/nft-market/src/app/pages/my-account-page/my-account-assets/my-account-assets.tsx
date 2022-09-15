@@ -6,8 +6,10 @@ import {
   Container,
   SelectChangeEvent,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { useImpersonateAccount } from "@fantohm/shared-web3";
 import {
   useGetListingsQuery,
   useGetLoansQuery,
@@ -28,11 +30,17 @@ import {
 import "./my-account-assets.module.scss";
 import style from "../../../components/asset-filter/borrower-asset-filter/borrower-asset-filter.module.scss";
 
-export interface MyAccountAssetsProps {
-  address: string;
-}
+export function MyAccountAssets() {
+  const params = useParams();
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+  const { user } = useSelector((state: RootState) => state.backend);
+  const walletAddress = useMemo(() => {
+    return !!params["walletAddress"] && params["walletAddress"].length > 1
+      ? params["walletAddress"]
+      : user.address ?? "";
+  }, [user, params["walletAddress"]]);
+  const address = isImpersonating ? impersonateAddress : walletAddress;
 
-export function MyAccountAssets({ address }: MyAccountAssetsProps) {
   const take = 20;
   const [status, setStatus] = useState<string>("All");
   const [continuation, setContinuation] = useState("");

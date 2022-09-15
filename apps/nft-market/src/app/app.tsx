@@ -18,6 +18,11 @@ import { RootState } from "./store";
 import { BorrowPage } from "./pages/borrow-page/borrow-page";
 import { LendPage } from "./pages/lend-page/lend-page";
 import { MyAccountPage } from "./pages/my-account-page/my-account-page";
+import MyAccountDetails from "./pages/my-account-page/my-account-details/my-account-details";
+import MyAccountLoans from "./pages/my-account-page/my-account-loans/my-account-loans";
+import MyAccountOffers from "./pages/my-account-page/my-account-offers/my-account-offers";
+import MyAccountAssets from "./pages/my-account-page/my-account-assets/my-account-assets";
+import MyAccountActivity from "./pages/my-account-page/my-account-activity/my-account-activity";
 import { loadAppDetails, setCheckedConnection } from "./store/reducers/app-slice";
 import { authorizeAccount, logout } from "./store/reducers/backend-slice";
 import Typography from "@mui/material/Typography";
@@ -268,10 +273,19 @@ export const App = (): JSX.Element => {
                 path="/asset/:contractAddress/:tokenId"
                 element={<AssetDetailsPage />}
               />
-              <Route path="/my-account" element={<MyAccountPage />} />
-              <Route path="/my-account/:tab" element={<MyAccountPage />} />
-              <Route path="/account/:walletAddress" element={<MyAccountPage />} />
-              <Route path="/account/:walletAddress/:tab" element={<MyAccountPage />} />
+              <Route path="/my-account" element={<MyAccountPage />}>
+                <Route index element={<MyAccountDetails />} />
+                <Route path="detail" element={<MyAccountDetails />} />
+                <Route path="loans" element={<MyAccountLoans />} />
+                <Route path="offers" element={<MyAccountOffers />} />
+                <Route path="assets" element={<MyAccountAssets />} />
+                <Route path="activity" element={<MyAccountActivity />} />
+              </Route>
+              <Route path="/account/:walletAddress" element={<MyAccountPage />}>
+                <Route index element={<MyAccountDetails />} />
+                <Route path="detail" element={<MyAccountDetails />} />
+                <Route path="assets" element={<MyAccountAssets />} />
+              </Route>
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogPostPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
