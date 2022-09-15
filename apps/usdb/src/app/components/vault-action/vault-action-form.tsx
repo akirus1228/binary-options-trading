@@ -246,14 +246,14 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
 
   const shouldOverlay = useMemo(() => {
     const curTime = Math.round(new Date().getTime() / 1000);
-    if (!vaultData?.shouldBeFrozen) return false;
+    if (!vaultData?.shouldBeFrozen && !vaultData?.frozen) return false;
     if (!isDeposit && !vaultData?.frozen && curTime > vaultData?.repaymentTimestamp)
       return false;
     return true;
   }, [isPending, isDeposit, vaultData]);
 
   const shouldDisabled = useMemo(() => {
-    if (redeemPrepared) return parseFloat(redeemAmount) === 0;
+    if (redeemPrepared) return positionData?.positionEntries.length === 0;
     return (
       isPending ||
       shouldOverlay ||
