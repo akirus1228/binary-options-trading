@@ -9,6 +9,7 @@ import {
   IVaultWithdrawAsyncThunk,
   IVaultRoiAsyncThunk,
   IVaultRedeemAsyncThunk,
+  IVaultMaxDepositAsyncThunk,
 } from "./interfaces";
 
 export type BalanceVault = {
@@ -249,13 +250,35 @@ export const getRedeemAmount = createAsyncThunk(
   async ({ vaultId, address, provider }: IVaultRedeemAsyncThunk) => {
     const signer = provider.getSigner();
     let vaultContract = new ethers.Contract(vaultId, balanceVaultAbi, signer);
-    const redeem = await vaultContract.callStatic["redeem()"]();
-    if (redeem.length > 0) return redeem[0];
+    try {
+      const redeem = await vaultContract.callStatic["redeem()"]();
+      if (redeem.length > 0) return redeem[0];
+    } catch (err) {
+      console.log(err);
+    }
 
     // TODO: remove this later, temporary fix for vaults with no returning redeem function
     vaultContract = new ethers.Contract(vaultId, balanceVaultAbi, provider);
     const positions = await vaultContract["balanceOf(address)"](address);
+    if (positions[0].length === 0) return 0;
+
     const roi = await vaultContract["roi"](positions[0][0]);
     return (positions[0][0] as BigNumber).add(roi).toString();
+  }
+);
+
+export const getMaxDepositAmount = createAsyncThunk(
+  "balance-vault/getRoiAmount",
+  async ({ vaultId, provider }: IVaultMaxDepositAsyncThunk) => {
+    const vaultContract = new ethers.Contract(
+      vaultId,
+      balanceVaultAbi,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      provider
+    );
+    // call the contract
+    const fundingAmount: BigNumber = await vaultContract["fundingAmount"]();
+    const fundraised: BigNumber = await vaultContract["fundraised"]();
+    return fundingAmount.sub(fundraised);
   }
 );

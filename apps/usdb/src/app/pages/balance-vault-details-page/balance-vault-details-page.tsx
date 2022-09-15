@@ -164,12 +164,14 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                   <h2 className={`${style["text-lg"]}`}>
                     {vaultData?.fundsRaised &&
                       formatCurrency(
-                        +ethers.utils.formatUnits(vaultData?.fundsRaised, 18)
+                        +ethers.utils.formatUnits(vaultData?.fundsRaised, 18),
+                        2
                       )}{" "}
                     /{" "}
                     {vaultData?.fundingAmount &&
                       formatCurrency(
-                        +ethers.utils.formatUnits(vaultData?.fundingAmount, 18)
+                        +ethers.utils.formatUnits(vaultData?.fundingAmount, 18),
+                        2
                       )}
                   </h2>
                 </Box>
@@ -280,7 +282,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                       />
                     </Box>
                     <Typography sx={{ color: "#69D9C8" }}>
-                      {formatCurrency(positionData?.totalUsdValue ?? 0)}
+                      {formatCurrency(positionData?.totalUsdValue ?? 0, 2)}
                     </Typography>
                     {/* todo: replace with position total */}
                   </Box>

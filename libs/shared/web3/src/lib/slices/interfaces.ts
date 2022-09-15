@@ -123,6 +123,10 @@ export interface IVaultRedeemAsyncThunk extends IInteractiveAsyncThunk {
   readonly address: string;
 }
 
+export interface IVaultMaxDepositAsyncThunk extends IInteractiveAsyncThunk {
+  readonly vaultId: string;
+}
+
 export interface ICalcBondDetailsAsyncThunk extends IBaseBondAsyncThunk {
   readonly value: string;
 }
