@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import React, { useCallback, useEffect, useState } from "react";
 import Switch from "@mui/material/Switch";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import CreateVaultForm from "../../components/create-vault/createVault";
 import {
   defaultNetworkId,
@@ -154,9 +154,11 @@ export default function BalanceVault() {
           </PaperTableHead>
           <TableBody>
             {balanceVaults &&
-              balanceVaults.map((balanceVault: BalanceVaultType, index: number) => (
-                <BalanceVaultItem key={index} Type={balanceVault} overview={overView} />
-              ))}
+              balanceVaults
+                .filter((x) => x.vaultAddress !== ethers.constants.AddressZero)
+                .map((balanceVault: BalanceVaultType, index: number) => (
+                  <BalanceVaultItem key={index} Type={balanceVault} overview={overView} />
+                ))}
           </TableBody>
         </PaperTable>
       </Box>

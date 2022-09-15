@@ -223,14 +223,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
               </Box>
               <Box className="grid g-x-2">
                 <Box>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <h2 className={style["text-md"]}>Overview</h2>
-                    <Icon
-                      component={InfoOutlinedIcon}
-                      fontSize={"medium"}
-                      sx={{ ml: "5px" }}
-                    />
-                  </Box>
+                  <h2 className={style["text-md"]}>Overview</h2>
                   <p className={lowContrastText}>
                     Deposit{" "}
                     {vaultData &&
@@ -273,14 +266,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 </Box>
                 <Box className="flex fc fj-sb">
                   <Box className="flex fr fj-sb ai-c">
-                    <Box className="flex ai-c">
-                      <h2 className={style["text-md"]}>My Position</h2>
-                      <Icon
-                        component={InfoOutlinedIcon}
-                        fontSize={"medium"}
-                        sx={{ ml: "5px" }}
-                      />
-                    </Box>
+                    <h2 className={style["text-md"]}>My Position</h2>
                     <Typography sx={{ color: "#69D9C8" }}>
                       {formatCurrency(positionData?.totalUsdValue ?? 0, 2)}
                     </Typography>
@@ -329,23 +315,9 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
               </Button>
             </Box>
             <Box sx={{ p: "2em" }}>
-              <Box className="flex ai-c">
-                <h2 className={`${style["text-md"]}`}>Description</h2>
-                <Icon
-                  component={InfoOutlinedIcon}
-                  fontSize={"medium"}
-                  sx={{ ml: "5px" }}
-                />
-              </Box>
+              <h2 className={`${style["text-md"]}`}>Description</h2>
               <p className={lowContrastText}>{vaultData?.description}</p>
-              <Box className="flex ai-c">
-                <h2 className={`${style["text-md"]}`}>Vault owner</h2>
-                <Icon
-                  component={InfoOutlinedIcon}
-                  fontSize={"medium"}
-                  sx={{ ml: "5px" }}
-                />
-              </Box>
+              <h2 className={`${style["text-md"]}`}>Vault owner</h2>
               <Box
                 sx={{ p: "0.75em" }}
                 className={`flex fr jf-c ai-c gap-x-2 fj-sb rounded ${lowContrastBg}`}
@@ -365,14 +337,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                   </IconButton>
                 </Box>
               </Box>
-              <Box className="flex ai-c">
-                <h2 className={`${style["text-md"]}`}>External Links</h2>
-                <Icon
-                  component={InfoOutlinedIcon}
-                  fontSize={"medium"}
-                  sx={{ ml: "5px" }}
-                />
-              </Box>
+              <h2 className={`${style["text-md"]}`}>External Links</h2>
               <Box className="flex fr ai-c gap-x-1">
                 {vaultData?.ownerContacts.map(
                   (item, index) =>
