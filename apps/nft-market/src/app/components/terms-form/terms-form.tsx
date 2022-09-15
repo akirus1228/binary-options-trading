@@ -495,7 +495,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   }, [durationType, duration, amount, apr]);
 
   // make offer logic
-  const handleMakeOffer = useCallback(async () => {
+  const handleMakeOffer = async () => {
     if (!props.listing || !provider || !props.asset.owner) return;
     const expirationAt = new Date(Date.now() + 86400 * 1000 * 7);
     const { id, ...listingTerm } = props.listing.term;
@@ -535,7 +535,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     createOffer(offer);
     dispatch(addAlert({ message: "Offer sent" }));
     props.onClose(true);
-  }, [props.listing, provider, props.asset, amount, duration, apr, currency]);
+  };
 
   useEffect(() => {
     if (!isCreateOfferLoading && !!createOfferResponse) {
