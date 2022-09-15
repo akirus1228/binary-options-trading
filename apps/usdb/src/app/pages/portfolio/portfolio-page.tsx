@@ -1,13 +1,4 @@
-import {
-  Box,
-  Grid,
-  LinearProgress,
-  Container,
-  Icon,
-  Typography,
-  Avatar,
-} from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { Box, Grid, LinearProgress, Container, Typography, Avatar } from "@mui/material";
 import { useSelector } from "react-redux";
 import { formatCurrency, prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
 import {
@@ -24,10 +15,10 @@ export default function PortfolioPage() {
   const themeType = useSelector((state: RootState) => state.app.theme);
 
   // load user positions from balance vault manager
-  const { data: positionData } = useBvmGetPositions(address, 0, 100);
+  const { data: positionData } = useBvmGetPositions(address, 0, 1000);
 
   // load generated vaults from balance vault manager
-  const { data: vaultData } = useBvmGetGeneratedVaults(0, 100);
+  const { data: vaultData } = useBvmGetGeneratedVaults(0, 1000);
 
   // total portfolio value from all vaults
   const portfolioValue = useMemo(() => {
@@ -79,7 +70,7 @@ export default function PortfolioPage() {
           marginTop: "20px",
         }}
       >
-        {formatCurrency(portfolioValue ?? 0)}
+        {formatCurrency(portfolioValue ?? 0, 4)}
       </Typography>
       <Box
         sx={{
@@ -178,14 +169,6 @@ export default function PortfolioPage() {
                     >
                       My position
                     </Typography>
-                    <Icon
-                      component={InfoOutlinedIcon}
-                      fontSize={"medium"}
-                      sx={{
-                        mt: `${"3px"}`,
-                        ml: `${"10px"}`,
-                      }}
-                    />
                   </Box>
                   <Typography
                     sx={{
@@ -218,14 +201,6 @@ export default function PortfolioPage() {
                     >
                       Duration
                     </Typography>
-                    <Icon
-                      component={InfoOutlinedIcon}
-                      fontSize={"medium"}
-                      sx={{
-                        mt: `${"3px"}`,
-                        ml: `${"10px"}`,
-                      }}
-                    />
                   </Box>
                   <Box display="flex" alignItems="center" sx={{ marginTop: "10px" }}>
                     <Typography
