@@ -38,6 +38,7 @@ import { PositionTemplate } from "../../pages/balance-vault-details-page/positio
 import FormInputWrapper from "../formInputWrapper";
 import { AppDispatch, RootState } from "../../store";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatCurrency } from "@fantohm/shared-helpers";
 
 export interface VaultActionProps {
   vaultId: string;
@@ -60,9 +61,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   const [token, setToken] = useState("USDB");
   const [currency, setCurrency] = useState<Erc20Currency>();
   const [isPending, setIsPending] = useState(false);
-  const [yieldAmount, setYieldAmount] = useState("0");
-  const [dollarAmount, setDollarAmount] = useState("0");
-  const [redeemAmount, setRedeemAmount] = useState("0");
+  const [yieldAmount, setYieldAmount] = useState(0);
+  const [dollarAmount, setDollarAmount] = useState(0);
+  const [redeemAmount, setRedeemAmount] = useState(0);
   const [maxDepositAmount, setMaxDepositAmount] = useState(BigNumber.from(0));
   const themeType = useSelector((state: RootState) => state.app.theme);
 
@@ -198,8 +199,8 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   useEffect(() => {
     const fetchRoi = async () => {
       if (provider === null || amount.trim() === "" || parseFloat(amount) === 0) {
-        setYieldAmount("0");
-        setDollarAmount("0");
+        setYieldAmount(0);
+        setDollarAmount(0);
       } else {
         const roi: BigNumber = await dispatch(
           getRoiAmount({
@@ -208,9 +209,9 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
             provider,
           })
         ).unwrap();
-        setYieldAmount(ethers.utils.formatUnits(roi, currency?.decimals ?? 18));
+        setYieldAmount(+ethers.utils.formatUnits(roi, currency?.decimals ?? 18));
         // const dollar = await getTokenPrice(token.toLowerCase());
-        setDollarAmount(ethers.utils.formatUnits(roi, currency?.decimals ?? 18));
+        setDollarAmount(+ethers.utils.formatUnits(roi, currency?.decimals ?? 18));
       }
     };
 
@@ -232,12 +233,12 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   useEffect(() => {
     const fetchRedeem = async () => {
       if (provider === null || !redeemPrepared) {
-        setRedeemAmount("0");
+        setRedeemAmount(0);
       } else {
         const redeem = await dispatch(
           getRedeemAmount({ vaultId, address, provider })
         ).unwrap();
-        setRedeemAmount(ethers.utils.formatUnits(redeem, currency?.decimals ?? 18));
+        setRedeemAmount(+ethers.utils.formatUnits(redeem, currency?.decimals ?? 18));
       }
     };
 
@@ -403,7 +404,13 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                 <Typography>
                   Max Amount:{" "}
                   {maxDepositAmount &&
-                    ethers.utils.formatUnits(maxDepositAmount, currency?.decimals ?? 18)}
+                    formatCurrency(
+                      +ethers.utils.formatUnits(
+                        maxDepositAmount,
+                        currency?.decimals ?? 18
+                      ),
+                      2
+                    ).replace("$", "")}
                 </Typography>
               </Box>
               <Box
@@ -438,7 +445,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                   <Typography sx={{ fontSize: 16 }}>USDB</Typography>
                 </Box>
                 <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>
-                  {yieldAmount}
+                  {formatCurrency(yieldAmount, 2).replace("$", "")}
                 </Typography>
               </Box>
               <Box
