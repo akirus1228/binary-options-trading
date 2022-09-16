@@ -116,15 +116,26 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
           setUrl(previewNotAvailable);
         } else {
           if (preferredWidth < 1024) {
-            getGucUrl(validImages[0].config.url ?? "").then((gucUrl) => {
-              setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
-            });
-          } else {
-            getGucUrl(validImages[validImages.length - 1].config.url ?? "").then(
-              (gucUrl) => {
+            if (validImages[0].headers["content-type"] === "image/svg+xml") {
+              setUrl(validImages[0].config.url ?? "");
+            } else {
+              getGucUrl(validImages[0].config.url ?? "").then((gucUrl) => {
                 setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
-              }
-            );
+              });
+            }
+          } else {
+            if (
+              validImages[validImages.length - 1].headers["content-type"] ===
+              "image/svg+xml"
+            ) {
+              setUrl(validImages[validImages.length - 1].config.url ?? "");
+            } else {
+              getGucUrl(validImages[validImages.length - 1].config.url ?? "").then(
+                (gucUrl) => {
+                  setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
+                }
+              );
+            }
           }
         }
       }
