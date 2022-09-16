@@ -1,5 +1,5 @@
 import { NftPortAsset } from "../api/nftport";
-import { OpenseaAsset, OpenseaCollection } from "../api/opensea";
+import { OpenseaAsset, OpenseaCollection } from "./opensea-types";
 import { ReservoirToken } from "../api/reservoir";
 
 // request types
