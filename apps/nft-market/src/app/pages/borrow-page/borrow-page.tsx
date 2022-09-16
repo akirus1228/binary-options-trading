@@ -26,9 +26,6 @@ import style from "./borrow-page.module.scss";
 import { useBestImage } from "../../hooks/use-best-image";
 
 export const BorrowPage = (): JSX.Element => {
-  useEffect(() => {
-    console.count("BorrowPage rendered");
-  });
   const take = 20;
   const { address } = useWeb3Context();
   const { impersonateAddress, isImpersonating } = useImpersonateAccount();
@@ -118,7 +115,6 @@ export const BorrowPage = (): JSX.Element => {
       ?.map((loan) => loan.assetListing.asset)
       .filter((asset) => asset.status === AssetStatus.Locked) || [];
 
-  console.log("myAssets = ", myAssets);
   const assetsToShow: Asset[] = useMemo(() => {
     return (
       feQuery.status === AssetStatus.Locked && loans
