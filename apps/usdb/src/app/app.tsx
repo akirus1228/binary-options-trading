@@ -117,7 +117,11 @@ export const App = (): JSX.Element => {
             <Backdrop open={true} className={` ${style["backdropElement"]}`}>
               <Paper className={` ${style["paperContainerSm"]}`}>
                 <Box
-                  sx={{ display: "flex", justifyContent: "flex-end" }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    flexDirection: "column",
+                  }}
                   className={style["closeDeposit"]}
                 >
                   <Typography>
