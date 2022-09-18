@@ -9,10 +9,6 @@ export interface PreviewImageProps {
 }
 
 export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
-  // if (props.name && props.name?.search("Munko") > -1) {
-  //   console.log(props.name);
-  //   console.log(props.url);
-  // }
   return (
     <Box
       sx={{ height: "300px", width: "300px", borderRadius: "28px", overflow: "hidden" }}
@@ -21,7 +17,12 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
         className={style["assetImg"]}
         src={props.url}
         alt={props.name}
-        style={{ height: "100%", width: "auto" }}
+        style={{
+          height: "100%",
+          width: "auto",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
       />
     </Box>
   );
