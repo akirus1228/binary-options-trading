@@ -54,7 +54,7 @@ export type UseBalanceVaultResponse = {
  *
  */
 export const useBalanceVault = (contractAddress: string): UseBalanceVaultResponse => {
-  const { provider, address } = useWeb3Context();
+  const { provider, defaultProvider } = useWeb3Context();
 
   const {
     data: vaultData,
@@ -67,7 +67,7 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
         contractAddress ?? "",
         balanceVaultAbi,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        provider!
+        provider || defaultProvider
       );
       const vaultName = contract["ownerName"]();
       const vaultDescription = contract["ownerDescription"]();
@@ -128,7 +128,7 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
         };
       });
     },
-    { enabled: provider !== null && !!address }
+    { enabled: provider !== null || defaultProvider !== null }
   );
 
   useEffect(() => {
@@ -168,7 +168,7 @@ export type UseBalanceVaultPositionResponse = {
 export const useBalanceVaultPosition = (
   contractAddress: string
 ): UseBalanceVaultPositionResponse => {
-  const { provider, address, chainId } = useWeb3Context();
+  const { provider, defaultProvider, address, chainId } = useWeb3Context();
 
   const {
     data: positionData,
@@ -181,7 +181,7 @@ export const useBalanceVaultPosition = (
         contractAddress ?? "",
         balanceVaultAbi,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        provider!
+        provider || defaultProvider
       );
       const position = contract["balanceOf(address)"](address).then(
         (res: BalanceOfResponse) => ({
@@ -197,7 +197,7 @@ export const useBalanceVaultPosition = (
       );
       return position;
     },
-    { enabled: provider !== null && !!address }
+    { enabled: (provider !== null || defaultProvider !== null) && !!address }
   );
 
   useEffect(() => {

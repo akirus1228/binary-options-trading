@@ -1,4 +1,11 @@
-import React, { ReactElement, useCallback, useContext, useMemo, useState } from "react";
+import React, {
+  ReactElement,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
@@ -55,6 +62,9 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
   const [chainId, setChainId] = useState(defaultNetworkId);
   const [address, setAddress] = useState("");
   const [provider, setProvider] = useState<JsonRpcProvider | null>(null);
+  const [defaultProvider, setDefaultProvider] = useState<JsonRpcProvider>(
+    new JsonRpcProvider("https://rinkeby.infura.io/v3/2d7e77efb83e46d8a8b91cf77245f6bb")
+  );
 
   const rpcUris = enabledNetworkIds.reduce(
     (rpcUris: { [key: string]: string }, NetworkId: NetworkId) => (
@@ -76,6 +86,28 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
       },
     })
   );
+
+  useEffect(() => {
+    const fetch = async () => {
+      const _chainId = await window.ethereum.request({ method: "eth_chainId" });
+      setChainId(parseInt(_chainId, 16));
+    };
+
+    fetch();
+
+    window.ethereum.on("chainChanged", (_chainId: string) => {
+      setChainId(parseInt(_chainId, 16));
+    });
+  }, [window.ethereum]);
+
+  useEffect(() => {
+    if (chainId === 4)
+      setDefaultProvider(
+        new JsonRpcProvider(
+          "https://rinkeby.infura.io/v3/2d7e77efb83e46d8a8b91cf77245f6bb"
+        )
+      );
+  }, [chainId]);
 
   const hasCachedProvider = useCallback((): boolean => {
     if (!web3Modal) return false;
@@ -268,6 +300,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
       address,
       chainId,
       web3Modal,
+      defaultProvider,
     }),
     [
       connect,
@@ -278,6 +311,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
       address,
       chainId,
       web3Modal,
+      defaultProvider,
     ]
   );
 

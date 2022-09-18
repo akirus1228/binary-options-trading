@@ -26,7 +26,7 @@ export enum BalanceVaultOverview {
 }
 
 export default function BalanceVault() {
-  const { provider, address, chainId, connected } = useWeb3Context();
+  const { provider, address, chainId, connected, defaultProvider } = useWeb3Context();
   const dispatch = useDispatch();
 
   const [createVaultOpen, setCreateVaultOpen] = useState(false);
@@ -43,26 +43,26 @@ export default function BalanceVault() {
   ];
   console.log("length", vaultLength);
   useEffect(() => {
-    if (!provider) return;
+    if (!provider && !defaultProvider) return;
 
     dispatch(
       getGeneratedVaultsLength({
         networkId: chainId ?? defaultNetworkId,
-        provider: provider,
+        provider: provider || defaultProvider,
         callback: (result: any) => {
           setVaultLength(BigNumber.from(result).toString());
         },
       })
     );
-  }, [provider, connected, address]);
+  }, [provider, defaultProvider, connected, address]);
 
   useEffect(() => {
-    if (!provider) return;
+    if (!provider && !defaultProvider) return;
 
     dispatch(
       getBalanceVaultManager({
         networkId: chainId ?? defaultNetworkId,
-        provider: provider,
+        provider: provider || defaultProvider,
         skip: "0",
         limit: vaultLength as string,
         callback: (result: any) => {
@@ -88,7 +88,7 @@ export default function BalanceVault() {
         },
       })
     );
-  }, [provider, connected, address, vaultLength]);
+  }, [provider, defaultProvider, connected, address, vaultLength]);
 
   const onCreateVaultOpen = useCallback(() => {
     setCreateVaultOpen(true);
@@ -97,7 +97,7 @@ export default function BalanceVault() {
     setCreateVaultOpen(false);
   };
   console.log("balanceVaults", balanceVaults);
-  return connected ? (
+  return (
     <Box sx={{ mt: "100px" }}>
       <CreateVaultForm onClose={onCreateVaultClose} open={createVaultOpen} />
       <Typography
@@ -162,10 +162,6 @@ export default function BalanceVault() {
           </TableBody>
         </PaperTable>
       </Box>
-    </Box>
-  ) : (
-    <Box className="flex fj-c" sx={{ mt: "100px" }}>
-      <Typography sx={{ fontSize: "40px" }}>Please connect your wallet</Typography>
     </Box>
   );
 }
