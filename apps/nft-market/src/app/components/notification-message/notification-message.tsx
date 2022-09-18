@@ -395,18 +395,12 @@ export const NotificationMessage = ({
         setContextType("loan");
         break;
       case NotificationContext.ListingCancelled:
-      case NotificationContext.NewOffer:
         setAssetListingId(notification.contextId);
         setContextType("listing");
         break;
+      case NotificationContext.NewOffer:
       case NotificationContext.OfferAccepted:
-        setOfferId(notification.contextId);
-        setContextType("offer");
-        break;
       case NotificationContext.OfferUpdated:
-        setOfferId(notification.contextId);
-        setContextType("offer");
-        break;
       case NotificationContext.OfferRemoved:
         setOfferId(notification.contextId);
         setContextType("offer");
@@ -475,15 +469,15 @@ export const NotificationMessage = ({
         MsgType =
           notification.userType === UserType.Lender ? RepaymentLender : RepaymentBorrower;
         break;
-      case NotificationContext.NewOffer:
-        MsgType =
-          notification.userType === UserType.Lender ? NewOfferLender : NewOfferBorrower;
-        break;
       case NotificationContext.ListingCancelled:
         MsgType =
           notification.userType === UserType.Lender
             ? ListingCancelledLender
             : ListingCancelledBorrower;
+        break;
+      case NotificationContext.NewOffer:
+        MsgType =
+          notification.userType === UserType.Lender ? NewOfferLender : NewOfferBorrower;
         break;
       case NotificationContext.OfferAccepted:
         MsgType =
