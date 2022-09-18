@@ -58,13 +58,21 @@ export const BlogPost = (props: BlogPostProps): JSX.Element => {
             className="email-div"
             md={12}
             order={{ lg: 1 }}
-            style={{ width: "100%", overflow: "hidden", padding: 0 }}
+            style={{ width: "100%", padding: 0 }}
           >
-            <img
-              src={props.post && props.post.image ? props.post.image : BalanceHeroImage}
-              alt="DAI token"
-              className={style["daiIcon"]}
-            />
+            <section
+              style={{
+                height: "270px",
+                borderRadius: "25px",
+                backgroundImage:
+                  props.post && props.post.image
+                    ? `url('${props.post.image}')`
+                    : `url('${BalanceHeroImage}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></section>
             <Box
               className={style["titleWrapper"]}
               style={{
