@@ -99,18 +99,23 @@ export function MyAccountAssets() {
       case "In Escrow":
         return AssetStatus.Locked;
       default:
-        return AssetStatus.New;
+        return "All";
     }
   };
 
   const handleStatusChange = useCallback(
     (event: SelectChangeEvent<string>) => {
-      if (!["All", "Unlisted", "Listed", "In Escrow"].includes(event.target.value))
+      if (
+        !["All", "Unlisted", "Listed", "In Escrow", "Unsuable"].includes(
+          event.target.value
+        )
+      )
         return;
       setStatus(event.target.value);
       const updatedQuery: FrontendAssetFilterQuery = {
         ...feQuery,
         status: getStatusType(event.target.value),
+        usable: event.target.value === "Unsuable" ? false : undefined,
       };
       setFeQuery(updatedQuery);
     },
@@ -182,6 +187,7 @@ export function MyAccountAssets() {
               <MenuItem value="Listed">Listed</MenuItem>
               <MenuItem value="Unlisted">Unlisted</MenuItem>
               <MenuItem value="In Escrow">In Escrow</MenuItem>
+              <MenuItem value="Unsuable">Unsuable</MenuItem>
             </Select>
           </Box>
           <AssetList

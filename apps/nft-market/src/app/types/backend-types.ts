@@ -135,6 +135,7 @@ export type BackendAsset = {
   assetContractAddress: string;
   chain: Chain;
   wallet: string;
+  usable: boolean;
 } & StandardBackendObject;
 
 export type Asset = BackendAsset & {

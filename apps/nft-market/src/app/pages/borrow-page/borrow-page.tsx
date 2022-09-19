@@ -2,7 +2,6 @@ import { useWeb3Context, useImpersonateAccount } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { utils } from "ethers";
 import {
   useGetListingsQuery,
   useGetLoansQuery,
@@ -162,7 +161,7 @@ export const BorrowPage = (): JSX.Element => {
               </Box>
             )}
             {isWalletConnected &&
-              (assetsLoading || isAssetLoading || isLoansLoaing || isAssetLoading ? (
+              (assetsLoading || isLoansLoaing || isAssetLoading ? (
                 <Box className="flex fr fj-c">
                   <CircularProgress />
                 </Box>
