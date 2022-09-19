@@ -4,6 +4,24 @@ import { Asset } from "../types/backend-types";
 import loadingGradient from "../../assets/images/loading.png";
 import previewNotAvailable from "../../assets/images/preview-not-available.png";
 
+export const getIpfsUrl = (url: string | null = "") => {
+  if (!url?.includes("ipfs")) return url || "";
+
+  const IPFS_URL = "https://balance.mypinata.cloud/";
+
+  if (!url) {
+    return url;
+  }
+
+  const [, item] = url.split("ipfs/");
+
+  if (item) {
+    return IPFS_URL + "ipfs/" + item;
+  }
+
+  return url;
+};
+
 export type ImageConvertResponse = {
   message?: string;
   error?: string;
@@ -113,7 +131,7 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
       validImages.sort((imageA, imageB) => sortImageBySize(imageA, imageB));
       if (isSubscribed) {
         if (validImages.length < 1) {
-          setUrl(previewNotAvailable);
+          setUrl("");
         } else {
           if (preferredWidth < 1024) {
             if (validImages[0].headers["content-type"] === "image/svg+xml") {
@@ -145,5 +163,5 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
     });
   }, [imageLoadOrder]);
 
-  return url;
+  return url || getIpfsUrl(asset?.gifUrl) || previewNotAvailable;
 };
