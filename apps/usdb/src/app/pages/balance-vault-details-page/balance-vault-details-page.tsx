@@ -118,7 +118,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             id="left-box"
           >
             <Box
-              className="flex fr fj-sb ai-c gap-x-2"
+              className="flex fr fj-sb ai-c gap-x-1"
               sx={{ borderBottom: borderStyle, p: "2em" }}
               id="left-box-header"
             >

@@ -63,7 +63,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
   const [address, setAddress] = useState("");
   const [provider, setProvider] = useState<JsonRpcProvider | null>(null);
   const [defaultProvider, setDefaultProvider] = useState<JsonRpcProvider>(
-    new JsonRpcProvider("https://rinkeby.infura.io/v3/2d7e77efb83e46d8a8b91cf77245f6bb")
+    new JsonRpcProvider(chains[defaultNetworkId].rpcUrls[0])
   );
 
   const rpcUris = enabledNetworkIds.reduce(
@@ -101,12 +101,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
   }, [window.ethereum]);
 
   useEffect(() => {
-    if (chainId === 4)
-      setDefaultProvider(
-        new JsonRpcProvider(
-          "https://rinkeby.infura.io/v3/2d7e77efb83e46d8a8b91cf77245f6bb"
-        )
-      );
+    setDefaultProvider(new JsonRpcProvider(chains[chainId].rpcUrls[0]));
   }, [chainId]);
 
   const hasCachedProvider = useCallback((): boolean => {
