@@ -445,7 +445,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                   <Typography sx={{ fontSize: 16 }}>USDB</Typography>
                 </Box>
                 <Typography sx={{ fontSize: 30, color: "#8A99A8" }}>
-                  {formatCurrency(yieldAmount, 2).replace("$", "")}
+                  {formatCurrency(yieldAmount, 6).replace("$", "")}
                 </Typography>
               </Box>
               <Box
@@ -460,7 +460,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                     {(vaultData?.apr ?? 0) / 100}%
                   </Typography>
                 </Box>
-                <Typography>${dollarAmount}</Typography>
+                <Typography>{formatCurrency(dollarAmount, 6)}</Typography>
               </Box>
             </FormInputWrapper>
           </>

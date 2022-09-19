@@ -3,9 +3,10 @@ import {
   getErc20CurrencyFromAddress,
   prettifySeconds,
   useWeb3Context,
+  NetworkIds,
 } from "@fantohm/shared-web3";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DaiToken, TakepileLogo } from "@fantohm/shared/images";
 import { ContentCopy, NorthEast, OpenInNew } from "@mui/icons-material";
 import {
@@ -97,7 +98,11 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
     setVaultActionFormOpen(false);
   };
 
-  return (
+  const shouldSwitch = useMemo(() => {
+    return chainId !== NetworkIds.FantomOpera && !vaultData;
+  }, [vaultData, chainId]);
+
+  return !shouldSwitch ? (
     <Box>
       <Box
         className="flexCenterRow"
@@ -118,7 +123,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             id="left-box"
           >
             <Box
-              className="flex fr fj-sb ai-c gap-x-2"
+              className="flex fr fj-sb ai-c gap-x-1"
               sx={{ borderBottom: borderStyle, p: "2em" }}
               id="left-box-header"
             >
@@ -356,6 +361,10 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
         </Box>
       </Box>
       <Faq />
+    </Box>
+  ) : (
+    <Box className="flex fj-c" sx={{ mt: "100px" }}>
+      <Typography sx={{ fontSize: "40px" }}>Switch wallet to FTM chain</Typography>
     </Box>
   );
 };
