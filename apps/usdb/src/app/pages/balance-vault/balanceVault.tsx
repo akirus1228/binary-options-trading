@@ -105,7 +105,7 @@ export default function BalanceVault() {
         (x) => x.vaultAddress !== ethers.constants.AddressZero
       ).length === 0
     );
-  }, [balanceVaults]);
+  }, [balanceVaults, chainId]);
 
   return !shouldSwitch ? (
     <Box sx={{ mt: "100px" }}>
