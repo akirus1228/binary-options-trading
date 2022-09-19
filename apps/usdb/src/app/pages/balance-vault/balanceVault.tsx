@@ -1,7 +1,7 @@
 import { Box, Button, Container, TableBody, TableRow, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Switch from "@mui/material/Switch";
 import { BigNumber, ethers } from "ethers";
 import CreateVaultForm from "../../components/create-vault/createVault";
@@ -9,6 +9,7 @@ import {
   defaultNetworkId,
   getBalanceVaultManager,
   getGeneratedVaultsLength,
+  NetworkIds,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import { BalanceVaultType } from "../../store/interfaces";
@@ -96,8 +97,17 @@ export default function BalanceVault() {
   const onCreateVaultClose = () => {
     setCreateVaultOpen(false);
   };
-  console.log("balanceVaults", balanceVaults);
-  return (
+
+  const shouldSwitch = useMemo(() => {
+    return (
+      chainId !== NetworkIds.FantomOpera &&
+      (balanceVaults ?? new Array(0)).filter(
+        (x) => x.vaultAddress !== ethers.constants.AddressZero
+      ).length === 0
+    );
+  }, [balanceVaults]);
+
+  return !shouldSwitch ? (
     <Box sx={{ mt: "100px" }}>
       <CreateVaultForm onClose={onCreateVaultClose} open={createVaultOpen} />
       <Typography
@@ -162,6 +172,10 @@ export default function BalanceVault() {
           </TableBody>
         </PaperTable>
       </Box>
+    </Box>
+  ) : (
+    <Box className="flex fj-c" sx={{ mt: "100px" }}>
+      <Typography sx={{ fontSize: "40px" }}>Switch wallet to FTM chain</Typography>
     </Box>
   );
 }
