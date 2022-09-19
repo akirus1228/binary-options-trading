@@ -77,6 +77,12 @@ export const BorrowPage = (): JSX.Element => {
     });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
+  const allMyAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      status: "All",
+      wallet: actualAddress,
+    })
+  );
 
   useEffect(() => {
     const newQuery = {
@@ -178,6 +184,7 @@ export const BorrowPage = (): JSX.Element => {
                 </Box>
               ) : (
                 <AssetList
+                  allAssetsForPagination={[...allMyAssets, ...assetsInEscrow]}
                   assets={assetsToShow}
                   type="borrow"
                   fetchData={fetchMoreData}

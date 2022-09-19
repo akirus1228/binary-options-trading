@@ -74,6 +74,12 @@ export function MyAccountAssets() {
   });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
+  const allMyAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      status: "All",
+      wallet: address,
+    })
+  );
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
@@ -191,6 +197,9 @@ export function MyAccountAssets() {
             </Select>
           </Box>
           <AssetList
+            allAssetsForPagination={
+              feQuery.status === AssetStatus.Locked && loans ? assetsToShow : allMyAssets
+            }
             assets={assetsToShow}
             type="borrow"
             hasMore={hasNext}
