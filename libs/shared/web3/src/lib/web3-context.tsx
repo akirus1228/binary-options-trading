@@ -62,9 +62,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
   const [chainId, setChainId] = useState(defaultNetworkId);
   const [address, setAddress] = useState("");
   const [provider, setProvider] = useState<JsonRpcProvider | null>(null);
-  const [defaultProvider, setDefaultProvider] = useState<JsonRpcProvider>(
-    new JsonRpcProvider(chains[defaultNetworkId].rpcUrls[0])
-  );
+  const defaultProvider = new JsonRpcProvider(chains[defaultNetworkId].rpcUrls[0]);
 
   const rpcUris = enabledNetworkIds.reduce(
     (rpcUris: { [key: string]: string }, NetworkId: NetworkId) => (
@@ -86,23 +84,6 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
       },
     })
   );
-
-  useEffect(() => {
-    const fetch = async () => {
-      const _chainId = await window.ethereum.request({ method: "eth_chainId" });
-      setChainId(parseInt(_chainId, 16));
-    };
-
-    fetch();
-
-    window.ethereum.on("chainChanged", (_chainId: string) => {
-      setChainId(parseInt(_chainId, 16));
-    });
-  }, [window.ethereum]);
-
-  useEffect(() => {
-    setDefaultProvider(new JsonRpcProvider(chains[chainId].rpcUrls[0]));
-  }, [chainId]);
 
   const hasCachedProvider = useCallback((): boolean => {
     if (!web3Modal) return false;
