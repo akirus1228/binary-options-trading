@@ -10,7 +10,6 @@ import {
   coingeckoApi,
 } from "@fantohm/shared-web3";
 import { listingsReducer } from "./reducers/listing-slice";
-import { openseaApi } from "../api/opensea";
 import { nftPortApi } from "../api/nftport";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { backendApi } from "../api/backend-api";
@@ -33,14 +32,12 @@ const store = configureStore({
     account: accountReducer,
     currency: currencyReducer,
 
-    [openseaApi.reducerPath]: openseaApi.reducer,
     [nftPortApi.reducerPath]: nftPortApi.reducer,
     [backendApi.reducerPath]: backendApi.reducer,
     [coingeckoApi.reducerPath]: coingeckoApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false })
-      .concat(openseaApi.middleware)
       .concat(nftPortApi.middleware)
       .concat(backendApi.middleware)
       .concat(coingeckoApi.middleware)

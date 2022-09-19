@@ -6,7 +6,7 @@ import {
   SUPPORTED_VIDEO_EXTENSIONS,
 } from "@fantohm/shared/fetch-nft";
 import { NftPortAsset } from "../api/nftport";
-import { OpenseaAsset } from "../api/opensea";
+import { OpenseaAsset } from "../types/opensea-types";
 import { ReservoirToken } from "../api/reservoir";
 import { Assets, assetToAssetId } from "../store/reducers/asset-slice";
 import { Listings } from "../store/reducers/listing-slice";

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { isAssetValid } from "@fantohm/shared/fetch-nft";
 import { isDev, loadState, ierc721Abi, chains } from "@fantohm/shared-web3";
 import { Asset, AssetStatus, BackendLoadingStatus } from "../../types/backend-types";
-import { OpenseaAsset } from "../../api/opensea";
+import { OpenseaAsset } from "../../types/opensea-types";
 import {
   nftPortAssetsToAssets,
   openseaAssetToAsset,
