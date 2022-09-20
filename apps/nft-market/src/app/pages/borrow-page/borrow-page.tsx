@@ -77,6 +77,12 @@ export const BorrowPage = (): JSX.Element => {
     });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
+  const allMyAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      status: "All",
+      wallet: actualAddress,
+    })
+  );
 
   useEffect(() => {
     const newQuery = {
@@ -165,7 +171,7 @@ export const BorrowPage = (): JSX.Element => {
                 <Box className="flex fr fj-c">
                   <CircularProgress />
                 </Box>
-              ) : assetsToShow.length === 0 ? (
+              ) : !hasNext && assetsToShow.length === 0 ? (
                 <Box
                   className="flex fr fj-c"
                   sx={{
@@ -178,6 +184,7 @@ export const BorrowPage = (): JSX.Element => {
                 </Box>
               ) : (
                 <AssetList
+                  allAssetsCount={allMyAssets.length + assetsInEscrow.length}
                   assets={assetsToShow}
                   type="borrow"
                   fetchData={fetchMoreData}
