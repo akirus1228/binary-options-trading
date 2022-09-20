@@ -65,7 +65,7 @@ export const BorrowerAssetFilter = ({
   const handleStatusChange = useCallback(
     (event: SelectChangeEvent<string>) => {
       if (
-        !["All", "Unlisted", "Listed", "In Escrow", "Unsuable"].includes(
+        !["All", "Unlisted", "Listed", "In Escrow", "Unusable"].includes(
           event.target.value
         )
       )
@@ -74,7 +74,7 @@ export const BorrowerAssetFilter = ({
       const updatedQuery: FrontendAssetFilterQuery = {
         ...query,
         status: getStatusType(event.target.value),
-        usable: event.target.value === "Unsuable" ? false : undefined,
+        usable: event.target.value === "Unusable" ? false : undefined,
       };
       setQuery(updatedQuery);
     },
@@ -123,7 +123,7 @@ export const BorrowerAssetFilter = ({
         <MenuItem value="Listed">Listed</MenuItem>
         <MenuItem value="Unlisted">Unlisted</MenuItem>
         <MenuItem value="In Escrow">In Escrow</MenuItem>
-        <MenuItem value="Unsuable">Unsuable</MenuItem>
+        <MenuItem value="Unusable">Unusable</MenuItem>
       </Select>
       {isWalletConnected && (
         <>

@@ -106,7 +106,7 @@ export function MyAccountAssets() {
   const handleStatusChange = useCallback(
     (event: SelectChangeEvent<string>) => {
       if (
-        !["All", "Unlisted", "Listed", "In Escrow", "Unsuable"].includes(
+        !["All", "Unlisted", "Listed", "In Escrow", "Unusable"].includes(
           event.target.value
         )
       )
@@ -115,7 +115,7 @@ export function MyAccountAssets() {
       const updatedQuery: FrontendAssetFilterQuery = {
         ...feQuery,
         status: getStatusType(event.target.value),
-        usable: event.target.value === "Unsuable" ? false : undefined,
+        usable: event.target.value === "Unusable" ? false : undefined,
       };
       setFeQuery(updatedQuery);
     },
@@ -187,7 +187,7 @@ export function MyAccountAssets() {
               <MenuItem value="Listed">Listed</MenuItem>
               <MenuItem value="Unlisted">Unlisted</MenuItem>
               <MenuItem value="In Escrow">In Escrow</MenuItem>
-              <MenuItem value="Unsuable">Unsuable</MenuItem>
+              <MenuItem value="Unusable">Unusable</MenuItem>
             </Select>
           </Box>
           <AssetList
