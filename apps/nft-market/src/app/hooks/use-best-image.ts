@@ -70,31 +70,36 @@ const getGucUrl = (img_url: string): Promise<string> => {
     });
 };
 
+const ipfsToHttps = (ipfsUrl: string): string => {
+  return ipfsUrl.replace("ipfs://", "https://balance.mypinata.cloud/ipfs/");
+};
+
 export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
   const [url, setUrl] = useState(loadingGradient);
 
   const imageLoadOrder: string[] = useMemo(() => {
     if (asset === null) return [];
     const imageSet = new Set<string>(); // use set to enforce uniqueness
-    if (asset.osData?.image_url)
-      imageSet.add(
-        asset.osData?.image_url.replace(
-          "opensea.mypinata.cloud",
-          "balance.mypinata.cloud"
-        )
-      );
+    console.log(asset);
     if (asset.thumbUrl)
       imageSet.add(
-        asset.thumbUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
+        ipfsToHttps(
+          asset.thumbUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
+        )
       );
     if (asset.imageUrl)
       imageSet.add(
-        asset.imageUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
+        ipfsToHttps(
+          asset.imageUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
+        )
       );
     if (asset.frameUrl)
       imageSet.add(
-        asset.frameUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
+        ipfsToHttps(
+          asset.frameUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
+        )
       );
+    console.log(imageSet);
     return [...imageSet]; // return array for simplicity of filtering and sorting
   }, [asset?.osData?.image_url, asset?.thumbUrl, asset?.imageUrl, asset?.frameUrl]);
 
