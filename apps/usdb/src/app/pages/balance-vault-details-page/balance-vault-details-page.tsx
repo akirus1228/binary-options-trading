@@ -6,7 +6,7 @@ import {
   NetworkIds,
 } from "@fantohm/shared-web3";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { DaiToken, TakepileLogo } from "@fantohm/shared/images";
 import { ContentCopy, NorthEast, OpenInNew } from "@mui/icons-material";
 import {
@@ -35,7 +35,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   const { vaultId } = useParams();
   const themeType = useSelector((state: RootState) => state.app.theme);
 
-  const { chainId } = useWeb3Context();
+  const { chainId, connected, connect } = useWeb3Context();
 
   const { vaultData } = useBalanceVault(vaultId as string);
   const { positionData } = useBalanceVaultPosition(vaultId as string);
@@ -80,17 +80,37 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
       ? style["low-contrast-text-light"]
       : style["low-contrast-text-dark"];
 
+  const handleConnect = useCallback(async () => {
+    try {
+      await connect();
+    } catch (e) {
+      console.log("Connection metamask error", e);
+    }
+  }, [connect]);
+
   const onDeposit = () => {
+    if (!connected) {
+      handleConnect();
+      return;
+    }
     setIsDeposit(true);
     setVaultActionFormOpen(true);
   };
 
   const onWithdraw = () => {
+    if (!connected) {
+      handleConnect();
+      return;
+    }
     setIsDeposit(false);
     setVaultActionFormOpen(true);
   };
 
   const onRedeem = () => {
+    if (!connected) {
+      handleConnect();
+      return;
+    }
     setVaultActionFormOpen(true);
   };
 

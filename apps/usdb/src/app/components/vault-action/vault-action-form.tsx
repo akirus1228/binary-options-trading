@@ -92,8 +92,22 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   useEffect(() => {
     if (open) {
       setIsDeposit(deposit);
+      if (redeemPrepared) {
+        const fetchRedeem = async () => {
+          if (provider === null || !redeemPrepared) {
+            setRedeemAmount(0);
+          } else {
+            const redeem = await dispatch(
+              getRedeemAmount({ vaultId, address, provider })
+            ).unwrap();
+            setRedeemAmount(+ethers.utils.formatUnits(redeem, currency?.decimals ?? 18));
+          }
+        };
+
+        fetchRedeem();
+      }
     }
-  }, [open]);
+  }, [open, redeemPrepared]);
 
   const handleClose = () => {
     onClose(false);
@@ -229,21 +243,6 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
     fetchRoi();
     fetchMaxDepositAmount();
   }, [amount]);
-
-  useEffect(() => {
-    const fetchRedeem = async () => {
-      if (provider === null || !redeemPrepared) {
-        setRedeemAmount(0);
-      } else {
-        const redeem = await dispatch(
-          getRedeemAmount({ vaultId, address, provider })
-        ).unwrap();
-        setRedeemAmount(+ethers.utils.formatUnits(redeem, currency?.decimals ?? 18));
-      }
-    };
-
-    fetchRedeem();
-  }, [address, redeemPrepared]);
 
   const hasAllowance = useMemo(() => {
     console.log(
@@ -638,7 +637,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
           sx={{ fontSize: "18px", color: "#8A99A8" }}
         >
           <Typography>
-            My Position: {redeemAmount} {token}
+            My Position: {formatCurrency(redeemAmount, 6).replace("$", "")} {token}
           </Typography>
         </Box>
         <Button

@@ -6,6 +6,10 @@
 .faqItem {
     width: 40%;
     border: none !important;
+
+    &::before {
+        opacity: 0 !important;
+    }
 }
 
 .faqTitle {
