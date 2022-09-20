@@ -92,6 +92,7 @@ export const LendPage = (): JSX.Element => {
             )}
             <AssetTypeFilter query={query} setQuery={setQuery} />
             <AssetList
+              allAssetsCount={displayAssets.length}
               assets={displayAssets}
               type="lend"
               fetchData={fetchMoreData}

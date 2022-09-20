@@ -6,9 +6,8 @@ import LenderAsset from "./lender-asset/lender-asset";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useCallback } from "react";
 
-// if allAssetsForPagination is passed, we should use pagination with allAssetsForPagination
 export interface AssetListProps {
-  allAssetsForPagination?: Asset[];
+  allAssetsCount: number;
   assets: Asset[];
   type: "lend" | "borrow";
   address?: string;
@@ -26,11 +25,7 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
   return (
     <Box className="flex w100">
       <InfiniteScroll
-        dataLength={
-          props.allAssetsForPagination
-            ? props.allAssetsForPagination.length
-            : props.assets.length
-        } //This is important field to render the next data
+        dataLength={props.allAssetsCount} //This is important field to render the next data
         next={props.fetchData || defaultFn}
         hasMore={props.hasMore || false}
         loader={
@@ -43,23 +38,12 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
         endMessage={<Box className="flex fw fr fj-c ai-c w100"></Box>}
         scrollableTarget={document.body}
       >
-        {props.allAssetsForPagination
-          ? props.allAssetsForPagination.map((asset: Asset, index: number) => {
-              if (
-                props.assets.findIndex(
-                  (item) =>
-                    item.assetContractAddress === asset.assetContractAddress &&
-                    item.tokenId === asset.tokenId
-                ) === -1
-              ) {
-                return <span key={`asset-${index}`}></span>; // for empty item
-              }
-              return <AssetThumb key={`asset-${index}`} asset={asset} />;
-            })
-          : props.assets &&
-            props.assets.map((asset: Asset, index: number) => (
-              <AssetThumb key={`asset-${index}`} asset={asset} />
-            ))}
+        {props.assets.map((asset: Asset, index: number) => (
+          <AssetThumb key={`asset-${index}`} asset={asset} />
+        ))}
+        {new Array(props.allAssetsCount - props.assets.length).map((_, index) => (
+          <span key={index} />
+        ))}
       </InfiniteScroll>
     </Box>
   );

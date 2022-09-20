@@ -197,8 +197,10 @@ export function MyAccountAssets() {
             </Select>
           </Box>
           <AssetList
-            allAssetsForPagination={
-              feQuery.status === AssetStatus.Locked && loans ? assetsToShow : allMyAssets
+            allAssetsCount={
+              feQuery.status === AssetStatus.Locked && loans
+                ? assetsToShow.length
+                : allMyAssets.length
             }
             assets={assetsToShow}
             type="borrow"
