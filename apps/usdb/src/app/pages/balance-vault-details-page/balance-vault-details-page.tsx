@@ -4,9 +4,10 @@ import {
   prettifySeconds,
   useWeb3Context,
   NetworkIds,
+  getRedeemStatus,
 } from "@fantohm/shared-web3";
 
-import { useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { DaiToken, TakepileLogo } from "@fantohm/shared/images";
 import { ContentCopy, NorthEast, OpenInNew } from "@mui/icons-material";
 import {
@@ -20,10 +21,10 @@ import {
   Typography,
 } from "@mui/material";
 import { ethers } from "ethers";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useBalanceVault, useBalanceVaultPosition } from "../../hooks/use-balance-vault";
-import { RootState } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 import style from "./balance-vault-details-page.module.scss";
 import { ExternalLink } from "./external-link";
 import { PositionTemplate } from "./position-template";
@@ -35,10 +36,12 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   const { vaultId } = useParams();
   const themeType = useSelector((state: RootState) => state.app.theme);
 
-  const { chainId, connected, connect } = useWeb3Context();
+  const { chainId, connected, connect, address, provider, defaultProvider } =
+    useWeb3Context();
 
   const { vaultData } = useBalanceVault(vaultId as string);
   const { positionData } = useBalanceVaultPosition(vaultId as string);
+  const dispatch: AppDispatch = useDispatch();
 
   const getDate = (UNIX_timestamp: any) => {
     const a = new Date(UNIX_timestamp * 1000);
@@ -68,6 +71,23 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
   };
   const [vaultActionFormOpen, setVaultActionFormOpen] = useState(false);
   const [isDeposit, setIsDeposit] = useState(false);
+  const [redeemStatus, setRedeemStatus] = useState(false);
+
+  useEffect(() => {
+    const fetchRedeemStatus = async () => {
+      if (provider !== null || defaultProvider !== null) {
+        const status = await dispatch(
+          getRedeemStatus({
+            nftAddress: vaultData?.nftAddress || "",
+            provider: provider || defaultProvider,
+          })
+        ).unwrap();
+        setRedeemStatus(status);
+      }
+    };
+
+    fetchRedeemStatus();
+  }, [vaultData, provider, defaultProvider]);
 
   // theme relevant style data
   const borderStyle = themeType === "light" ? "2px solid #ECECF4" : "2px solid #101112";
@@ -122,12 +142,34 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
     return chainId !== NetworkIds.FantomOpera && !vaultData;
   }, [vaultData, chainId]);
 
+  const shouldNotifyFreeze = useMemo(() => {
+    return (
+      connected &&
+      address === vaultData?.ownerWallet &&
+      vaultData?.shouldBeFrozen &&
+      !vaultData.frozen
+    );
+  }, [connected, address, vaultData]);
+
+  const shouldNotifyClose = useMemo(() => {
+    return vaultData?.redeemPrepared && redeemStatus;
+  }, [connected, address, vaultData]);
+
   return !shouldSwitch ? (
     <Box>
+      {(shouldNotifyFreeze || shouldNotifyClose) && (
+        <Box className="flex fj-c" sx={{ mt: "60px" }}>
+          <Typography sx={{ fontSize: "40px" }}>
+            {shouldNotifyFreeze
+              ? "Vault should be frozen, Freeze!"
+              : "This vault is closed"}
+          </Typography>
+        </Box>
+      )}
       <Box
         className="flexCenterRow"
         id="content-centering-container"
-        sx={{ mt: "100px" }}
+        sx={{ mt: shouldNotifyFreeze || shouldNotifyClose ? "0px" : "100px" }}
       >
         <VaultActionForm
           vaultId={vaultId as string}

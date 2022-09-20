@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BigNumber, ethers } from "ethers";
 
-import { balanceVaultAbi } from "../abi";
+import { balanceVaultAbi, ierc721Abi } from "../abi";
 import { clearPendingTxn, fetchPendingTxns } from "./pending-txns-slice";
 import { error, info } from "./messages-slice";
 import {
@@ -10,6 +10,7 @@ import {
   IVaultRoiAsyncThunk,
   IVaultRedeemAsyncThunk,
   IVaultMaxDepositAsyncThunk,
+  IVaultGetRedeemStatusAsyncThunk,
 } from "./interfaces";
 
 export type BalanceVault = {
@@ -268,7 +269,7 @@ export const getRedeemAmount = createAsyncThunk(
 );
 
 export const getMaxDepositAmount = createAsyncThunk(
-  "balance-vault/getRoiAmount",
+  "balance-vault/getMaxDepositAmount",
   async ({ vaultId, provider }: IVaultMaxDepositAsyncThunk) => {
     const vaultContract = new ethers.Contract(
       vaultId,
@@ -280,5 +281,24 @@ export const getMaxDepositAmount = createAsyncThunk(
     const fundingAmount: BigNumber = await vaultContract["fundingAmount"]();
     const fundraised: BigNumber = await vaultContract["fundraised"]();
     return fundingAmount.sub(fundraised);
+  }
+);
+
+export const getRedeemStatus = createAsyncThunk(
+  "balance-vault/getRedeemStatus",
+  async ({ nftAddress, provider }: IVaultGetRedeemStatusAsyncThunk) => {
+    try {
+      const nftContract = new ethers.Contract(
+        nftAddress,
+        ierc721Abi,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        provider
+      );
+      // call the contract
+      const supply: BigNumber = await nftContract["totalSupply"]();
+      return supply.isZero();
+    } catch {
+      return false;
+    }
   }
 );
