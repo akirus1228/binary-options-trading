@@ -27,8 +27,8 @@ export const useWalletAsset = (
     {
       skip: 0,
       take: 1,
-      contractAddress,
-      tokenId,
+      contractAddresses: contractAddress,
+      tokenIds: tokenId,
     },
     { skip: !npResponse || isAssetLoading || !authSignature }
   );

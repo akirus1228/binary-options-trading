@@ -73,7 +73,7 @@ export const BorrowPage = (): JSX.Element => {
   // using the opensea assets, crosscheck with backend api for correlated data
   const { isLoading: isAssetLoading, isSuccess: isAssetLoadSuccess } =
     useGetListingsQuery(beQuery, {
-      skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
+      skip: !beQuery.contractAddresses || !authSignature,
     });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
@@ -81,9 +81,12 @@ export const BorrowPage = (): JSX.Element => {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: npResponse?.assets?.map((asset: Asset) =>
-        (asset.openseaId || "").toString()
-      ),
+      contractAddresses: npResponse?.assets
+        ?.map((asset: Asset) => (asset.assetContractAddress || "").toString())
+        .join(","),
+      tokenIds: npResponse?.assets
+        ?.map((asset: Asset) => (asset.tokenId || "").toString())
+        .join(","),
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
