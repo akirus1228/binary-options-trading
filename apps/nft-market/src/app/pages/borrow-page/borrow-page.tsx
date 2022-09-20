@@ -2,7 +2,6 @@ import { useWeb3Context, useImpersonateAccount } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { utils } from "ethers";
 import {
   useGetListingsQuery,
   useGetLoansQuery,
@@ -74,17 +73,26 @@ export const BorrowPage = (): JSX.Element => {
   // using the opensea assets, crosscheck with backend api for correlated data
   const { isLoading: isAssetLoading, isSuccess: isAssetLoadSuccess } =
     useGetListingsQuery(beQuery, {
-      skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
+      skip: !beQuery.contractAddresses || !authSignature,
     });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
+  const allMyAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      status: "All",
+      wallet: actualAddress,
+    })
+  );
 
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: npResponse?.assets?.map((asset: Asset) =>
-        (asset.openseaId || "").toString()
-      ),
+      contractAddresses: npResponse?.assets
+        ?.map((asset: Asset) => (asset.assetContractAddress || "").toString())
+        .join(","),
+      tokenIds: npResponse?.assets
+        ?.map((asset: Asset) => (asset.tokenId || "").toString())
+        .join(","),
     };
     setBeQuery(newQuery);
     // store the next page cursor ID
@@ -162,11 +170,11 @@ export const BorrowPage = (): JSX.Element => {
               </Box>
             )}
             {isWalletConnected &&
-              (assetsLoading || isAssetLoading || isLoansLoaing || isAssetLoading ? (
+              (assetsLoading || isLoansLoaing || isAssetLoading ? (
                 <Box className="flex fr fj-c">
                   <CircularProgress />
                 </Box>
-              ) : assetsToShow.length === 0 ? (
+              ) : !hasNext && assetsToShow.length === 0 ? (
                 <Box
                   className="flex fr fj-c"
                   sx={{
@@ -179,6 +187,7 @@ export const BorrowPage = (): JSX.Element => {
                 </Box>
               ) : (
                 <AssetList
+                  allAssetsCount={allMyAssets.length + assetsInEscrow.length}
                   assets={assetsToShow}
                   type="borrow"
                   fetchData={fetchMoreData}

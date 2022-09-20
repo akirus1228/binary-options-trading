@@ -7,6 +7,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useCallback } from "react";
 
 export interface AssetListProps {
+  allAssetsCount: number;
   assets: Asset[];
   type: "lend" | "borrow";
   address?: string;
@@ -24,7 +25,7 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
   return (
     <Box className="flex w100">
       <InfiniteScroll
-        dataLength={props.assets.length} //This is important field to render the next data
+        dataLength={props.allAssetsCount} //This is important field to render the next data
         next={props.fetchData || defaultFn}
         hasMore={props.hasMore || false}
         loader={
@@ -37,10 +38,12 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
         endMessage={<Box className="flex fw fr fj-c ai-c w100"></Box>}
         scrollableTarget={document.body}
       >
-        {props.assets &&
-          props.assets.map((asset: Asset, index: number) => (
-            <AssetThumb key={`asset-${index}`} asset={asset} />
-          ))}
+        {props.assets.map((asset: Asset, index: number) => (
+          <AssetThumb key={`asset-${index}`} asset={asset} />
+        ))}
+        {new Array(props.allAssetsCount - props.assets.length).map((_, index) => (
+          <span key={index} />
+        ))}
       </InfiniteScroll>
     </Box>
   );

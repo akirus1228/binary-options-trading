@@ -234,6 +234,7 @@ export const reservoirTokenToAsset = (token: ReservoirToken): Asset => {
     assetContractAddress: token.contract || "",
     chain: "eth" as Chain,
     wallet: token.owner,
+    usable: true,
     reservoirData: token,
     collection: {
       name: token.collection.name || "",
