@@ -295,9 +295,8 @@ export type FrontendAssetFilterQuery = Omit<Partial<Asset>, "status"> & {
 
 export type BackendAssetQueryParams = {
   status?: AssetStatus;
-  openseaIds?: string[];
-  contractAddress?: string;
-  tokenId?: string;
+  contractAddresses?: string;
+  tokenIds?: string;
   mediaType?: CollectibleMediaType;
 } & BackendStandardQuery;
 

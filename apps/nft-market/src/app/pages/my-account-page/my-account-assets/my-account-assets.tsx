@@ -91,7 +91,7 @@ export function MyAccountAssets() {
 
   // using the opensea assets, crosscheck with backend api for correlated data
   useGetListingsQuery(beQuery, {
-    skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
+    skip: !beQuery.contractAddresses || !authSignature,
   });
 
   const getStatusType = (status: string): AssetStatus | "All" => {
@@ -131,9 +131,12 @@ export function MyAccountAssets() {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: npResponse?.assets?.map((asset: Asset) =>
-        (asset.openseaId || "").toString()
-      ),
+      contractAddresses: npResponse?.assets
+        ?.map((asset: Asset) => (asset.assetContractAddress || "").toString())
+        .join(","),
+      tokenIds: npResponse?.assets
+        ?.map((asset: Asset) => (asset.tokenId || "").toString())
+        .join(","),
     };
     setBeQuery(newQuery);
     if (npResponse && npResponse.continuation) {
