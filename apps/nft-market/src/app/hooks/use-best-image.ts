@@ -56,7 +56,7 @@ const sortImageBySize = (imageA: AxiosResponse, imageB: AxiosResponse) => {
 const getGucUrl = (img_url: string): Promise<string> => {
   return axios
     .get<ImageConvertResponse>(
-      `https://image-converter-362319.uc.r.appspot.com/?url=${img_url}`
+      `https://image-manager-363021.uk.r.appspot.com/?url=${img_url}`
     )
     .then((response: AxiosResponse) => {
       if (response.status === 200) {
