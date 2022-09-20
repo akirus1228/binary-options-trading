@@ -127,6 +127,10 @@ export interface IVaultMaxDepositAsyncThunk extends IInteractiveAsyncThunk {
   readonly vaultId: string;
 }
 
+export interface IVaultGetRedeemStatusAsyncThunk extends IInteractiveAsyncThunk {
+  readonly nftAddress: string;
+}
+
 export interface ICalcBondDetailsAsyncThunk extends IBaseBondAsyncThunk {
   readonly value: string;
 }
