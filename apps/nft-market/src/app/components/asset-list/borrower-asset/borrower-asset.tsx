@@ -54,14 +54,18 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   };
 
   const viewLinks = [
-    {
-      startIcon: search,
-      alt: "Search",
-      title: "View Listing",
-      url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
-      endIcon: null,
-      isSelfTab: true,
-    },
+    ...(asset.usable
+      ? [
+          {
+            startIcon: search,
+            alt: "Search",
+            title: "View Listing",
+            url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
+            endIcon: null,
+            isSelfTab: true,
+          },
+        ]
+      : []),
     {
       startIcon: etherScan,
       alt: "EtherScan",
@@ -239,7 +243,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
             </Box>
           )}
           <span style={{ fontWeight: "700", fontSize: "20px", margin: "2em 0" }}>
-            {asset.name}
+            {asset.name || "#" + asset.tokenId}
           </span>
         </Box>
       </Paper>
