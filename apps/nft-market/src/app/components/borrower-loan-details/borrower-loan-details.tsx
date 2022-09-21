@@ -106,6 +106,7 @@ export const BorrowerLoanDetails = ({
           provider,
           walletAddress: user.address,
           assetAddress: loanDetails.currency,
+          lendingContractAddress: loanDetails.lendingContractAddress,
         })
       );
     }
@@ -190,6 +191,7 @@ export const BorrowerLoanDetails = ({
         walletAddress: user.address,
         assetAddress: loanDetails.currency,
         amount: loanDetails.amountDueGwei,
+        lendingContractAddress: loanDetails.lendingContractAddress,
       })
     );
   }, [

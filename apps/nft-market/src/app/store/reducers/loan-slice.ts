@@ -345,6 +345,7 @@ export const getLoanDetailsFromContract = createAsyncThunk(
       amountDueGwei: loanDetails.amountDue,
       nftTokenType: loanDetails.nftTokenType,
       loanId: loan.contractLoanId,
+      lendingContractAddress: lendingContract.address,
     } as LoanDetails;
   }
 );
