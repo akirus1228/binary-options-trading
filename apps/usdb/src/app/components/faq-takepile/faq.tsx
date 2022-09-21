@@ -5,8 +5,10 @@ import {
   Box,
   Typography,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import style from "./faq.module.scss";
 import { ExpandMore } from "@mui/icons-material";
+import { RootState } from "../../store";
 
 const faqItems = [
   { title: "What is Takepile?", link: "https://www.youtube.com/embed/83UDk-bITYw" },
@@ -33,6 +35,8 @@ const faqItems = [
 ];
 
 export const Faq = (): JSX.Element => {
+  const themeType: string = useSelector((state: RootState) => state.app.theme);
+
   return (
     <Box className="flexCenterCol">
       <Typography className={style["faqHeader"]}>Frequently Asked Questions</Typography>
@@ -41,7 +45,7 @@ export const Faq = (): JSX.Element => {
           key={`faq-acc-${key}`}
           className={style["faqItem"]}
           style={{
-            background: "#20203088",
+            background: themeType === "dark" ? "#20203088" : "white",
             borderRadius: "30px",
             padding: "15px",
             paddingLeft: "40px",
