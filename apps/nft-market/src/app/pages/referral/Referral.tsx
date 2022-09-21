@@ -6,6 +6,7 @@ import {
   Paper,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import { useWeb3Context } from "@fantohm/shared-web3";
@@ -22,6 +23,7 @@ export const Referral = (): JSX.Element => {
     provider,
     switchEthereumChain,
   } = useWeb3Context();
+  const isDesktop = useMediaQuery('(min-width:767px)');
 
   return (
     <Container maxWidth={"lg"}>
@@ -36,7 +38,7 @@ export const Referral = (): JSX.Element => {
         }}
         className="referral-wrapper"
       >
-        <Paper variant="elevation" elevation={6} sx={{ width: "80%" }}>
+        <Paper variant="elevation" elevation={6} className="referral-link-paper">
           <Typography variant="h5" component="h5">
             Refer a Friend to Liqd
           </Typography>
@@ -53,6 +55,7 @@ export const Referral = (): JSX.Element => {
             mt="50px"
             mr="auto"
             alignItems="center"
+           
           >
             <Typography variant="subtitle2" component="span">
               Your Liqd referral link
@@ -64,12 +67,15 @@ export const Referral = (): JSX.Element => {
 
           {address ? (
             <Box
-              flexDirection={"row"}
               display="flex"
               alignItems={"center"}
               mt="21px"
               width="100%"
               gap={3}
+              sx={{
+                flexDirection: isDesktop ? "row" : "column",
+                justifyContent: isDesktop? "space-between": "center"
+              }}
             >
               <TextField
                 id="standard-basic"
@@ -81,7 +87,7 @@ export const Referral = (): JSX.Element => {
                 style={{ color: "#7e9aa9", border: "none" }}
                 className="referral-link"
               />
-              <Box ml={"auto"}>
+              <Box>
                 <Button variant="contained" color="primary">
                   Copy
                 </Button>
@@ -97,7 +103,7 @@ export const Referral = (): JSX.Element => {
         </Paper>
         {address && (
           <>
-            <Box sx={{ width: "80%" }}>
+            <Box className="referral-link-paper">
               <EarningView />
             </Box>
             <Paper sx={{ width: "80%" }} variant="elevation" elevation={6}>

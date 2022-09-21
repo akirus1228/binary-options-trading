@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, Typography, useMediaQuery } from "@mui/material";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import BonusModal from "./BonusModal";
 import { ClaimModal } from "./ClaimModal";
@@ -7,12 +7,15 @@ import { ClaimModal } from "./ClaimModal";
 export const EarningView = (): JSX.Element => {
   const [bonusModalOpen, setBonusModalOpen] = useState<boolean>(false);
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
+  const isDesktop = useMediaQuery("(min-width:767px)");
+
   return (
     <>
       <Box
         sx={{
           display: "flex",
-          alignItems: "flex-end",
+          flexDirection: isDesktop ? "row" : "column",
+          alignItems: isDesktop ? "flex-end" : "flex-start",
           justifyContent: "space-between",
           width: "100%",
           paddingLeft: "1.5rem",
@@ -62,7 +65,17 @@ export const EarningView = (): JSX.Element => {
       </Box>
       <Grid container sx={{ marginTop: "30px" }} spacing={2}>
         <Grid item xs={12} md={4}>
-          <Paper variant="elevation" elevation={6} sx={{ minHeight: "200px" }}>
+          <Paper
+            variant="elevation"
+            elevation={6}
+            sx={{
+              width: "100%",
+              minHeight: isDesktop ? "200px" : "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isDesktop ? "flex-start" : "center",
+            }}
+          >
             <Box display={"flex"} flexDirection={"row"} alignItems="center">
               <Typography variant="subtitle2" component="span">
                 Users referred
@@ -75,7 +88,17 @@ export const EarningView = (): JSX.Element => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Paper variant="elevation" elevation={6} sx={{ minHeight: "200px" }}>
+          <Paper
+            variant="elevation"
+            elevation={6}
+            sx={{
+              width: "100%",
+              minHeight: isDesktop ? "200px" : "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isDesktop ? "flex-start" : "center",
+            }}
+          >
             <Box display={"flex"} flexDirection={"row"} alignItems="center">
               <Typography variant="subtitle2" component="span">
                 Total fees earned
@@ -88,7 +111,17 @@ export const EarningView = (): JSX.Element => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Paper variant="elevation" elevation={6} sx={{ minHeight: "200px" }}>
+          <Paper
+            variant="elevation"
+            elevation={6}
+            sx={{
+              width: "100%",
+              minHeight: isDesktop ? "200px" : "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isDesktop ? "flex-start" : "center",
+            }}
+          >
             <Box display={"flex"} flexDirection={"row"} alignItems="center">
               <Typography variant="subtitle2" component="span">
                 Claimable fees
