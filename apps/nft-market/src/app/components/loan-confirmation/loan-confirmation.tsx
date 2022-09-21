@@ -24,9 +24,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
   checkErc20Allowance,
+  getLendingAddressConfig,
   loadErc20Balance,
   loadPlatformFee,
-  networks,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   selectErc20BalanceByAddress,
@@ -180,9 +180,7 @@ export const LoanConfirmation = ({
         status: ListingStatus.Completed,
         asset: { ...listing.asset, status: AssetStatus.Locked },
       },
-      lendingContractAddress:
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS"],
+      lendingContractAddress: getLendingAddressConfig(desiredNetworkId).currentVersion,
       term: listing.term,
       status: LoanStatus.Active,
     };
