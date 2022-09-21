@@ -29,7 +29,6 @@ export const getBalanceVaultManager = createAsyncThunk(
         skip,
         limit
       );
-      console.log("vaults", vaults);
       callback && callback(vaults);
     } catch (e) {
       //
