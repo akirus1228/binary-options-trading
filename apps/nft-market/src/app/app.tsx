@@ -38,6 +38,7 @@ import TermsPage from "./components/Terms-Condition/terms";
 import { NewHomePage } from "./pages/home-page";
 import HelpPage from "./components/help/help";
 import { InfoBtn } from "./components/template/info/info";
+import Referral from "./pages/referral";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -291,6 +292,7 @@ export const App = (): JSX.Element => {
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/term" element={<TermsPage />} />
               <Route path="/help" element={<HelpPage />} />
+              <Route path="/referral" element={<Referral />} />
               <Route
                 path="/th"
                 element={
