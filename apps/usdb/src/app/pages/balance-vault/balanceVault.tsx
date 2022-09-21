@@ -42,7 +42,7 @@ export default function BalanceVault() {
     BalanceVaultOverview.Vault_Currency,
     BalanceVaultOverview.Vault_Status,
   ];
-  console.log("length", vaultLength);
+
   useEffect(() => {
     if (!provider && !defaultProvider) return;
 
@@ -51,45 +51,42 @@ export default function BalanceVault() {
         networkId: chainId ?? defaultNetworkId,
         provider: provider || defaultProvider,
         callback: (result: any) => {
-          setVaultLength(BigNumber.from(result).toString());
+          const length = BigNumber.from(result).toString();
+          setVaultLength(length);
+
+          dispatch(
+            getBalanceVaultManager({
+              networkId: chainId ?? defaultNetworkId,
+              provider: provider || defaultProvider,
+              skip: "0",
+              limit: length,
+              callback: (result: any) => {
+                const tmpVaults: BalanceVaultType[] = [];
+                result.forEach((vault: any) => {
+                  tmpVaults.push({
+                    vaultAddress: vault["vaultAddress"],
+                    index: BigNumber.from(vault["index"]).toString(),
+                    nftAddress: vault["nftAddress"],
+                    ownerInfos: vault["ownerInfos"],
+                    ownerContacts: vault["ownerContacts"],
+                    ownerWallet: vault["ownerWallet"],
+                    fundingAmount: vault["fundingAmount"],
+                    fundraised: vault["fundraised"],
+                    allowedTokens: vault["allowedTokens"],
+                    freezeTimestamp: vault["freezeTimestamp"],
+                    repaymentTimestamp: vault["repaymentTimestamp"],
+                    apr: vault["apr"],
+                    shouldBeFrozen: vault["shouldBeFrozen"],
+                  });
+                });
+                setBalanceVaults(tmpVaults);
+              },
+            })
+          );
         },
       })
     );
   }, [provider, defaultProvider, connected, address]);
-
-  useEffect(() => {
-    if (!provider && !defaultProvider) return;
-
-    dispatch(
-      getBalanceVaultManager({
-        networkId: chainId ?? defaultNetworkId,
-        provider: provider || defaultProvider,
-        skip: "0",
-        limit: vaultLength as string,
-        callback: (result: any) => {
-          const tmpVaults: BalanceVaultType[] = [];
-          result.forEach((vault: any) => {
-            tmpVaults.push({
-              vaultAddress: vault["vaultAddress"],
-              index: BigNumber.from(vault["index"]).toString(),
-              nftAddress: vault["nftAddress"],
-              ownerInfos: vault["ownerInfos"],
-              ownerContacts: vault["ownerContacts"],
-              ownerWallet: vault["ownerWallet"],
-              fundingAmount: vault["fundingAmount"],
-              fundraised: vault["fundraised"],
-              allowedTokens: vault["allowedTokens"],
-              freezeTimestamp: vault["freezeTimestamp"],
-              repaymentTimestamp: vault["repaymentTimestamp"],
-              apr: vault["apr"],
-              shouldBeFrozen: vault["shouldBeFrozen"],
-            });
-          });
-          setBalanceVaults(tmpVaults);
-        },
-      })
-    );
-  }, [provider, defaultProvider, connected, address, vaultLength]);
 
   const onCreateVaultOpen = useCallback(() => {
     setCreateVaultOpen(true);
