@@ -117,7 +117,9 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
         },
       }}
       title={
-        asset.usable ? "" : "Not verified collection, Ask for whitelisting on discord"
+        asset.usable === false
+          ? "Not verified collection, Ask for whitelisting on discord"
+          : ""
       }
     >
       <Paper
@@ -127,7 +129,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           flexDirection: "column",
           padding: "0",
           position: "relative",
-          opacity: asset.usable ? undefined : "0.5",
+          opacity: asset.usable === false ? "0.5" : undefined,
         }}
         className={style["assetBox"]}
       >
@@ -210,7 +212,16 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           </Popover>
         </Box>
         {asset.tokenId &&
-          (asset.usable ? (
+          (asset.usable === false ? (
+            <span className={style["assetImage"]}>
+              <PreviewImage
+                url={imageUrl}
+                name={asset.name || "placeholder name"}
+                contractAddress={asset.assetContractAddress}
+                tokenId={asset.tokenId}
+              />
+            </span>
+          ) : (
             <RouterLink
               to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
               className={style["assetImage"]}
@@ -222,15 +233,6 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
                 tokenId={asset.tokenId}
               />
             </RouterLink>
-          ) : (
-            <span className={style["assetImage"]}>
-              <PreviewImage
-                url={imageUrl}
-                name={asset.name || "placeholder name"}
-                contractAddress={asset.assetContractAddress}
-                tokenId={asset.tokenId}
-              />
-            </span>
           ))}
         <Box className="flex fc fj-c ai-c">
           {asset.collection && asset.collection.name && (
