@@ -3,10 +3,16 @@ import { Box, Button, Grid, Paper, Typography, useMediaQuery } from "@mui/materi
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import BonusModal from "./BonusModal";
 import { ClaimModal } from "./ClaimModal";
+import { useReferralInfo } from "../../hooks/use-referral";
 
 export const EarningView = (): JSX.Element => {
   const [bonusModalOpen, setBonusModalOpen] = useState<boolean>(false);
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
+  const [bonusActive, setBonusActive] = useState<boolean>(false);
+
+  const { referredUserCount, totalClaimedFeeAmount, claimableFeeAmount } =
+    useReferralInfo();
+
   const isDesktop = useMediaQuery("(min-width:767px)");
 
   return (
@@ -55,7 +61,7 @@ export const EarningView = (): JSX.Element => {
             onClick={() => setBonusModalOpen(true)}
           >
             <Typography variant="subtitle2" component="span">
-              Active
+              {bonusActive ? "Active" : "Inactive"}
             </Typography>
             <Box ml={1} display={"flex"}>
               <InfoIcon />
@@ -84,7 +90,9 @@ export const EarningView = (): JSX.Element => {
                 <InfoIcon />
               </Box>
             </Box>
-            <Typography style={{ fontSize: "22px" }}>{124}</Typography>
+            <Typography style={{ fontSize: "22px" }}>
+              {new Intl.NumberFormat().format(referredUserCount)}
+            </Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
@@ -107,7 +115,12 @@ export const EarningView = (): JSX.Element => {
                 <InfoIcon />
               </Box>
             </Box>
-            <Typography style={{ fontSize: "22px" }}>{"$1,220.39"}</Typography>
+            <Typography style={{ fontSize: "22px" }}>
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(totalClaimedFeeAmount)}
+            </Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
@@ -130,7 +143,12 @@ export const EarningView = (): JSX.Element => {
                 <InfoIcon />
               </Box>
             </Box>
-            <Typography style={{ fontSize: "22px" }}>{"$232.84"}</Typography>
+            <Typography style={{ fontSize: "22px" }}>
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(claimableFeeAmount)}
+            </Typography>
             <Button
               variant="contained"
               style={{ marginTop: "10px" }}

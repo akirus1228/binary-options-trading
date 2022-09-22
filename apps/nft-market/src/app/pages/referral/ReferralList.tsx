@@ -3,9 +3,11 @@ import InfoIcon from "@mui/icons-material/InfoOutlined";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
 import AvatarPlaceholder from "../../../assets/images/temp-avatar.png";
+import { useMediaQuery } from "@material-ui/core";
 import { addressEllipsis } from "@fantohm/shared-helpers";
 
 export const ReferralList = (): JSX.Element => {
+  const isDesktop = useMediaQuery("(min-width:767px)");
   const referredList = [
     "0xc09eAC15f9Ba6462e8E4612af7C431E1cfe08b87",
     "0xc09eAC15f9Ba6462e8E4612af7C431E1cfe08b87",
@@ -13,6 +15,10 @@ export const ReferralList = (): JSX.Element => {
     "0xc09eAC15f9Ba6462e8E4612af7C431E1cfe08b87",
   ];
   //   const referredList: any[] = [];
+
+  const openLink = (address: string) => {
+    window.open(`https://etherscan.io/address/${address}`, "_blank");
+  };
 
   return (
     <Box>
@@ -28,9 +34,16 @@ export const ReferralList = (): JSX.Element => {
         {referredList && referredList.length > 0 ? (
           <Box>
             {referredList.map((item, index) => (
-              <Box key={`referred-accounts-${index}`}>
+              <Box key={`referred-accounts-${index}`} onClick={() => openLink(item)}>
                 {
-                  <Box sx={{ display: "flex", alignItems: "center", gridGap: "10px" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gridGap: "10px",
+                      cursor: "pointer",
+                    }}
+                  >
                     <Box sx={{ display: "block" }}>
                       <Avatar
                         sx={{ mr: { sm: "0" }, borderRadius: "2rem" }}
@@ -38,7 +51,7 @@ export const ReferralList = (): JSX.Element => {
                       ></Avatar>
                     </Box>
                     <Typography variant="caption" component="span">
-                      {addressEllipsis(item)}
+                      {isDesktop ? item : addressEllipsis(item)}
                     </Typography>
                   </Box>
                 }

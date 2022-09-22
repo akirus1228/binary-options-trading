@@ -66,6 +66,10 @@ export const ClaimModal = ({
     },
   ];
 
+  const onClaim = () => {
+    console.log("claim:");
+  };
+
   return (
     <div>
       <Modal
@@ -105,13 +109,20 @@ export const ClaimModal = ({
                         <Typography>{row.token}</Typography>
                       </TableCell>
                       <TableCell align="center">{row.amount}</TableCell>
-                      <TableCell align="right">{row.value}</TableCell>
+                      <TableCell align="right">
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        }).format(row.value)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <Button variant="contained">Claim fees</Button>
+            <Button variant="contained" onClick={onClaim}>
+              Claim fees
+            </Button>
           </Box>
         </Fade>
       </Modal>
