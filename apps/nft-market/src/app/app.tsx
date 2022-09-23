@@ -1,4 +1,10 @@
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Backdrop, Box, Button, CssBaseline, Fade, Paper } from "@mui/material";
@@ -39,6 +45,7 @@ import { NewHomePage } from "./pages/home-page";
 import HelpPage from "./components/help/help";
 import { InfoBtn } from "./components/template/info/info";
 import Referral from "./pages/referral";
+import { getAffiliateStats, saveAffiliateCode } from "./store/reducers/affiliate-slice";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -164,6 +171,27 @@ export const App = (): JSX.Element => {
       }
     }
   }, [provider, address, connected]);
+
+  // Affilate system
+  const [params] = useSearchParams();
+  const referralCode = params.get("ref");
+
+  useEffect(() => {
+    if (address && connected && referralCode) {
+      dispatch(
+        saveAffiliateCode({
+          address,
+          referralCode,
+        })
+      );
+    }
+  }, [address, connected, referralCode]);
+
+  useEffect(() => {
+    if (address && connected) {
+      dispatch(getAffiliateStats(address));
+    }
+  }, [address, connected]);
 
   // User has switched back to the tab
   const onFocus = () => {

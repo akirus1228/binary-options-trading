@@ -11,6 +11,7 @@ import InfoIcon from "@mui/icons-material/InfoOutlined";
 import {
   defaultNetworkId,
   getBalances,
+  isDev,
   setWalletConnected,
   useWeb3Context,
 } from "@fantohm/shared-web3";
@@ -18,15 +19,20 @@ import { EarningView } from "./EarningView";
 import { ReferralList } from "./ReferralList";
 import { copyToClipboard } from "@fantohm/shared-helpers";
 import { useCallback, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addAlert, GrowlNotification } from "../../store/reducers/app-slice";
+import { getAccountAffiliateState } from "../../store/selectors/affilate-selectors";
+import { RootState } from "../../store";
 
 export const Referral = (): JSX.Element => {
   const { address, chainId, connected, disconnect, connect } = useWeb3Context();
   const dispatch = useDispatch();
+  const data = useSelector((state: RootState) => getAccountAffiliateState(state));
+  const referralPrefix = isDev ? "http://localhost:4200/" : "https://liqdnft.com/";
+
+  console.log("affiliateData: ", data);
 
   const isDesktop = useMediaQuery("(min-width:767px)");
-  const referralCode = "https://liqdnft.com/?ref=0x43Fe...24d1c";
 
   const handleConnect = useCallback(async () => {
     if (connected) {
@@ -46,8 +52,8 @@ export const Referral = (): JSX.Element => {
   }, [connected, address, dispatch]);
 
   const handleCopyReferralCode = () => {
-    if (!referralCode) return;
-    copyToClipboard(referralCode);
+    if (!address) return;
+    copyToClipboard(`${referralPrefix}?ref=${address}`);
     const notification: Partial<GrowlNotification> = {
       message: "Referral link copied to clipboard",
       duration: 1000,
@@ -110,7 +116,7 @@ export const Referral = (): JSX.Element => {
                 id="standard-basic"
                 label=""
                 variant="standard"
-                value={referralCode}
+                value={`${referralPrefix}?ref=${address}`}
                 disabled
                 fullWidth
                 style={{ color: "#7e9aa9", border: "none" }}
@@ -140,7 +146,7 @@ export const Referral = (): JSX.Element => {
               <EarningView />
             </Box>
             <Paper className="referral-link-paper" variant="elevation" elevation={6}>
-              <ReferralList />
+              <ReferralList data={data?.data?.referredAddresses || []} />
             </Paper>
           </>
         )}

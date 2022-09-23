@@ -6,15 +6,15 @@ import AvatarPlaceholder from "../../../assets/images/temp-avatar.png";
 import { useMediaQuery } from "@material-ui/core";
 import { addressEllipsis } from "@fantohm/shared-helpers";
 
-export const ReferralList = (): JSX.Element => {
+export const ReferralList = ({
+  data,
+}: {
+  data: {
+    user: string;
+    affiliate: string;
+  }[];
+}): JSX.Element => {
   const isDesktop = useMediaQuery("(min-width:767px)");
-  const referredList = [
-    "0xc09eAC15f9Ba6462e8E4612af7C431E1cfe08b87",
-    "0xc09eAC15f9Ba6462e8E4612af7C431E1cfe08b87",
-    "0xc09eAC15f9Ba6462e8E4612af7C431E1cfe08b87",
-    "0xc09eAC15f9Ba6462e8E4612af7C431E1cfe08b87",
-  ];
-  //   const referredList: any[] = [];
 
   const openLink = (address: string) => {
     window.open(`https://etherscan.io/address/${address}`, "_blank");
@@ -31,10 +31,10 @@ export const ReferralList = (): JSX.Element => {
         </Box>
       </Box>
       <Box mt={2} sx={{ display: "flex" }}>
-        {referredList && referredList.length > 0 ? (
+        {data && data.length > 0 ? (
           <Box>
-            {referredList.map((item, index) => (
-              <Box key={`referred-accounts-${index}`} onClick={() => openLink(item)}>
+            {data.map((item, index) => (
+              <Box key={`referred-accounts-${index}`} onClick={() => openLink(item.user)}>
                 {
                   <Box
                     sx={{
@@ -51,7 +51,7 @@ export const ReferralList = (): JSX.Element => {
                       ></Avatar>
                     </Box>
                     <Typography variant="caption" component="span">
-                      {isDesktop ? item : addressEllipsis(item)}
+                      {isDesktop ? item : addressEllipsis(item.user)}
                     </Typography>
                   </Box>
                 }

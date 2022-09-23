@@ -29,6 +29,9 @@ import {
   NftPrice,
   BackendNftAssetsQueryParams,
   BackendNftAssetsQueryResponse,
+  GetAffiliateResponse,
+  AffiliateData,
+  SaveAffiliateResponse,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -124,6 +127,57 @@ export const createListing = async (
     })
     .then(async (resp: AxiosResponse<CreateListingResponse>) => {
       return createListingResponseToListing(resp.data);
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const getAffiliate = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/all?affiliate=${address}`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<GetAffiliateResponse>) => {
+      console.log("getAffilate-backendapi: ", resp);
+      return {
+        referredAddresses: resp.data.data,
+      };
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const saveAffiliate = async (
+  signature: string,
+  address: string,
+  referralCode: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate`;
+  return axios
+    .post(
+      url,
+      {
+        user: address,
+        affiliate: referralCode,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${signature}`,
+        },
+      }
+    )
+    .then((resp: AxiosResponse<SaveAffiliateResponse>): AffiliateData => {
+      return {
+        referralCode: resp.data.data.affiliate,
+      };
     })
     .catch((error) => {
       return error.response.data.message;

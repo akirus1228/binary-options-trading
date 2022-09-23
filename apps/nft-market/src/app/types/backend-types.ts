@@ -30,6 +30,36 @@ export type CreateListingResponse = {
   status: ListingStatus;
 } & IncludesTerms;
 
+export type ClaimableToken = {
+  name: string;
+  symbol: string;
+  logo: string;
+  amount: number;
+};
+
+export type AffiliateData = {
+  referralCode?: string;
+  referredAddresses?: {
+    user: string;
+    affiliate: string;
+  }[];
+  totalClaimedAmount?: number;
+  claimableTokens?: ClaimableToken[];
+};
+
+export type GetAffiliateResponse = {
+  data: AffiliateData;
+  success: boolean;
+};
+
+export type SaveAffiliateResponse = {
+  data: {
+    user: string;
+    affiliate: string;
+  };
+  success: boolean;
+};
+
 // data models
 export enum AssetStatus {
   New = "NEW", // Not on backend yet

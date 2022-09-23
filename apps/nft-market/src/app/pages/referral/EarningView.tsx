@@ -3,15 +3,16 @@ import { Box, Button, Grid, Paper, Typography, useMediaQuery } from "@mui/materi
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import BonusModal from "./BonusModal";
 import { ClaimModal } from "./ClaimModal";
-import { useReferralInfo } from "../../hooks/use-referral";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { getAccountAffiliateState } from "../../store/selectors/affilate-selectors";
 
 export const EarningView = (): JSX.Element => {
   const [bonusModalOpen, setBonusModalOpen] = useState<boolean>(false);
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
   const [bonusActive, setBonusActive] = useState<boolean>(false);
 
-  const { referredUserCount, totalClaimedFeeAmount, claimableFeeAmount } =
-    useReferralInfo();
+  const data = useSelector((state: RootState) => getAccountAffiliateState(state));
 
   const isDesktop = useMediaQuery("(min-width:767px)");
 
@@ -91,7 +92,7 @@ export const EarningView = (): JSX.Element => {
               </Box>
             </Box>
             <Typography style={{ fontSize: "22px" }}>
-              {new Intl.NumberFormat().format(referredUserCount)}
+              {new Intl.NumberFormat().format(data?.data?.referredAddresses?.length || 0)}
             </Typography>
           </Paper>
         </Grid>
@@ -119,7 +120,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(totalClaimedFeeAmount)}
+              }).format(data?.data?.totalClaimedAmount || 0)}
             </Typography>
           </Paper>
         </Grid>
@@ -147,7 +148,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(claimableFeeAmount)}
+              }).format(0)}
             </Typography>
             <Button
               variant="contained"

@@ -17689,6 +17689,11 @@ redux@^4.0.0, redux@^4.1.2:
   dependencies:
     "@babel/runtime" "^7.9.2"
 
+referral-codes@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/referral-codes/-/referral-codes-2.0.3.tgz#07f3bc5a19b12ac6029fd8001077b0e4ab30c0eb"
+  integrity sha512-e66vOVnq7as2YH4fwaakd946VegbPCkivxkTKzcFn6q8tqgDeH03xY3gorIBPVzAWc3pqS+1cQGXDHuvE0t2aQ==
+
 refractor@^3.1.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/refractor/-/refractor-3.6.0.tgz#ac318f5a0715ead790fcfb0c71f4dd83d977935a"
