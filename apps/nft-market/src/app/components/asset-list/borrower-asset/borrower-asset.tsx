@@ -54,7 +54,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   };
 
   const viewLinks = [
-    ...(asset.usable !== undefined && !asset.usable
+    ...(asset.usable === false
       ? []
       : [
           {
@@ -121,7 +121,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
         },
       }}
       title={
-        asset.usable !== undefined && !asset.usable
+        asset.usable === false
           ? "Not verified collection, Ask for whitelisting on discord"
           : ""
       }
@@ -133,7 +133,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           flexDirection: "column",
           padding: "0",
           position: "relative",
-          opacity: asset.usable !== undefined && !asset.usable ? "0.5" : undefined,
+          opacity: asset.usable === false ? "0.5" : undefined,
         }}
         className={style["assetBox"]}
       >
@@ -216,7 +216,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           </Popover>
         </Box>
         {asset.tokenId &&
-          (asset.usable !== undefined && !asset.usable ? (
+          (asset.usable === false ? (
             <span className={style["assetImage"]}>
               <PreviewImage
                 url={imageUrl}
