@@ -38,6 +38,7 @@ import BlueChip from "../../../assets/icons/blue-chip.svg";
 import PriceInfo from "./price-info/price-info";
 import { useBestImage } from "../../hooks/use-best-image";
 import { addAlert } from "../../store/reducers/app-slice";
+import { useMediaQuery } from "@mui/material";
 
 export interface AssetDetailsProps {
   contractAddress: string;
@@ -126,6 +127,9 @@ export const AssetDetails = ({
     });
   };
 
+  const isTablet = useMediaQuery("(min-width:576px)");
+  console.log("isTablet: ", isTablet);
+
   return (
     <Container sx={sx} className={style["assetRow"]}>
       {/* <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} /> */}
@@ -161,13 +165,15 @@ export const AssetDetails = ({
                 ))}
               <Box sx={{ display: "flex", my: "20px", alignItems: "center" }}>
                 <Box>
-                  <h1 style={{ margin: "0" }}>{asset.name}</h1>
+                  <h1 style={{ margin: "0", fontSize: isTablet ? "2rem" : "1.5rem" }}>
+                    {asset.name}
+                  </h1>
                 </Box>
                 <IconButton
                   sx={{
                     position: "relative",
-                    left: "20px",
                     zIndex: 10,
+                    marginLeft: "auto",
                   }}
                   className={style["moreButton"]}
                   aria-haspopup="true"
