@@ -187,6 +187,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
                     style={{
                       fontWeight: "normal",
                       fontSize: "1em",
+                      textAlign: "center",
                       color: `${themeType === "light" ? "black" : "white"}`,
                     }}
                   >
