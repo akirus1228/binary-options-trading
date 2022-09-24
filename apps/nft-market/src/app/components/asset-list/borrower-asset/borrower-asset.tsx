@@ -54,16 +54,18 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   };
 
   const viewLinks = [
-    ...(!asset.usable ? [] : [
-      {
-        startIcon: search,
-        alt: "Search",
-        title: "View Listing",
-        url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
-        endIcon: null,
-        isSelfTab: true,
-      },
-    ]),
+    ...(!asset.usable
+      ? []
+      : [
+          {
+            startIcon: search,
+            alt: "Search",
+            title: "View Listing",
+            url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
+            endIcon: null,
+            isSelfTab: true,
+          },
+        ]),
     {
       startIcon: etherScan,
       alt: "EtherScan",
