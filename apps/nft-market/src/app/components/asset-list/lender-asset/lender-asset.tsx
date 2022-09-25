@@ -27,6 +27,7 @@ import etherScan from "../../../../assets/icons/etherscan.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useBestImage } from "../../../hooks/use-best-image";
+import { useMediaQuery } from "@material-ui/core";
 
 export type LenderAssetProps = {
   asset: Asset;
@@ -41,6 +42,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   );
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
+  const isTablet = useMediaQuery("(min-width:576px)");
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -106,33 +108,37 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   return (
     <Paper
       style={{
-        borderRadius: "28px",
+        borderRadius: isTablet ? "28px" : "14px",
         display: "flex",
         flexDirection: "column",
         padding: "0",
         position: "relative",
+        paddingTop: 0,
       }}
       className={style["assetBox"]}
     >
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: isTablet ? "space-between" : "center",
           position: "absolute",
           width: "100%",
-          zIndex: 10,
-          mt: "20px",
-          px: "10px",
+          mt: isTablet ? "20px" : "0px",
+          paddingLeft: isTablet ? "10px" : 0,
+          paddingRight: isTablet ? "10px" : 0,
         }}
       >
         <Chip
           label={capitalizeFirstLetter(asset?.status.toLowerCase()) || "Unlisted"}
-          className={chipColor}
+          className={`nft-status ${chipColor}`}
+          style={{ zIndex: "1" }}
         />
         <IconButton
           sx={{
-            position: "relative",
+            position: isTablet ? "relative" : "absolute",
             zIndex: 10,
+            right: isTablet ? "0" : "-4px",
+            top: isTablet ? "0" : "-8px",
           }}
           className={style["moreButton"]}
           aria-haspopup="true"
@@ -181,6 +187,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
                     style={{
                       fontWeight: "normal",
                       fontSize: "1em",
+                      textAlign: "center",
                       color: `${themeType === "light" ? "black" : "white"}`,
                     }}
                   >

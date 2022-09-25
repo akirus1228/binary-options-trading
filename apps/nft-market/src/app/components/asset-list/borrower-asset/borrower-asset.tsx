@@ -23,6 +23,7 @@ import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { useBestImage } from "../../../hooks/use-best-image";
+import { useMediaQuery } from "@material-ui/core";
 
 export interface BorrowerAssetProps {
   asset: Asset;
@@ -33,6 +34,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const imageUrl = useBestImage(asset, 1024);
+  const isTablet = useMediaQuery("(min-width:576px)");
 
   const chipColor = useMemo(() => {
     if (!asset) return;
@@ -128,7 +130,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
     >
       <Paper
         style={{
-          borderRadius: "28px",
+          borderRadius: isTablet ? "28px" : "14px",
           display: "flex",
           flexDirection: "column",
           padding: "0",
@@ -140,19 +142,22 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: isTablet ? "space-between" : "center",
             position: "absolute",
             width: "100%",
             zIndex: 10,
-            mt: "20px",
-            px: "10px",
+            mt: isTablet ? "20px" : "0px",
+            paddingLeft: isTablet ? "10px" : 0,
+            paddingRight: isTablet ? "10px" : 0,
           }}
         >
-          <Chip label={statusText || "Unlisted"} className={chipColor} />
+          <Chip label={statusText || "Unlisted"} className={`nft-status ${chipColor}`} />
           <IconButton
             sx={{
-              position: "relative",
+              position: isTablet ? "relative" : "absolute",
               zIndex: 10,
+              right: isTablet ? "0" : "-4px",
+              top: isTablet ? "0" : "-8px",
             }}
             className={style["moreButton"]}
             aria-haspopup="true"
@@ -199,6 +204,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
                       style={{
                         fontWeight: "normal",
                         fontSize: "1em",
+                        maxWidth: "80%",
                         color: `${themeType === "light" ? "black" : "white"}`,
                       }}
                     >
@@ -240,11 +246,28 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           ))}
         <Box className="flex fc fj-c ai-c">
           {asset.collection && asset.collection.name && (
-            <Box sx={{ position: "absolute" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                position: "absolute",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
               <span className={style["collectionName"]}>{asset.collection.name}</span>
             </Box>
           )}
-          <span style={{ fontWeight: "700", fontSize: "20px", margin: "2em 0" }}>
+          <span
+            style={{
+              fontWeight: "700",
+              fontSize: isTablet ? "20px" : "14px",
+              margin: "2em 0",
+              textAlign: "center",
+              paddingLeft: "5%",
+              paddingRight: "5%",
+            }}
+          >
             {asset.name || "#" + asset.tokenId}
           </span>
         </Box>

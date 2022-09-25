@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@material-ui/core";
 import { Box } from "@mui/material";
 import style from "./preview-image.module.scss";
 
@@ -9,9 +10,16 @@ export interface PreviewImageProps {
 }
 
 export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
+  const isTablet = useMediaQuery("(min-width:576px)");
+
   return (
     <Box
-      sx={{ height: "300px", width: "300px", borderRadius: "28px", overflow: "hidden" }}
+      sx={{
+        height: "300px",
+        width: "300px",
+        borderRadius: isTablet ? "28px" : "14px",
+        overflow: "hidden",
+      }}
     >
       <img
         className={style["assetImg"]}

@@ -23,6 +23,9 @@ h1 {
 
 .assetRow {
   margin-top:50px;
+  @media(max-width: 576px) {
+    margin-top: 0;
+  }
 }
 .moreButton {
   color: #000 !important;
