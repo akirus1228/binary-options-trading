@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { Asset } from "../types/backend-types";
-import loadingGradient from "../../assets/images/loading.png";
+import loadingGradientLight from "../../assets/images/loading-light.png";
+import loadingGradientDark from "../../assets/images/loading-dark.png";
 import previewNotAvailableLight from "../../assets/images/preview-not-available-light.png";
 import previewNotAvailableDark from "../../assets/images/preview-not-available-dark.png";
 import { useSelector } from "react-redux";
@@ -78,8 +79,10 @@ const ipfsToHttps = (ipfsUrl: string): string => {
 };
 
 export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
-  const [url, setUrl] = useState(loadingGradient);
   const themeType = useSelector((state: RootState) => state.theme.mode);
+  const loadingGradient =
+    themeType === "dark" ? loadingGradientDark : loadingGradientLight;
+  const [url, setUrl] = useState(loadingGradient);
 
   const imageLoadOrder: string[] = useMemo(() => {
     if (asset === null) return [];
@@ -175,6 +178,6 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
   return (
     url ||
     getIpfsUrl(asset?.gifUrl) ||
-    (themeType === "light" ? previewNotAvailableLight : previewNotAvailableDark)
+    (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
   );
 };
