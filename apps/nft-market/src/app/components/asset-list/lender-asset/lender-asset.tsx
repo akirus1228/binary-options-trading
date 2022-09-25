@@ -230,7 +230,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
             style={{ color: "rgba(255,255,255,0.7)" }}
             className={style["termHeading"]}
           >
-            APY
+            APR
           </span>
         </Box>
         <Box className="flex fr fj-sb ai-c w100">

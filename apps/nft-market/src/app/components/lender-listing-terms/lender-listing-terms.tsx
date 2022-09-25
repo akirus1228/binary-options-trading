@@ -210,7 +210,7 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               className={style["label"]}
               sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
             >
-              APY
+              APR
             </Typography>
             <Typography className={`${style["data"]}`}>
               {props.listing.term.apr}%
