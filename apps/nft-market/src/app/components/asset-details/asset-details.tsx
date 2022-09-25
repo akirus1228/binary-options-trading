@@ -24,7 +24,13 @@ import {
 } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { AppDispatch, RootState } from "../../store";
-import { AssetStatus, Listing, Loan, LoanStatus } from "../../types/backend-types";
+import {
+  AssetStatus,
+  CollectibleMediaType,
+  Listing,
+  Loan,
+  LoanStatus,
+} from "../../types/backend-types";
 import AssetOwnerTag from "../asset-owner-tag/asset-owner-tag";
 import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
@@ -133,7 +139,13 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={imageUrl} alt={asset.name || "unknown"} />
+              {asset.mediaType === CollectibleMediaType.Video && asset.videoUrl ? (
+                <video controls>
+                  <source src={asset.videoUrl} />
+                </video>
+              ) : (
+                <img src={imageUrl} alt={asset.name || "unknown"} />
+              )}
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
