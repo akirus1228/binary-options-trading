@@ -24,6 +24,7 @@ import { selectCurrencyByAddress } from "../../../store/selectors/currency-selec
 import style from "./lender-asset.module.scss";
 import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
+import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useBestImage } from "../../../hooks/use-best-image";
@@ -74,7 +75,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       isSelfTab: true,
     },
     {
-      startIcon: etherScan,
+      startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
       url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${

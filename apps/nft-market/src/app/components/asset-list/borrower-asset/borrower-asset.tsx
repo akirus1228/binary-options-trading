@@ -18,6 +18,7 @@ import { useMemo, useState } from "react";
 import { isDev } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
+import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useSelector } from "react-redux";
@@ -69,7 +70,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           },
         ]),
     {
-      startIcon: etherScan,
+      startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
       url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
