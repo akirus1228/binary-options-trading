@@ -128,7 +128,6 @@ export const AssetDetails = ({
   };
 
   const isTablet = useMediaQuery("(min-width:576px)");
-  console.log("isTablet: ", isTablet);
 
   return (
     <Container sx={sx} className={style["assetRow"]}>
