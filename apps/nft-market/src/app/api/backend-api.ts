@@ -593,7 +593,7 @@ export const backendApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(updateAssetsFromBackend(data.assets));
         } catch (e) {
-          console.info("Opensea failing. Reverting to backup");
+          console.info("GetNftAssets failing. Reverting to backup");
         }
       },
     }),
@@ -624,7 +624,7 @@ export const backendApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(updateAssetsFromBackend([data]));
         } catch (e) {
-          console.info("Opensea failing. Reverting to backup");
+          console.info("GetNftAsset failing. Reverting to backup");
         }
       },
     }),
