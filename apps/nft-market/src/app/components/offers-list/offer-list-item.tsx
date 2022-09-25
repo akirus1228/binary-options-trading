@@ -37,7 +37,7 @@ import {
   useWeb3Context,
   checkNftPermission,
   prettifySeconds,
-  networks,
+  getLendingAddressConfig,
 } from "@fantohm/shared-web3";
 import style from "./offers-list.module.scss";
 import SimpleProfile from "../simple-profile/simple-profile";
@@ -196,9 +196,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         status: ListingStatus.Completed,
         asset: { ...asset, status: AssetStatus.Locked },
       },
-      lendingContractAddress:
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS"],
+      lendingContractAddress: getLendingAddressConfig(desiredNetworkId).currentVersion,
       term: offer.term,
       status: LoanStatus.Active,
       offerId: offer.id,

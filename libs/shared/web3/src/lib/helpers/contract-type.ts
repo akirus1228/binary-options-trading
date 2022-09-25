@@ -3,6 +3,7 @@ import { isDev } from ".";
 import { cryptopunksAbi, erc1155Abi, ierc721Abi } from "../abi";
 import { addresses } from "../constants";
 import { NetworkIds } from "../networks";
+import { getLendingAddressConfig } from "./usdb-lending-address";
 
 export enum TokenType {
   ERC721,
@@ -43,8 +44,7 @@ export const getErc721Permission = async (
 ) => {
   const nftContract = new ethers.Contract(address, ierc721Abi, signer);
   return await nftContract["approve"](
-    (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-      addresses[networkId]["USDB_LENDING_ADDRESS"]) as string,
+    getLendingAddressConfig(networkId).currentVersion,
     tokenId
   );
 };
@@ -56,8 +56,7 @@ export const getErc1155Permission = async (
 ) => {
   const nftContract = new ethers.Contract(address, erc1155Abi, signer);
   return await nftContract["setApprovalForAll"](
-    (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-      addresses[networkId]["USDB_LENDING_ADDRESS"]) as string
+    getLendingAddressConfig(networkId).currentVersion
   );
 };
 
@@ -71,8 +70,7 @@ export const getCryptoPunksPermission = async (
   return await nftContract["offerPunkForSaleToAddress"](
     tokenId,
     0,
-    (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-      addresses[networkId]["USDB_LENDING_ADDRESS"]) as string
+    getLendingAddressConfig(networkId).currentVersion
   );
 };
 
@@ -84,8 +82,7 @@ export const checkErc721Permission = async (
 ): Promise<boolean> => {
   const nftContract = new ethers.Contract(address, ierc721Abi, signer);
   return await nftContract["approve"](
-    (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-      addresses[networkId]["USDB_LENDING_ADDRESS"]) as string,
+    getLendingAddressConfig(networkId).currentVersion,
     tokenId
   );
 };
@@ -99,8 +96,7 @@ export const checkErc1155Permission = async (
   const nftContract = new ethers.Contract(address, erc1155Abi, signer);
   return await nftContract["isApprovedForAll"](
     ownerAddress,
-    (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-      addresses[networkId]["USDB_LENDING_ADDRESS"]) as string
+    getLendingAddressConfig(networkId).currentVersion
   );
 };
 

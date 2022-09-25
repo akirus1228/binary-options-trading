@@ -2,9 +2,9 @@ import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit"
 import {
   erc165Abi,
   ercType,
+  getLendingAddressConfig,
   isDev,
   loadState,
-  networks,
   TokenType,
   usdbLending,
 } from "@fantohm/shared-web3";
@@ -128,8 +128,7 @@ export const contractCreateLoan = createAsyncThunk(
     const contractType = await ercType(nftContract);
 
     const lendingContract = new ethers.Contract(
-      networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
-        networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      getLendingAddressConfig(networkId).currentVersion,
       usdbLending,
       signer
     );
@@ -214,8 +213,8 @@ export const repayLoan = createAsyncThunk(
 
     const lendingContract = new ethers.Contract(
       loan?.lendingContractAddress
-        ? networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"]
-        : networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+        ? loan?.lendingContractAddress
+        : getLendingAddressConfig(networkId).currentVersion,
       usdbLending,
       signer
     );
@@ -255,8 +254,8 @@ export const forceCloseLoan = createAsyncThunk(
     const signer = provider.getSigner();
     const lendingContract = new ethers.Contract(
       loan?.lendingContractAddress
-        ? networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"]
-        : networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+        ? loan?.lendingContractAddress
+        : getLendingAddressConfig(networkId).currentVersion,
       usdbLending,
       signer
     );
@@ -294,8 +293,7 @@ export const listingCancel = createAsyncThunk(
   async ({ sig, provider, networkId }: ListingCancelAsyncThunk) => {
     const signer = provider.getSigner();
     const lendingContract = new ethers.Contract(
-      networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
-        networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+      getLendingAddressConfig(networkId).currentVersion,
       usdbLending,
       signer
     );
@@ -323,8 +321,8 @@ export const getLoanDetailsFromContract = createAsyncThunk(
   async ({ loan, networkId, provider }: LoanDetailsAsyncThunk) => {
     const lendingContract = new ethers.Contract(
       loan?.lendingContractAddress
-        ? networks[networkId].addresses["USDB_LENDING_ADDRESS_V2"]
-        : networks[networkId].addresses["USDB_LENDING_ADDRESS"],
+        ? loan?.lendingContractAddress
+        : getLendingAddressConfig(networkId).currentVersion,
       usdbLending,
       provider
     );
@@ -347,6 +345,7 @@ export const getLoanDetailsFromContract = createAsyncThunk(
       amountDueGwei: loanDetails.amountDue,
       nftTokenType: loanDetails.nftTokenType,
       loanId: loan.contractLoanId,
+      lendingContractAddress: lendingContract.address,
     } as LoanDetails;
   }
 );

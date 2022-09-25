@@ -10,6 +10,7 @@ import {
   getErc721Permission,
   TokenType,
 } from "../helpers/contract-type";
+import { getLendingAddressConfig } from "../helpers/usdb-lending-address";
 import { NetworkIds } from "../networks";
 import { chains } from "../providers";
 import {
@@ -71,8 +72,7 @@ export const loadPlatformFee = createAsyncThunk(
     const provider = await chains[networkId].provider;
 
     const usdbLendingContract = new ethers.Contract(
-      (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-        addresses[networkId]["USDB_LENDING_ADDRESS"]) as string,
+      getLendingAddressConfig(networkId).currentVersion,
       usdbLending,
       provider
     );
@@ -183,10 +183,7 @@ export const checkNftPermission = createAsyncThunk(
       const response: string = await nftContract["getApproved"](tokenId);
       const hasPermission =
         response.toLowerCase() ===
-        (
-          addresses[networkId]["USDB_LENDING_ADDRESS_V2"].toLowerCase() ||
-          addresses[networkId]["USDB_LENDING_ADDRESS"].toLowerCase()
-        ).toLowerCase();
+        getLendingAddressConfig(networkId).currentVersion.toLowerCase();
       const payload: NftPermStatus = {};
       payload[`${tokenId}:::${assetAddress.toLowerCase()}`] = hasPermission;
       return payload;
@@ -212,6 +209,7 @@ export const requestErc20Allowance = createAsyncThunk(
       walletAddress,
       assetAddress,
       amount,
+      lendingContractAddress,
     }: Erc20AllowanceAsyncThunk,
     { rejectWithValue }
   ) => {
@@ -222,8 +220,7 @@ export const requestErc20Allowance = createAsyncThunk(
       const signer = provider.getSigner();
       const erc20Contract = new ethers.Contract(assetAddress, ierc20Abi, signer);
       const approveTx = await erc20Contract["approve"](
-        (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-          addresses[networkId]["USDB_LENDING_ADDRESS"]) as string,
+        lendingContractAddress || getLendingAddressConfig(networkId).currentVersion,
         amount
       );
       await approveTx.wait();
@@ -255,6 +252,7 @@ export const checkErc20Allowance = createAsyncThunk(
       provider,
       walletAddress,
       assetAddress,
+      lendingContractAddress,
     }: InteractiveWalletErc20AsyncThunk,
     { rejectWithValue }
   ) => {
@@ -275,8 +273,7 @@ export const checkErc20Allowance = createAsyncThunk(
       const erc20Contract = new ethers.Contract(assetAddress, ierc20Abi, provider);
       const response: BigNumber = await erc20Contract["allowance"](
         walletAddress,
-        (addresses[networkId]["USDB_LENDING_ADDRESS_V2"] ||
-          addresses[networkId]["USDB_LENDING_ADDRESS"]) as string
+        lendingContractAddress || getLendingAddressConfig(networkId).currentVersion
       );
       const payload: Erc20Allowance = {};
       payload[`${walletAddress}:::${assetAddress.toLowerCase()}`] = response;
