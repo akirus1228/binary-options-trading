@@ -99,16 +99,27 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
         status: ListingStatus.Cancelled,
       };
 
-      updateListingApi(cancelledListing).then(() => {
-        updateListingReset();
-        props.onClose(true);
-        setIsPending(false);
+      const result: any = await updateListingApi(cancelledListing);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to cancel a listing because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
         dispatch(addAlert({ message: "Listing has been cancelled." }));
-      });
+      }
     } catch (e) {
       console.log(e);
     } finally {
       setIsPending(false);
+      props.onClose(true);
     }
   };
 

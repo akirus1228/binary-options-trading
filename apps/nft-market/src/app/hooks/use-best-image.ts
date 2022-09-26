@@ -44,7 +44,6 @@ const getHeaders = (url: string): Promise<AxiosResponse | void> => {
     })
     .catch((e: AxiosError) => {
       console.log(e);
-      console.log(url);
     });
 };
 
@@ -70,7 +69,6 @@ const getGucUrl = (img_url: string): Promise<string> => {
     })
     .catch((e: AxiosError) => {
       console.log(e);
-      console.log(img_url);
     });
 };
 
@@ -87,7 +85,6 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
   const imageLoadOrder: string[] = useMemo(() => {
     if (asset === null) return [];
     const imageSet = new Set<string>(); // use set to enforce uniqueness
-    console.log(asset);
     if (asset.thumbUrl)
       imageSet.add(
         ipfsToHttps(
@@ -106,7 +103,6 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
           asset.frameUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
         )
       );
-    console.log(imageSet);
     return [...imageSet]; // return array for simplicity of filtering and sorting
   }, [asset?.osData?.image_url, asset?.thumbUrl, asset?.imageUrl, asset?.frameUrl]);
 
@@ -118,7 +114,9 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
       imageString?.includes("googleusercontent")
     );
     if (img) {
-      setUrl(`${img.split("=")[0]}=w${preferredWidth}`);
+      if (isSubscribed) {
+        setUrl(`${img.split("=")[0]}=w${preferredWidth}`);
+      }
       return;
     }
 
@@ -127,7 +125,9 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
       imageString?.includes("data:image")
     );
     if (base64Img) {
-      setUrl(base64Img);
+      if (isSubscribed) {
+        setUrl(base64Img);
+      }
       return;
     }
 

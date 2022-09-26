@@ -61,44 +61,6 @@ export const doLogin = (address: string): Promise<LoginResponse> => {
   });
 };
 
-export const postAsset = (asset: Asset, signature: string): Promise<Asset> => {
-  const url = `${NFT_MARKETPLACE_API_URL}/asset`;
-  return axios
-    .post(url, asset, {
-      headers: {
-        Authorization: `Bearer ${signature}`,
-      },
-    })
-    .then((resp: AxiosResponse<CreateAssetResponse>) => {
-      return resp.data.asset;
-    })
-    .catch((err) => {
-      // most likely a 400 (not in our database)
-
-      return {} as Asset;
-    });
-};
-
-export const getListingByOpenseaIds = (
-  openseaIds: string[],
-  signature: string
-): Promise<Listing> => {
-  const url = `${NFT_MARKETPLACE_API_URL}/asset-listing/all?openseaId=${openseaIds.join(
-    ","
-  )}`;
-
-  return axios
-    .get(url, {
-      headers: {
-        Authorization: `Bearer ${signature}`,
-      },
-    })
-    .then((resp: AxiosResponse<AllListingsResponse>) => {
-      const { term, ...listing } = resp.data.data[0];
-      return { ...listing, term: term };
-    });
-};
-
 export const createListing = async (
   signature: string,
   asset: Asset,
@@ -106,16 +68,6 @@ export const createListing = async (
 ): Promise<Listing | string> => {
   const url = `${NFT_MARKETPLACE_API_URL}/asset-listing`;
   const listingParams = listingToCreateListingRequest(asset, term);
-  // try {
-  //   const resp = await axios.post(url, listingParams, {
-  //     headers: {
-  //       Authorization: `Bearer ${signature}`,
-  //     },
-  //   });
-  //   return createListingResponseToListing(resp.data);
-  // } catch (error: any) {
-  //   throw error.response.data.error;
-  // }
   return axios
     .post(url, listingParams, {
       headers: {
@@ -126,7 +78,7 @@ export const createListing = async (
       return createListingResponseToListing(resp.data);
     })
     .catch((error) => {
-      return error.response.data.message;
+      return error;
     });
 };
 
@@ -665,7 +617,6 @@ export const {
   useUpdateLoanMutation,
   useDeleteLoanMutation,
   useResetPartialLoanMutation,
-  useCreateListingMutation,
   useGetTermsQuery,
   useUpdateTermsMutation,
   useDeleteTermsMutation,

@@ -86,8 +86,23 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
     if (!myOffer) {
       return;
     }
-    deleteOffer(myOffer);
-    dispatch(addAlert({ message: "Offer removed" }));
+    const result: any = await deleteOffer(myOffer);
+
+    if (result?.error) {
+      if (result?.error?.status === 403) {
+        dispatch(
+          addAlert({
+            message:
+              "Failed to remove an offer because your signature is expired or invalid.",
+            severity: "error",
+          })
+        );
+      } else {
+        dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+      }
+    } else {
+      dispatch(addAlert({ message: "Offer removed" }));
+    }
   }, [myOffer]);
 
   const onListDialogClose = () => {

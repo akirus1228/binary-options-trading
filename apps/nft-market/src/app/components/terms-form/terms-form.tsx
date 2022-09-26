@@ -1,5 +1,4 @@
 import {
-  isDev,
   checkErc20Allowance,
   checkNftPermission,
   loadPlatformFee,
@@ -305,7 +304,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       return;
     }
     // send listing data to backend
-    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -323,33 +321,46 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
-    term.signature = await signTerms(
-      provider,
-      asset.owner?.address || "",
-      chainId,
-      asset.assetContractAddress,
-      asset.tokenId,
-      term,
-      currency,
-      dispatch
-    );
-    if (term.signature) {
-      try {
-        await dispatch(createListing({ term, asset })).unwrap();
-        await dispatch(addAlert({ message: "Listing created" }));
-      } catch (e) {
-        await dispatch(
-          addAlert({
-            severity: "error",
-            title: "Failed to create listing",
-            message: e as string,
-          })
-        );
-      } finally {
+    try {
+      setIsPending(true);
+      term.signature = await signTerms(
+        provider,
+        asset.owner?.address || "",
+        chainId,
+        asset.assetContractAddress,
+        asset.tokenId,
+        term,
+        currency,
+        dispatch
+      );
+      if (!term.signature || term.signature === "") {
         props.onClose(true);
+        return;
       }
-    } else {
+
+      const result: any = await dispatch(createListing({ term, asset })).unwrap();
+      if (result?.response) {
+        if (result?.response?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to list this asset because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(
+            addAlert({ message: result?.response?.data.message, severity: "error" })
+          );
+        }
+      } else {
+        dispatch(addAlert({ message: "This asset is listed." }));
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
       setIsPending(false);
+      props.onClose(true);
     }
     return;
   };
@@ -357,7 +368,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const handleUpdateTerms = async () => {
     if (!provider || !chainId || !props.listing) return;
     // send listing data to backend
-    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -375,6 +385,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currencyAddress: currency?.currentAddress,
     };
     try {
+      setIsPending(true);
       term.signature = await signTerms(
         provider,
         asset.owner?.address || "",
@@ -386,22 +397,31 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         dispatch
       );
       if (!term.signature || term.signature === "") {
-        // user rejected signature
-        // error message being dispatched from another catch
-        // dispatch(addAlert({ message: "Signature rejected. Terms not updated.", severity: "error" }));
         props.onClose(true);
         return;
       }
-
-      await updateTerms(term);
-      dispatch(addAlert({ message: "Terms have been updated." }));
-      props.onClose(true);
-    } catch (err) {
-      // most likely the user rejected the signature
+      const result: any = await updateTerms(term);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to update a term because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Terms have been updated." }));
+      }
+    } catch (e) {
+      console.log(e);
     } finally {
       setIsPending(false);
+      props.onClose(true);
     }
-
     return;
   };
 
@@ -509,31 +529,55 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currencyAddress: currency?.currentAddress,
     };
 
-    const signature = await signTerms(
-      provider,
-      props.listing.asset.wallet || "",
-      desiredNetworkId,
-      props.asset.assetContractAddress,
-      props.asset.tokenId,
-      preSigTerm,
-      currency,
-      dispatch
-    );
-    if (!signature) return;
+    try {
+      setIsPending(true);
+      const signature = await signTerms(
+        provider,
+        props.listing.asset.wallet || "",
+        desiredNetworkId,
+        props.asset.assetContractAddress,
+        props.asset.tokenId,
+        preSigTerm,
+        currency,
+        dispatch
+      );
+      if (!signature || signature === "") {
+        props.onClose(true);
+        return;
+      }
+      const term: Terms = {
+        ...preSigTerm,
+        signature,
+      };
 
-    const term: Terms = {
-      ...preSigTerm,
-      signature,
-    };
-
-    const offer: Offer = {
-      lender: user,
-      assetListing: props.listing,
-      term,
-      status: OfferStatus.Ready,
-    };
-    createOffer(offer);
-    dispatch(addAlert({ message: "Offer sent" }));
+      const offer: Offer = {
+        lender: user,
+        assetListing: props.listing,
+        term,
+        status: OfferStatus.Ready,
+      };
+      const result: any = await createOffer(offer);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to send an offer because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer sent." }));
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsPending(false);
+      props.onClose(true);
+    }
     props.onClose(true);
   };
 
