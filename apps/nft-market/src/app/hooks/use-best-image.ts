@@ -1,8 +1,12 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { Asset } from "../types/backend-types";
-import loadingGradient from "../../assets/images/loading.png";
-import previewNotAvailable from "../../assets/images/preview-not-available.png";
+import loadingGradientLight from "../../assets/images/loading-light.png";
+import loadingGradientDark from "../../assets/images/loading-dark.png";
+import previewNotAvailableLight from "../../assets/images/preview-not-available-light.png";
+import previewNotAvailableDark from "../../assets/images/preview-not-available-dark.png";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 export const getIpfsUrl = (url: string | null = "") => {
   if (!url?.includes("ipfs")) return url || "";
@@ -75,6 +79,9 @@ const ipfsToHttps = (ipfsUrl: string): string => {
 };
 
 export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
+  const themeType = useSelector((state: RootState) => state.theme.mode);
+  const loadingGradient =
+    themeType === "dark" ? loadingGradientDark : loadingGradientLight;
   const [url, setUrl] = useState(loadingGradient);
 
   const imageLoadOrder: string[] = useMemo(() => {
@@ -168,5 +175,9 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
     });
   }, [imageLoadOrder]);
 
-  return url || getIpfsUrl(asset?.gifUrl) || previewNotAvailable;
+  return (
+    url ||
+    getIpfsUrl(asset?.gifUrl) ||
+    (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
+  );
 };

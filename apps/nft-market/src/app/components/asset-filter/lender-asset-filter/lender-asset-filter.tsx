@@ -401,10 +401,10 @@ export const LenderAssetFilter = ({
             position: "static",
           }}
         >
-          Apr range
+          APR range
         </ListSubheader>
         <Slider
-          getAriaLabel={() => "Apr range"}
+          getAriaLabel={() => "APR range"}
           value={aprRange}
           onChange={handleAprRangeChange}
           onChangeCommitted={handleAprRangeChangeCommitted}

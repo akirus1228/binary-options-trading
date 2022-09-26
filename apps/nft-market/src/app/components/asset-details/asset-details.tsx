@@ -33,6 +33,7 @@ import style from "./asset-details.module.scss";
 import { useMemo, useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
+import etherScanDark from "../../../assets/icons/etherscan-dark.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import BlueChip from "../../../assets/icons/blue-chip.svg";
 import PriceInfo from "./price-info/price-info";
@@ -56,6 +57,7 @@ export const AssetDetails = ({
   const dispatch: AppDispatch = useDispatch();
   const { address } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
   const asset = useWalletAsset(contractAddress, tokenId);
   const imageUrl = useBestImage(asset, Math.floor(window.innerWidth * 0.75));
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
@@ -94,7 +96,7 @@ export const AssetDetails = ({
 
   const viewLinks = [
     {
-      startIcon: etherScan,
+      startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
       url: `https://${
@@ -128,7 +130,6 @@ export const AssetDetails = ({
   };
 
   const isTablet = useMediaQuery("(min-width:576px)");
-  console.log("isTablet: ", isTablet);
 
   return (
     <Container sx={sx} className={style["assetRow"]}>
