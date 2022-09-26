@@ -7,6 +7,7 @@ import previewNotAvailableLight from "../../assets/images/preview-not-available-
 import previewNotAvailableDark from "../../assets/images/preview-not-available-dark.png";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
+import { NFT_MARKETPLACE_API_URL } from "../api/backend-api";
 
 export const getIpfsUrl = (url: string | null = "") => {
   if (!url?.includes("ipfs")) return url || "";
@@ -33,9 +34,20 @@ export type ImageConvertResponse = {
   dir?: string;
 };
 
-const getHeaders = (url: string): Promise<AxiosResponse | void> => {
+const NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT = NFT_MARKETPLACE_API_URL + "/nft/image?url=";
+
+const getHeaders = async (url: string): Promise<AxiosResponse | void> => {
+  try {
+    const response: AxiosResponse = await axios.head(url);
+    if (response.status === 200) {
+      return response;
+    }
+    // eslint-disable-next-line no-empty
+  } catch {}
+
+  // try to get image from backend image proxy endpoint
   return axios
-    .head(url)
+    .head(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT + url)
     .then((response: AxiosResponse) => {
       if (response.status === 200) {
         return response;
@@ -145,26 +157,33 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
         if (validImages.length < 1) {
           setUrl("");
         } else {
-          if (preferredWidth < 1024) {
-            if (validImages[0].headers["content-type"] === "image/svg+xml") {
-              setUrl(validImages[0].config.url ?? "");
-            } else {
-              getGucUrl(validImages[0].config.url ?? "").then((gucUrl) => {
-                setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
-              });
-            }
+          if (
+            validImages[0].config.url?.startsWith(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT)
+          ) {
+            // ignore resize of it's from backend proxy endpoint
+            setUrl(validImages[0].config.url);
           } else {
-            if (
-              validImages[validImages.length - 1].headers["content-type"] ===
-              "image/svg+xml"
-            ) {
-              setUrl(validImages[validImages.length - 1].config.url ?? "");
-            } else {
-              getGucUrl(validImages[validImages.length - 1].config.url ?? "").then(
-                (gucUrl) => {
+            if (preferredWidth < 1024) {
+              if (validImages[0].headers["content-type"] === "image/svg+xml") {
+                setUrl(validImages[0].config.url ?? "");
+              } else {
+                getGucUrl(validImages[0].config.url ?? "").then((gucUrl) => {
                   setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
-                }
-              );
+                });
+              }
+            } else {
+              if (
+                validImages[validImages.length - 1].headers["content-type"] ===
+                "image/svg+xml"
+              ) {
+                setUrl(validImages[validImages.length - 1].config.url ?? "");
+              } else {
+                getGucUrl(validImages[validImages.length - 1].config.url ?? "").then(
+                  (gucUrl) => {
+                    setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
+                  }
+                );
+              }
             }
           }
         }
