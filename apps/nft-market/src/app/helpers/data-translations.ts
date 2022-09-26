@@ -24,10 +24,8 @@ import {
 } from "../types/backend-types";
 
 export const getIpfsUrl = (url?: Nullable<string>) => {
-  const IPFS_URL = "https://ipfs.io/";
-
   if (url && url.startsWith("ipfs")) {
-    return IPFS_URL + url.replaceAll("://", "/");
+    return url.replace("ipfs://", "https://balance.mypinata.cloud/ipfs/");
   }
 
   return url;
