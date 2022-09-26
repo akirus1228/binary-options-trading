@@ -114,7 +114,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDT_ADDRESS"],
     },
     coingeckoStub: "tether",
-    decimals: isDev ? 18 : 6,
+    decimals: 6,
   },
 };
 
