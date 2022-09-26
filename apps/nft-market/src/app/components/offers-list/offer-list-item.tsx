@@ -208,12 +208,26 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       networkId: desiredNetworkId,
       currencyAddress: offer.term.currencyAddress,
     };
-    let createLoanResult;
+    let createLoanResult: any;
     try {
-      createLoanResult = await createLoan(createLoanRequest).unwrap();
-      if (!createLoanResult) {
-        setIsPending(false);
-        dispatch(addAlert({ message: "Failed to create a loan", severity: "error" }));
+      createLoanResult = await createLoan(createLoanRequest);
+      if (!createLoanResult || (createLoanResult && createLoanResult?.error)) {
+        if (createLoanResult?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to create a loan because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(
+            addAlert({
+              message: createLoanResult?.error?.data.message,
+              severity: "error",
+            })
+          );
+        }
         return;
       }
       const createLoanContractResult = await dispatch(
@@ -223,12 +237,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       if (!createLoanContractResult) {
         setIsPending(false);
         resetCreateLoan();
-        resetPartialLoan(createLoanResult?.id || "");
+        resetPartialLoan(createLoanResult?.data?.id || "");
         return; //todo: throw nice error
       }
 
       createLoanRequest.contractLoanId = createLoanContractResult as number;
-      createLoanRequest.id = createLoanResult.id;
+      createLoanRequest.id = createLoanResult?.data?.id;
       await updateLoan(createLoanRequest).unwrap();
 
       resetUpdateLoan();
@@ -247,8 +261,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           })
         );
       }
-      if (createLoanResult) {
-        resetPartialLoan(createLoanResult?.id);
+      if (createLoanResult?.data) {
+        resetPartialLoan(createLoanResult?.data?.id);
       }
     } finally {
       setIsPending(false);
@@ -256,8 +270,26 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
 
   const handleDeleteOffer = useCallback(async () => {
-    deleteOffer(offer);
-    dispatch(addAlert({ message: "Offer removed" }));
+    try {
+      const result: any = await deleteOffer(offer);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to remove an offer because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer removed" }));
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }, [offer.id]);
 
   const offerExpires = useMemo(() => {

@@ -151,7 +151,24 @@ export const BorrowerLoanDetails = ({
           },
           status: LoanStatus.Complete,
         };
-        updateLoan(updateLoanRequest);
+        const result: any = await updateLoan(updateLoanRequest);
+        if (result?.error) {
+          if (result?.error?.status === 403) {
+            dispatch(
+              addAlert({
+                message:
+                  "Failed to repay a loan because your signature is expired or invalid.",
+                severity: "error",
+              })
+            );
+          } else {
+            dispatch(
+              addAlert({ message: result?.error?.data.message, severity: "error" })
+            );
+          }
+        } else {
+          dispatch(addAlert({ message: "Loan is repaid." }));
+        }
       } catch (e: any) {
         if (e.error === undefined) {
           let message;

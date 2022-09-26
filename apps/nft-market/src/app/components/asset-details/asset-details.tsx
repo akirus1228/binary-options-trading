@@ -121,12 +121,30 @@ export const AssetDetails = ({
     if (!activeLoan) {
       return;
     }
-    setIsPending(true);
-    resetPartialLoan(activeLoan.id).then(() => {
+    try {
+      setIsPending(true);
+      const result: any = await resetPartialLoan(activeLoan.id);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to cancel a listing because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        resetResetPartialLoan();
+        dispatch(addAlert({ message: "Locked has been cancelled." }));
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
       setIsPending(false);
-      resetResetPartialLoan();
-      dispatch(addAlert({ message: "Locked has been cancelled." }));
-    });
+    }
   };
 
   const isTablet = useMediaQuery("(min-width:576px)");
