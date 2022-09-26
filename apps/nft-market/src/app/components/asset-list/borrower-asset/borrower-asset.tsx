@@ -17,6 +17,7 @@ import { Asset, AssetStatus } from "../../../types/backend-types";
 import { useMemo, useState } from "react";
 import { isDev } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
+import searchDark from "../../../../assets/icons/search-dark.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
@@ -61,7 +62,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       ? []
       : [
           {
-            startIcon: search,
+            startIcon: themeType === "dark" ? searchDark : search,
             alt: "Search",
             title: "View Listing",
             url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,

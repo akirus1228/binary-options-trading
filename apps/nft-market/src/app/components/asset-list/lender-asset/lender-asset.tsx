@@ -23,6 +23,7 @@ import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice"
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
 import search from "../../../../assets/icons/search.svg";
+import searchDark from "../../../../assets/icons/search-dark.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
@@ -67,7 +68,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
 
   const viewLinks = [
     {
-      startIcon: search,
+      startIcon: themeType === "dark" ? searchDark : search,
       alt: "Search",
       title: "View Listing",
       url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
