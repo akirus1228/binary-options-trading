@@ -140,7 +140,7 @@ export const AssetDetails = ({
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
               {asset.mediaType === CollectibleMediaType.Video && asset.videoUrl ? (
-                <video controls>
+                <video controls autoPlay loop>
                   <source src={asset.videoUrl} />
                 </video>
               ) : (
