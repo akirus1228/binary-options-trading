@@ -137,32 +137,29 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
         if (validImages.length < 1) {
           setUrl("");
         } else {
-          if (
-            validImages[0].config.url?.startsWith(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT)
-          ) {
-            setUrl(validImages[0].config.url);
-          } else {
-            if (preferredWidth < 1024) {
-              if (validImages[0].headers["content-type"] === "image/svg+xml") {
-                setUrl(validImages[0].config.url ?? "");
-              } else {
-                getGucUrl(validImages[0].config.url ?? "").then((gucUrl) => {
-                  setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
-                });
-              }
+          if (preferredWidth < 1024) {
+            const response = validImages[0];
+            if (response.headers["content-type"] === "image/svg+xml") {
+              setUrl(response.config.url ?? "");
             } else {
-              if (
-                validImages[validImages.length - 1].headers["content-type"] ===
-                "image/svg+xml"
-              ) {
-                setUrl(validImages[validImages.length - 1].config.url ?? "");
-              } else {
-                getGucUrl(validImages[validImages.length - 1].config.url ?? "").then(
-                  (gucUrl) => {
-                    setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
-                  }
-                );
-              }
+              getGucUrl(
+                response.config.url?.replace(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT, "") ??
+                  ""
+              ).then((gucUrl) => {
+                setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
+              });
+            }
+          } else {
+            const response = validImages[validImages.length - 1];
+            if (response.headers["content-type"] === "image/svg+xml") {
+              setUrl(response.config.url ?? "");
+            } else {
+              getGucUrl(
+                response.config.url?.replace(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT, "") ??
+                  ""
+              ).then((gucUrl) => {
+                setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
+              });
             }
           }
         }
