@@ -7,7 +7,6 @@ import previewNotAvailableLight from "../../assets/images/preview-not-available-
 import previewNotAvailableDark from "../../assets/images/preview-not-available-dark.png";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import { NFT_MARKETPLACE_API_URL } from "../api/backend-api";
 
 export type ImageConvertResponse = {
   message?: string;
@@ -16,8 +15,6 @@ export type ImageConvertResponse = {
   dir?: string;
 };
 
-const NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT = NFT_MARKETPLACE_API_URL + "/nft/image?url=";
-
 const getHeaders = async (url: string): Promise<any | void> => {
   try {
     const response: AxiosResponse = await axios.head(url);
@@ -25,14 +22,21 @@ const getHeaders = async (url: string): Promise<any | void> => {
       return response;
     }
   } catch (e) {
+    // any exception, try if its CORS
     try {
-      const response: AxiosResponse = await axios.head(
-        NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT + url
-      );
-      if (response.status === 200) {
-        return response;
-      }
-    } catch (error) {
+      const fetchResponse = await fetch(url, { mode: "no-cors" });
+      // CORS exception will pass through here
+      return {
+        headers: {
+          "content-type": fetchResponse.headers.get("content-type"),
+          "content-length": fetchResponse.headers.get("content-length"),
+        },
+        config: {
+          url: url,
+        },
+      };
+    } catch (e2) {
+      // any other network exception, not CORS
       return null;
     }
   }
@@ -142,10 +146,7 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
             if (response.headers["content-type"] === "image/svg+xml") {
               setUrl(response.config.url ?? "");
             } else {
-              getGucUrl(
-                response.config.url?.replace(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT, "") ??
-                  ""
-              ).then((gucUrl) => {
+              getGucUrl(response.config.url ?? "").then((gucUrl) => {
                 setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
               });
             }
@@ -154,10 +155,7 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
             if (response.headers["content-type"] === "image/svg+xml") {
               setUrl(response.config.url ?? "");
             } else {
-              getGucUrl(
-                response.config.url?.replace(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT, "") ??
-                  ""
-              ).then((gucUrl) => {
+              getGucUrl(response.config.url ?? "").then((gucUrl) => {
                 setUrl(`${gucUrl}=s${preferredWidth}` ?? loadingGradient);
               });
             }
