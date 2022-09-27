@@ -9,24 +9,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { NFT_MARKETPLACE_API_URL } from "../api/backend-api";
 
-export const getIpfsUrl = (url: string | null = "") => {
-  if (!url?.includes("ipfs")) return url || "";
-
-  const IPFS_URL = "https://balance.mypinata.cloud/";
-
-  if (!url) {
-    return url;
-  }
-
-  const [, item] = url.split("ipfs/");
-
-  if (item) {
-    return IPFS_URL + "ipfs/" + item;
-  }
-
-  return url;
-};
-
 export type ImageConvertResponse = {
   message?: string;
   error?: string;
@@ -36,27 +18,24 @@ export type ImageConvertResponse = {
 
 const NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT = NFT_MARKETPLACE_API_URL + "/nft/image?url=";
 
-const getHeaders = async (url: string): Promise<AxiosResponse | void> => {
+const getHeaders = async (url: string): Promise<any | void> => {
   try {
     const response: AxiosResponse = await axios.head(url);
     if (response.status === 200) {
       return response;
     }
-    // eslint-disable-next-line no-empty
-  } catch {}
-
-  // try to get image from backend image proxy endpoint
-  return axios
-    .head(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT + url)
-    .then((response: AxiosResponse) => {
+  } catch (e) {
+    try {
+      const response: AxiosResponse = await axios.head(
+        NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT + url
+      );
       if (response.status === 200) {
         return response;
       }
-      return;
-    })
-    .catch((e: AxiosError) => {
-      console.log(e);
-    });
+    } catch (error) {
+      return null;
+    }
+  }
 };
 
 const sortImageBySize = (imageA: AxiosResponse, imageB: AxiosResponse) => {
@@ -84,73 +63,74 @@ const getGucUrl = (img_url: string): Promise<string> => {
     });
 };
 
-const ipfsToHttps = (ipfsUrl: string): string => {
-  return ipfsUrl.replace("ipfs://", "https://balance.mypinata.cloud/ipfs/");
-};
-
 export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const loadingGradient =
     themeType === "dark" ? loadingGradientDark : loadingGradientLight;
   const [url, setUrl] = useState(loadingGradient);
 
-  const imageLoadOrder: string[] = useMemo(() => {
+  const loadImages: string[] = useMemo(() => {
     if (asset === null) return [];
     const imageSet = new Set<string>(); // use set to enforce uniqueness
-    if (asset.thumbUrl)
-      imageSet.add(
-        ipfsToHttps(
-          asset.thumbUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
-        )
-      );
-    if (asset.imageUrl)
-      imageSet.add(
-        ipfsToHttps(
-          asset.imageUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
-        )
-      );
-    if (asset.frameUrl)
-      imageSet.add(
-        ipfsToHttps(
-          asset.frameUrl.replace("opensea.mypinata.cloud", "balance.mypinata.cloud")
-        )
-      );
-    return [...imageSet]; // return array for simplicity of filtering and sorting
+    if (asset.thumbUrl) {
+      imageSet.add(asset.thumbUrl);
+    } else if (asset.imageUrl) {
+      imageSet.add(asset.imageUrl);
+    } else if (asset.frameUrl) {
+      imageSet.add(asset.frameUrl);
+    }
+    return [...imageSet].filter((item) => !!item);
   }, [asset?.osData?.image_url, asset?.thumbUrl, asset?.imageUrl, asset?.frameUrl]);
 
   useEffect(() => {
     let isSubscribed = true;
     // do any of the images contain googleusercontent?
     // if so this is what we want to use
-    const img = imageLoadOrder.find((imageString) =>
+    if (!loadImages.length) {
+      if (isSubscribed) {
+        setUrl("");
+      }
+      return;
+    }
+
+    const googleImage = loadImages.find((imageString) =>
       imageString?.includes("googleusercontent")
     );
-    if (img) {
+    if (googleImage) {
       if (isSubscribed) {
-        setUrl(`${img.split("=")[0]}=w${preferredWidth}`);
+        setUrl(`${googleImage.split("=")[0]}=w${preferredWidth}`);
       }
       return;
     }
 
-    // don't worry about base64 encoded images, max size should be around 32kb.
-    const base64Img = imageLoadOrder.find((imageString) =>
+    const base64Image = loadImages.find((imageString) =>
       imageString?.includes("data:image")
     );
-    if (base64Img) {
+    if (base64Image) {
       if (isSubscribed) {
-        setUrl(base64Img);
+        setUrl(base64Image);
       }
       return;
     }
 
-    // no googleusercontent, check the image headers to make sure they're valid links
-    Promise.all(
-      imageLoadOrder
-        .filter((imageString) => !!imageString) // ignore empty strings
-        .map((imageString) => getHeaders(imageString))
-    ).then((imageDetails) => {
-      const validImages: AxiosResponse[] = imageDetails.filter(
-        (imageDetails) => !!imageDetails
+    const liqdIpfsImage = loadImages.find((imageString) =>
+      imageString?.includes("https://balance.mypinata.cloud/ipfs")
+    );
+    if (liqdIpfsImage) {
+      if (isSubscribed) {
+        setUrl(liqdIpfsImage);
+      }
+      return;
+    }
+
+    // no google user content, check the image headers to make sure they're valid links
+    Promise.all(loadImages.map((url) => getHeaders(url))).then((imageDetail) => {
+      if (!imageDetail || (imageDetail && !imageDetail.length)) {
+        setUrl("");
+        return;
+      }
+      const validImages: AxiosResponse[] = imageDetail.filter(
+        (imageDetail) => !!imageDetail
       ) as AxiosResponse[];
       validImages.sort((imageA, imageB) => sortImageBySize(imageA, imageB));
       if (isSubscribed) {
@@ -160,7 +140,6 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
           if (
             validImages[0].config.url?.startsWith(NFT_MARKETPLACE_IMAGE_PROXY_ENDPOINT)
           ) {
-            // ignore resize of it's from backend proxy endpoint
             setUrl(validImages[0].config.url);
           } else {
             if (preferredWidth < 1024) {
@@ -188,15 +167,15 @@ export const useBestImage = (asset: Asset | null, preferredWidth: number) => {
           }
         }
       }
-      return () => {
-        isSubscribed = false;
-      };
     });
-  }, [imageLoadOrder]);
+    return () => {
+      isSubscribed = false;
+    };
+  }, [loadImages]);
 
   return (
     url ||
-    getIpfsUrl(asset?.gifUrl) ||
+    asset?.gifUrl ||
     (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
   );
 };
