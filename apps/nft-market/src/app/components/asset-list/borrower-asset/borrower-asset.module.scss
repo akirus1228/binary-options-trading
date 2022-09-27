@@ -8,12 +8,20 @@
   & > .assetImage {
     display: block;
   }
+
   .assetImage > div {
     width: 100% !important;
-    height: auto !important;
-    padding-top: 100%;
     position: relative;
+
+    video {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     img {
+      object-fit: cover;
       width: 100%;
       max-width: 100%;
       display: block;
@@ -72,6 +80,7 @@ body[class*="darkTheme"] {
     color: #fff;
     background: #000;
   }
+
   .collectionName {
     background: #000;
     color: #fff;
