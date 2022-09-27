@@ -122,7 +122,11 @@ export const BorrowerAssetSearch = ({
     if (!searchedOwnedCollections.isSuccess) return;
 
     const filteredCollections = searchedOwnedCollections.data
-      .filter((item) => item.name?.toLowerCase().includes(keyword.toLowerCase()))
+      .filter(
+        (item) =>
+          item.name?.toLowerCase().includes(keyword.toLowerCase()) ||
+          item.contractAddress?.toLowerCase().includes(keyword.toLowerCase())
+      )
       .map((item) => {
         const _collection =
           searchedCollections.data.find((sub) => sub.slug === item.slug) ||
