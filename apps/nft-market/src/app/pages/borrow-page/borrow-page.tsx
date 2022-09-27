@@ -147,7 +147,10 @@ export const BorrowPage = (): JSX.Element => {
     setOsQuery({ ...osQuery, continuation: continuation });
   };
 
-  const blurImageUrl = useBestImage(myAssets.find((asset) => asset.usable) ?? null, 300);
+  const blurImageUrl = useBestImage(
+    myAssets.find((asset) => asset.imageUrl || asset.gifUrl) ?? null,
+    300
+  );
 
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
