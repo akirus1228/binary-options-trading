@@ -11,7 +11,7 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { formatCurrency, capitalizeFirstLetter } from "@fantohm/shared-helpers";
 import { Asset, AssetStatus } from "../../../types/backend-types";
 import { AppDispatch, RootState } from "../../../store";
@@ -28,7 +28,6 @@ import etherScan from "../../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
-import { useBestImage } from "../../../hooks/use-best-image";
 import { useMediaQuery } from "@material-ui/core";
 
 export type LenderAssetProps = {
@@ -36,7 +35,6 @@ export type LenderAssetProps = {
 };
 
 export function LenderAsset({ asset }: LenderAssetProps) {
-  const imageUrl = useBestImage(asset, 1024);
   const dispatch: AppDispatch = useDispatch();
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
@@ -103,7 +101,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
     dispatch(loadCurrencyFromAddress(listing?.term?.currencyAddress));
   }, [listing]);
 
-  if (asset === null || !asset || !listing) {
+  if (!asset || !listing) {
     return <h3>Loading...</h3>;
   }
 
@@ -166,7 +164,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
               href={link.url}
               style={{ textDecoration: "none" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
-              onClick={(e) => {
+              onClick={() => {
                 setFlagMoreDropDown(null);
               }}
             >
@@ -211,14 +209,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         className="flex"
         style={{ flexGrow: "1" }}
       >
-        {asset.tokenId && (
-          <PreviewImage
-            url={imageUrl}
-            name={asset.name || "placeholder name"}
-            contractAddress={asset.assetContractAddress}
-            tokenId={asset.tokenId}
-          />
-        )}
+        {asset.tokenId && <PreviewImage asset={asset} />}
       </RouterLink>
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>

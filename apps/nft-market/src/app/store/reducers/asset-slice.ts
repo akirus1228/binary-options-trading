@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { isAssetValid } from "@fantohm/shared/fetch-nft";
 import { isDev, loadState, ierc721Abi, chains } from "@fantohm/shared-web3";
 import { Asset, AssetStatus, BackendLoadingStatus } from "../../types/backend-types";
-import { OpenseaAsset } from "../../types/opensea-types";
 import {
   nftPortAssetsToAssets,
-  openseaAssetToAsset,
   reservoirTokenToAsset,
 } from "../../helpers/data-translations";
 import { ReservoirToken } from "../../api/reservoir";
@@ -31,45 +28,13 @@ export interface AssetState {
   readonly assetLoadStatus: AssetLoadStatus;
 }
 
-export const updateAssetsFromOpensea = createAsyncThunk(
-  "asset/updateAssetsFromOpensea",
-  async (openseaAssets: OpenseaAsset[], { dispatch }) => {
-    const newAssetAry = await openseaAssetToAsset(
-      openseaAssets.filter((asset: OpenseaAsset) => isAssetValid(asset))
-    );
-
-    const ethcallProvider = new Provider(await chains[desiredNetworkId].provider);
-    await ethcallProvider.init();
-    const owners = await ethcallProvider.all(
-      newAssetAry.map((asset) => {
-        const nftContract = new Contract(asset.assetContractAddress, ierc721Abi);
-        return nftContract["ownerOf"](asset.tokenId);
-      })
-    );
-
-    const newAssets: Assets = {};
-    newAssetAry.forEach((asset: Asset, index: number) => {
-      newAssets[assetToAssetId(asset)] = {
-        ...asset,
-        owner: {
-          ...asset.owner,
-          address: owners[index],
-        },
-      };
-    });
-
-    dispatch(updateAssets(newAssets));
-  }
-);
-
 export const updateAssetsFromBackend = createAsyncThunk(
   "asset/updateAssetsFromBackend",
   async (backendAssets: Asset[], { dispatch }) => {
     const newAssets: Assets = {};
-    backendAssets.forEach((asset: Asset, index: number) => {
+    backendAssets.forEach((asset: Asset) => {
       newAssets[assetToAssetId(asset)] = {
         ...asset,
-        status: AssetStatus.New,
       };
     });
 

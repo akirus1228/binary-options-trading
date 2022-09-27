@@ -14,7 +14,7 @@ import { Link as RouterLink } from "react-router-dom";
 import style from "./borrower-asset.module.scss";
 import PreviewImage from "../preview-image/preview-image";
 import { Asset, AssetStatus } from "../../../types/backend-types";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { isDev } from "@fantohm/shared-web3";
 import search from "../../../../assets/icons/search.svg";
 import searchDark from "../../../../assets/icons/search-dark.svg";
@@ -24,7 +24,6 @@ import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { useBestImage } from "../../../hooks/use-best-image";
 import { useMediaQuery } from "@material-ui/core";
 
 export interface BorrowerAssetProps {
@@ -32,10 +31,8 @@ export interface BorrowerAssetProps {
 }
 
 export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
-  // const asset = useWalletAsset(props.contractAddress, props.tokenId);
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
-  const imageUrl = useBestImage(asset, 1024);
   const isTablet = useMediaQuery("(min-width:576px)");
 
   const chipColor = useMemo(() => {
@@ -58,18 +55,14 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   };
 
   const viewLinks = [
-    ...(asset.usable === false
-      ? []
-      : [
-          {
-            startIcon: themeType === "dark" ? searchDark : search,
-            alt: "Search",
-            title: "View Listing",
-            url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
-            endIcon: null,
-            isSelfTab: true,
-          },
-        ]),
+    {
+      startIcon: themeType === "dark" ? searchDark : search,
+      alt: "Search",
+      title: "View Listing",
+      url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
+      endIcon: null,
+      isSelfTab: true,
+    },
     {
       startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
@@ -95,9 +88,8 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   ];
 
   const statusText = useMemo(() => {
-    if (!asset) return;
-    if (asset.usable === false) {
-      return "Unusable";
+    if (!asset) {
+      return;
     }
     switch (asset.status) {
       case AssetStatus.New:
@@ -112,10 +104,6 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
     }
   }, [asset]);
 
-  if (asset === null) {
-    return <h3>Loading...</h3>;
-  }
-
   return (
     <Tooltip
       arrow
@@ -124,11 +112,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           marginTop: "-150px !important",
         },
       }}
-      title={
-        asset.usable === false
-          ? "Not verified collection, Ask for whitelisting on discord"
-          : ""
-      }
+      title=""
     >
       <Paper
         style={{
@@ -137,7 +121,6 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
           flexDirection: "column",
           padding: "0",
           position: "relative",
-          opacity: asset.usable === false ? "0.5" : undefined,
         }}
         className={style["assetBox"]}
       >
@@ -223,29 +206,14 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
             ))}
           </Popover>
         </Box>
-        {asset.tokenId &&
-          (asset.usable === false ? (
-            <span className={style["assetImage"]}>
-              <PreviewImage
-                url={imageUrl}
-                name={asset.name || "placeholder name"}
-                contractAddress={asset.assetContractAddress}
-                tokenId={asset.tokenId}
-              />
-            </span>
-          ) : (
-            <RouterLink
-              to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
-              className={style["assetImage"]}
-            >
-              <PreviewImage
-                url={imageUrl}
-                name={asset.name || "placeholder name"}
-                contractAddress={asset.assetContractAddress}
-                tokenId={asset.tokenId}
-              />
-            </RouterLink>
-          ))}
+        {asset.tokenId && (
+          <RouterLink
+            to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
+            className={style["assetImage"]}
+          >
+            <PreviewImage asset={asset} />
+          </RouterLink>
+        )}
         <Box className="flex fc fj-c ai-c">
           {asset.collection && asset.collection.name && (
             <Box
