@@ -1,5 +1,12 @@
 import { useWeb3Context, useImpersonateAccount } from "@fantohm/shared-web3";
-import { Box, CircularProgress, Container, Grid } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -29,6 +36,7 @@ export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
   const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
+  const isDesktop = useMediaQuery("(min-width: 576px)");
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
@@ -185,7 +193,7 @@ export const BorrowPage = (): JSX.Element => {
                 >
                   No assets have been found in your wallet
                 </Box>
-              ) : (
+              ) : assetsToShow && assetsToShow.length > 0 ? (
                 <AssetList
                   allAssetsCount={allMyAssets.length + assetsInEscrow.length}
                   assets={assetsToShow}
@@ -193,6 +201,15 @@ export const BorrowPage = (): JSX.Element => {
                   fetchData={fetchMoreData}
                   hasMore={hasNext}
                 />
+              ) : (
+                <Typography
+                  variant="h5"
+                  component={"h5"}
+                  color="GrayText"
+                  sx={{ marginTop: isDesktop ? "150px" : "20px", textAlign: "center" }}
+                >
+                  No items
+                </Typography>
               ))}
           </Grid>
         </Grid>
