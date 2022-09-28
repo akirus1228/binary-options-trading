@@ -373,3 +373,9 @@ export type BackendNftAssetsQueryResponse = {
   count: number;
   assets: Asset[];
 };
+
+export type SendReport = {
+  subject: string;
+  text: string;
+  to: string;
+};

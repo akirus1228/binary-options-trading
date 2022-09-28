@@ -29,6 +29,7 @@ import {
   NftPrice,
   BackendNftAssetsQueryParams,
   BackendNftAssetsQueryResponse,
+  SendReport,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -124,6 +125,7 @@ export const backendApi = createApi({
     "PlatformWalletInfo",
     "Terms",
     "User",
+    "Mail",
   ],
   baseQuery: fetchBaseQuery({
     baseUrl: NFT_MARKETPLACE_API_URL,
@@ -596,6 +598,16 @@ export const backendApi = createApi({
         url: `collection/fetchAllByWallet/${queryParams.wallet}`,
       }),
     }),
+    sendReport: builder.mutation<SendReport, Partial<SendReport>>({
+      query: (body) => {
+        return {
+          url: `mail`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Mail"],
+    }),
   }),
 });
 
@@ -635,4 +647,5 @@ export const {
   useGetNftAssetQuery,
   useLazyGetNftCollectionsQuery,
   useGetNftCollectionsQuery,
+  useSendReportMutation,
 } = backendApi;
