@@ -114,9 +114,8 @@ export const contractCreateLoan = createAsyncThunk(
   async ({ loan, provider, networkId }: LoanAsyncThunk, { getState, dispatch }) => {
     const state: RootState = getState() as RootState;
     const currency =
-      state.currency.currencies[
-        getSymbolFromAddress(loan.assetListing.term.currencyAddress)
-      ] || getErc20CurrencyFromAddress(loan.assetListing.term.currencyAddress);
+      state.currency.currencies[getSymbolFromAddress(loan.term.currencyAddress)] ||
+      getErc20CurrencyFromAddress(loan.term.currencyAddress);
 
     const signer = provider.getSigner();
 
