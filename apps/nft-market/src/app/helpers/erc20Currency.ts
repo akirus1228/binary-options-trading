@@ -63,7 +63,7 @@ export const currencyInfo: CurrencyInfo = {
   },
   USDB_ADDRESS: {
     symbol: "USDB",
-    name: "USDBalance",
+    name: "USD Balance",
     icon: USDBToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["USDB_ADDRESS"],
@@ -114,7 +114,7 @@ export const currencyInfo: CurrencyInfo = {
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDT_ADDRESS"],
     },
     coingeckoStub: "tether",
-    decimals: isDev ? 18 : 6,
+    decimals: 6,
   },
 };
 

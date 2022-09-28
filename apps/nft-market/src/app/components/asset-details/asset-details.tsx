@@ -24,7 +24,13 @@ import {
 } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { AppDispatch, RootState } from "../../store";
-import { AssetStatus, Listing, Loan, LoanStatus } from "../../types/backend-types";
+import {
+  AssetStatus,
+  CollectibleMediaType,
+  Listing,
+  Loan,
+  LoanStatus,
+} from "../../types/backend-types";
 import AssetOwnerTag from "../asset-owner-tag/asset-owner-tag";
 import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
@@ -33,11 +39,13 @@ import style from "./asset-details.module.scss";
 import { useMemo, useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
+import etherScanDark from "../../../assets/icons/etherscan-dark.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import BlueChip from "../../../assets/icons/blue-chip.svg";
 import PriceInfo from "./price-info/price-info";
 import { useBestImage } from "../../hooks/use-best-image";
 import { addAlert } from "../../store/reducers/app-slice";
+import { useMediaQuery } from "@mui/material";
 
 export interface AssetDetailsProps {
   contractAddress: string;
@@ -55,6 +63,7 @@ export const AssetDetails = ({
   const dispatch: AppDispatch = useDispatch();
   const { address } = useWeb3Context();
   const { authSignature } = useSelector((state: RootState) => state.backend);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
   const asset = useWalletAsset(contractAddress, tokenId);
   const imageUrl = useBestImage(asset, Math.floor(window.innerWidth * 0.75));
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
@@ -93,7 +102,7 @@ export const AssetDetails = ({
 
   const viewLinks = [
     {
-      startIcon: etherScan,
+      startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
       url: `https://${
@@ -118,13 +127,33 @@ export const AssetDetails = ({
     if (!activeLoan) {
       return;
     }
-    setIsPending(true);
-    resetPartialLoan(activeLoan.id).then(() => {
+    try {
+      setIsPending(true);
+      const result: any = await resetPartialLoan(activeLoan.id);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to cancel a listing because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        resetResetPartialLoan();
+        dispatch(addAlert({ message: "Locked has been cancelled." }));
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
       setIsPending(false);
-      resetResetPartialLoan();
-      dispatch(addAlert({ message: "Locked has been cancelled." }));
-    });
+    }
   };
+
+  const isTablet = useMediaQuery("(min-width:576px)");
 
   return (
     <Container sx={sx} className={style["assetRow"]}>
@@ -133,7 +162,33 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              <img src={imageUrl} alt={asset.name || "unknown"} />
+              {asset.mediaType === CollectibleMediaType.Video && asset.videoUrl && (
+                <video controls autoPlay loop>
+                  <source src={asset.videoUrl} />
+                </video>
+              )}
+              {(asset.mediaType === CollectibleMediaType.Image ||
+                asset.mediaType === CollectibleMediaType.Gif) && (
+                <img src={imageUrl} alt={asset.name || "unknown"} />
+              )}
+              {asset.mediaType === CollectibleMediaType.Audio && asset.videoUrl && (
+                <Box sx={{ width: "100%", background: "#dfdada" }}>
+                  <img src={imageUrl} alt={asset.name || "unknown"} />
+                  <audio
+                    controls
+                    src={asset.videoUrl}
+                    autoPlay={true}
+                    className={style["audio"]}
+                  />
+                </Box>
+              )}
+              {asset.mediaType === CollectibleMediaType.Html && asset.videoUrl && (
+                <iframe
+                  src={asset.videoUrl}
+                  frameBorder="0"
+                  className={style["iframe"]}
+                />
+              )}
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -161,13 +216,15 @@ export const AssetDetails = ({
                 ))}
               <Box sx={{ display: "flex", my: "20px", alignItems: "center" }}>
                 <Box>
-                  <h1 style={{ margin: "0" }}>{asset.name}</h1>
+                  <h1 style={{ margin: "0", fontSize: isTablet ? "2rem" : "1.5rem" }}>
+                    {asset.name}
+                  </h1>
                 </Box>
                 <IconButton
                   sx={{
                     position: "relative",
-                    left: "20px",
                     zIndex: 10,
+                    marginLeft: "auto",
                   }}
                   className={style["moreButton"]}
                   aria-haspopup="true"

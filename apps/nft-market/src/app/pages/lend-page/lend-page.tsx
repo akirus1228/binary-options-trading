@@ -1,5 +1,12 @@
 import { scrollTo } from "@fantohm/shared-helpers";
-import { Box, CircularProgress, Container, Grid } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLazyGetListingsQuery } from "../../api/backend-api";
@@ -21,10 +28,12 @@ export const LendPage = (): JSX.Element => {
     skip: 0,
     take,
     status: ListingStatus.Listed,
-    sortQuery: "",
+    sortQuery: "asset_listing.createdAt:DESC",
   });
   const { user } = useSelector((state: RootState) => state.backend);
   const [trigger, listingsResult] = useLazyGetListingsQuery();
+
+  const isDesktop = useMediaQuery("(min-width: 576px)");
 
   useEffect(() => {
     // if we're down the page we should go ahead and scroll back to the top of the results
@@ -91,12 +100,25 @@ export const LendPage = (): JSX.Element => {
               </Box>
             )}
             <AssetTypeFilter query={query} setQuery={setQuery} />
-            <AssetList
-              assets={displayAssets}
-              type="lend"
-              fetchData={fetchMoreData}
-              hasMore={hasNext}
-            />
+            {displayAssets && displayAssets.length > 0 && (
+              <AssetList
+                allAssetsCount={displayAssets.length}
+                assets={displayAssets}
+                type="lend"
+                fetchData={fetchMoreData}
+                hasMore={hasNext}
+              />
+            )}
+            {(!displayAssets || displayAssets.length === 0) && (
+              <Typography
+                variant="h5"
+                component={"h5"}
+                color="GrayText"
+                sx={{ marginTop: isDesktop ? "200px" : "50px", textAlign: "center" }}
+              >
+                No items
+              </Typography>
+            )}
           </Grid>
         </Grid>
       </Box>

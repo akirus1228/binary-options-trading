@@ -1,12 +1,10 @@
 import {
-  assetToCollectible,
   Collectible,
   NON_IMAGE_EXTENSIONS,
   SUPPORTED_3D_EXTENSIONS,
   SUPPORTED_VIDEO_EXTENSIONS,
 } from "@fantohm/shared/fetch-nft";
 import { NftPortAsset } from "../api/nftport";
-import { OpenseaAsset } from "../types/opensea-types";
 import { ReservoirToken } from "../api/reservoir";
 import { Assets, assetToAssetId } from "../store/reducers/asset-slice";
 import { Listings } from "../store/reducers/listing-slice";
@@ -24,39 +22,11 @@ import {
 } from "../types/backend-types";
 
 export const getIpfsUrl = (url?: Nullable<string>) => {
-  const IPFS_URL = "https://ipfs.io/";
-
   if (url && url.startsWith("ipfs")) {
-    return IPFS_URL + url.replaceAll("://", "/");
+    return url.replace("ipfs://", "https://balance.mypinata.cloud/ipfs/");
   }
 
   return url;
-};
-
-// convert asset data from opensea to our internal type
-export const openseaAssetToAsset = async (
-  openseaAsset: OpenseaAsset[]
-): Promise<Asset[]> => {
-  const collectibles = await Promise.all(
-    openseaAsset.map(async (asset) => await assetToCollectible(asset))
-  );
-  // convertCollectible to Asset
-  const walletContents = collectibles.map((collectible: Collectible): Asset => {
-    const { id, ...tmpCollectible } = collectible;
-    const asset = {
-      ...tmpCollectible,
-      openseaLoaded: Date.now() + 300 * 1000,
-      status: AssetStatus.New,
-      osData: openseaAsset.find(
-        (asset: OpenseaAsset) =>
-          asset.asset_contract?.address === collectible.assetContractAddress &&
-          asset.token_id === collectible.tokenId
-      ),
-    } as Asset;
-    return asset;
-  });
-
-  return walletContents;
 };
 
 export const nftPortAssetToCollectible = async (
@@ -194,26 +164,22 @@ export const nftPortAssetsToAssets = async (
     nftPortAssets.map(async (asset) => await nftPortAssetToCollectible(asset))
   );
   // convertCollectible to Asset
-  const walletContents = collectibles.map((collectible: Collectible): Asset => {
+  return collectibles.map((collectible: Collectible): Asset => {
     const { id, ...tmpCollectible } = collectible;
-    const asset = {
+    return {
       ...tmpCollectible,
       openseaLoaded: Date.now() + 300 * 1000,
-      status: AssetStatus.New,
       npData: nftPortAssets.find(
         (asset) =>
           asset.contract_address === collectible.assetContractAddress &&
           asset.token_id === collectible.tokenId
       ),
     } as Asset;
-    return asset;
   });
-
-  return walletContents;
 };
 
 export const reservoirTokenToAsset = (token: ReservoirToken): Asset => {
-  const updatedAsset = {
+  return {
     status: AssetStatus.New,
     tokenId: token.tokenId.toString(),
     name: token.name || null,
@@ -234,6 +200,7 @@ export const reservoirTokenToAsset = (token: ReservoirToken): Asset => {
     assetContractAddress: token.contract || "",
     chain: "eth" as Chain,
     wallet: token.owner,
+    usable: true,
     reservoirData: token,
     collection: {
       name: token.collection.name || "",
@@ -241,7 +208,6 @@ export const reservoirTokenToAsset = (token: ReservoirToken): Asset => {
       slug: token.collection.slug || "",
     },
   };
-  return updatedAsset;
 };
 
 // convert Asset[] to Assets

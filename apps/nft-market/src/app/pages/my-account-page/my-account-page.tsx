@@ -30,6 +30,7 @@ export const MyAccountPage = (): JSX.Element => {
   const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const params = useParams();
   const { user } = useSelector((state: RootState) => state.backend);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
   const location = useLocation();
 
   const address = useMemo(() => {
@@ -110,7 +111,12 @@ export const MyAccountPage = (): JSX.Element => {
                         fontFamily: "Inter,Roboto,sans-serif",
                         fontWeight: "500",
                         fontSize: "1.2em",
-                        color: tabIndex === activeTab ? "black" : "#8991A2",
+                        color:
+                          tabIndex === activeTab
+                            ? themeType === "light"
+                              ? "black"
+                              : "white"
+                            : "#8991A2",
                         padding: "8px 0px",
                         minWidth: "120px",
                       }}
@@ -120,7 +126,6 @@ export const MyAccountPage = (): JSX.Element => {
                   }
                   {...a11yProps(tabIndex)}
                   key={`tab-${tabIndex}`}
-                  className={style["tabElem"]}
                 />
               </Link>
             ))}

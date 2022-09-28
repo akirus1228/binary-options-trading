@@ -174,8 +174,10 @@ export type InteractiveErc20AsyncThunk = AssetAddressAsyncThunk &
 
 export type InteractiveWalletErc20AsyncThunk = {
   walletAddress: string;
+  lendingContractAddress?: string;
 } & InteractiveErc20AsyncThunk;
 
 export type Erc20AllowanceAsyncThunk = {
   amount: BigNumber;
+  lendingContractAddress?: string;
 } & InteractiveWalletErc20AsyncThunk;

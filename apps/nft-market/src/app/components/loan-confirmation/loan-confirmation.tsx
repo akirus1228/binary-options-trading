@@ -24,9 +24,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
   checkErc20Allowance,
+  getLendingAddressConfig,
   loadErc20Balance,
   loadPlatformFee,
-  networks,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   selectErc20BalanceByAddress,
@@ -180,9 +180,7 @@ export const LoanConfirmation = ({
         status: ListingStatus.Completed,
         asset: { ...listing.asset, status: AssetStatus.Locked },
       },
-      lendingContractAddress:
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS"],
+      lendingContractAddress: getLendingAddressConfig(desiredNetworkId).currentVersion,
       term: listing.term,
       status: LoanStatus.Active,
     };
@@ -192,11 +190,26 @@ export const LoanConfirmation = ({
       provider,
       networkId: desiredNetworkId,
     };
-    let createLoanResult;
+    let createLoanResult: any;
     try {
-      createLoanResult = await createLoan(createLoanRequest).unwrap();
-      if (!createLoanResult) {
-        dispatch(addAlert({ message: "Failed to create a loan", severity: "error" }));
+      createLoanResult = await createLoan(createLoanRequest);
+      if (!createLoanResult || (createLoanResult && createLoanResult?.error)) {
+        if (createLoanResult?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to create a loan because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(
+            addAlert({
+              message: createLoanResult?.error?.data.message,
+              severity: "error",
+            })
+          );
+        }
         return;
       }
       const createLoanContractResult = await dispatch(
@@ -205,11 +218,11 @@ export const LoanConfirmation = ({
 
       if (!createLoanContractResult) {
         resetCreateLoan();
-        resetPartialLoan(createLoanResult?.id || "");
+        resetPartialLoan(createLoanResult?.data?.id || "");
         return; //todo: throw nice error
       }
       createLoanRequest.contractLoanId = createLoanContractResult;
-      createLoanRequest.id = createLoanResult.id;
+      createLoanRequest.id = createLoanResult?.data?.id;
       await updateLoan(createLoanRequest).unwrap();
       resetUpdateLoan();
       dispatch(
@@ -221,8 +234,8 @@ export const LoanConfirmation = ({
       handleClose();
     } catch (e) {
       console.log(e);
-      if (createLoanResult) {
-        resetPartialLoan(createLoanResult?.id || "");
+      if (createLoanResult?.data) {
+        resetPartialLoan(createLoanResult?.data?.id || "");
       }
       return;
     }

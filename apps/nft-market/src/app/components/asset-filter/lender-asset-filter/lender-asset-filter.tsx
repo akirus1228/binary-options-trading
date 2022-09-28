@@ -276,23 +276,22 @@ export const LenderAssetFilter = ({
 
   function numFormatterForDuration(num: any) {
     if (num > 0 && num < 30) {
-      return `${Math.floor(num)} ${Math.floor(num) > 1 ? "days" : "day"}`;
+      return `${Math.floor(num)}${Math.floor(num) > 1 ? " days" : " day"}`;
     } else if (num >= 30 && num < 365) {
-      return `${Math.floor(num / 30)} ${Math.floor(num / 30) > 1 ? "months" : "month"} ${
+      return `${Math.floor(num / 30)}${Math.floor(num / 30) > 1 ? " months" : " month"} ${
         Math.floor(num % 30) > 0
           ? Math.floor(num % 30) > 1
-            ? Math.floor(num % 30) + "days"
-            : Math.floor(num % 30) + "day"
+            ? Math.floor(num % 30) + " days"
+            : Math.floor(num % 30) + " day"
           : ""
       }`;
     } else if (num >= 365) {
-      return `${Math.floor(num / 365)} ${Math.floor(num / 365) > 1 ? "years" : "year"} ${
-        Math.floor(num % 365) > 0
-          ? Math.floor(num % 365) > 1
-            ? Math.floor(num % 365) + "days"
-            : Math.floor(num % 365) + "day"
-          : ""
-      }`;
+      const year = Math.floor(num / 365);
+      const month = Math.floor((num % 365) / 30);
+      const day = Math.floor((num % 365) % 30);
+      return `${year} ${year > 1 ? "years" : "year"}${
+        month > 0 ? (month > 1 ? " " + month + " months" : " " + month + " month") : ""
+      }${day > 0 ? (day > 1 ? " " + day + " days" : " " + day + " day") : ""}`;
     } else {
       return "0 day";
     }
@@ -402,10 +401,10 @@ export const LenderAssetFilter = ({
             position: "static",
           }}
         >
-          Apr range
+          APR range
         </ListSubheader>
         <Slider
-          getAriaLabel={() => "Apr range"}
+          getAriaLabel={() => "APR range"}
           value={aprRange}
           onChange={handleAprRangeChange}
           onChangeCommitted={handleAprRangeChangeCommitted}
