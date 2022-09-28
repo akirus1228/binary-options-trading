@@ -100,7 +100,7 @@ export const LendPage = (): JSX.Element => {
               </Box>
             )}
             <AssetTypeFilter query={query} setQuery={setQuery} />
-            {displayAssets && displayAssets.length > 0 ? (
+            {displayAssets && displayAssets.length > 0 && (
               <AssetList
                 allAssetsCount={displayAssets.length}
                 assets={displayAssets}
@@ -108,7 +108,8 @@ export const LendPage = (): JSX.Element => {
                 fetchData={fetchMoreData}
                 hasMore={hasNext}
               />
-            ) : (
+            )}
+            {(!displayAssets || displayAssets.length === 0) && (
               <Typography
                 variant="h5"
                 component={"h5"}

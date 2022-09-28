@@ -180,12 +180,14 @@ export const BorrowPage = (): JSX.Element => {
                 <h1>Please connect your wallet.</h1>
               </Box>
             )}
+            {isWalletConnected && (assetsLoading || isLoansLoaing || isAssetLoading) && (
+              <Box className="flex fr fj-c">
+                <CircularProgress />
+              </Box>
+            )}
             {isWalletConnected &&
-              (assetsLoading || isLoansLoaing || isAssetLoading ? (
-                <Box className="flex fr fj-c">
-                  <CircularProgress />
-                </Box>
-              ) : !hasNext && assetsToShow.length === 0 ? (
+              !(assetsLoading || isLoansLoaing || isAssetLoading) &&
+              (!hasNext || assetsToShow.length === 0) && (
                 <Box
                   className="flex fr fj-c"
                   sx={{
@@ -196,24 +198,16 @@ export const BorrowPage = (): JSX.Element => {
                 >
                   No assets have been found in your wallet
                 </Box>
-              ) : assetsToShow && assetsToShow.length > 0 ? (
-                <AssetList
-                  allAssetsCount={allMyAssets.length + assetsInEscrow.length}
-                  assets={assetsToShow}
-                  type="borrow"
-                  fetchData={fetchMoreData}
-                  hasMore={hasNext}
-                />
-              ) : (
-                <Typography
-                  variant="h5"
-                  component={"h5"}
-                  color="GrayText"
-                  sx={{ marginTop: isDesktop ? "150px" : "20px", textAlign: "center" }}
-                >
-                  No items
-                </Typography>
-              ))}
+              )}
+            {assetsToShow && assetsToShow.length > 0 && (
+              <AssetList
+                allAssetsCount={allMyAssets.length + assetsInEscrow.length}
+                assets={assetsToShow}
+                type="borrow"
+                fetchData={fetchMoreData}
+                hasMore={hasNext}
+              />
+            )}
           </Grid>
         </Grid>
       </Box>
