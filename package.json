@@ -11,7 +11,7 @@
   },
   "private": true,
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.12.1",

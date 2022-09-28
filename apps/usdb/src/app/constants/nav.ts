@@ -19,7 +19,6 @@ export type FooterItem = {
 export const headerPages: Page[] = [
   // { title: "Traditional Finance", href: "/trad-fi", params: { comingSoon: false } },
   // { title: "Stablecoin Farming", href: "/staking", params: { comingSoon: false } },
-  { title: "Vault", href: "/vault", params: { comingSoon: false } },
   { title: "Minter", href: "/mint", params: { comingSoon: false } },
   // { title: "xFHM", href: "/xfhm?enable-testnet=true", params: { comingSoon: true } },
   // { title: "USDB Bank", href: "", params: { comingSoon: true } },
@@ -28,15 +27,11 @@ export const headerPages: Page[] = [
     href: "https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1",
     params: { comingSoon: false },
   },
+  { title: "Vault", href: "/", params: { comingSoon: true } },
   // { title: "Backed NFT", href: "/backed-nft", params: { comingSoon: false } },
   // { title: "Amps", href: "/amps", params: { comingSoon: true } },
 ];
 
-export const balanceVaultPages: Page[] = [
-  { title: "Vault", href: "/", params: { comingSoon: false } },
-  { title: "Portofolio", href: "/", params: { comingSoon: false } },
-  { title: "Create Vault", href: "/", params: { comingSoon: false } },
-];
 export const balanceheaderPages: Page[] = [
   { title: "About", href: "/about", params: { comingSoon: false } },
   { title: "USDB", href: "/usdb", params: { comingSoon: false } },
@@ -58,7 +53,7 @@ export const footerItems: FooterItem[] = [
         title: "Bridge",
         href: "https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1",
       },
-      { title: "Vault", href: "/vault", params: { comingSoon: false } },
+      { title: "Vault", href: "/", params: { comingSoon: true } },
       // { title: "Backed NFT", href: "/backed-nft" },
       // { title: "Amps", href: "/amps", params: { comingSoon: true } },
     ],
