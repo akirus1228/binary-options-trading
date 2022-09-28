@@ -155,12 +155,16 @@ export const BorrowerAssetSearch = ({
 
     setCollections(filteredCollections);
 
-    for (let i = 0; i < filteredCollections.length; i++) {
-      triggerAssets({
-        limit: 3,
-        walletAddress: address,
-        contractAddress: filteredCollections[i].contractAddress,
-      });
+    if (filteredCollections.length > 0) {
+      for (let i = 0; i < filteredCollections.length; i++) {
+        triggerAssets({
+          limit: 3,
+          walletAddress: address,
+          contractAddress: filteredCollections[i].contractAddress,
+        });
+      }
+    } else {
+      setAssets([]);
     }
   }, [searchedCollections.data, searchedCollections.fulfilledTimeStamp, keyword]);
 
