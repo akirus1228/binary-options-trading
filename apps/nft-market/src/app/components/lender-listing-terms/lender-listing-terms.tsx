@@ -231,10 +231,10 @@ export function LenderListingTerms(props: LenderListingTermsProps) {
               {props.listing.term.apr}%
             </Typography>
           </Box>
-          <Box className="flex fc">
+          <Box className="flex fc" sx={{ mt: { xs: "10px", md: "0" } }}>
             <LoanConfirmation listing={props.listing} />
           </Box>
-          <Box className="flex fc">
+          <Box className="flex fc" sx={{ mt: { xs: "10px", md: "0" } }}>
             <Button variant="outlined" onClick={handleMakeOffer}>
               Make Offer
             </Button>
