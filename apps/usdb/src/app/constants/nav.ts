@@ -27,7 +27,7 @@ export const headerPages: Page[] = [
     href: "https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1",
     params: { comingSoon: false },
   },
-  { title: "Vault", href: "/", params: { comingSoon: true } },
+  { title: "Vault", href: "/vvvv", params: { comingSoon: true } },
   // { title: "Backed NFT", href: "/backed-nft", params: { comingSoon: false } },
   // { title: "Amps", href: "/amps", params: { comingSoon: true } },
 ];
