@@ -51,7 +51,7 @@ export const ReferralList = ({
                       ></Avatar>
                     </Box>
                     <Typography variant="caption" component="span">
-                      {isDesktop ? item : addressEllipsis(item.user)}
+                      {isDesktop ? item.user : addressEllipsis(item.user)}
                     </Typography>
                   </Box>
                 }
