@@ -122,11 +122,14 @@ export const BorrowerAssetSearch = ({
     if (!searchedOwnedCollections.isSuccess) return;
 
     const filteredCollections = searchedOwnedCollections.data
-      .filter(
-        (item) =>
-          item.name?.toLowerCase().includes(keyword.toLowerCase()) ||
-          item.contractAddress?.toLowerCase().includes(keyword.toLowerCase())
-      )
+      .filter((item) => {
+        let match = item.name?.toLowerCase().includes(keyword.toLowerCase());
+        if (keyword?.toLowerCase()?.substring(0, 2) === "0x") {
+          match =
+            match || item.contractAddress?.toLowerCase().includes(keyword?.toLowerCase());
+        }
+        return match;
+      })
       .map((item) => {
         const _collection =
           searchedCollections.data.find((sub) => sub.slug === item.slug) ||
