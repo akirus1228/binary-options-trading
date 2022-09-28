@@ -12,6 +12,7 @@ type onChainProvider = {
   hasCachedProvider?: () => boolean;
   chainId?: number;
   switchEthereumChain?: (networkId: NetworkId, forceSwitch?: boolean) => Promise<boolean>;
+  defaultProvider: JsonRpcProvider;
 };
 
 export type Web3ContextData = {

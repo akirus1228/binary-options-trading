@@ -418,6 +418,5 @@ export async function getIlRedeemBlockNumber(networkId: NetworkId, address: stri
   return [currentBlockNumber, Number(bondDetails.ilProtectionUnlockBlock.toString())];
 }
 
-export const isDev = (): boolean => {
-  return !process.env["NODE_ENV"] || process.env["NODE_ENV"] === "development";
-};
+export const isDev: boolean =
+  !process.env["NODE_ENV"] || process.env["NODE_ENV"] === "development";

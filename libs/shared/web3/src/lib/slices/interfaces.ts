@@ -99,6 +99,38 @@ export interface IApproveBondAsyncThunk
   readonly address: string;
 }
 
+export interface IVaultDepositAsyncThunk extends IBaseAsyncThunk, IInteractiveAsyncThunk {
+  readonly address: string;
+  readonly vaultId: string;
+  readonly amount: BigNumber;
+  readonly token: string;
+}
+
+export interface IVaultWithdrawAsyncThunk
+  extends IBaseAsyncThunk,
+    IInteractiveAsyncThunk {
+  readonly address: string;
+  readonly vaultId: string;
+}
+
+export interface IVaultRoiAsyncThunk extends IInteractiveAsyncThunk {
+  readonly vaultId: string;
+  readonly amount: BigNumber;
+}
+
+export interface IVaultRedeemAsyncThunk extends IInteractiveAsyncThunk {
+  readonly vaultId: string;
+  readonly address: string;
+}
+
+export interface IVaultMaxDepositAsyncThunk extends IInteractiveAsyncThunk {
+  readonly vaultId: string;
+}
+
+export interface IVaultGetRedeemStatusAsyncThunk extends IInteractiveAsyncThunk {
+  readonly nftAddress: string;
+}
+
 export interface ICalcBondDetailsAsyncThunk extends IBaseBondAsyncThunk {
   readonly value: string;
 }
@@ -243,3 +275,16 @@ export interface IMintNFTAsyncThunk extends IBaseAsyncThunk {
   readonly proof1: string[];
   readonly proof2: string[];
 }
+
+export type BalanceVaultManagerAsyncThunk = {
+  readonly networkId: number;
+  readonly provider: JsonRpcProvider;
+  readonly skip: string;
+  readonly limit: string;
+  readonly callback?: any;
+};
+export type BalanceVaultLengthAsyncThunk = {
+  readonly networkId: number;
+  readonly provider: JsonRpcProvider;
+  readonly callback?: any;
+};

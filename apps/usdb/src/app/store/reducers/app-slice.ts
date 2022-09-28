@@ -13,10 +13,24 @@ import {
 } from "@reduxjs/toolkit";
 import { loadState } from "../localstorage";
 import { RootState } from "..";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { BlogPostDTO } from "../../../../../nft-market/src/app/types/backend-types";
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const contentful = require("contentful");
+
+export type BlogPostDTO = {
+  id?: string;
+  date: string;
+  blogTitle: string;
+  isFeatured: boolean;
+  blogAsset?: string;
+  blogCategory?: string;
+  content: string;
+  image?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  getInTouch?: string;
+};
 
 export const loadAppDetails = createAsyncThunk(
   "app/loadAppDetails",

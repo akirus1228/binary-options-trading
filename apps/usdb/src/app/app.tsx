@@ -16,29 +16,26 @@ import {
   loadAccountDetails,
   defaultNetworkId,
   calculateAllUserBondDetails,
-  isPendingTxn,
-  txnButtonText,
 } from "@fantohm/shared-web3";
 import { StakingChoicePage } from "./pages/staking-choice/staking-choice";
 import { Header, Footer } from "./components/template";
 import { ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
 import { Messages } from "./components/messages/messages";
 import { XfhmLqdrPage } from "./pages/xfhm-lqdr/xfhm-lqdr";
-import { BalanceHomePage } from "./pages/home/balance-home-page";
 import { TradFiDeposit } from "./pages/trad-fi/deposit/deposit";
 import { TradFi } from "./pages/trad-fi/trad-fi";
 import { MyAccount } from "./pages/my-account/my-account";
 import { RootState } from "./store";
-import { loadAppDetails, setTheme } from "./store/reducers/app-slice";
+import { loadAppDetails } from "./store/reducers/app-slice";
 import StakingV1Page from "./pages/staking-v1/staking-v1";
 import { MintNftPage } from "./pages/backed-nft/mint-nft";
 import Amps from "./pages/amps/amps";
-import BalanceAboutPage from "./pages/balance-about-page/balance-about-page";
-import { HomeHeader } from "./components/template/header/home-header";
 import HomePage from "./pages/home/home-page";
-import FhmPage from "./pages/fhm/fhm-page";
 import Typography from "@mui/material/Typography";
 import style from "./pages/trad-fi/deposit/deposit.module.scss";
+import BalanceVault from "./pages/balance-vault/balanceVault";
+import BalanceVaultDetailsPage from "./pages/balance-vault-details-page/balance-vault-details-page";
+import PortfolioPage from "./pages/portfolio/portfolio-page";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -63,13 +60,13 @@ export const App = (): JSX.Element => {
     dispatch(loadAppDetails({ networkId: chainId || defaultNetworkId }));
     bonds
       .filter((bond) => bond.name !== "stakeNft" && bond.name !== "usdbNft")
-      .map((bond) => {
+      .forEach((bond) => {
         dispatch(
           calcBondDetails({ bond, value: "", networkId: chainId || defaultNetworkId })
         );
       });
     dispatch(calcGlobalBondDetails({ allBonds }));
-    investments.map((investment) => {
+    investments.forEach((investment) => {
       dispatch(calcInvestmentDetails({ investment }));
       dispatch(fetchTokenPrice({ investment }));
     });
@@ -120,7 +117,11 @@ export const App = (): JSX.Element => {
             <Backdrop open={true} className={` ${style["backdropElement"]}`}>
               <Paper className={` ${style["paperContainerSm"]}`}>
                 <Box
-                  sx={{ display: "flex", justifyContent: "flex-end" }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    flexDirection: "column",
+                  }}
                   className={style["closeDeposit"]}
                 >
                   <Typography>
@@ -181,11 +182,14 @@ export const App = (): JSX.Element => {
             <Route path="/trad-fi" element={<TradFi />}>
               <Route path="/trad-fi/deposit/:bondType" element={<TradFiDeposit />} />
             </Route>
+            <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/xfhm" element={<XfhmLqdrPage />} />
             <Route path="/mint" element={<Mint />} />
             <Route path="/backed-nft" element={<MintNftPage />} />
             <Route path="/amps" element={<Amps />} />
             <Route path="/my-account" element={<MyAccount />} />
+            <Route path="/vault" element={<BalanceVault />} />
+            <Route path="/vault/:vaultId" element={<BalanceVaultDetailsPage />} />
             <Route
               path="*"
               element={

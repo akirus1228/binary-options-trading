@@ -1,3 +1,4 @@
+import full_BalanceVault from "./BalanceVault.json";
 import full_BalancerVault from "./BalancerVault.json";
 import full_BalancerWeightedPool from "./BalancerWeightedPool.json";
 import full_BondCalcContract from "./BondCalcContract.json";
@@ -5,7 +6,10 @@ import full_BondContract from "./BondContract.json";
 import full_BondStakingDepository from "./BondStakingDepository.json";
 import full_BridgeConverter from "./BridgeConverter.json";
 import full_CirculatingSupplyContract from "./CirculatingSupplyContract.json";
+import full_Cryptopunks from "./cryptopunks.json";
 import full_DistributorContract from "./DistributorContract.json";
+import full_ERC1155 from "./ERC1155.json";
+import full_ERC165 from "./ERC165.json";
 import full_ExpandedIERC20 from "./ExpandedIERC20.json";
 import full_FHUDContract from "./FHUDContract.json";
 import full_Factory from "./Factory.json";
@@ -47,6 +51,7 @@ import full_sOhmv2 from "./sOhmv2.json";
 import full_wMEMO from "./wMEMO.json";
 import full_wsOHM from "./wsOHM.json";
 import full_xFhm from "./xFhm.json";
+import full_BalanceVaultManager from "./BalanceVaultManager.json";
 
 // reserves
 import full_DAIContract from "./reserves/DAIContract.json";
@@ -80,6 +85,7 @@ import full_AmpsToken from "./AmpsToken.json";
 //passNFT-mint
 import full_PassNFT from "./passNFT.json";
 
+export const balanceVaultAbi = full_BalanceVault.abi;
 export const balancerVaultAbi = full_BalancerVault.abi;
 export const balancerWeightedPoolAbi = full_BalancerWeightedPool.abi;
 export const bondCalcContractAbi = full_BondCalcContract.abi;
@@ -87,7 +93,10 @@ export const bondContractAbi = full_BondContract.abi;
 export const bondStakingDepositoryAbi = full_BondStakingDepository.abi;
 export const bridgeConverterAbi = full_BridgeConverter.abi;
 export const circulatingSupplyContractAbi = full_CirculatingSupplyContract.abi;
+export const cryptopunksAbi = full_Cryptopunks.abi;
 export const distributorContractAbi = full_DistributorContract.abi;
+export const erc1155Abi = full_ERC1155.abi;
+export const erc165Abi = full_ERC165.abi;
 export const expandedIERC20Abi = full_ExpandedIERC20.abi;
 export const fhudContractAbi = full_FHUDContract.abi;
 export const factoryAbi = full_Factory.abi;
@@ -129,6 +138,7 @@ export const sOhmv2Abi = full_sOhmv2.abi;
 export const wMemoAbi = full_wMEMO.abi;
 export const wsOhmAbi = full_wsOHM.abi;
 export const xFhmAbi = full_xFhm.abi;
+export const balanceVaultManager = full_BalanceVaultManager.abi;
 export const daiContractAbi = full_DAIContract.abi;
 export const ohmDaiAbi = full_OhmDai.abi;
 export const ohmEthAbi = full_OhmEth.abi;

@@ -1,4 +1,11 @@
-import React, { ReactElement, useCallback, useContext, useMemo, useState } from "react";
+import React, {
+  ReactElement,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
@@ -55,6 +62,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
   const [chainId, setChainId] = useState(defaultNetworkId);
   const [address, setAddress] = useState("");
   const [provider, setProvider] = useState<JsonRpcProvider | null>(null);
+  const defaultProvider = new JsonRpcProvider(chains[defaultNetworkId].rpcUrls[0]);
 
   const rpcUris = enabledNetworkIds.reduce(
     (rpcUris: { [key: string]: string }, NetworkId: NetworkId) => (
@@ -212,27 +220,24 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
         }
         window.localStorage.setItem("disclaimerSigned", signVal);
       }
-      const chainId = await connectedProvider
+      const mmChainId = await connectedProvider
         .getNetwork()
         .then((network) => network.chainId);
       const connectedAddress = await connectedProvider.getSigner().getAddress();
-      const validNetwork = _checkNetwork(chainId);
-      let networkId = forceSwitch ? forceNetworkId : defaultNetworkId;
-      if (isTradfiPage() && validNetwork) {
-        networkId = validNetwork ? defaultNetworkId : forceNetworkId;
+      let networkId = chainId ?? defaultNetworkId;
+      if (forceSwitch && _checkNetwork(forceNetworkId)) {
+        networkId = forceNetworkId;
       }
 
-      if (!validNetwork || isTradfiPage()) {
+      if (networkId !== mmChainId) {
         const switched = await switchEthereumChain(networkId, true);
         if (!switched) {
           web3Modal.clearCachedProvider();
           const errorMessage = "Unable to connect. Please change network using provider.";
           console.error(errorMessage);
           //store.dispatch(error(errorMessage));
+          return;
         }
-      }
-      if (!validNetwork) {
-        return;
       }
       // Save everything after we've validated the right network.
       // Eventually we'll be fine without doing network validations.
@@ -268,6 +273,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
       address,
       chainId,
       web3Modal,
+      defaultProvider,
     }),
     [
       connect,
@@ -278,6 +284,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
       address,
       chainId,
       web3Modal,
+      defaultProvider,
     ]
   );
 
