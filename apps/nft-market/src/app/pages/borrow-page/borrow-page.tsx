@@ -36,7 +36,6 @@ export const BorrowPage = (): JSX.Element => {
   const { address } = useWeb3Context();
   const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
-  const isDesktop = useMediaQuery("(min-width: 576px)");
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
   const [osQuery, setOsQuery] = useState<BackendNftAssetsQueryParams>({
@@ -187,7 +186,7 @@ export const BorrowPage = (): JSX.Element => {
             )}
             {isWalletConnected &&
               !(assetsLoading || isLoansLoaing || isAssetLoading) &&
-              (!hasNext || assetsToShow.length === 0) && (
+              (!assetsToShow || assetsToShow.length === 0) && (
                 <Box
                   className="flex fr fj-c"
                   sx={{
