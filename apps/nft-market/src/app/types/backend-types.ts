@@ -44,6 +44,8 @@ export enum CollectibleMediaType {
   Video = "VIDEO",
   Gif = "GIF",
   ThreeD = "THREE_D",
+  Html = "HTML",
+  Audio = "AUDIO",
 }
 
 export enum AssetChain {
