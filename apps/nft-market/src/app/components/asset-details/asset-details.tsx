@@ -162,12 +162,32 @@ export const AssetDetails = ({
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
-              {asset.mediaType === CollectibleMediaType.Video && asset.videoUrl ? (
+              {asset.mediaType === CollectibleMediaType.Video && asset.videoUrl && (
                 <video controls autoPlay loop>
                   <source src={asset.videoUrl} />
                 </video>
-              ) : (
+              )}
+              {(asset.mediaType === CollectibleMediaType.Image ||
+                asset.mediaType === CollectibleMediaType.Gif) && (
                 <img src={imageUrl} alt={asset.name || "unknown"} />
+              )}
+              {asset.mediaType === CollectibleMediaType.Audio && asset.videoUrl && (
+                <Box sx={{ width: "100%", background: "#dfdada" }}>
+                  <img src={imageUrl} alt={asset.name || "unknown"} />
+                  <audio
+                    controls
+                    src={asset.videoUrl}
+                    autoPlay={true}
+                    className={style["audio"]}
+                  />
+                </Box>
+              )}
+              {asset.mediaType === CollectibleMediaType.Html && asset.videoUrl && (
+                <iframe
+                  src={asset.videoUrl}
+                  frameBorder="0"
+                  className={style["iframe"]}
+                />
               )}
             </Box>
           </Grid>

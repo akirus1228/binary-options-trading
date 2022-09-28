@@ -11,22 +11,38 @@ export interface PreviewImageProps {
 
 export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
   const isTablet = useMediaQuery("(min-width:576px)");
-  const imageUrl = useBestImage(props?.asset, 1024);
-
+  const { asset } = props;
+  const imageUrl = useBestImage(asset, 1024);
   return (
     <Box
       sx={{
-        height: "300px",
+        height: isTablet ? "300px" : "130px",
         width: "300px",
         borderRadius: isTablet ? "28px" : "14px",
         overflow: "hidden",
       }}
     >
-      {props?.asset.mediaType === CollectibleMediaType.Video && props?.asset.videoUrl ? (
-        <video controls autoPlay loop>
-          <source src={props?.asset.videoUrl} />
-        </video>
-      ) : (
+      {asset.mediaType !== CollectibleMediaType.Image &&
+        (asset.gifUrl || asset.imageUrl || asset.frameUrl || asset.thumbUrl) && (
+          <img
+            className={style["assetImg"]}
+            src={imageUrl || ""}
+            alt={props.asset?.name || ""}
+            style={{
+              height: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          />
+        )}
+      {asset.mediaType !== CollectibleMediaType.Image &&
+        !(asset.gifUrl || asset.imageUrl || asset.frameUrl || asset.thumbUrl) &&
+        asset.videoUrl && (
+          <video controls loop>
+            <source src={asset.videoUrl} />
+          </video>
+        )}
+      {asset.mediaType === CollectibleMediaType.Image && imageUrl && (
         <img
           className={style["assetImg"]}
           src={imageUrl || ""}
