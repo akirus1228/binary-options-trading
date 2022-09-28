@@ -16,7 +16,7 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
   return (
     <Box
       sx={{
-        height: "300px",
+        height: isTablet ? "300px" : "130px",
         width: "300px",
         borderRadius: isTablet ? "28px" : "14px",
         overflow: "hidden",
