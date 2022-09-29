@@ -147,6 +147,7 @@ export const getTokenIdFromAddress = (
 ): string => {
   const currencyDetails = Object.entries(currencyInfo).find(
     ([tokenId, currencyDetails]) =>
+      currencyDetails.addresses[networkId] &&
       currencyDetails.addresses[networkId].toLowerCase() === currencyAddress.toLowerCase()
   );
   if (!currencyDetails) throw new ReferenceError("Unidentified address");
@@ -159,6 +160,7 @@ export const getSymbolFromAddress = (
 ): string => {
   const currencyDetails = Object.entries(currencyInfo).find(
     ([tokenId, currencyDetails]) =>
+      currencyDetails.addresses[networkId] &&
       currencyDetails.addresses[networkId].toLowerCase() === currencyAddress.toLowerCase()
   );
   if (!currencyDetails) return "USDB";
