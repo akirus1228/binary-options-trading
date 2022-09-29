@@ -206,8 +206,6 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
     setToDefault();
   };
 
-  console.log("currencyInfo: ", currencyInfo);
-
   return (
     <Dialog
       onClose={handleClose}
