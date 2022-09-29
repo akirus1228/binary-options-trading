@@ -184,7 +184,7 @@ export const Header = (): JSX.Element => {
                 );
               })}
 
-              <Typography
+              {/* <Typography
                 key={`btn-buy`}
                 textAlign="center"
                 style={{ order: "10", flex: "0 0 100%" }}
@@ -196,7 +196,7 @@ export const Header = (): JSX.Element => {
                 >
                   Buy USDB
                 </Button>
-              </Typography>
+              </Typography> */}
             </Menu>
           </Box>
           <Typography
@@ -261,7 +261,7 @@ export const Header = (): JSX.Element => {
                   </Typography>
                 );
               })}
-              <Typography key={`btn-buy`} textAlign="center">
+              {/* <Typography key={`btn-buy`} textAlign="center">
                 <Button
                   style={{
                     padding: "1em 1.25em",
@@ -272,7 +272,7 @@ export const Header = (): JSX.Element => {
                 >
                   Buy USDB
                 </Button>
-              </Typography>
+              </Typography> */}
               <Popover
                 id="buy-usdb"
                 open={anchorBuyUSDB ? true : false}
