@@ -67,7 +67,7 @@ interface AllChainDetails {
   [key: number]: ChainDetails;
 }
 
-export const chains: AllChainDetails = {
+const allChains: AllChainDetails = {
   [NetworkIds.FantomOpera]: new ChainDetails({
     networkName: "Fantom Opera",
     rpcUrls: [
@@ -149,3 +149,18 @@ export const chains: AllChainDetails = {
     blockExplorerUrls: ["https://blockexplorer.boba.network/"],
   }),
 };
+
+const enableNetworkIds = (process.env["ENABLE_NETWORK_IDS"] || "")
+  .split(",")
+  .filter((item) => !!item);
+
+let availableChains: AllChainDetails = {};
+if (!enableNetworkIds.length) {
+  availableChains = allChains;
+} else {
+  enableNetworkIds.map((networkId: string) => {
+    availableChains[Number(networkId)] = allChains[Number(networkId)];
+  });
+}
+
+export const chains = availableChains;

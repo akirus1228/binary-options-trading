@@ -20,7 +20,7 @@ import {
 import { isDev } from "./helpers";
 
 export const getURI = (networkId: NetworkId): string => {
-  return chains[networkId].rpcUrls[0];
+  return chains[networkId]?.rpcUrls[0];
 };
 
 export const uauthOptions: IUAuthOptions = {

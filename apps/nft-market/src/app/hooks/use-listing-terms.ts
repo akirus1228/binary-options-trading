@@ -41,7 +41,7 @@ export const useListingTermDetails = (listing: Listing): ListingTermDetails => {
         setDuration(listing.term.duration);
       }
     }
-  }, [JSON.stringify(listing.term)]);
+  }, [listing?.term]);
 
   return { repaymentAmount, repaymentTotal, amount, apr, duration };
 };

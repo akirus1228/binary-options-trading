@@ -128,20 +128,6 @@ export class NodeHelper {
   };
 
   /**
-   * iterate through all the nodes we have with a chainId check.
-   * - log the failing nodes
-   * - _maxFailedConnections fails in < _failedConnectionsMinutesLimit sends the node to the invalidNodes list
-   * returns an Array of working mainnet nodes
-   */
-  static checkAllNodesStatus = async () => {
-    return await Promise.all(
-      NodeHelper.getNodesUris().map(async (URI) => {
-        return await NodeHelper.checkNodeStatus(URI);
-      })
-    );
-  };
-
-  /**
    * 403 errors are not caught by fetch so we check response.status, too
    * this func returns a workingURL string or false;
    */
