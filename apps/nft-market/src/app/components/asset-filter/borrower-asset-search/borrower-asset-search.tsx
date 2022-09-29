@@ -21,7 +21,7 @@ import {
   useLazyGetNftCollectionsQuery,
 } from "../../../api/backend-api";
 import { Link } from "react-router-dom";
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { useImpersonateAccount, useWeb3Context } from "@fantohm/shared-web3";
 import { selectAssetsByQuery } from "../../../store/selectors/asset-selectors";
 
 export const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -52,15 +52,17 @@ export const BorrowerAssetSearch = ({
   const ref = useRef<HTMLElement>(null);
   const [triggerOwnedCollections, searchedOwnedCollections] =
     useLazyGetNftCollectionsQuery();
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+
   const { data: loans } = useGetLoansQuery(
     {
       skip: 0,
       take: 50,
-      walletAddress: address,
+      walletAddress: isImpersonating ? impersonateAddress : address,
       status: LoanStatus.Active,
     },
     {
-      skip: !address,
+      skip: !(isImpersonating ? impersonateAddress : address),
     }
   );
   const assetsInEscrow =
@@ -81,7 +83,7 @@ export const BorrowerAssetSearch = ({
   const [triggerAssets, searchedAssets] = useLazyGetNftAssetsQuery();
   const myAssets = useSelector((state: RootState) =>
     selectAssetsByQuery(state, {
-      wallet: address,
+      wallet: isImpersonating ? impersonateAddress : address,
       status: "All",
     })
   );
@@ -99,7 +101,7 @@ export const BorrowerAssetSearch = ({
   useEffect(() => {
     if (!address) return;
 
-    triggerOwnedCollections({ wallet: address });
+    triggerOwnedCollections({ wallet: isImpersonating ? impersonateAddress : address });
   }, [address]);
 
   const onChangeKeyword = (value: string) => {
@@ -155,7 +157,7 @@ export const BorrowerAssetSearch = ({
     for (let i = 0; i < filteredCollections.length; i++) {
       triggerAssets({
         limit: 3,
-        walletAddress: address,
+        walletAddress: isImpersonating ? impersonateAddress : address,
         contractAddress: filteredCollections[i].contractAddress,
       });
     }
@@ -323,11 +325,11 @@ export const BorrowerAssetSearch = ({
             )}
             {!searchedAssets.isFetching &&
               assets &&
-              assets?.slice(0, 3).map((asset) => {
+              assets?.slice(0, 3).map((asset, index) => {
                 return (
                   <Link
                     to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
-                    key={`${asset.assetContractAddress}-${asset.name}`}
+                    key={`${asset.assetContractAddress}-${asset.name}-${index}`}
                   >
                     <Box
                       sx={{
