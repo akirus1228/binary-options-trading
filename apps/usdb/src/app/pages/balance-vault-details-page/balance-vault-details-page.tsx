@@ -383,7 +383,9 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
             </Box>
             <Box sx={{ p: "2em" }}>
               <h2 className={`${style["text-md"]}`}>Description</h2>
-              <p className={lowContrastText}>{vaultData?.description}</p>
+              <p className={lowContrastText}>
+                {vaultData?.description?.replaceAll("&#9166;", "\n")}
+              </p>
               <h2 className={`${style["text-md"]}`}>Vault owner</h2>
               <Box
                 sx={{ p: "0.75em" }}
