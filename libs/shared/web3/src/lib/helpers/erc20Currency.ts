@@ -131,8 +131,9 @@ export const getErc20CurrencyFromAddress = (
   const currencyDetails = Object.entries(currencyInfo).find(
     ([tokenId, currencyDetails]) => {
       return (
+        currencyDetails.addresses[networkId] &&
         currencyDetails.addresses[networkId].toLowerCase() ===
-        currencyAddress.toLowerCase()
+          currencyAddress.toLowerCase()
       );
     }
   );
