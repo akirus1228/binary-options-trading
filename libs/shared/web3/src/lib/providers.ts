@@ -64,11 +64,11 @@ class ChainDetails {
 }
 
 interface AllChainDetails {
-  [key: number]: ChainDetails;
+  [key: number]: ChainDetails | any;
 }
 
-export const chains: AllChainDetails = {
-  [NetworkIds.FantomOpera]: new ChainDetails({
+const allChains: AllChainDetails = {
+  [NetworkIds.FantomOpera]: {
     networkName: "Fantom Opera",
     rpcUrls: [
       // this is just a test, have our node and one other
@@ -85,38 +85,38 @@ export const chains: AllChainDetails = {
     decimals: 18,
     blockExplorerUrls: ["https://ftmscan.com/"],
     multicallAddress: "0xe4CC2532B2b1EC585310682af3656b2E4B6fab58",
-  }),
-  [NetworkIds.FantomTestnet]: new ChainDetails({
+  },
+  [NetworkIds.FantomTestnet]: {
     networkName: "Fantom testnet",
     rpcUrls: ["https://rpc.testnet.fantom.network/"],
     decimals: 18,
     symbol: "FTM",
     blockExplorerUrls: [],
-  }),
-  [NetworkIds.Moonriver]: new ChainDetails({
+  },
+  [NetworkIds.Moonriver]: {
     networkName: "Moonriver",
     rpcUrls: ["https://rpc.api.moonbeam.network"],
     symbol: "MOVR",
     decimals: 18,
     blockExplorerUrls: ["https://blockscout.moonriver.moonbeam.network/"],
     multicallAddress: "0x43D002a2B468F048028Ea9C2D3eD4705a94e68Ae",
-  }),
-  [NetworkIds.MoonbaseAlpha]: new ChainDetails({
+  },
+  [NetworkIds.MoonbaseAlpha]: {
     networkName: "Moonbase Alpha",
     rpcUrls: ["https://rpc.api.moonbase.moonbeam.network/"],
     symbol: "DEV",
     decimals: 18,
     blockExplorerUrls: ["https://moonbase-blockscout.testnet.moonbeam.network/"],
-  }),
-  [NetworkIds.Ethereum]: new ChainDetails({
+  },
+  [NetworkIds.Ethereum]: {
     networkName: "Ethereum",
     rpcUrls: ["https://mainnet.infura.io/v3/84842078b09946638c03157f83405213"],
     symbol: "ETH",
     decimals: 18,
     blockExplorerUrls: ["https://etherscan.io/"],
     multicallAddress: "0x5ba1e12693dc8f9c48aad8770482f4739beed696",
-  }),
-  [NetworkIds.Rinkeby]: new ChainDetails({
+  },
+  [NetworkIds.Rinkeby]: {
     networkName: "Rinkeby",
     rpcUrls: [
       // 'https://rinkeby.infura.io/v3/84842078b09946638c03157f83405213',
@@ -126,26 +126,44 @@ export const chains: AllChainDetails = {
     decimals: 18,
     blockExplorerUrls: ["https://rinkeby.etherscan.io/"],
     multicallAddress: "0x5ba1e12693dc8f9c48aad8770482f4739beed696",
-  }),
-  [NetworkIds.Avalanche]: new ChainDetails({
+  },
+  [NetworkIds.Avalanche]: {
     networkName: "Avalanche Network",
     rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
     symbol: "AVAX",
     decimals: 18,
     blockExplorerUrls: ["https://snowtrace.io/"],
-  }),
-  [NetworkIds.Bsc]: new ChainDetails({
+  },
+  [NetworkIds.Bsc]: {
     networkName: "Smart Chain",
     rpcUrls: ["https://bsc-dataseed.binance.org/"],
     symbol: "BNB",
     decimals: 18,
     blockExplorerUrls: ["https://bscscan.com/"],
-  }),
-  [NetworkIds.Boba]: new ChainDetails({
+  },
+  [NetworkIds.Boba]: {
     networkName: "BOBA L2",
     rpcUrls: ["https://mainnet.boba.network/"],
     symbol: "ETH",
     decimals: 18,
     blockExplorerUrls: ["https://blockexplorer.boba.network/"],
-  }),
+  },
 };
+
+const enableNetworkIds = (process.env["ENABLE_NETWORK_IDS"] || "")
+  .trim()
+  .split(",")
+  .filter((item) => !!item);
+
+const availableChains: AllChainDetails = {};
+if (!enableNetworkIds.length) {
+  Object.keys(allChains).map((key: string) => {
+    availableChains[Number(key)] = new ChainDetails(allChains[Number(key)]);
+  });
+} else {
+  enableNetworkIds.map((networkId: string) => {
+    availableChains[Number(networkId)] = new ChainDetails(allChains[Number(networkId)]);
+  });
+}
+
+export const chains = availableChains;
