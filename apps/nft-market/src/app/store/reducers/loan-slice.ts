@@ -329,6 +329,8 @@ export const getLoanDetailsFromContract = createAsyncThunk(
     const loanDetails: LoanDetailsResponse = await lendingContract["loans"](
       loan.contractLoanId
     );
+    const erc20 = getErc20CurrencyFromAddress(loanDetails.currency);
+
     return {
       nftAddress: loanDetails.nftAddress,
       borrower: loanDetails.borrower,
@@ -339,8 +341,8 @@ export const getLoanDetailsFromContract = createAsyncThunk(
       startTime: +loanDetails.startTime,
       endTime: loanDetails.endTime.toNumber(),
       endDateTime: new Date(+loanDetails.endTime * 1000),
-      loanAmount: +ethers.utils.formatEther(loanDetails.loanAmount),
-      amountDue: +ethers.utils.formatEther(loanDetails.amountDue),
+      loanAmount: +ethers.utils.formatUnits(loanDetails.loanAmount, erc20.decimals),
+      amountDue: +ethers.utils.formatUnits(loanDetails.amountDue, erc20.decimals),
       amountDueGwei: loanDetails.amountDue,
       nftTokenType: loanDetails.nftTokenType,
       loanId: loan.contractLoanId,
