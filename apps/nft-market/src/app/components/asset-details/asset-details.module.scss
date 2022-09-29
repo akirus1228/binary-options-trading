@@ -22,7 +22,7 @@ h1 {
 }
 
 .assetRow {
-  margin-top: 50px;
+  margin-top: 50px !important;
   @media (max-width: 576px) {
     margin-top: 0 !important;
   }
