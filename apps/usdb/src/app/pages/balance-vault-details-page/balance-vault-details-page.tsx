@@ -399,7 +399,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                     <ContentCopy sx={{ color: "#8A99A8" }} />
                   </IconButton>
                   <IconButton
-                    href={`https://etherscan.io/address/${vaultData?.ownerWallet}`}
+                    href={`https://ftmscan.com/address/${vaultData?.ownerWallet}`}
                     target="_blank"
                   >
                     <OpenInNew sx={{ color: "#8A99A8" }} />
