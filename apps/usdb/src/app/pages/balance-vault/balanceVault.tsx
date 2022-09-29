@@ -136,13 +136,13 @@ export default function BalanceVault() {
             View portfolio
           </Button>
         </Link>
-        <Button
-          onClick={onCreateVaultOpen}
-          disabled={true}
-          sx={{ border: "solid 2px #252729", width: "200px", ml: "20px" }}
-        >
-          + Create Vault
-        </Button>
+        {/*<Button*/}
+        {/*  onClick={onCreateVaultOpen}*/}
+        {/*  disabled={true}*/}
+        {/*  sx={{ border: "solid 2px #252729", width: "200px", ml: "20px" }}*/}
+        {/*>*/}
+        {/*  + Create Vault*/}
+        {/*</Button>*/}
       </Box>
       <Box className={style["offerContainer"]}>
         <PaperTable sx={{ borderSpacing: "0em 2em !important" }}>
