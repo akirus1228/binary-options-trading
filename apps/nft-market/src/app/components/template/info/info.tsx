@@ -54,11 +54,11 @@ export const InfoBtn = (): JSX.Element => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setFormOpen(false);
   };
 
   const handleFormOpen = () => {
     setFormOpen(true);
-    handleClose();
   };
 
   const handleSendReport = () => {
@@ -240,7 +240,7 @@ export const InfoBtn = (): JSX.Element => {
         >
           <h1 style={{ margin: "0" }}>Report an issue</h1>
           <IconButton onClick={handleClose} style={{ position: "absolute", right: 15 }}>
-            <CancelOutlinedIcon />
+            <CancelOutlinedIcon sx={{fontSize: 40}} />
           </IconButton>
         </Box>
         <Box

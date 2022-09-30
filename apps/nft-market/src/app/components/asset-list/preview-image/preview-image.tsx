@@ -7,12 +7,15 @@ import style from "./preview-image.module.scss";
 
 export interface PreviewImageProps {
   asset: Asset;
+  metaDataResponse: Asset | undefined;
 }
 
 export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
+  const latestAsset =
+    props.metaDataResponse !== undefined ? props.metaDataResponse : props.asset;
   const isTablet = useMediaQuery("(min-width:576px)");
-  const { asset } = props;
-  const imageUrl = useBestImage(asset, 1024);
+  const imageUrl = useBestImage(latestAsset, 1024);
+
   return (
     <Box
       sx={{
@@ -22,12 +25,15 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
         overflow: "hidden",
       }}
     >
-      {asset.mediaType !== CollectibleMediaType.Image &&
-        (asset.gifUrl || asset.imageUrl || asset.frameUrl || asset.thumbUrl) && (
+      {latestAsset.mediaType !== CollectibleMediaType.Image &&
+        (latestAsset.gifUrl ||
+          latestAsset.imageUrl ||
+          latestAsset.frameUrl ||
+          latestAsset.thumbUrl) && (
           <img
             className={style["assetImg"]}
             src={imageUrl || ""}
-            alt={props.asset?.name || ""}
+            alt={latestAsset?.name || ""}
             style={{
               height: "100%",
               left: "50%",
@@ -35,18 +41,23 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
             }}
           />
         )}
-      {asset.mediaType !== CollectibleMediaType.Image &&
-        !(asset.gifUrl || asset.imageUrl || asset.frameUrl || asset.thumbUrl) &&
-        asset.videoUrl && (
+      {latestAsset.mediaType !== CollectibleMediaType.Image &&
+        !(
+          latestAsset.gifUrl ||
+          latestAsset.imageUrl ||
+          latestAsset.frameUrl ||
+          latestAsset.thumbUrl
+        ) &&
+        latestAsset.videoUrl && (
           <video controls loop>
-            <source src={asset.videoUrl} />
+            <source src={latestAsset.videoUrl} />
           </video>
         )}
-      {asset.mediaType === CollectibleMediaType.Image && imageUrl && (
+      {latestAsset.mediaType === CollectibleMediaType.Image && imageUrl && (
         <img
           className={style["assetImg"]}
           src={imageUrl || ""}
-          alt={props.asset?.name || ""}
+          alt={latestAsset.name || ""}
           style={{
             height: "100%",
             left: "50%",
