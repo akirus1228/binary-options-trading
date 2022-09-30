@@ -132,7 +132,7 @@ export const useBalanceVault = (contractAddress: string): UseBalanceVaultRespons
   );
 
   useEffect(() => {
-    console.log(error);
+    if (error) console.log(error);
   }, [error]);
 
   return { vaultData, isLoading, error };
@@ -201,7 +201,7 @@ export const useBalanceVaultPosition = (
   );
 
   useEffect(() => {
-    console.log(error);
+    if (error) console.log(error);
   }, [error]);
 
   return { positionData, isLoading, error };

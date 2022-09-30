@@ -245,10 +245,10 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
   }, [amount]);
 
   const hasAllowance = useMemo(() => {
-    console.log(
-      "erc20Allowance",
-      ethers.utils.formatUnits(erc20Allowance || 0, currency?.decimals ?? 18)
-    );
+    // console.log(
+    //   "erc20Allowance",
+    //   ethers.utils.formatUnits(erc20Allowance || 0, currency?.decimals ?? 18)
+    // );
     if (!erc20Allowance) return false;
     return ethers.utils.parseUnits(amount || "0", 18).lte(erc20Allowance);
   }, [amount, erc20Allowance]);
@@ -458,6 +458,7 @@ export const VaultActionForm = (props: VaultActionProps): JSX.Element => {
                   <Typography sx={{ color: "#69D9C8" }}>
                     {(vaultData?.apr ?? 0) / 100}%
                   </Typography>
+                  <Typography>&nbsp;APR</Typography>
                 </Box>
                 <Typography>{formatCurrency(dollarAmount, 6)}</Typography>
               </Box>
