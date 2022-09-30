@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useState, MouseEvent } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -21,10 +21,10 @@ import { useSendReportMutation } from "../../../api/backend-api";
 export const InfoBtn = (): JSX.Element => {
   const location = useLocation();
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [formOpen, setFormOpen] = React.useState<boolean>(false);
-  const [nftContract, setNftContract] = React.useState<string>("");
-  const [nftTokenID, setNftTokenID] = React.useState<string>("");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [formOpen, setFormOpen] = useState<boolean>(false);
+  const [nftContract, setNftContract] = useState<string>("");
+  const [nftTokenID, setNftTokenID] = useState<string>("");
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch: AppDispatch = useDispatch();
@@ -33,13 +33,13 @@ export const InfoBtn = (): JSX.Element => {
     { isLoading: isSendReportLoading, data: sendReportResponse, reset: sendReportReset },
   ] = useSendReportMutation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isSendReportLoading && !!sendReportResponse) {
       sendReportReset();
     }
   }, [isSendReportLoading, sendReportResponse]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const paramArr = location.pathname.split("/");
     if (paramArr[1] === "asset") {
       setNftContract(paramArr[2]);
@@ -48,7 +48,7 @@ export const InfoBtn = (): JSX.Element => {
   }, [location]);
 
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
