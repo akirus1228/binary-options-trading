@@ -240,7 +240,7 @@ export const InfoBtn = (): JSX.Element => {
         >
           <h1 style={{ margin: "0" }}>Report an issue</h1>
           <IconButton onClick={handleClose} style={{ position: "absolute", right: 15 }}>
-            <CancelOutlinedIcon sx={{fontSize: 40}} />
+            <CancelOutlinedIcon sx={{ fontSize: 40 }} />
           </IconButton>
         </Box>
         <Box
