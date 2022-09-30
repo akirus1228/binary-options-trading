@@ -1,4 +1,9 @@
-import { selectErc20Balance } from "@fantohm/shared-web3";
+import {
+  defaultNetworkId,
+  networks,
+  selectErc20Balance,
+  useWeb3Context,
+} from "@fantohm/shared-web3";
 import { Box, Button, Container, Paper } from "@mui/material";
 import { ethers } from "ethers";
 import { useState } from "react";
@@ -10,7 +15,7 @@ import ManageFund from "../../managefund/managefund";
 export const WalletBalances = (): JSX.Element => {
   const currencies = useSelector((state: RootState) => selectCurrencies(state));
   const erc20Balances = useSelector((state: RootState) => selectErc20Balance(state));
-
+  const { chainId } = useWeb3Context();
   // make offer code
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -65,6 +70,13 @@ export const WalletBalances = (): JSX.Element => {
                 );
 
                 if (value === 0) {
+                  return null;
+                }
+                // Hide usdb
+                if (
+                  currencyInfo.addresses[chainId || defaultNetworkId] ==
+                  networks[chainId || defaultNetworkId]?.addresses?.["USDB_ADDRESS"]
+                ) {
                   return null;
                 }
 
