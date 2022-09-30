@@ -10,7 +10,13 @@ export const rtkQueryErrorLogger: Middleware =
       action.type === "backendApi/executeQuery/rejected"
     ) {
       console.log(action);
-      //api.dispatch(setOpenseaStatus(false));
+      api.dispatch(
+        addAlert({
+          message:
+            "There was an error fetching data from the backend. Please try again later.",
+          severity: "error",
+        })
+      );
       console.log("NFT Port Error");
     }
 
