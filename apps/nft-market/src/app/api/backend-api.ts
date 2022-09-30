@@ -1,6 +1,11 @@
 // external libs
 import axios, { AxiosResponse } from "axios";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+  retry,
+} from "@reduxjs/toolkit/query/react";
 import { JsonRpcProvider } from "@ethersproject/providers";
 
 // internal libs
@@ -111,6 +116,29 @@ const standardQueryParams: BackendStandardQuery = {
   take: 50,
 };
 
+const staggeredBaseQuery = retry(
+  async (args: string | FetchArgs, api, extraOptions) => {
+    const result = await fetchBaseQuery({
+      baseUrl: NFT_MARKETPLACE_API_URL,
+      prepareHeaders: (headers, { getState }) => {
+        const signature = (getState() as RootState).backend.authSignature;
+        headers.set("authorization", `Bearer ${signature}`);
+        return headers;
+      },
+    })(args, api, extraOptions);
+    if (result.error) {
+      // fail immediatly if it's a 500 error
+      if (result.error?.status === 500) {
+        retry.fail(result.error);
+      }
+    }
+    return result;
+  },
+  {
+    maxRetries: 5,
+  }
+);
+
 export const backendApi = createApi({
   reducerPath: "backendApi",
   tagTypes: [
@@ -125,14 +153,7 @@ export const backendApi = createApi({
     "Terms",
     "User",
   ],
-  baseQuery: fetchBaseQuery({
-    baseUrl: NFT_MARKETPLACE_API_URL,
-    prepareHeaders: (headers, { getState }) => {
-      const signature = (getState() as RootState).backend.authSignature;
-      headers.set("authorization", `Bearer ${signature}`);
-      return headers;
-    },
-  }),
+  baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
     // Assets
     getAssets: builder.query<Asset[], Partial<BackendAssetQueryParams>>({
