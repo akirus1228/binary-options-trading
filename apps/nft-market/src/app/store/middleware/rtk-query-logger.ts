@@ -9,7 +9,6 @@ export const rtkQueryErrorLogger: Middleware =
       isRejectedWithValue(action) &&
       action.type === "backendApi/executeQuery/rejected"
     ) {
-      console.log(action);
       api.dispatch(
         addAlert({
           message:
