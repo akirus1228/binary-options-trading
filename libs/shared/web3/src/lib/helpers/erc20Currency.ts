@@ -167,7 +167,11 @@ export const getSymbolFromAddress = (
   return currencyDetails[1].symbol;
 };
 
-export const activeNetworks = [NetworkIds.Ethereum, NetworkIds.Rinkeby];
+export const activeNetworks = [
+  NetworkIds.Ethereum,
+  NetworkIds.Rinkeby,
+  NetworkIds.FantomOpera,
+];
 
 export class erc20Currency implements Erc20Currency {
   readonly symbol: string;
