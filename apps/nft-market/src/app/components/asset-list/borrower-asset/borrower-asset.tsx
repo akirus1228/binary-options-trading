@@ -189,7 +189,6 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
                       style={{
                         fontWeight: "normal",
                         fontSize: "1em",
-                        maxWidth: "80%",
                         color: `${themeType === "light" ? "black" : "white"}`,
                       }}
                     >
