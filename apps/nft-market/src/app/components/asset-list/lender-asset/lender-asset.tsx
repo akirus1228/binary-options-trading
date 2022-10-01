@@ -275,7 +275,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           }}
         >
           <Box
-            className="flex fr fj-sb w100"
+            className={`${style["asset-loan-info"]} w100`}
             sx={{
               alignItems: "top",
               flexFlow: {
@@ -285,7 +285,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           >
             <Box
               sx={{
-                width: "50%",
+                flex: 1,
                 flexFlow: "wrap",
                 alignItems: "center",
                 alignContent: "center",
@@ -318,7 +318,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
             <Box
               className={style["interestElem"]}
               sx={{
-                width: "50%",
+                flex: 1,
                 flexFlow: "wrap",
               }}
             >

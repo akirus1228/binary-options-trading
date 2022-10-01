@@ -78,6 +78,9 @@
 
   .interestElem {
     text-align: right;
+    @media(max-width: 576px) {
+      text-align: left !important;
+    }
   }
 
   .assetPriceStable {
@@ -176,6 +179,15 @@
       margin-left: auto;
       margin-right: auto;
     }
+  }
+}
+
+.asset-loan-info  {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  @media(max-width: 576px) {
+    flex-direction: column !important;
   }
 }
 
