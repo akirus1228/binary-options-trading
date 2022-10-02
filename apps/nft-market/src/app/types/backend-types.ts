@@ -30,11 +30,17 @@ export type CreateListingResponse = {
   status: ListingStatus;
 } & IncludesTerms;
 
-export type ClaimableToken = {
-  name: string;
-  symbol: string;
-  logo: string;
-  amount: number;
+export type AffiliateFee = {
+  id: string;
+  affilate: string;
+  currency: string;
+  fee: string;
+  updatedAt: string;
+  price: number;
+  icon: string;
+  tokenName: string;
+  tokenSymbol: string;
+  decimals: number;
 };
 
 export type AffiliateData = {
@@ -43,13 +49,8 @@ export type AffiliateData = {
     user: string;
     affiliate: string;
   }[];
-  totalClaimedAmount?: number;
-  claimableTokens?: ClaimableToken[];
-};
-
-export type GetAffiliateResponse = {
-  data: AffiliateData;
-  success: boolean;
+  affiliateFees?: AffiliateFee[];
+  proofs?: string[];
 };
 
 export type SaveAffiliateResponse = {

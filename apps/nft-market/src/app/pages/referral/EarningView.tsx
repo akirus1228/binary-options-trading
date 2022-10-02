@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Grid, Paper, Typography, useMediaQuery } from "@mui/material";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import BonusModal from "./BonusModal";
@@ -6,6 +6,8 @@ import { ClaimModal } from "./ClaimModal";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { getAccountAffiliateState } from "../../store/selectors/affilate-selectors";
+import { formatUnits, parseUnits } from "ethers/lib/utils";
+import { BigNumber } from "ethers";
 
 export const EarningView = (): JSX.Element => {
   const [bonusModalOpen, setBonusModalOpen] = useState<boolean>(false);
@@ -13,9 +15,17 @@ export const EarningView = (): JSX.Element => {
   const [bonusActive, setBonusActive] = useState<boolean>(false);
 
   const data = useSelector((state: RootState) => getAccountAffiliateState(state));
-
   const isDesktop = useMediaQuery("(min-width:767px)");
 
+  const [claimableAmount, setClaimableAmount] = useState<number>(0);
+  useEffect(() => {
+    let sum = 0;
+    data.data.affiliateFees?.map((fee) => {
+      sum += parseFloat(formatUnits(BigNumber.from(fee.fee), fee.decimals)) * fee.price;
+    });
+    setClaimableAmount(sum);
+  }, [data]);
+  console.log("earningView: ", data.data);
   return (
     <>
       <Box
@@ -120,7 +130,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(data?.data?.totalClaimedAmount || 0)}
+              }).format(0)}
             </Typography>
           </Paper>
         </Grid>
@@ -148,7 +158,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(0)}
+              }).format(claimableAmount)}
             </Typography>
             <Button
               variant="contained"
@@ -161,7 +171,7 @@ export const EarningView = (): JSX.Element => {
         </Grid>
       </Grid>
       <BonusModal open={bonusModalOpen} setOpen={setBonusModalOpen} />
-      <ClaimModal open={claimModalOpen} setOpen={setClaimModalOpen} />
+      <ClaimModal data={data.data} open={claimModalOpen} setOpen={setClaimModalOpen} />
     </>
   );
 };

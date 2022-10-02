@@ -45,7 +45,11 @@ import { NewHomePage } from "./pages/home-page";
 import HelpPage from "./components/help/help";
 import { InfoBtn } from "./components/template/info/info";
 import Referral from "./pages/referral";
-import { getAffiliateStats, saveAffiliateCode } from "./store/reducers/affiliate-slice";
+import {
+  getAffiliateAddresses,
+  getAffiliateFees,
+  saveAffiliateCode,
+} from "./store/reducers/affiliate-slice";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -189,7 +193,8 @@ export const App = (): JSX.Element => {
 
   useEffect(() => {
     if (address && connected) {
-      dispatch(getAffiliateStats(address));
+      dispatch(getAffiliateAddresses(address));
+      dispatch(getAffiliateFees(address));
     }
   }, [address, connected]);
 

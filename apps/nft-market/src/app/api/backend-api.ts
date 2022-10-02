@@ -13,7 +13,6 @@ import {
   AllAssetsResponse,
   AllListingsResponse,
   Asset,
-  CreateAssetResponse,
   CreateListingRequest,
   Listing,
   LoginResponse,
@@ -34,7 +33,6 @@ import {
   NftPrice,
   BackendNftAssetsQueryParams,
   BackendNftAssetsQueryResponse,
-  GetAffiliateResponse,
   AffiliateData,
   SaveAffiliateResponse,
 } from "../types/backend-types";
@@ -54,6 +52,7 @@ import {
 } from "../store/reducers/asset-slice";
 import { updateListing, updateListings } from "../store/reducers/listing-slice";
 import { isDev } from "@fantohm/shared-web3";
+import { affiliateFees } from "./mockup";
 
 export const WEB3_SIGN_MESSAGE =
   "Welcome to Liqdnft!\n\nTo get started, click Sign In and accept our Terms of Service: <https://liqdnft.com/term> \n\nThis request will not trigger a blockchain transaction or cost any gas fees.";
@@ -90,7 +89,7 @@ export const createListing = async (
     });
 };
 
-export const getAffiliate = async (
+export const getAffiliateAddresses = async (
   signature: string,
   address: string
 ): Promise<AffiliateData> => {
@@ -101,11 +100,35 @@ export const getAffiliate = async (
         Authorization: `Bearer ${signature}`,
       },
     })
-    .then((resp: AxiosResponse<GetAffiliateResponse>) => {
+    .then((resp: AxiosResponse<any>) => {
       console.log("getAffilate-backendapi: ", resp);
       return {
         referredAddresses: resp.data.data,
       };
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const getAffiliateFees = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/fee/${address}?proof=true`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<any>) => {
+      console.log("getAffilateFee-backendapi: ", resp);
+      // mockup
+      return {
+        affiliateFees: affiliateFees,
+      };
+      // return resp.data;
     })
     .catch((error) => {
       return error.response.data.message;

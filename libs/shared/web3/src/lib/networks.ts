@@ -105,6 +105,7 @@ export const networks: INetworks = {
       LQDR_USDB_POL_BOND_DEPOSITORY_ADDRESS: "",
       LQDR_USDB_LP_ADDRESS: "",
       USDB_DAI_LP_ADDRESS: "0xD5E946b5619fFf054c40D38c976f1d06C1e2fA82",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.FantomTestnet]: {
@@ -155,6 +156,7 @@ export const networks: INetworks = {
       // staking warmup manager: 0x8D4603d7302f2F962CCf6044A6AC2Dfd812B92bE
       // FHUD Minter: 0xA3b5fE35db679D21af9a499EE88231Ea9B656Cb8
       // mock oracle: 0xB85a387b0DfBFA6BAf834118C5478D9a8D418322
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.Moonriver]: {
@@ -201,6 +203,7 @@ export const networks: INetworks = {
       LQDR_ADDRESS: "",
       LQDR_USDB_POL_BOND_DEPOSITORY_ADDRESS: "",
       LQDR_USDB_LP_ADDRESS: "",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.MoonbaseAlpha]: {
@@ -259,6 +262,7 @@ export const networks: INetworks = {
       LQDR_ADDRESS: "",
       LQDR_USDB_POL_BOND_DEPOSITORY_ADDRESS: "",
       LQDR_USDB_LP_ADDRESS: "",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.Rinkeby]: {
@@ -310,6 +314,7 @@ export const networks: INetworks = {
       // staking warmup manager: 0xeD1f984502f8773Ec950E2D006781D7ce33CEEE4
       // FHUD Minter: 0x139ffDD962A2d8D498a92aB33b31ed78397cbae2
       // twap oracle: 0xc9ca91fe0667bafd4289e082088e41ed86471d79
+      MERKLE_DISTRIBUTOR: "",
     },
     USDB_LENDING_ADDRESSES: [
       "0x388753E39938De4dc37594B2d77Ed2DeB9E36208",
@@ -358,6 +363,7 @@ export const networks: INetworks = {
       CRYPTOPUNKS_ADDRESS: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
       XFHM_ADDRESS: "",
       MASTERCHEF_ADDRESS: "",
+      MERKLE_DISTRIBUTOR: "",
     },
     USDB_LENDING_ADDRESSES: [
       "0x6685691e0370d9b6FC70421D7a64071Ed1E2fb2f",
@@ -400,6 +406,7 @@ export const networks: INetworks = {
       FHUD_ADDRESS: "0x0000000000000000000000000000000000000000",
       USDT_ADDRESS: "0x55d398326f99059ff775485246999027b3197955",
       DAI_ADDRESS: "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
 };

@@ -11,7 +11,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Avatar } from "@mui/material";
+import { Avatar, CircularProgress } from "@mui/material";
+import { AffiliateData, AffiliateFee } from "../../types/backend-types";
+import { BigNumber } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
+import { useCallback, useState } from "react";
+import { useWeb3Context } from "@fantohm/shared-web3";
+import { useDispatch } from "react-redux";
+import { claimFees } from "../../store/reducers/affiliate-slice";
+import { AppDispatch } from "../../store";
 
 const style = {
   position: "absolute",
@@ -31,44 +39,36 @@ const style = {
 };
 
 export const ClaimModal = ({
+  data,
   open,
   setOpen,
 }: {
+  data?: AffiliateData;
   open: boolean;
   setOpen: (value: boolean) => void;
 }) => {
+  const { address, provider, chainId } = useWeb3Context();
+  const [isPending, setPending] = useState<boolean>(false);
+  const dispatch: AppDispatch = useDispatch();
+
   const handleClose = () => setOpen(false);
 
-  const claimInfo = [
-    {
-      token: "DAI",
-      icon: DaiToken,
-      amount: 50,
-      value: 50,
-    },
-    {
-      token: "USDC",
-      icon: UsdcToken,
-      amount: 50,
-      value: 50,
-    },
-    {
-      token: "USDT",
-      icon: UsdtToken,
-      amount: 50,
-      value: 50,
-    },
-    {
-      token: "USDB",
-      icon: USDBToken,
-      amount: 50,
-      value: 50,
-    },
-  ];
-
-  const onClaim = () => {
+  const onClaim = useCallback(async () => {
     console.log("claim:");
-  };
+    if (address && provider && chainId) {
+      setPending(true);
+      await dispatch(
+        claimFees({
+          tokens: data?.affiliateFees?.map((fee) => fee.currency) || [],
+          fees: data?.affiliateFees?.map((fee) => fee.fee) || [],
+          proofs: data?.proofs || [],
+          provider,
+          networkId: chainId,
+        })
+      ).unwrap();
+      setPending(false);
+    }
+  }, [address, provider, chainId, data]);
 
   return (
     <div>
@@ -98,31 +98,46 @@ export const ClaimModal = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {claimInfo.map((row, index) => (
-                    <TableRow key={`claim-list-${index}`} sx={{ border: 0 }}>
-                      <TableCell sx={{ display: "flex", gap: "5px" }}>
-                        <Avatar
-                          src={row.icon}
-                          sx={{ width: "24px", height: "24px" }}
-                          alt="icon"
-                        />
-                        <Typography>{row.token}</Typography>
-                      </TableCell>
-                      <TableCell align="center">{row.amount}</TableCell>
-                      <TableCell align="right">
-                        {new Intl.NumberFormat("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        }).format(row.value)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {data &&
+                    data.affiliateFees &&
+                    data.affiliateFees?.map((row: AffiliateFee, index: number) => (
+                      <TableRow key={`claim-list-${index}`} sx={{ border: 0 }}>
+                        <TableCell sx={{ display: "flex", gap: "5px" }}>
+                          <Avatar
+                            src={row.icon}
+                            sx={{ width: "24px", height: "24px" }}
+                            alt="icon"
+                          />
+                          <Typography>{row.tokenSymbol}</Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          {formatUnits(BigNumber.from(row.fee), row.decimals)}
+                        </TableCell>
+                        <TableCell align="right">
+                          {new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          }).format(
+                            parseFloat(
+                              formatUnits(BigNumber.from(row.fee), row.decimals)
+                            ) * row.price
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <Button variant="contained" onClick={onClaim}>
-              Claim fees
-            </Button>
+            {!isPending && (
+              <Button variant="contained" onClick={onClaim}>
+                Claim fees
+              </Button>
+            )}
+            {isPending && (
+              <Button variant="contained">
+                <CircularProgress color="inherit" />
+              </Button>
+            )}
           </Box>
         </Fade>
       </Modal>
