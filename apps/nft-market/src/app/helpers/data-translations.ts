@@ -22,10 +22,14 @@ import {
 } from "../types/backend-types";
 
 export const getIpfsUrl = (url?: Nullable<string>) => {
-  if (url && url.startsWith("ipfs")) {
-    return url.replace("ipfs://", "https://balance.mypinata.cloud/ipfs/");
+  const pinataUrl = "https://balance.mypinata.cloud/ipfs/";
+  if (url) {
+    url = url
+      .replace("ipfs://ipfs/", pinataUrl)
+      .replace("ipfs://", pinataUrl)
+      .replace("https://gateway.ipfs.io/ipfs/", pinataUrl)
+      .replace(/https:\/\/ipfs.*.*\/ipfs\//g, pinataUrl);
   }
-
   return url;
 };
 

@@ -625,21 +625,27 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               sx={{ background: "transparent" }}
               className="borderless"
             >
-              {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
-                <MenuItem
-                  value={currencyDetails.symbol}
-                  key={`currency-option-item-${tokenId}`}
-                >
-                  <Box className="flex fr ai-c">
-                    <img
-                      style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                      src={currencyDetails.icon}
-                      alt={`${currencyDetails.symbol} Token Icon`}
-                    />
-                    {currencyDetails.symbol}
-                  </Box>
-                </MenuItem>
-              ))}
+              {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => {
+                // Hide usdb
+                if (tokenId.toLowerCase() == "usdb_address") {
+                  return null;
+                }
+                return (
+                  <MenuItem
+                    value={currencyDetails.symbol}
+                    key={`currency-option-item-${tokenId}`}
+                  >
+                    <Box className="flex fr ai-c">
+                      <img
+                        style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                        src={currencyDetails.icon}
+                        alt={`${currencyDetails.symbol} Token Icon`}
+                      />
+                      {currencyDetails.symbol}
+                    </Box>
+                  </MenuItem>
+                );
+              })}
             </Select>
           </Box>
           <Box className={`flex fr ${style["rightSide"]}`}>

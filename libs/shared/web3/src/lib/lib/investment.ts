@@ -88,6 +88,26 @@ export class TokenInvestment extends Investment {
   readonly treasuryBalance: Promise<number>;
   readonly historicPrices: Promise<IHistoricPrices>;
 
+  constructor(investmentOpts: TokenInvestmentOpts) {
+    super(investmentOpts);
+    this.contractAddress = investmentOpts.contractAddress;
+    this.daoAddress = investmentOpts.daoAddress;
+    this.provider = chains[investmentOpts.chainId]?.provider;
+    this.networkName = investmentOpts.chainName;
+    this.assetBalance = investmentOpts.customAssetBalanceFunc
+      ? investmentOpts.customAssetBalanceFunc.bind(this)()
+      : this.getAssetBalance.bind(this)();
+    this.assetPrice = investmentOpts.customAssetPriceFunc
+      ? investmentOpts.customAssetPriceFunc.bind(this)()
+      : this.getAssetPrice.bind(this)();
+    this.treasuryBalance = investmentOpts.customTreasuryBalanceFunc
+      ? investmentOpts.customTreasuryBalanceFunc.bind(this)()
+      : this.getTreasuryBalance.bind(this)();
+    this.historicPrices = investmentOpts.customHistoricPricesFunc
+      ? investmentOpts.customHistoricPricesFunc.bind(this)()
+      : this.getHistoricPrices.bind(this)();
+  }
+
   async getAssetBalance(this: TokenInvestment): Promise<number> {
     return 0;
   }
@@ -104,26 +124,6 @@ export class TokenInvestment extends Investment {
     return new HistoricPrices(
       await getHistoricTokenPrice(this.networkName, this.contractAddress)
     );
-  }
-
-  constructor(investmentOpts: TokenInvestmentOpts) {
-    super(investmentOpts);
-    this.contractAddress = investmentOpts.contractAddress;
-    this.daoAddress = investmentOpts.daoAddress;
-    this.provider = chains[investmentOpts.chainId].provider;
-    this.networkName = investmentOpts.chainName;
-    this.assetBalance = investmentOpts.customAssetBalanceFunc
-      ? investmentOpts.customAssetBalanceFunc.bind(this)()
-      : this.getAssetBalance.bind(this)();
-    this.assetPrice = investmentOpts.customAssetPriceFunc
-      ? investmentOpts.customAssetPriceFunc.bind(this)()
-      : this.getAssetPrice.bind(this)();
-    this.treasuryBalance = investmentOpts.customTreasuryBalanceFunc
-      ? investmentOpts.customTreasuryBalanceFunc.bind(this)()
-      : this.getTreasuryBalance.bind(this)();
-    this.historicPrices = investmentOpts.customHistoricPricesFunc
-      ? investmentOpts.customHistoricPricesFunc.bind(this)()
-      : this.getHistoricPrices.bind(this)();
   }
 }
 
