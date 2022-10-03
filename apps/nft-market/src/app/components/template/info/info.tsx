@@ -26,7 +26,7 @@ export const InfoBtn = (): JSX.Element => {
     setAnchorEl(null);
   };
   const backgroundColor = () =>
-    themeType === "light" ? "#16181A !important" : "#fff !important";
+    themeType === "dark" ? "#fff !important" : "#16181A !important";
 
   return (
     <Box
@@ -50,7 +50,7 @@ export const InfoBtn = (): JSX.Element => {
       >
         <Avatar
           sx={{ width: { xs: "29px", lg: "37px" }, height: { xs: "29px", lg: "37px" } }}
-          src={themeType === "light" ? infoSvg : infoDarkSvg}
+          src={themeType === "dark" ? infoDarkSvg : infoSvg}
         />
       </IconButton>
       <Menu
