@@ -48,6 +48,8 @@ import Referral from "./pages/referral";
 import {
   getAffiliateAddresses,
   getAffiliateFees,
+  getPassBonusable,
+  getTotalClaimedAmounts,
   saveAffiliateCode,
 } from "./store/reducers/affiliate-slice";
 
@@ -192,11 +194,13 @@ export const App = (): JSX.Element => {
   }, [address, connected, referralCode]);
 
   useEffect(() => {
-    if (address && connected) {
+    if (address && connected && provider && chainId) {
       dispatch(getAffiliateAddresses(address));
       dispatch(getAffiliateFees(address));
+      dispatch(getPassBonusable({ provider, networkId: chainId }));
+      dispatch(getTotalClaimedAmounts({ provider, networkId: chainId }));
     }
-  }, [address, connected]);
+  }, [address, connected, provider, chainId]);
 
   // User has switched back to the tab
   const onFocus = () => {

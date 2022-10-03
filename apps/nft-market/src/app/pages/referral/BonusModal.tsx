@@ -33,6 +33,9 @@ export default function BonusModal({
 }) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    window.open("https://opensea.io/collection/balance-pass", "_blank");
+  };
 
   return (
     <div>
@@ -52,14 +55,20 @@ export default function BonusModal({
             <Typography id="transition-modal-title" variant="h6" component="h2">
               Balance Pass Bonus
             </Typography>
-            <img src={nftImage} alt="" className="nft-image" />
+            <img
+              src={
+                "https://i.seadn.io/gae/CVFyOVeQcwXgfWT2XAmUcevFxKlYQZE7CxDPH4bbvwTF4LfryieEw0JN8sZJMc8bqLbtA_1Obgs9ZcL9uYvoL_x18XhBHLqUi9qYZOc?auto=format&w=384"
+              }
+              alt=""
+              className="nft-image"
+            />
             <Typography
               id="transition-modal-description"
               sx={{ mt: 2, textAlign: "center" }}
             >
               Earn an additional 5% in rewards when you hold a Balance Pass in your wallet
             </Typography>
-            <Button variant="contained" endIcon={<LaunchIcon />}>
+            <Button variant="contained" endIcon={<LaunchIcon />} onClick={handleClick}>
               View on Opensea
             </Button>
           </Box>

@@ -7,12 +7,13 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
 import { BackendApi } from "../../api";
-import { getErc20CurrencyFromAddress } from "../../helpers/erc20Currency";
+import { currencyInfo, getErc20CurrencyFromAddress } from "../../helpers/erc20Currency";
 import { AffiliateData } from "../../types/backend-types";
 import { ClaimFeesAsyncThunk } from "./interfaces";
 import { RepayLoanEvent } from "./loan-slice";
 import { merkleDistributor, ierc721Abi } from "@fantohm/shared-web3";
 import { JsonRpcProvider } from "@ethersproject/providers";
+import { formatUnits } from "ethers/lib/utils";
 export type AffiliateState = {
   data: AffiliateData;
   status: "pending" | "ready" | "failed";
@@ -28,6 +29,7 @@ const initialState: AffiliateState = {
     claimableTokens: [],
   },
   status: "pending",
+  totalAmounts: 0,
 };
 /*
 Referral data: 
@@ -154,7 +156,7 @@ export const getPassBonusable = createAsyncThunk(
   async ({ provider, networkId }: { provider: JsonRpcProvider; networkId: number }) => {
     const signer = provider.getSigner();
     const balancePassContract = new ethers.Contract(
-      networks[networkId].addresses["WSOHM_ADDRESS"],
+      networks[networkId].addresses["PASS_NFT_ADDRESS"],
       ierc721Abi,
       signer
     );
@@ -162,6 +164,34 @@ export const getPassBonusable = createAsyncThunk(
       await signer.getAddress()
     );
     return balance.gt(BigNumber.from(0));
+  }
+);
+
+export const getTotalClaimedAmounts = createAsyncThunk(
+  "affiliate/total-claimed",
+  async ({ provider, networkId }: { provider: JsonRpcProvider; networkId: number }) => {
+    const signer = provider.getSigner();
+    const affiliateContract = new ethers.Contract(
+      getMerkleDistributorAddress(networkId),
+      merkleDistributor,
+      signer
+    );
+
+    let sum = 0;
+
+    await Promise.all(
+      Object.entries(currencyInfo).map(async ([tokenId, currencyDetails]) => {
+        const tokenAddress = currencyDetails.addresses[networkId];
+        const user = await signer.getAddress();
+        const amount = await affiliateContract["claimedAmount"](user, tokenAddress);
+        const currentCurrency = getErc20CurrencyFromAddress(tokenAddress);
+        await currentCurrency.wait();
+        sum +=
+          parseFloat(formatUnits(amount, currentCurrency.decimals)) *
+          currentCurrency.lastPrice;
+      })
+    );
+    return sum;
   }
 );
 
@@ -217,6 +247,20 @@ export const affilateSlice = createSlice({
         state.data = {
           ...state.data,
           isBonus: action.payload,
+        };
+      }
+    );
+    builder.addCase(getTotalClaimedAmounts.pending, (state, action) => {
+      state.status = "pending";
+    });
+    builder.addCase(
+      getTotalClaimedAmounts.fulfilled,
+      (state, action: PayloadAction<number>) => {
+        console.log("bonus: ", action);
+        state.status = "ready";
+        state.data = {
+          ...state.data,
+          totalAmounts: action.payload,
         };
       }
     );

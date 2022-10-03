@@ -129,7 +129,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(0)}
+              }).format(data?.data?.totalAmounts || 0)}
             </Typography>
           </Paper>
         </Grid>
