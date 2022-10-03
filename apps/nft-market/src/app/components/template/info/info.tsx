@@ -5,14 +5,19 @@ import Menu from "@mui/material/Menu";
 import { Link } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { HashLink } from "react-router-hash-link";
+import { useSelector } from "react-redux";
 
 import infoSvg from "../../../../assets/icons/info.svg";
+import infoDarkSvg from "../../../../assets/icons/info-dark.svg";
 import infoClosePng from "../../../../assets/images/info-close.png";
 import infoIconPng from "../../../../assets/images/info-icon.png";
 import Typography from "@mui/material/Typography";
+import { RootState } from "../../../store";
 
 export const InfoBtn = (): JSX.Element => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const themeType = useSelector((state: RootState) => state.theme.mode);
+
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -20,6 +25,9 @@ export const InfoBtn = (): JSX.Element => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const backgroundColor = () =>
+    themeType === "light" ? "#16181A !important" : "#fff !important";
+
   return (
     <Box
       sx={{
@@ -32,7 +40,7 @@ export const InfoBtn = (): JSX.Element => {
       <IconButton
         onClick={handleClick}
         sx={{
-          background: "#16181A !important",
+          background: backgroundColor(),
           width: { xs: "49px", lg: "64px" },
           height: { xs: "49px", lg: "64px" },
         }}
@@ -42,7 +50,7 @@ export const InfoBtn = (): JSX.Element => {
       >
         <Avatar
           sx={{ width: { xs: "29px", lg: "37px" }, height: { xs: "29px", lg: "37px" } }}
-          src={infoSvg}
+          src={themeType === "light" ? infoSvg : infoDarkSvg}
         />
       </IconButton>
       <Menu
