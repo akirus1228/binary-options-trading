@@ -1,12 +1,18 @@
-import { getMerkleDistributorAddress, loadState } from "@fantohm/shared-web3";
+import {
+  getMerkleDistributorAddress,
+  loadState,
+  networks,
+  saveState,
+} from "@fantohm/shared-web3";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
 import { BackendApi } from "../../api";
 import { getErc20CurrencyFromAddress } from "../../helpers/erc20Currency";
 import { AffiliateData } from "../../types/backend-types";
 import { ClaimFeesAsyncThunk } from "./interfaces";
 import { RepayLoanEvent } from "./loan-slice";
-import { merkleDistributor } from "@fantohm/shared-web3";
+import { merkleDistributor, ierc721Abi } from "@fantohm/shared-web3";
+import { JsonRpcProvider } from "@ethersproject/providers";
 export type AffiliateState = {
   data: AffiliateData;
   status: "pending" | "ready" | "failed";
@@ -143,6 +149,22 @@ export const claimFees = createAsyncThunk(
   }
 );
 
+export const getPassBonusable = createAsyncThunk(
+  "affiliate/pass-bonus",
+  async ({ provider, networkId }: { provider: JsonRpcProvider; networkId: number }) => {
+    const signer = provider.getSigner();
+    const balancePassContract = new ethers.Contract(
+      networks[networkId].addresses["WSOHM_ADDRESS"],
+      ierc721Abi,
+      signer
+    );
+    const balance: BigNumber = await balancePassContract["balanceOf"](
+      await signer.getAddress()
+    );
+    return balance.gt(BigNumber.from(0));
+  }
+);
+
 export const affilateSlice = createSlice({
   name: "affiliate",
   initialState,
@@ -174,7 +196,6 @@ export const affilateSlice = createSlice({
     builder.addCase(
       getAffiliateFees.fulfilled,
       (state, action: PayloadAction<AffiliateData | undefined>) => {
-        console.log("affilateFeeFullfiled: ", action.payload);
         if (action.payload) {
           state.status = "ready";
           state.data = {
@@ -183,6 +204,20 @@ export const affilateSlice = createSlice({
           };
           console.log("fullfillState: ", state);
         }
+      }
+    );
+    builder.addCase(getPassBonusable.pending, (state, action) => {
+      state.status = "pending";
+    });
+    builder.addCase(
+      getPassBonusable.fulfilled,
+      (state, action: PayloadAction<boolean>) => {
+        console.log("bonus: ", action);
+        state.status = "ready";
+        state.data = {
+          ...state.data,
+          isBonus: action.payload,
+        };
       }
     );
   },

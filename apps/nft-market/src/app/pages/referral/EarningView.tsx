@@ -12,7 +12,6 @@ import { BigNumber } from "ethers";
 export const EarningView = (): JSX.Element => {
   const [bonusModalOpen, setBonusModalOpen] = useState<boolean>(false);
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
-  const [bonusActive, setBonusActive] = useState<boolean>(false);
 
   const data = useSelector((state: RootState) => getAccountAffiliateState(state));
   const isDesktop = useMediaQuery("(min-width:767px)");
@@ -72,7 +71,7 @@ export const EarningView = (): JSX.Element => {
             onClick={() => setBonusModalOpen(true)}
           >
             <Typography variant="subtitle2" component="span">
-              {bonusActive ? "Active" : "Inactive"}
+              {data.data.isBonus ? "Active" : "Inactive"}
             </Typography>
             <Box ml={1} display={"flex"}>
               <InfoIcon />

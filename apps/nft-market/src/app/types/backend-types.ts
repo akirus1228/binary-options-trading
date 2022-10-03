@@ -51,6 +51,7 @@ export type AffiliateData = {
   }[];
   affiliateFees?: AffiliateFee[];
   proofs?: string[][];
+  isBonus?: boolean;
 };
 
 export type SaveAffiliateResponse = {
