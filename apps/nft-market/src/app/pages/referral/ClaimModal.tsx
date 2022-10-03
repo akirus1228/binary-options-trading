@@ -20,6 +20,7 @@ import { useWeb3Context } from "@fantohm/shared-web3";
 import { useDispatch } from "react-redux";
 import { claimFees } from "../../store/reducers/affiliate-slice";
 import { AppDispatch } from "../../store";
+import { addAlert, GrowlNotification } from "../../store/reducers/app-slice";
 
 const style = {
   position: "absolute",
@@ -56,17 +57,34 @@ export const ClaimModal = ({
   const onClaim = useCallback(async () => {
     console.log("claim:");
     if (address && provider && chainId) {
-      setPending(true);
-      await dispatch(
-        claimFees({
-          tokens: data?.affiliateFees?.map((fee) => fee.currency) || [],
-          fees: data?.affiliateFees?.map((fee) => fee.fee) || [],
-          proofs: data?.proofs || [],
-          provider,
-          networkId: chainId,
-        })
-      ).unwrap();
-      setPending(false);
+      try {
+        setPending(true);
+        await dispatch(
+          claimFees({
+            tokens: data?.affiliateFees?.map((fee) => fee.currency) || [],
+            fees: data?.affiliateFees?.map((fee) => fee.fee) || [],
+            proofs: data?.proofs || [],
+            provider,
+            networkId: chainId,
+          })
+        ).unwrap();
+        setPending(false);
+        const notification: Partial<GrowlNotification> = {
+          message: "Successfully claimed.",
+          duration: 2000,
+        };
+        dispatch(addAlert(notification));
+      } catch (e) {
+        console.log("claim_error: ", e);
+        const notification: Partial<GrowlNotification> = {
+          message: "Sorry. Something wroing",
+          duration: 2000,
+          severity: "error",
+        };
+        dispatch(addAlert(notification));
+      } finally {
+        setPending(false);
+      }
     }
   }, [address, provider, chainId, data]);
 

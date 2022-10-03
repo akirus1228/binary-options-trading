@@ -50,7 +50,7 @@ export type AffiliateData = {
     affiliate: string;
   }[];
   affiliateFees?: AffiliateFee[];
-  proofs?: string[];
+  proofs?: string[][];
 };
 
 export type SaveAffiliateResponse = {

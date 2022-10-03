@@ -314,7 +314,7 @@ export const networks: INetworks = {
       // staking warmup manager: 0xeD1f984502f8773Ec950E2D006781D7ce33CEEE4
       // FHUD Minter: 0x139ffDD962A2d8D498a92aB33b31ed78397cbae2
       // twap oracle: 0xc9ca91fe0667bafd4289e082088e41ed86471d79
-      MERKLE_DISTRIBUTOR: "",
+      MERKLE_DISTRIBUTOR: "0x3418a0561F8c490CCA938efc974eEFb88eaa3445",
     },
     USDB_LENDING_ADDRESSES: [
       "0x388753E39938De4dc37594B2d77Ed2DeB9E36208",

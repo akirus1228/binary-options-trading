@@ -120,7 +120,7 @@ export interface OpenseaAssetQueryAsyncThunk {
 export interface ClaimFeesAsyncThunk extends IBaseAsyncThunk {
   readonly tokens: string[];
   readonly fees: (number | string)[];
-  readonly proofs: string[];
+  readonly proofs: string[][];
   readonly networkId: number;
   readonly provider: JsonRpcProvider;
 }
