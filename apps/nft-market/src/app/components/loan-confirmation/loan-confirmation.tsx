@@ -27,6 +27,7 @@ import {
   getLendingAddressConfig,
   loadErc20Balance,
   loadPlatformFee,
+  networks,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
   selectErc20BalanceByAddress,
@@ -249,13 +250,22 @@ export const LoanConfirmation = ({
       user.address &&
       typeof minRequiredBalanceGwei !== "undefined"
     ) {
+      let approveAmounts;
+      if (
+        currency.currentAddress === networks[desiredNetworkId].addresses["USDT_ADDRESS"]
+      ) {
+        approveAmounts = ethers.constants.MaxUint256;
+      } else {
+        approveAmounts = minRequiredBalanceGwei;
+      }
+
       dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
           assetAddress: listing.term.currencyAddress,
-          amount: minRequiredBalanceGwei,
+          amount: approveAmounts,
         })
       );
     }
