@@ -119,11 +119,12 @@ export const BorrowerAssetSearch = ({
     }
   }, [keyword]);
 
+  console.log("searchedOwnedCollections: ", searchedOwnedCollections);
   useEffect(() => {
     if (!searchedCollections.isSuccess) return;
     if (!searchedOwnedCollections.isSuccess) return;
 
-    const filteredCollections = searchedOwnedCollections.data
+    const filteredCollections = searchedOwnedCollections.data.data
       .filter((item) => {
         let match = item.name?.toLowerCase().includes(keyword.toLowerCase());
         if (keyword?.toLowerCase()?.substring(0, 2) === "0x") {
