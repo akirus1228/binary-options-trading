@@ -119,7 +119,6 @@ export const BorrowerAssetSearch = ({
     }
   }, [keyword]);
 
-  console.log("searchedOwnedCollections: ", searchedOwnedCollections);
   useEffect(() => {
     if (!searchedCollections.isSuccess) return;
     if (!searchedOwnedCollections.isSuccess) return;
