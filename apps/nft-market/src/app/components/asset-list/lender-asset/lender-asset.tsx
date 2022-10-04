@@ -77,7 +77,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
+      url: `https://${isDev ? "goerli." : ""}etherscan.io/token/${
         asset?.assetContractAddress
       }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,

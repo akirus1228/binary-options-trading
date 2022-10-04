@@ -14,7 +14,7 @@ export enum TokenType {
 export const ercType = async (contract: ethers.Contract): Promise<TokenType> => {
   if (
     contract.address.toLowerCase() ===
-    addresses[isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum][
+    addresses[isDev ? NetworkIds.Goerli : NetworkIds.Ethereum][
       "CRYPTOPUNKS_ADDRESS"
     ].toLowerCase()
   ) {

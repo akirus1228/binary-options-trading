@@ -82,8 +82,16 @@ export const UserMenu = (): JSX.Element => {
   }, [address]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
+    console.log(
+      "connect: ",
+      isDev,
+      desiredNetworkId,
+      address,
+      isWalletConnected,
+      authSignature
+    );
     try {
-      connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+      connect(true, isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
     } catch (e: unknown) {
       console.warn(e);
     }
@@ -117,7 +125,7 @@ export const UserMenu = (): JSX.Element => {
   };
 
   const isWalletConnected = useMemo(() => {
-    return address && authSignature && connected && [1, 4].includes(chainId ?? 0);
+    return address && authSignature && connected && chainId === desiredNetworkId;
   }, [address, authSignature, connected, chainId]);
 
   useEffect(() => {

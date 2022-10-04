@@ -106,7 +106,7 @@ export const AssetDetails = ({
       alt: "EtherScan",
       title: "View on Etherscan",
       url: `https://${
-        isDev ? "rinkeby." : ""
+        isDev ? "goerli." : ""
       }etherscan.io/token/${contractAddress}?a=${tokenId}`,
       endIcon: grayArrowRightUp,
     },
