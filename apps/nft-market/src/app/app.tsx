@@ -106,7 +106,7 @@ export const App = (): JSX.Element => {
     // if there's a cached provider, try and connect
     if (hasCachedProvider && hasCachedProvider() && !connected) {
       try {
-        connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+        connect(true, isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
       } catch (e) {
         console.log("Connection metamask error", e);
       }
@@ -199,7 +199,7 @@ export const App = (): JSX.Element => {
     setIsChecked(!isChecked);
   };
 
-  saveNetworkId(isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+  saveNetworkId(isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
 
   return (
     <ThemeProvider theme={theme}>

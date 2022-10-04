@@ -172,10 +172,10 @@ export const checkNftPermission = createAsyncThunk(
     if (!walletAddress || !assetAddress || !tokenId) {
       return rejectWithValue("Addresses and id required");
     }
-    if (networkId != NetworkIds.Ethereum && networkId != NetworkIds.Rinkeby) {
+    if (networkId !== NetworkIds.Ethereum && networkId !== NetworkIds.Goerli) {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: NetworkIds.Rinkeby }],
+        params: [{ chainId: NetworkIds.Goerli }],
       });
     }
     try {
@@ -259,11 +259,11 @@ export const checkErc20Allowance = createAsyncThunk(
     if (!walletAddress || !assetAddress) {
       return rejectWithValue("Addresses and id required");
     }
-    if (![NetworkIds.Ethereum, NetworkIds.Rinkeby].includes(networkId)) {
+    if (![NetworkIds.Ethereum, NetworkIds.Goerli].includes(networkId)) {
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum }],
+          params: [{ chainId: isDev ? NetworkIds.Goerli : NetworkIds.Ethereum }],
         });
       } catch (err: any) {
         console.warn(err);

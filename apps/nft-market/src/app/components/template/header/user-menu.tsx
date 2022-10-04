@@ -83,7 +83,7 @@ export const UserMenu = (): JSX.Element => {
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     try {
-      connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+      connect(true, isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
     } catch (e: unknown) {
       console.warn(e);
     }
