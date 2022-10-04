@@ -2,6 +2,7 @@ import {
   checkErc20Allowance,
   checkNftPermission,
   loadPlatformFee,
+  networks,
   requestErc20Allowance,
   requestNftPermission,
   selectErc20AllowanceByAddress,
@@ -176,6 +177,8 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       erc20TokenAddress: currency?.currentAddress || "",
     })
   );
+
+  console.log("allownce: ", erc20Allowance);
 
   const amountGwei = useMemo(() => {
     const [integerPart, decimalPart] = amount.split(".");
@@ -592,15 +595,26 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const handleRequestAllowance = useCallback(() => {
     if (provider && address && props.listing) {
       setIsPending(true);
+
+      let approveAmounts;
+      if (
+        currency.currentAddress === networks[desiredNetworkId].addresses["USDT_ADDRESS"]
+      ) {
+        approveAmounts = ethers.constants.MaxUint256;
+      } else {
+        approveAmounts = ethers.utils.parseUnits(
+          (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString(),
+          currency.decimals
+        );
+      }
+
       dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
           provider,
           walletAddress: address,
           assetAddress: currency?.currentAddress,
-          amount: ethers.utils.parseEther(
-            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
-          ),
+          amount: approveAmounts,
         })
       );
     }
@@ -769,8 +783,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         typeof platformFees[currency?.currentAddress] !== "undefined" && // has platform fees
         !insufficientBalance && // has sufficient balance
         erc20Allowance.gte(
-          ethers.utils.parseEther(
-            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
+          ethers.utils.parseUnits(
+            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString(),
+            currency?.decimals
           )
         ) && (
           <Button
@@ -793,8 +808,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !insufficientBalance &&
         (!erc20Allowance ||
           erc20Allowance.lt(
-            ethers.utils.parseEther(
-              (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
+            ethers.utils.parseUnits(
+              (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString(),
+              currency.decimals
             )
           )) && (
           <Button

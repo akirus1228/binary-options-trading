@@ -114,13 +114,23 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const handleRequestAllowance = useCallback(async () => {
     if (provider && address) {
       setIsPending(true);
+
+      let approveAmounts;
+      if (
+        currency.currentAddress === networks[desiredNetworkId].addresses["USDT_ADDRESS"]
+      ) {
+        approveAmounts = ethers.constants.MaxUint256;
+      } else {
+        approveAmounts = ethers.utils.parseUnits(amount, currency.decimals);
+      }
+
       const result = await dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
           provider,
           walletAddress: address,
           assetAddress: currency?.currentAddress,
-          amount: ethers.utils.parseUnits(amount, currency.decimals),
+          amount: approveAmounts,
         })
       ).unwrap();
       if (result) {
