@@ -266,7 +266,6 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         ...offer,
         status: OfferStatus.Rejected,
       });
-      console.log(result);
       if (result?.error) {
         if (result?.error?.status === 403) {
           dispatch(
