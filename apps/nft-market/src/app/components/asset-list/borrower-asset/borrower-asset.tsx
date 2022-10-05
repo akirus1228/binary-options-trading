@@ -80,7 +80,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       url: `${
         !isDev
           ? "https://opensea.io/assets/ethereum/"
-          : "https://testnets.opensea.io/assets/rinkeby/"
+          : "https://testnets.opensea.io/assets/goerli/"
       }${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,

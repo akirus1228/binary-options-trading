@@ -117,7 +117,7 @@ export const AssetDetails = ({
       url: `${
         !isDev
           ? "https://opensea.io/assets/ethereum/"
-          : "https://testnets.opensea.io/assets/rinkeby/"
+          : "https://testnets.opensea.io/assets/goerli/"
       }${contractAddress}/${tokenId}`,
       endIcon: grayArrowRightUp,
     },
