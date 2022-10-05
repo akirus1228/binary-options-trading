@@ -25,7 +25,6 @@ export function IconLink({ icon, title, link = undefined }: IconLinkProps) {
         textAlign="center"
         sx={link ? { cursor: "pointer" } : {}}
         onClick={handleOnClick}
-        style={setOpacity}
       >
         <Box
           className={style["imageBox"]}
@@ -38,7 +37,11 @@ export function IconLink({ icon, title, link = undefined }: IconLinkProps) {
         </Box>
         <h1 className={style["title"]}>{title}</h1>
       </Box>
-      {!link && <h2 className={`${style["link"]}`}>Coming Soon</h2>}
+      {!link && (
+        <h2 className={`${style["link"]}`} style={setOpacity}>
+          Coming Soon
+        </h2>
+      )}
     </Box>
   );
 }
