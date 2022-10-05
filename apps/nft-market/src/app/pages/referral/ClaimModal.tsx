@@ -55,7 +55,6 @@ export const ClaimModal = ({
   const handleClose = () => setOpen(false);
 
   const onClaim = useCallback(async () => {
-    console.log("claim:");
     if (address && provider && chainId) {
       try {
         setPending(true);

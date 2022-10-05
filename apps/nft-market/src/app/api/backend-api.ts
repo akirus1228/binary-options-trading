@@ -52,7 +52,6 @@ import {
 } from "../store/reducers/asset-slice";
 import { updateListing, updateListings } from "../store/reducers/listing-slice";
 import { isDev } from "@fantohm/shared-web3";
-import { affiliateFees } from "./mockup";
 
 export const WEB3_SIGN_MESSAGE =
   "Welcome to Liqdnft!\n\nTo get started, click Sign In and accept our Terms of Service: <https://liqdnft.com/term> \n\nThis request will not trigger a blockchain transaction or cost any gas fees.";
@@ -126,7 +125,8 @@ export const getAffiliateFees = async (
       console.log("getAffilateFee-backendapi: ", resp);
       // mockup
       return {
-        affiliateFees: affiliateFees,
+        affiliateFees: resp.data.affiliateFees,
+        proofs: resp.data.proofs,
       };
       // return resp.data;
     })

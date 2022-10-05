@@ -5,7 +5,7 @@ import {
   useLocation,
   useSearchParams,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Backdrop, Box, Button, CssBaseline, Fade, Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
@@ -45,13 +45,7 @@ import { NewHomePage } from "./pages/home-page";
 import HelpPage from "./components/help/help";
 import { InfoBtn } from "./components/template/info/info";
 import Referral from "./pages/referral";
-import {
-  getAffiliateAddresses,
-  getAffiliateFees,
-  getPassBonusable,
-  getTotalClaimedAmounts,
-  saveAffiliateCode,
-} from "./store/reducers/affiliate-slice";
+import { saveAffiliateCode } from "./store/reducers/affiliate-slice";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -75,6 +69,7 @@ export const App = (): JSX.Element => {
   const { user, authorizedAccount, accountStatus } = useSelector(
     (state: RootState) => state.backend
   );
+  const { authSignature } = useSelector((state: RootState) => state.backend);
 
   const [promptTerms, setPromptTerms] = useState<boolean>(true);
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -182,8 +177,12 @@ export const App = (): JSX.Element => {
   const [params] = useSearchParams();
   const referralCode = params.get("ref");
 
+  const isWalletConnected = useMemo(() => {
+    return address && authSignature && connected && chainId === desiredNetworkId;
+  }, [address, authSignature, connected, chainId]);
+
   useEffect(() => {
-    if (address && connected && referralCode) {
+    if (address && connected && referralCode && isWalletConnected) {
       dispatch(
         saveAffiliateCode({
           address,
@@ -191,16 +190,7 @@ export const App = (): JSX.Element => {
         })
       );
     }
-  }, [address, connected, referralCode]);
-
-  useEffect(() => {
-    if (address && connected && provider && chainId) {
-      dispatch(getAffiliateAddresses(address));
-      dispatch(getAffiliateFees(address));
-      dispatch(getPassBonusable({ provider, networkId: chainId }));
-      dispatch(getTotalClaimedAmounts({ provider, networkId: chainId }));
-    }
-  }, [address, connected, provider, chainId]);
+  }, [address, connected, referralCode, isWalletConnected]);
 
   // User has switched back to the tab
   const onFocus = () => {

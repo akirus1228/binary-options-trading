@@ -23,9 +23,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { addAlert, GrowlNotification } from "../../store/reducers/app-slice";
 import { getAccountAffiliateState } from "../../store/selectors/affilate-selectors";
 import { RootState } from "../../store";
+import {
+  getAffiliateAddresses,
+  getAffiliateFees,
+  getPassBonusable,
+  getTotalClaimedAmounts,
+} from "../../store/reducers/affiliate-slice";
 
 export const Referral = (): JSX.Element => {
-  const { address, chainId, connected, disconnect, connect } = useWeb3Context();
+  const { address, chainId, provider, connected, disconnect, connect } = useWeb3Context();
   const dispatch = useDispatch();
   const data = useSelector((state: RootState) => getAccountAffiliateState(state));
   const referralPrefix = isDev ? "http://localhost:4200/" : "https://liqdnft.com/";
@@ -60,6 +66,15 @@ export const Referral = (): JSX.Element => {
     };
     dispatch(addAlert(notification));
   };
+
+  useEffect(() => {
+    if (address && connected && provider && chainId) {
+      // dispatch(getAffiliateAddresses(address));
+      dispatch(getAffiliateFees(address));
+      dispatch(getPassBonusable({ provider, networkId: chainId }));
+      dispatch(getTotalClaimedAmounts({ provider, networkId: chainId }));
+    }
+  }, [address, connected, provider, chainId]);
 
   return (
     <Container maxWidth={"lg"}>

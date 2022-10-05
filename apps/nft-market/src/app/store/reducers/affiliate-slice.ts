@@ -66,6 +66,7 @@ export const getAffiliateFees = createAsyncThunk(
         thisState.backend.authSignature,
         address
       );
+      console.log("affiliateFees: ", response, response.affiliateFees);
       if (response && response.affiliateFees) {
         const feeData = await Promise.all(
           response.affiliateFees.map(async (fee) => {
