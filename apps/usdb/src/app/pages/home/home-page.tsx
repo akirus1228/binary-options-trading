@@ -76,7 +76,7 @@ export const HomePage = (): JSX.Element => {
               </h3>
               <Box className="flex">
                 <a
-                  href="https://indacoin.io/buy-usd%20balance-with-card"
+                  href="https://beets.fi/swap"
                   className={style["heroLink"]}
                   target="_blank"
                   rel="noreferrer"
