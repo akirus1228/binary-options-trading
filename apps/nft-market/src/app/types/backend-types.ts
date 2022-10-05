@@ -167,6 +167,7 @@ export enum NotificationContext {
   OfferAccepted = "OFFER_ACCEPTED",
   OfferUpdated = "OFFER_UPDATED",
   OfferRemoved = "OFFER_REMOVED",
+  OfferRejected = "OFFER_REJECTED",
   ListingCancelled = "LISTING_CANCELLED",
 }
 
@@ -255,6 +256,7 @@ export enum OfferStatus {
   Complete = "COMPLETE",
   Expired = "EXPIRED",
   Ready = "READY",
+  Rejected = "REJECTED",
 }
 
 export type Offer = {

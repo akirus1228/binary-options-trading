@@ -1,15 +1,6 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  IconButton,
-  Menu,
-  Tooltip,
-} from "@mui/material";
+import { Avatar, Box, Button, Chip, CircularProgress, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -269,6 +260,32 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     }
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
 
+  const handleRejectOffer = useCallback(async () => {
+    try {
+      const result: any = await updateOffer({
+        ...offer,
+        status: OfferStatus.Rejected,
+      });
+      console.log(result);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message: "Failed to reject an offer.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer rejected" }));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [offer.id]);
+
   const handleDeleteOffer = useCallback(async () => {
     try {
       const result: any = await deleteOffer(offer);
@@ -515,14 +532,24 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                   <CircularProgress />
                 </Button>
               ) : (
-                <Button
-                  variant="outlined"
-                  sx={{ width: "150px" }}
-                  className="offer slim"
-                  onClick={handleRequestPermission}
-                >
-                  Accept
-                </Button>
+                <Box sx={{ display: "flex" }}>
+                  <Button
+                    variant="contained"
+                    sx={{ my: "10px", mr: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRequestPermission}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ my: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRejectOffer}
+                  >
+                    Reject
+                  </Button>
+                </Box>
               ))}
             {isOwner &&
               hasPermission &&
@@ -532,14 +559,24 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                   <CircularProgress />
                 </Button>
               ) : (
-                <Button
-                  variant="outlined"
-                  sx={{ width: "150px" }}
-                  className="offer slim"
-                  onClick={handleAcceptOffer}
-                >
-                  Accept
-                </Button>
+                <Box sx={{ display: "flex" }}>
+                  <Button
+                    variant="contained"
+                    sx={{ my: "10px", mr: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleAcceptOffer}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ my: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRejectOffer}
+                  >
+                    Reject
+                  </Button>
+                </Box>
               ))}
             {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
               <Box sx={{ display: "flex" }}>
