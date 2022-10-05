@@ -38,7 +38,7 @@ export const IconGrid = (): JSX.Element => {
         />
       </Grid>
       <Grid item md={4} xs={6}>
-        <IconLink title="Vault" icon={BankIcon} />
+        <IconLink title="Vault" icon={WalletIcon} link="/vault" />
       </Grid>
       {/* <Grid item md={4} xs={6}>
        <IconLink title="Backed NFT" icon={WalletIcon} link="/backed-nft" />

@@ -27,7 +27,8 @@ export const headerPages: Page[] = [
     href: "https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1",
     params: { comingSoon: false },
   },
-  { title: "Vault", href: "/vault", params: { comingSoon: true } },
+  /* FIXME vercel */
+  { title: "Vault", href: "/vault", params: { comingSoon: false } },
   // { title: "Backed NFT", href: "/backed-nft", params: { comingSoon: false } },
   // { title: "Amps", href: "/amps", params: { comingSoon: true } },
 ];
@@ -53,7 +54,7 @@ export const footerItems: FooterItem[] = [
         title: "Bridge",
         href: "https://synapseprotocol.com/?inputCurrency=USDB&outputCurrency=USDB&outputChain=1",
       },
-      { title: "Vault", href: "/vault", params: { comingSoon: true } },
+      { title: "Vault", href: "/vault", params: { comingSoon: false } },
       // { title: "Backed NFT", href: "/backed-nft" },
       // { title: "Amps", href: "/amps", params: { comingSoon: true } },
     ],
