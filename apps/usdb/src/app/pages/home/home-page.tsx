@@ -3,7 +3,7 @@ import style from "./home-page.module.scss";
 import IconGrid from "./icon-grid/icon-grid";
 import USDBLogoLight from "../../../assets/images/USDB-logo.svg";
 import USDBLogoDark from "../../../assets/images/USDB-logo-dark.svg";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import CallMadeIcon from "@mui/icons-material/CallMade";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 
@@ -73,9 +73,14 @@ export const HomePage = (): JSX.Element => {
                 USDB provides a wide range of financial tools and services to individuals
                 and institutions
               </h3>
-              <a href="/trad-fi" className={style["heroLink"]} rel="noreferrer">
+              <a
+                href="https://www.balance.capital/blog/usdb-stablecoin-and-how-it-stands-apart"
+                className={style["heroLink"]}
+                target="_blank"
+                rel="noreferrer"
+              >
                 Learn more
-                <Icon component={ArrowUpwardIcon} className={style["linkArrow"]} />
+                <Icon component={CallMadeIcon} className={style["linkArrow"]} />
               </a>
             </Box>
           </Grid>

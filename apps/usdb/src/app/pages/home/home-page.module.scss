@@ -56,13 +56,14 @@
             font-size:18px;
         }
         .linkArrow{
-            font-size: 22px;
-            transform: rotate(90deg) translateX(2px);
+            font-size: 30px;
             display:inline-block;
             margin-left:5px;
+            margin-bottom: -7px;
 
             @media (max-width:600px) {
-                font-size:17px;
+                font-size:22px;
+                margin-bottom: -5px;
             }
         }
     }
