@@ -369,7 +369,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
               id="right-box-header"
             >
               <h2 className={`${style["text-lg"]}`}>About</h2>
-              <Button
+              {/* <Button
                 variant="contained"
                 disabled={true}
                 className="thinSquaredButton"
@@ -379,7 +379,7 @@ export const BalanceVaultDetailsPage = (): JSX.Element => {
                 }}
               >
                 + Edit
-              </Button>
+              </Button> */}
             </Box>
             <Box sx={{ p: "2em" }}>
               <h2 className={`${style["text-md"]}`}>Description</h2>
