@@ -68,20 +68,49 @@ export const HomePage = (): JSX.Element => {
                   className={style["heroLogo"]}
                 />
               </Box>
-              <h1 className={style["heroTitle"]}>Where traditional finance meets DeFi</h1>
+              <h1 className={style["heroTitle"]}>The Optimized Stablecoin</h1>
               <h3 className={style["heroSubtitle"]}>
-                USDB provides a wide range of financial tools and services to individuals
-                and institutions
+                USDB is a stablecoin built for economic adoption. Combining the
+                conventional and non-conventional, USDB provides a wide range of financial
+                tools and services to individuals and institutions.
               </h3>
-              <a
-                href="https://www.balance.capital/blog/usdb-stablecoin-and-how-it-stands-apart"
-                className={style["heroLink"]}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Learn more
-                <Icon component={CallMadeIcon} className={style["linkArrow"]} />
-              </a>
+              <Box className="flex">
+                <a
+                  href="https://indacoin.io/buy-usd%20balance-with-card"
+                  className={style["heroLink"]}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={
+                    themeType === "light"
+                      ? {
+                          background: "black",
+                          color: "white",
+                        }
+                      : { background: "white", color: "black" }
+                  }
+                >
+                  Buy USDB
+                  <Icon component={CallMadeIcon} className={style["linkArrow"]} />
+                </a>
+                <a
+                  href="https://www.balance.capital/blog/usdb-stablecoin-and-how-it-stands-apart"
+                  className={style["heroLink"]}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    opacity: 0.7,
+                    ...(themeType === "light"
+                      ? { background: "white", color: "black" }
+                      : {
+                          background: "black",
+                          color: "white",
+                        }),
+                  }}
+                >
+                  Learn more
+                  <Icon component={CallMadeIcon} className={style["linkArrow"]} />
+                </a>
+              </Box>
             </Box>
           </Grid>
         </Grid>
