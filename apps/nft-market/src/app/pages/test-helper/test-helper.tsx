@@ -192,8 +192,8 @@ export const TestHelper = (): JSX.Element => {
       <Box>
         {Object.entries(currencyInfo).map(([key, currencyDetails]) => (
           <Button
-            href={`https://rinkeby.etherscan.io/address/${
-              currencyDetails.addresses[NetworkIds.Rinkeby]
+            href={`https://goerli.etherscan.io/address/${
+              currencyDetails.addresses[NetworkIds.Goerli]
             }#writeContract`}
             target="_blank"
             key={`mint-helper-${currencyDetails.symbol}`}

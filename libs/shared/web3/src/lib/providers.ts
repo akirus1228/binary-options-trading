@@ -127,6 +127,18 @@ const allChains: AllChainDetails = {
     blockExplorerUrls: ["https://rinkeby.etherscan.io/"],
     multicallAddress: "0x5ba1e12693dc8f9c48aad8770482f4739beed696",
   },
+  [NetworkIds.Goerli]: new ChainDetails({
+    networkName: "Goerli",
+    rpcUrls: [
+      "https://eth-goerli.public.blastapi.io",
+      "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      "https://rpc.ankr.com/eth_goerli",
+    ],
+    symbol: "ETH",
+    decimals: 18,
+    blockExplorerUrls: ["https://goerli.etherscan.io/"],
+    multicallAddress: "0x5ba1e12693dc8f9c48aad8770482f4739beed696",
+  }),
   [NetworkIds.Avalanche]: {
     networkName: "Avalanche Network",
     rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
@@ -157,10 +169,12 @@ const enableNetworkIds = (process.env["ENABLE_NETWORK_IDS"] || "")
 
 const availableChains: AllChainDetails = {};
 if (!enableNetworkIds.length) {
+  // eslint-disable-next-line array-callback-return
   Object.keys(allChains).map((key: string) => {
     availableChains[Number(key)] = new ChainDetails(allChains[Number(key)]);
   });
 } else {
+  // eslint-disable-next-line array-callback-return
   enableNetworkIds.map((networkId: string) => {
     availableChains[Number(networkId)] = new ChainDetails(allChains[Number(networkId)]);
   });

@@ -680,18 +680,23 @@ export const backendApi = createApi({
     }),
     getNftCollections: builder.query<
       {
-        name: string;
-        slug: string;
-        imageUrl: string;
-        contractAddress: string;
-        numNftsOwned: 105;
-      }[],
+        data: {
+          name: string;
+          slug: string;
+          imageUrl: string;
+          contractAddress: string;
+          numNftsOwned: 105;
+        }[];
+      },
       {
         wallet: string;
+        limit?: number;
       }
     >({
       query: (queryParams) => ({
-        url: `collection/fetchAllByWallet/${queryParams.wallet}`,
+        url: `collection/fetchAllByWallet?walletAddress=${queryParams.wallet}&limit=${
+          queryParams.limit || 50
+        }`,
       }),
     }),
   }),

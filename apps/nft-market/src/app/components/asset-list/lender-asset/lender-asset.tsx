@@ -77,7 +77,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
+      url: `https://${isDev ? "goerli." : ""}etherscan.io/token/${
         asset?.assetContractAddress
       }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
@@ -90,7 +90,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       url: `${
         !isDev
           ? "https://opensea.io/assets/ethereum/"
-          : "https://testnets.opensea.io/assets/rinkeby/"
+          : "https://testnets.opensea.io/assets/goerli/"
       }${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,
@@ -275,7 +275,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           }}
         >
           <Box
-            className="flex fr fj-sb w100"
+            className={`${style["asset-loan-info"]} w100`}
             sx={{
               alignItems: "top",
               flexFlow: {
@@ -285,7 +285,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           >
             <Box
               sx={{
-                width: "50%",
+                flex: 1,
                 flexFlow: "wrap",
                 alignItems: "center",
                 alignContent: "center",
@@ -318,7 +318,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
             <Box
               className={style["interestElem"]}
               sx={{
-                width: "50%",
+                flex: 1,
                 flexFlow: "wrap",
               }}
             >

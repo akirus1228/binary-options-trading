@@ -124,7 +124,16 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }} fullWidth>
+    <Dialog
+      onClose={() => {
+        if (!isPending) {
+          handleClose();
+        }
+      }}
+      open={open}
+      sx={{ padding: "1.5em" }}
+      fullWidth
+    >
       <Box className="flex fr fj-c">
         <h1 style={{ margin: "0 0 0.5em 0" }}>Cancel listing</h1>
       </Box>
@@ -132,7 +141,12 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
         className={`flex fr fj-fe ${style["header"]}`}
         sx={{ position: "absolute", right: "16px" }}
       >
-        <IconButton onClick={handleClose}>
+        <IconButton
+          disabled={isPending}
+          onClick={() => {
+            handleClose();
+          }}
+        >
           <CancelOutlinedIcon />
         </IconButton>
       </Box>

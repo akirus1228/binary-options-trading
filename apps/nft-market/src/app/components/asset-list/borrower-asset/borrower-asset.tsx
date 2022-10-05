@@ -67,7 +67,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
+      url: `https://${isDev ? "goerli." : ""}etherscan.io/token/${
         asset?.assetContractAddress
       }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
@@ -80,7 +80,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       url: `${
         !isDev
           ? "https://opensea.io/assets/ethereum/"
-          : "https://testnets.opensea.io/assets/rinkeby/"
+          : "https://testnets.opensea.io/assets/goerli/"
       }${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,
