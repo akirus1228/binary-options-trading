@@ -17,13 +17,25 @@ export const EarningView = (): JSX.Element => {
   const isDesktop = useMediaQuery("(min-width:767px)");
 
   const [claimableAmount, setClaimableAmount] = useState<number>(0);
+  const [totalAmounts, setTotalAmounts] = useState<number>(0);
+
   useEffect(() => {
     let sum = 0;
+    let sum_claimed = 0;
+    // fee: cumulative amount
+    // total: claimed amount
     data.data.affiliateFees?.map((fee) => {
       sum += parseFloat(formatUnits(BigNumber.from(fee.fee), fee.decimals)) * fee.price;
     });
-    setClaimableAmount(sum);
+    data.data.totalAmounts?.map((token) => {
+      sum_claimed +=
+        parseFloat(formatUnits(token.amount, token.token.decimals)) *
+        token.token.lastPrice;
+    });
+    setClaimableAmount(sum - sum_claimed);
+    setTotalAmounts(sum_claimed);
   }, [data]);
+
   return (
     <>
       <Box
@@ -128,7 +140,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(data?.data?.totalAmounts || 0)}
+              }).format(totalAmounts || 0)}
             </Typography>
           </Paper>
         </Grid>

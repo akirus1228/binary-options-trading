@@ -1,19 +1,17 @@
-import {
-  getMerkleDistributorAddress,
-  loadState,
-  networks,
-  saveState,
-} from "@fantohm/shared-web3";
+import { getMerkleDistributorAddress, networks } from "@fantohm/shared-web3";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BigNumber, ContractReceipt, ContractTransaction, ethers, Event } from "ethers";
 import { BackendApi } from "../../api";
-import { currencyInfo, getErc20CurrencyFromAddress } from "../../helpers/erc20Currency";
+import {
+  currencyInfo,
+  erc20Currency,
+  getErc20CurrencyFromAddress,
+} from "../../helpers/erc20Currency";
 import { AffiliateData } from "../../types/backend-types";
 import { ClaimFeesAsyncThunk } from "./interfaces";
 import { RepayLoanEvent } from "./loan-slice";
 import { merkleDistributor, ierc721Abi } from "@fantohm/shared-web3";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { formatUnits } from "ethers/lib/utils";
 export type AffiliateState = {
   data: AffiliateData;
   status: "pending" | "ready" | "failed";
@@ -172,21 +170,25 @@ export const getTotalClaimedAmounts = createAsyncThunk(
       signer
     );
 
-    let sum = 0;
+    // let sum = 0;
 
-    await Promise.all(
+    const totalClaimedAmounts = await Promise.all(
       Object.entries(currencyInfo).map(async ([tokenId, currencyDetails]) => {
         const tokenAddress = currencyDetails.addresses[networkId];
         const user = await signer.getAddress();
         const amount = await affiliateContract["claimedAmount"](user, tokenAddress);
         const currentCurrency = getErc20CurrencyFromAddress(tokenAddress);
         await currentCurrency.wait();
-        sum +=
-          parseFloat(formatUnits(amount, currentCurrency.decimals)) *
-          currentCurrency.lastPrice;
+        return {
+          token: currentCurrency,
+          amount,
+        };
+        // sum +=
+        //   parseFloat(formatUnits(amount, currentCurrency.decimals)) *
+        //   currentCurrency.lastPrice;
       })
     );
-    return sum;
+    return totalClaimedAmounts;
   }
 );
 
@@ -246,7 +248,7 @@ export const affilateSlice = createSlice({
     });
     builder.addCase(
       getTotalClaimedAmounts.fulfilled,
-      (state, action: PayloadAction<number>) => {
+      (state, action: PayloadAction<{ token: erc20Currency; amount: BigNumber }[]>) => {
         state.status = "ready";
         state.data = {
           ...state.data,

@@ -4,7 +4,6 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { DaiToken, UsdtToken, UsdcToken, USDBToken } from "@fantohm/shared/images";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,7 +14,7 @@ import { Avatar, CircularProgress } from "@mui/material";
 import { AffiliateData, AffiliateFee } from "../../types/backend-types";
 import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useWeb3Context } from "@fantohm/shared-web3";
 import { useDispatch } from "react-redux";
 import { claimFees } from "../../store/reducers/affiliate-slice";
@@ -50,9 +49,41 @@ export const ClaimModal = ({
 }) => {
   const { address, provider, chainId } = useWeb3Context();
   const [isPending, setPending] = useState<boolean>(false);
+  const [isClaimable, setClaimable] = useState<boolean>(false);
+
   const dispatch: AppDispatch = useDispatch();
 
   const handleClose = () => setOpen(false);
+  const [claimableFeeData, setClaimableFeeData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (data) {
+      let sum = 0;
+      let sum_claimed = 0;
+      // fee: cumulative amount
+      // total: claimed amount
+      console.log("___: ", data.affiliateFees, data.totalAmounts);
+      const _claimableFeeData = data.affiliateFees?.map((fee) => {
+        sum += parseFloat(formatUnits(BigNumber.from(fee.fee), fee.decimals)) * fee.price;
+        const claimedAmountData = data.totalAmounts?.find(
+          (token) =>
+            token.token.currentAddress.toLowerCase() === fee.currency.toLowerCase()
+        );
+        return {
+          ...fee,
+          fee: parseFloat(fee.fee) - (claimedAmountData?.amount?.toNumber() || 0),
+        };
+      });
+
+      data.totalAmounts?.map((token) => {
+        sum_claimed +=
+          parseFloat(formatUnits(token.amount, token.token.decimals)) *
+          token.token.lastPrice;
+      });
+      setClaimable(sum - sum_claimed > 0);
+      setClaimableFeeData(_claimableFeeData || []);
+    }
+  }, [data]);
 
   const onClaim = useCallback(async () => {
     if (address && provider && chainId) {
@@ -117,8 +148,8 @@ export const ClaimModal = ({
                 </TableHead>
                 <TableBody>
                   {data &&
-                    data.affiliateFees &&
-                    data.affiliateFees?.map((row: AffiliateFee, index: number) => (
+                    claimableFeeData &&
+                    claimableFeeData?.map((row: AffiliateFee, index: number) => (
                       <TableRow key={`claim-list-${index}`} sx={{ border: 0 }}>
                         <TableCell sx={{ display: "flex", gap: "5px" }}>
                           <Avatar
@@ -147,7 +178,7 @@ export const ClaimModal = ({
               </Table>
             </TableContainer>
             {!isPending && (
-              <Button variant="contained" onClick={onClaim}>
+              <Button variant="contained" onClick={onClaim} disabled={!isClaimable}>
                 Claim fees
               </Button>
             )}

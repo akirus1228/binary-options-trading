@@ -1,6 +1,8 @@
 import { NftPortAsset } from "../api/nftport";
 import { OpenseaAsset, OpenseaCollection } from "./opensea-types";
 import { ReservoirToken } from "../api/reservoir";
+import { erc20Currency } from "../helpers/erc20Currency";
+import { BigNumber } from "ethers";
 
 // request types
 export type CreateListingRequest = {
@@ -52,7 +54,10 @@ export type AffiliateData = {
   affiliateFees?: AffiliateFee[];
   proofs?: string[][];
   isBonus?: boolean;
-  totalAmounts?: number;
+  totalAmounts?: {
+    token: erc20Currency;
+    amount: BigNumber;
+  }[];
 };
 
 export type SaveAffiliateResponse = {
