@@ -13,7 +13,6 @@ import {
 } from "@fantohm/shared-web3";
 import { Header, Footer } from "./components/template";
 // import { Messages } from "./components/messages/messages";
-import { HomePage } from "./pages/home/home-page";
 import { RootState } from "./store";
 import { BorrowPage } from "./pages/borrow-page/borrow-page";
 import { LendPage } from "./pages/lend-page/lend-page";
@@ -23,7 +22,7 @@ import MyAccountLoans from "./pages/my-account-page/my-account-loans/my-account-
 import MyAccountOffers from "./pages/my-account-page/my-account-offers/my-account-offers";
 import MyAccountAssets from "./pages/my-account-page/my-account-assets/my-account-assets";
 import MyAccountActivity from "./pages/my-account-page/my-account-activity/my-account-activity";
-import { loadAppDetails, setCheckedConnection } from "./store/reducers/app-slice";
+import { setCheckedConnection } from "./store/reducers/app-slice";
 import { authorizeAccount, logout } from "./store/reducers/backend-slice";
 import Typography from "@mui/material/Typography";
 import { AssetDetailsPage } from "./pages/asset-details-page/asset-details-page";
@@ -175,9 +174,6 @@ export const App = (): JSX.Element => {
   };
 
   useEffect(() => {
-    // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
-    dispatch(loadAppDetails());
-
     window.addEventListener("focus", onFocus);
     window.addEventListener("blur", onBlur);
     // Specify how to clean up after this effect:
