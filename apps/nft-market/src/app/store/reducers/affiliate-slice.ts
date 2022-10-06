@@ -19,17 +19,12 @@ export type AffiliateState = {
   status: "pending" | "ready" | "failed";
 };
 
-const previousState = loadState("affiliate");
 const initialState: AffiliateState = {
-  ...previousState,
   data: {
     referralCode: "",
     referredAddresses: [],
-    totalClaimedAmount: 0,
-    claimableTokens: [],
   },
   status: "pending",
-  totalAmounts: 0,
 };
 /*
 Referral data: 
@@ -66,7 +61,6 @@ export const getAffiliateFees = createAsyncThunk(
         thisState.backend.authSignature,
         address
       );
-      console.log("affiliateFees: ", response, response.affiliateFees);
       if (response && response.affiliateFees) {
         const feeData = await Promise.all(
           response.affiliateFees.map(async (fee) => {
@@ -207,14 +201,12 @@ export const affilateSlice = createSlice({
     builder.addCase(
       getAffiliateAddresses.fulfilled,
       (state, action: PayloadAction<AffiliateData | undefined>) => {
-        console.log("affilateFullfiled: ", action.payload);
         if (action.payload) {
           state.status = "ready";
           state.data = {
             ...state.data,
             ...action.payload,
           };
-          console.log("fullfillState: ", state);
         }
       }
     );
@@ -233,7 +225,6 @@ export const affilateSlice = createSlice({
             ...state.data,
             ...action.payload,
           };
-          console.log("fullfillState: ", state);
         }
       }
     );
@@ -243,7 +234,6 @@ export const affilateSlice = createSlice({
     builder.addCase(
       getPassBonusable.fulfilled,
       (state, action: PayloadAction<boolean>) => {
-        console.log("bonus: ", action);
         state.status = "ready";
         state.data = {
           ...state.data,
@@ -257,7 +247,6 @@ export const affilateSlice = createSlice({
     builder.addCase(
       getTotalClaimedAmounts.fulfilled,
       (state, action: PayloadAction<number>) => {
-        console.log("bonus: ", action);
         state.status = "ready";
         state.data = {
           ...state.data,

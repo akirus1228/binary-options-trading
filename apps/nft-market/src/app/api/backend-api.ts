@@ -100,7 +100,6 @@ export const getAffiliateAddresses = async (
       },
     })
     .then((resp: AxiosResponse<any>) => {
-      console.log("getAffilate-backendapi: ", resp);
       return {
         referredAddresses: resp.data.data,
       };
@@ -122,8 +121,6 @@ export const getAffiliateFees = async (
       },
     })
     .then((resp: AxiosResponse<any>) => {
-      console.log("getAffilateFee-backendapi: ", resp);
-      // mockup
       return {
         affiliateFees: resp.data.affiliateFees,
         proofs: resp.data.proofs,

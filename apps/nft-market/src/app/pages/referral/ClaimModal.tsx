@@ -83,6 +83,7 @@ export const ClaimModal = ({
         dispatch(addAlert(notification));
       } finally {
         setPending(false);
+        setOpen(false);
       }
     }
   }, [address, provider, chainId, data]);

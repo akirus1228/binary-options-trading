@@ -69,7 +69,7 @@ export const Referral = (): JSX.Element => {
 
   useEffect(() => {
     if (address && connected && provider && chainId) {
-      // dispatch(getAffiliateAddresses(address));
+      dispatch(getAffiliateAddresses(address));
       dispatch(getAffiliateFees(address));
       dispatch(getPassBonusable({ provider, networkId: chainId }));
       dispatch(getTotalClaimedAmounts({ provider, networkId: chainId }));

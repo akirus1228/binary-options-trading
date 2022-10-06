@@ -24,7 +24,6 @@ export const EarningView = (): JSX.Element => {
     });
     setClaimableAmount(sum);
   }, [data]);
-  console.log("earningView: ", data.data);
   return (
     <>
       <Box
