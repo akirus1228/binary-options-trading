@@ -41,8 +41,10 @@ export const BalanceVaultItem = ({
     <PaperTableRow className={`${style["row"]} ${rowThemeMod}`}>
       <PaperTableCell key="vaultName" className={style["offerElem"]}>
         <Box sx={{ display: "flex" }}>
-          <Avatar src={Type.ownerContacts[0]} sx={{ height: 43, width: 43, mr: 10 }} />
-          <Box className="flex fr ai-c">{Type.ownerInfos[0]}</Box>
+          <Avatar src={Type.ownerContacts[0]} sx={{ height: 43, width: 43, mr: 3 }} />
+          <Box className="flex fr ai-c" sx={{ mr: 2 }}>
+            {Type.ownerInfos[0]}
+          </Box>
         </Box>
       </PaperTableCell>
       <PaperTableCell key="vaultAmount" className={style["offerElem"]}>
