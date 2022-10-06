@@ -498,7 +498,11 @@ export const NotificationMessage = ({
             : OfferRemovedBorrower;
         break;
     }
-    return <MsgType {...msgParams} />;
+    if (MsgType) {
+      return <MsgType {...msgParams} />;
+    } else {
+      return <></>;
+    }
   }, [notification.context, asset, borrower, lender, terms, short]);
 
   const handleRecordClick = useCallback(() => {
