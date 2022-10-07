@@ -7,7 +7,6 @@ import {
   BscIcon,
   MoonBaseAlphaIcon,
 } from "@fantohm/shared-ui-themes";
-import { isDev } from "./helpers";
 
 export type NetworkId = number;
 
@@ -361,7 +360,10 @@ export const networks: INetworks = {
       USDT_ADDRESS: "0x0265e9fEA16431C84BF3916276cA64102e19b356", //old: 0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02
       CRYPTOPUNKS_ADDRESS: "0x0000000000000000000000000000000000000000",
     },
-    USDB_LENDING_ADDRESSES: ["0x1888BB30f9EdD63b265942F3E3D061F186f38079"],
+    USDB_LENDING_ADDRESSES: [
+      "0x1888BB30f9EdD63b265942F3E3D061F186f38079",
+      "0x71828E1A0b634c7A661dFC2B4Ae8486d3a88B15d",
+    ],
   },
   [NetworkIds.Ethereum]: {
     name: "Ethereum",
@@ -409,6 +411,7 @@ export const networks: INetworks = {
       "0x6685691e0370d9b6FC70421D7a64071Ed1E2fb2f",
       "0x9e05F7408AE8132D9CA2bab641423ffEfAAA43f9",
       "0xc001160D7e90e8534Aa6d719d20F0E5425c25B40",
+      "0x3b566779ad1D85928DD8af235bDE0c00049CFB9A",
     ],
   },
   [NetworkIds.Bsc]: {

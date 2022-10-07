@@ -178,8 +178,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
     })
   );
 
-  console.log("allownce: ", erc20Allowance);
-
   const amountGwei = useMemo(() => {
     const [integerPart, decimalPart] = amount.split(".");
     if (
@@ -641,7 +639,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
             >
               {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => {
                 // Hide usdb
-                if (tokenId.toLowerCase() == "usdb_address") {
+                if (tokenId.toLowerCase() === "usdb_address") {
                   return null;
                 }
                 return (

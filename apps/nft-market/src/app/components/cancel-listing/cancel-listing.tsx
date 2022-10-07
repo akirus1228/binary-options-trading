@@ -30,14 +30,7 @@ export const CancelListing = (props: CancelListingProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const { address, chainId, provider } = useWeb3Context();
   // update term backend api call
-  const [
-    updateListingApi,
-    {
-      isLoading: isDeleteListingLoading,
-      data: updateListingResponse,
-      reset: updateListingReset,
-    },
-  ] = useUpdateListingMutation();
+  const [updateListingApi] = useUpdateListingMutation();
   // primary form pending state
   const [isPending, setIsPending] = useState(false);
 
