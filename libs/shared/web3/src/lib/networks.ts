@@ -409,6 +409,7 @@ export const networks: INetworks = {
       "0x6685691e0370d9b6FC70421D7a64071Ed1E2fb2f",
       "0x9e05F7408AE8132D9CA2bab641423ffEfAAA43f9",
       "0xc001160D7e90e8534Aa6d719d20F0E5425c25B40",
+      "0x3b566779ad1D85928DD8af235bDE0c00049CFB9A",
     ],
   },
   [NetworkIds.Bsc]: {
