@@ -223,6 +223,16 @@ export const assetAryToAssets = (assetAry: Asset[]): Assets => {
   return assets;
 };
 
+export const checkNullAsset = (asset: Asset): boolean => {
+  return (
+    asset.thumbUrl !== "" ||
+    asset.imageUrl !== "" ||
+    asset.videoUrl !== "" ||
+    asset.gifUrl !== "" ||
+    asset.threeDUrl !== ""
+  );
+};
+
 // convert Listing[] to Listings
 export const listingAryToListings = (listingAry: Listing[]): Listings => {
   const listings: Listings = {};

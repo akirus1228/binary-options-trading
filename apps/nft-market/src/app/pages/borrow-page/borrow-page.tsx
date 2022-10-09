@@ -152,12 +152,18 @@ export const BorrowPage = (): JSX.Element => {
     setNftPortQuery({ ...nftPortQuery, continuation: continuation });
   };
 
-  const blurAsset = myAssets.find((asset) => asset.imageUrl || asset.gifUrl);
+  const blurAsset = myAssets.find(
+    (asset) => asset?.imageUrl || asset?.gifUrl || asset?.threeDUrl
+  );
 
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
-        url={myAssets.length > 0 ? blurAsset?.imageUrl || blurAsset?.gifUrl : undefined}
+        url={
+          myAssets.length > 0
+            ? blurAsset?.imageUrl || blurAsset?.gifUrl || blurAsset?.threeDUrl
+            : ""
+        }
         height="300px"
       />
       <Box className="flex fr fj-sb ai-c">

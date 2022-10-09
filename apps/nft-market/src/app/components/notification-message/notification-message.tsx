@@ -517,7 +517,7 @@ export const NotificationMessage = ({
         style={{ width: "100%", justifyContent: "space-between" }}
       >
         <Avatar
-          src={asset ? asset.imageUrl || "" : ""}
+          src={asset ? asset?.imageUrl || asset?.gifUrl || asset?.threeDUrl || "" : ""}
           sx={{ mr: "1em", borderRadius: "50%" }}
           variant="circular"
         />

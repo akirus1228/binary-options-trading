@@ -71,7 +71,12 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
         <Avatar
           className="squared"
           alt={loan.assetListing.asset.name || ""}
-          src={loan.assetListing.asset.imageUrl || ""}
+          src={
+            loan.assetListing.asset?.imageUrl ||
+            loan.assetListing.asset?.gifUrl ||
+            loan.assetListing.asset?.threeDUrl ||
+            ""
+          }
         />
       </PaperTableCell>
       <PaperTableCell>

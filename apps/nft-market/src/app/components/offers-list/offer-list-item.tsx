@@ -439,7 +439,16 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       case OffersListFields.EXPIRATION:
         return offerExpires;
       case OffersListFields.ASSET:
-        return <Avatar src={offer.assetListing.asset.imageUrl || ""} />;
+        return (
+          <Avatar
+            src={
+              offer.assetListing.asset?.imageUrl ||
+              offer.assetListing.asset?.gifUrl ||
+              offer.assetListing.asset?.threeDUrl ||
+              ""
+            }
+          />
+        );
       case OffersListFields.NAME:
         return (
           <Link

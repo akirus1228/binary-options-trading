@@ -24,6 +24,7 @@ import {
 } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { AppDispatch, RootState } from "../../store";
+import { checkNullAsset } from "../../helpers/data-translations";
 import {
   AssetStatus,
   CollectibleMediaType,
@@ -36,7 +37,7 @@ import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import style from "./asset-details.module.scss";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../assets/icons/etherscan-dark.svg";
@@ -71,7 +72,7 @@ export const AssetDetails = ({
     tokenId,
   });
   const [isPending, setIsPending] = useState(false);
-  const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
+  const [resetPartialLoan, { reset: resetResetPartialLoan }] =
     useResetPartialLoanMutation();
   const { data: loans } = useGetLoansQuery(
     {
@@ -156,7 +157,7 @@ export const AssetDetails = ({
   return (
     <Container sx={sx} className={style["assetRow"]}>
       {/* <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} /> */}
-      {asset && (asset.thumbUrl !== "" || asset.imageUrl !== "") ? (
+      {asset && checkNullAsset(asset) ? (
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
@@ -165,8 +166,16 @@ export const AssetDetails = ({
                   <source src={asset.videoUrl} />
                 </video>
               )}
-              {(asset.mediaType === CollectibleMediaType.Image ||
-                asset.mediaType === CollectibleMediaType.Gif) && (
+              {asset.mediaType === CollectibleMediaType.Gif && asset.gifUrl && (
+                <img src={asset.gifUrl || ""} alt={asset.name || "unknown"} />
+              )}
+              {asset.mediaType === CollectibleMediaType.ThreeD && asset.threeDUrl && (
+                <img src={asset.threeDUrl || ""} alt={asset.name || "unknown"} />
+              )}
+              {asset.mediaType === CollectibleMediaType.Gif && asset.gifUrl && (
+                <img src={asset.gifUrl || ""} alt={asset.name || "unknown"} />
+              )}
+              {asset.mediaType === CollectibleMediaType.Image && asset.imageUrl && (
                 <img src={asset.imageUrl || ""} alt={asset.name || "unknown"} />
               )}
               {asset.mediaType === CollectibleMediaType.Audio && asset.videoUrl && (
@@ -181,11 +190,7 @@ export const AssetDetails = ({
                 </Box>
               )}
               {asset.mediaType === CollectibleMediaType.Html && asset.videoUrl && (
-                <iframe
-                  src={asset.videoUrl}
-                  frameBorder="0"
-                  className={style["iframe"]}
-                />
+                <iframe src={asset.videoUrl} className={style["iframe"]} />
               )}
             </Box>
           </Grid>
