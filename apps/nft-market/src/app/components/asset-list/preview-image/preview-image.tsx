@@ -73,7 +73,11 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
         </Box>
       )}
       {asset.mediaType === CollectibleMediaType.Html && asset.videoUrl && (
-        <iframe title={asset?.name} src={asset.videoUrl} className={style["iframe"]} />
+        <iframe
+          title={asset?.name || ""}
+          src={asset.videoUrl}
+          className={style["iframe"]}
+        />
       )}
     </Box>
   );
