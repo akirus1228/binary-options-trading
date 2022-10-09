@@ -172,9 +172,6 @@ export const AssetDetails = ({
               {asset.mediaType === CollectibleMediaType.ThreeD && asset.threeDUrl && (
                 <img src={asset.threeDUrl || ""} alt={asset.name || "unknown"} />
               )}
-              {asset.mediaType === CollectibleMediaType.Gif && asset.gifUrl && (
-                <img src={asset.gifUrl || ""} alt={asset.name || "unknown"} />
-              )}
               {asset.mediaType === CollectibleMediaType.Image && asset.imageUrl && (
                 <img src={asset.imageUrl || ""} alt={asset.name || "unknown"} />
               )}
