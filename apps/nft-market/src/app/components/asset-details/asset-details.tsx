@@ -43,7 +43,6 @@ import etherScanDark from "../../../assets/icons/etherscan-dark.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import BlueChip from "../../../assets/icons/blue-chip.svg";
 import PriceInfo from "./price-info/price-info";
-import { useBestImage } from "../../hooks/use-best-image";
 import { addAlert } from "../../store/reducers/app-slice";
 import { useMediaQuery } from "@mui/material";
 
@@ -65,7 +64,6 @@ export const AssetDetails = ({
   const { authSignature } = useSelector((state: RootState) => state.backend);
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const asset = useWalletAsset(contractAddress, tokenId);
-  const imageUrl = useBestImage(asset, Math.floor(window.innerWidth * 0.75));
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const { data: collections } = useGetCollectionsQuery({});
   const { data: nftPrices } = useGetNftPriceQuery({
@@ -169,11 +167,11 @@ export const AssetDetails = ({
               )}
               {(asset.mediaType === CollectibleMediaType.Image ||
                 asset.mediaType === CollectibleMediaType.Gif) && (
-                <img src={imageUrl} alt={asset.name || "unknown"} />
+                <img src={asset.imageUrl || ""} alt={asset.name || "unknown"} />
               )}
               {asset.mediaType === CollectibleMediaType.Audio && asset.videoUrl && (
                 <Box sx={{ width: "100%", background: "#dfdada" }}>
-                  <img src={imageUrl} alt={asset.name || "unknown"} />
+                  <img src={asset.imageUrl || ""} alt={asset.name || "unknown"} />
                   <audio
                     controls
                     src={asset.videoUrl}

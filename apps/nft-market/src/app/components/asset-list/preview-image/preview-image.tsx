@@ -1,7 +1,6 @@
 import { useMediaQuery } from "@material-ui/core";
 import { Box } from "@mui/material";
 
-import { useBestImage } from "../../../hooks/use-best-image";
 import { Asset, CollectibleMediaType } from "../../../types/backend-types";
 import style from "./preview-image.module.scss";
 
@@ -12,7 +11,6 @@ export interface PreviewImageProps {
 export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
   const isTablet = useMediaQuery("(min-width:576px)");
   const { asset } = props;
-  const imageUrl = useBestImage(asset, 1024);
   return (
     <Box
       sx={{
@@ -26,7 +24,7 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
         (asset.gifUrl || asset.imageUrl || asset.frameUrl || asset.thumbUrl) && (
           <img
             className={style["assetImg"]}
-            src={imageUrl || ""}
+            src={asset.imageUrl || ""}
             alt={props.asset?.name || ""}
             style={{
               height: "100%",
@@ -42,10 +40,10 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
             <source src={asset.videoUrl} />
           </video>
         )}
-      {asset.mediaType === CollectibleMediaType.Image && imageUrl && (
+      {asset.mediaType === CollectibleMediaType.Image && asset?.imageUrl && (
         <img
           className={style["assetImg"]}
-          src={imageUrl || ""}
+          src={asset.imageUrl || ""}
           alt={props.asset?.name || ""}
           style={{
             height: "100%",
