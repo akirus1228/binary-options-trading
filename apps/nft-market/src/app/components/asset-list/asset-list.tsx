@@ -1,5 +1,5 @@
 import { Box, CircularProgress, SxProps, Theme } from "@mui/material";
-// import style from "./asset-list.module.scss";
+import { checkNullAsset } from "../../helpers/data-translations";
 import BorrowerAsset from "./borrower-asset/borrower-asset";
 import { Asset } from "../../types/backend-types";
 import LenderAsset from "./lender-asset/lender-asset";
@@ -18,6 +18,7 @@ export interface AssetListProps {
 
 export const AssetList = (props: AssetListProps): JSX.Element => {
   const AssetThumb = props.type === "lend" ? LenderAsset : BorrowerAsset;
+  const filteredAsset = props?.assets.filter((asset: Asset) => checkNullAsset(asset));
   const defaultFn = useCallback(() => {
     console.log("checking for more data");
   }, []);
@@ -38,11 +39,8 @@ export const AssetList = (props: AssetListProps): JSX.Element => {
         endMessage={<Box className="flex fw fr fj-c ai-c w100"></Box>}
         scrollableTarget={document.body}
       >
-        {props.assets.map((asset: Asset, index: number) => (
+        {filteredAsset.map((asset: Asset, index: number) => (
           <AssetThumb key={`asset-${index}`} asset={asset} />
-        ))}
-        {new Array(props.allAssetsCount - props.assets.length).map((_, index) => (
-          <span key={index} />
         ))}
       </InfiniteScroll>
     </Box>

@@ -22,7 +22,6 @@ import {
   LoanStatus,
 } from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
-import { useBestImage } from "../../hooks/use-best-image";
 
 export const BorrowPage = (): JSX.Element => {
   const take = 20;
@@ -153,15 +152,18 @@ export const BorrowPage = (): JSX.Element => {
     setNftPortQuery({ ...nftPortQuery, continuation: continuation });
   };
 
-  const blurImageUrl = useBestImage(
-    myAssets.find((asset) => asset.imageUrl || asset.gifUrl) ?? null,
-    300
+  const blurAsset = myAssets.find(
+    (asset) => asset?.imageUrl || asset?.gifUrl || asset?.threeDUrl
   );
 
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
-        url={myAssets.length > 0 ? blurImageUrl : undefined}
+        url={
+          myAssets.length > 0
+            ? blurAsset?.imageUrl || blurAsset?.gifUrl || blurAsset?.threeDUrl
+            : ""
+        }
         height="300px"
       />
       <Box className="flex fr fj-sb ai-c">
