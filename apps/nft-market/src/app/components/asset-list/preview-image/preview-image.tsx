@@ -21,7 +21,7 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
       }}
     >
       {asset.mediaType === CollectibleMediaType.Video && asset.videoUrl && (
-        <video controls autoPlay loop>
+        <video controls>
           <source src={asset.videoUrl} />
         </video>
       )}
@@ -64,12 +64,7 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
       {asset.mediaType === CollectibleMediaType.Audio && asset.videoUrl && (
         <Box sx={{ width: "100%", background: "#dfdada" }}>
           <img src={asset.imageUrl || ""} alt={asset.name || "unknown"} />
-          <audio
-            controls
-            src={asset.videoUrl}
-            autoPlay={true}
-            className={style["audio"]}
-          />
+          <audio controls src={asset.videoUrl} className={style["audio"]} />
         </Box>
       )}
       {asset.mediaType === CollectibleMediaType.Html && asset.videoUrl && (
