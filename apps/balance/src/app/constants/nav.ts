@@ -34,25 +34,16 @@ export const balanceheaderPages: Page[] = [
   { title: "USDB", href: "/about#usdb", params: { comingSoon: false } },
   { title: "Liqd NFTs", href: "https://www.liqdnft.com/", params: { comingSoon: false } },
   { title: "Dex", href: "https://app.fantohm.com/#/dex", params: { comingSoon: false } },
+  { title: "Vaults", href: "https://www.usdbalance.com/vault", params: { comingSoon: false } },
   {
     title: "Balance Pass",
     href: "/balancepass",
     params: { comingSoon: false },
   },
-  {
-    title: "Balance Pass Mint",
-    href: "/balancepass-mint",
-    params: { comingSoon: false },
-  },
   // {
-  //   title: "Balance Whitelist Mint",
-  //   href: "/balancewhitelistmint",
+  //   title: "Balance Pass Mint",
+  //   href: "/balancepass-mint",
   //   params: { comingSoon: false },
-  // },
-  // {
-  //   title: "Balance Public Mint",
-  //   href: "/balancepublicmint",
-  //   params: { comingSoon: true },
   // },
 ];
 
@@ -72,25 +63,16 @@ export const footerItems: FooterItem[] = [
         href: "https://app.fantohm.com/#/dex",
         params: { comingSoon: false },
       },
+      { title: "Vaults", href: "https://www.usdbalance.com/vault", params: { comingSoon: false } },
       {
         title: "Balance Pass",
         href: "/balancepass",
         params: { comingSoon: false },
       },
-      {
-        title: "Balance Pass Mint",
-        href: "/balancepass-mint",
-        params: { comingSoon: false },
-      },
       // {
-      //   title: "Balance Whitelist Mint",
-      //   href: "/balancewhitelistmint",
+      //   title: "Balance Pass Mint",
+      //   href: "/balancepass-mint",
       //   params: { comingSoon: false },
-      // },
-      // {
-      //   title: "Balance Public Mint",
-      //   href: "/balancepublicmint",
-      //   params: { comingSoon: true },
       // },
     ],
   },
