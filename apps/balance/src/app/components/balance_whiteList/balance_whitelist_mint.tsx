@@ -86,8 +86,8 @@ export const BalanceWhitelistMintPage = (
   ]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
-    console.log("connect", isDev());
-    connect(true, isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+    console.log("connect", isDev);
+    connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
   };
 
   const onClickDisconnect = () => {

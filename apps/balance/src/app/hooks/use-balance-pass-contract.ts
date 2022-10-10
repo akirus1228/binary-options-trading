@@ -32,7 +32,7 @@ export const useBpGetTimestampsQuery =
     useEffect(() => {
       console.log("address", address);
       console.log("provider", provider);
-      console.log("isDev", isDev());
+      console.log("isDev", isDev);
       console.log("bpContractAddress", bpContractAddress);
     }, [address, provider]);
 
