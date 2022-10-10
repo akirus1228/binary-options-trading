@@ -162,7 +162,7 @@ const allChains: AllChainDetails = {
   },
 };
 
-const enableNetworkIds = (process.env["ENABLE_NETWORK_IDS"] || "")
+const enableNetworkIds = (process.env["NX_ENABLE_NETWORK_IDS"] || "")
   .trim()
   .split(",")
   .filter((item) => !!item);
