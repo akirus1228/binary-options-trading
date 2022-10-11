@@ -13,7 +13,6 @@ import {
   AllAssetsResponse,
   AllListingsResponse,
   Asset,
-  CreateAssetResponse,
   CreateListingRequest,
   Listing,
   LoginResponse,
@@ -34,6 +33,8 @@ import {
   NftPrice,
   BackendNftAssetsQueryParams,
   BackendNftAssetsQueryResponse,
+  AffiliateData,
+  SaveAffiliateResponse,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -84,6 +85,79 @@ export const createListing = async (
     })
     .catch((error) => {
       return error;
+    });
+};
+
+export const getAffiliateAddresses = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/all?affiliate=${address}`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<any>) => {
+      return {
+        referredAddresses: resp.data.data,
+      };
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const getAffiliateFees = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/fee/${address}?proof=true`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<any>) => {
+      return {
+        affiliateFees: resp.data.affiliateFees,
+        proofs: resp.data.proofs,
+      };
+      // return resp.data;
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const saveAffiliate = async (
+  signature: string,
+  address: string,
+  referralCode: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate`;
+  return axios
+    .post(
+      url,
+      {
+        user: address,
+        affiliate: referralCode,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${signature}`,
+        },
+      }
+    )
+    .then((resp: AxiosResponse<SaveAffiliateResponse>): AffiliateData => {
+      return {
+        referralCode: resp.data.data.affiliate,
+      };
+    })
+    .catch((error) => {
+      return error.response.data.message;
     });
 };
 

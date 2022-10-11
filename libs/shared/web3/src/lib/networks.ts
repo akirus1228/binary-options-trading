@@ -105,6 +105,7 @@ export const networks: INetworks = {
       LQDR_USDB_POL_BOND_DEPOSITORY_ADDRESS: "",
       LQDR_USDB_LP_ADDRESS: "",
       USDB_DAI_LP_ADDRESS: "0xD5E946b5619fFf054c40D38c976f1d06C1e2fA82",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.FantomTestnet]: {
@@ -155,6 +156,7 @@ export const networks: INetworks = {
       // staking warmup manager: 0x8D4603d7302f2F962CCf6044A6AC2Dfd812B92bE
       // FHUD Minter: 0xA3b5fE35db679D21af9a499EE88231Ea9B656Cb8
       // mock oracle: 0xB85a387b0DfBFA6BAf834118C5478D9a8D418322
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.Moonriver]: {
@@ -201,6 +203,7 @@ export const networks: INetworks = {
       LQDR_ADDRESS: "",
       LQDR_USDB_POL_BOND_DEPOSITORY_ADDRESS: "",
       LQDR_USDB_LP_ADDRESS: "",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.MoonbaseAlpha]: {
@@ -259,6 +262,7 @@ export const networks: INetworks = {
       LQDR_ADDRESS: "",
       LQDR_USDB_POL_BOND_DEPOSITORY_ADDRESS: "",
       LQDR_USDB_LP_ADDRESS: "",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
   [NetworkIds.Rinkeby]: {
@@ -310,6 +314,8 @@ export const networks: INetworks = {
       // staking warmup manager: 0xeD1f984502f8773Ec950E2D006781D7ce33CEEE4
       // FHUD Minter: 0x139ffDD962A2d8D498a92aB33b31ed78397cbae2
       // twap oracle: 0xc9ca91fe0667bafd4289e082088e41ed86471d79
+      MERKLE_DISTRIBUTOR: "0x3418a0561F8c490CCA938efc974eEFb88eaa3445",
+      PASS_NFT_ADDRESS: "0x9Da418B0c5B41C1a2a3Bea87187deA99d768BCc6",
     },
     USDB_LENDING_ADDRESSES: [
       "0x388753E39938De4dc37594B2d77Ed2DeB9E36208",
@@ -359,6 +365,7 @@ export const networks: INetworks = {
       USDC_ADDRESS: "0xD87Ba7A50B2E7E660f678A895E4B72E7CB4CCd9C",
       USDT_ADDRESS: "0x0265e9fEA16431C84BF3916276cA64102e19b356", //old: 0xD9BA894E0097f8cC2BBc9D24D308b98e36dc6D02
       CRYPTOPUNKS_ADDRESS: "0x0000000000000000000000000000000000000000",
+      MERKLE_DISTRIBUTOR: "0x187Ec6F51CC8EAdb090127505fDC401Ef307408b",
     },
     USDB_LENDING_ADDRESSES: [
       "0x1888BB30f9EdD63b265942F3E3D061F186f38079",
@@ -406,6 +413,8 @@ export const networks: INetworks = {
       CRYPTOPUNKS_ADDRESS: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
       XFHM_ADDRESS: "",
       MASTERCHEF_ADDRESS: "",
+      MERKLE_DISTRIBUTOR: "",
+      PASS_NFT_ADDRESS: "0x3707CFddaE348F05bAEFD42406ffBa4B74Ec8D91",
     },
     USDB_LENDING_ADDRESSES: [
       "0x6685691e0370d9b6FC70421D7a64071Ed1E2fb2f",
@@ -449,6 +458,7 @@ export const networks: INetworks = {
       FHUD_ADDRESS: "0x0000000000000000000000000000000000000000",
       USDT_ADDRESS: "0x55d398326f99059ff775485246999027b3197955",
       DAI_ADDRESS: "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3",
+      MERKLE_DISTRIBUTOR: "",
     },
   },
 };

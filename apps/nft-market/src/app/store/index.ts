@@ -15,6 +15,7 @@ import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { backendApi } from "../api/backend-api";
 import { loansReducer } from "./reducers/loan-slice";
 import { currencyReducer } from "./reducers/currency-slice";
+import { affiliateReducer } from "./reducers/affiliate-slice";
 import { rtkQueryErrorLogger } from "./middleware/rtk-query-logger";
 
 // reducers are named automatically based on the name field in the slice
@@ -31,6 +32,7 @@ const store = configureStore({
     loans: loansReducer,
     account: accountReducer,
     currency: currencyReducer,
+    affiliate: affiliateReducer,
 
     [nftPortApi.reducerPath]: nftPortApi.reducer,
     [backendApi.reducerPath]: backendApi.reducer,
@@ -52,6 +54,7 @@ store.subscribe(() => {
   saveState("loans", store.getState().loans);
   saveState("account", store.getState().account);
   saveState("currency", store.getState().currency);
+  saveState("affiliate", store.getState().affiliate);
 });
 
 const accountInfo = (state: RootState) => state.account;

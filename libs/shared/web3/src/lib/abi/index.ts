@@ -76,6 +76,7 @@ import full_UsdbABondDepository from "./bonds/UsdbABondDepository.json";
 
 //nft-lending
 import full_UsdbLending from "./UsdbLending.json";
+import merkle_distributor from "./BalanceMerkleDistributor.json";
 
 export const balancerVaultAbi = full_BalancerVault.abi;
 export const balancerWeightedPoolAbi = full_BalancerWeightedPool.abi;
@@ -148,3 +149,4 @@ export const usdbABondDepositoryAbi = full_UsdbABondDepository.abi;
 
 //nft-lending
 export const usdbLending = full_UsdbLending.abi;
+export const merkleDistributor = merkle_distributor;

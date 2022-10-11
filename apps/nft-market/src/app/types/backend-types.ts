@@ -1,6 +1,8 @@
 import { NftPortAsset } from "../api/nftport";
 import { OpenseaAsset, OpenseaCollection } from "./opensea-types";
 import { ReservoirToken } from "../api/reservoir";
+import { erc20Currency } from "../helpers/erc20Currency";
+import { BigNumber } from "ethers";
 
 // request types
 export type CreateListingRequest = {
@@ -29,6 +31,42 @@ export type CreateListingResponse = {
   asset: Asset;
   status: ListingStatus;
 } & IncludesTerms;
+
+export type AffiliateFee = {
+  id: string;
+  affilate: string;
+  currency: string;
+  fee: string;
+  updatedAt: string;
+  price: number;
+  icon: string;
+  tokenName: string;
+  tokenSymbol: string;
+  decimals: number;
+};
+
+export type AffiliateData = {
+  referralCode?: string;
+  referredAddresses?: {
+    user: string;
+    affiliate: string;
+  }[];
+  affiliateFees?: AffiliateFee[];
+  proofs?: string[][];
+  isBonus?: boolean;
+  totalAmounts?: {
+    token: erc20Currency;
+    amount: BigNumber;
+  }[];
+};
+
+export type SaveAffiliateResponse = {
+  data: {
+    user: string;
+    affiliate: string;
+  };
+  success: boolean;
+};
 
 // data models
 export enum AssetStatus {
