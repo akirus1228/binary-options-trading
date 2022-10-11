@@ -4,14 +4,22 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { DaiToken, UsdtToken, UsdcToken, USDBToken } from "@fantohm/shared/images";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Avatar } from "@mui/material";
+import { Avatar, CircularProgress } from "@mui/material";
+import { AffiliateData, AffiliateFee } from "../../types/backend-types";
+import { BigNumber } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
+import { useCallback, useState, useEffect } from "react";
+import { useWeb3Context } from "@fantohm/shared-web3";
+import { useDispatch } from "react-redux";
+import { claimFees } from "../../store/reducers/affiliate-slice";
+import { AppDispatch } from "../../store";
+import { addAlert, GrowlNotification } from "../../store/reducers/app-slice";
 
 const style = {
   position: "absolute",
@@ -31,44 +39,85 @@ const style = {
 };
 
 export const ClaimModal = ({
+  data,
   open,
   setOpen,
 }: {
+  data?: AffiliateData;
   open: boolean;
   setOpen: (value: boolean) => void;
 }) => {
+  const { address, provider, chainId } = useWeb3Context();
+  const [isPending, setPending] = useState<boolean>(false);
+  const [isClaimable, setClaimable] = useState<boolean>(false);
+
+  const dispatch: AppDispatch = useDispatch();
+
   const handleClose = () => setOpen(false);
+  const [claimableFeeData, setClaimableFeeData] = useState<any[]>([]);
 
-  const claimInfo = [
-    {
-      token: "DAI",
-      icon: DaiToken,
-      amount: 50,
-      value: 50,
-    },
-    {
-      token: "USDC",
-      icon: UsdcToken,
-      amount: 50,
-      value: 50,
-    },
-    {
-      token: "USDT",
-      icon: UsdtToken,
-      amount: 50,
-      value: 50,
-    },
-    {
-      token: "USDB",
-      icon: USDBToken,
-      amount: 50,
-      value: 50,
-    },
-  ];
+  useEffect(() => {
+    if (data) {
+      let sum = 0;
+      let sum_claimed = 0;
+      // fee: cumulative amount
+      // total: claimed amount
+      console.log("___: ", data.affiliateFees, data.totalAmounts);
+      const _claimableFeeData = data.affiliateFees?.map((fee) => {
+        sum += parseFloat(formatUnits(BigNumber.from(fee.fee), fee.decimals)) * fee.price;
+        const claimedAmountData = data.totalAmounts?.find(
+          (token) =>
+            token.token.currentAddress.toLowerCase() === fee.currency.toLowerCase()
+        );
+        return {
+          ...fee,
+          fee: parseFloat(fee.fee) - (claimedAmountData?.amount?.toNumber() || 0),
+        };
+      });
 
-  const onClaim = () => {
-    console.log("claim:");
-  };
+      data.totalAmounts?.map((token) => {
+        sum_claimed +=
+          parseFloat(formatUnits(token.amount, token.token.decimals)) *
+          token.token.lastPrice;
+      });
+      setClaimable(sum - sum_claimed > 0);
+      setClaimableFeeData(_claimableFeeData || []);
+    }
+  }, [data]);
+
+  const onClaim = useCallback(async () => {
+    if (address && provider && chainId) {
+      try {
+        setPending(true);
+        await dispatch(
+          claimFees({
+            tokens: data?.affiliateFees?.map((fee) => fee.currency) || [],
+            fees: data?.affiliateFees?.map((fee) => fee.fee) || [],
+            proofs: data?.proofs || [],
+            provider,
+            networkId: chainId,
+          })
+        ).unwrap();
+        setPending(false);
+        const notification: Partial<GrowlNotification> = {
+          message: "Successfully claimed.",
+          duration: 2000,
+        };
+        dispatch(addAlert(notification));
+      } catch (e) {
+        console.log("claim_error: ", e);
+        const notification: Partial<GrowlNotification> = {
+          message: "Sorry. Something wroing",
+          duration: 2000,
+          severity: "error",
+        };
+        dispatch(addAlert(notification));
+      } finally {
+        setPending(false);
+        setOpen(false);
+      }
+    }
+  }, [address, provider, chainId, data]);
 
   return (
     <div>
@@ -98,31 +147,46 @@ export const ClaimModal = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {claimInfo.map((row, index) => (
-                    <TableRow key={`claim-list-${index}`} sx={{ border: 0 }}>
-                      <TableCell sx={{ display: "flex", gap: "5px" }}>
-                        <Avatar
-                          src={row.icon}
-                          sx={{ width: "24px", height: "24px" }}
-                          alt="icon"
-                        />
-                        <Typography>{row.token}</Typography>
-                      </TableCell>
-                      <TableCell align="center">{row.amount}</TableCell>
-                      <TableCell align="right">
-                        {new Intl.NumberFormat("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        }).format(row.value)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {data &&
+                    claimableFeeData &&
+                    claimableFeeData?.map((row: AffiliateFee, index: number) => (
+                      <TableRow key={`claim-list-${index}`} sx={{ border: 0 }}>
+                        <TableCell sx={{ display: "flex", gap: "5px" }}>
+                          <Avatar
+                            src={row.icon}
+                            sx={{ width: "24px", height: "24px" }}
+                            alt="icon"
+                          />
+                          <Typography>{row.tokenSymbol}</Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          {formatUnits(BigNumber.from(row.fee), row.decimals)}
+                        </TableCell>
+                        <TableCell align="right">
+                          {new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          }).format(
+                            parseFloat(
+                              formatUnits(BigNumber.from(row.fee), row.decimals)
+                            ) * row.price
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <Button variant="contained" onClick={onClaim}>
-              Claim fees
-            </Button>
+            {!isPending && (
+              <Button variant="contained" onClick={onClaim} disabled={!isClaimable}>
+                Claim fees
+              </Button>
+            )}
+            {isPending && (
+              <Button variant="contained">
+                <CircularProgress color="inherit" />
+              </Button>
+            )}
           </Box>
         </Fade>
       </Modal>

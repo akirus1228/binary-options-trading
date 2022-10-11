@@ -1,19 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Grid, Paper, Typography, useMediaQuery } from "@mui/material";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import BonusModal from "./BonusModal";
 import { ClaimModal } from "./ClaimModal";
-import { useReferralInfo } from "../../hooks/use-referral";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { getAccountAffiliateState } from "../../store/selectors/affilate-selectors";
+import { formatUnits, parseUnits } from "ethers/lib/utils";
+import { BigNumber } from "ethers";
 
 export const EarningView = (): JSX.Element => {
   const [bonusModalOpen, setBonusModalOpen] = useState<boolean>(false);
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
-  const [bonusActive, setBonusActive] = useState<boolean>(false);
 
-  const { referredUserCount, totalClaimedFeeAmount, claimableFeeAmount } =
-    useReferralInfo();
-
+  const data = useSelector((state: RootState) => getAccountAffiliateState(state));
   const isDesktop = useMediaQuery("(min-width:767px)");
+
+  const [claimableAmount, setClaimableAmount] = useState<number>(0);
+  const [totalAmounts, setTotalAmounts] = useState<number>(0);
+
+  useEffect(() => {
+    let sum = 0;
+    let sum_claimed = 0;
+    // fee: cumulative amount
+    // total: claimed amount
+    data.data.affiliateFees?.map((fee) => {
+      sum += parseFloat(formatUnits(BigNumber.from(fee.fee), fee.decimals)) * fee.price;
+    });
+    data.data.totalAmounts?.map((token) => {
+      sum_claimed +=
+        parseFloat(formatUnits(token.amount, token.token.decimals)) *
+        token.token.lastPrice;
+    });
+    setClaimableAmount(sum - sum_claimed);
+    setTotalAmounts(sum_claimed);
+  }, [data]);
 
   return (
     <>
@@ -61,7 +82,7 @@ export const EarningView = (): JSX.Element => {
             onClick={() => setBonusModalOpen(true)}
           >
             <Typography variant="subtitle2" component="span">
-              {bonusActive ? "Active" : "Inactive"}
+              {data.data.isBonus ? "Active" : "Inactive"}
             </Typography>
             <Box ml={1} display={"flex"}>
               <InfoIcon />
@@ -91,7 +112,7 @@ export const EarningView = (): JSX.Element => {
               </Box>
             </Box>
             <Typography style={{ fontSize: "22px" }}>
-              {new Intl.NumberFormat().format(referredUserCount)}
+              {new Intl.NumberFormat().format(data?.data?.referredAddresses?.length || 0)}
             </Typography>
           </Paper>
         </Grid>
@@ -119,7 +140,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(totalClaimedFeeAmount)}
+              }).format(totalAmounts || 0)}
             </Typography>
           </Paper>
         </Grid>
@@ -147,7 +168,7 @@ export const EarningView = (): JSX.Element => {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
-              }).format(claimableFeeAmount)}
+              }).format(claimableAmount)}
             </Typography>
             <Button
               variant="contained"
@@ -161,7 +182,7 @@ export const EarningView = (): JSX.Element => {
         </Grid>
       </Grid>
       <BonusModal open={bonusModalOpen} setOpen={setBonusModalOpen} />
-      <ClaimModal open={claimModalOpen} setOpen={setClaimModalOpen} />
+      <ClaimModal data={data.data} open={claimModalOpen} setOpen={setClaimModalOpen} />
     </>
   );
 };
