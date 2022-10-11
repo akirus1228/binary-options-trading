@@ -152,6 +152,7 @@ export const EarningView = (): JSX.Element => {
             <Button
               variant="contained"
               style={{ marginTop: "10px" }}
+              disabled={claimableFeeAmount === 0}
               onClick={() => setClaimModalOpen(true)}
             >
               Claim
