@@ -275,6 +275,27 @@ export const AssetSearch = ({
               })}
           </Box>
         )}
+      {isDropdown &&
+        keyword &&
+        !searchedCollections.isFetching &&
+        (!collections || collections?.length == 0) &&
+        !searchedListings.isFetching &&
+        (!assets || assets?.length == 0) && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "70px",
+              padding: "40px 28px 20px 28px",
+              zIndex: "10",
+              width: "100%",
+              borderRadius: "20px",
+              background: `${themeType === "light" ? "white" : "black"}`,
+              boxShadow: "0px 0px 12px 0px #7e9aa926",
+            }}
+          >
+            <Typography>No items</Typography>
+          </Box>
+        )}
     </Box>
   );
 };

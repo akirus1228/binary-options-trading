@@ -165,18 +165,10 @@ export const BorrowerListingDetails = (
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>APY</Typography>
+            <Typography className={style["label"]}>APR</Typography>
             <Typography className={`${style["data"]}`}>{listing.term.apr}%</Typography>
           </Box>
-          {/* <Box className="flex fc">
-            <Typography className={style["label"]}>Time until offer expires</Typography>
-            <Box className="flex fr w100">
-              <Typography className={`${style["data"]}`}>
-                {new Date(Date.parse(listing.term.expirationAt)).toLocaleString()}
-              </Typography>
-            </Box>
-          </Box> */}
-          <Box className="flex fc">
+          <Box className="flex fc" sx={{ mt: { xs: "10px", md: "0" } }}>
             <Button
               variant="contained"
               onClick={onDialogUpdateTermsOpen}
@@ -185,7 +177,7 @@ export const BorrowerListingDetails = (
               Update Terms
             </Button>
           </Box>
-          <Box className="flex fc">
+          <Box className="flex fc" sx={{ mt: { xs: "10px", md: "0" } }}>
             <Button variant="outlined" onClick={onDialogCancelListingOpen}>
               Cancel Listing
             </Button>

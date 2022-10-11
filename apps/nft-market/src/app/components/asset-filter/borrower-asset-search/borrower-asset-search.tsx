@@ -21,7 +21,7 @@ import {
   useLazyGetNftCollectionsQuery,
 } from "../../../api/backend-api";
 import { Link } from "react-router-dom";
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { useImpersonateAccount, useWeb3Context } from "@fantohm/shared-web3";
 import { selectAssetsByQuery } from "../../../store/selectors/asset-selectors";
 
 export const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -52,15 +52,17 @@ export const BorrowerAssetSearch = ({
   const ref = useRef<HTMLElement>(null);
   const [triggerOwnedCollections, searchedOwnedCollections] =
     useLazyGetNftCollectionsQuery();
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+
   const { data: loans } = useGetLoansQuery(
     {
       skip: 0,
       take: 50,
-      walletAddress: address,
+      walletAddress: isImpersonating ? impersonateAddress : address,
       status: LoanStatus.Active,
     },
     {
-      skip: !address,
+      skip: !(isImpersonating ? impersonateAddress : address),
     }
   );
   const assetsInEscrow =
@@ -81,7 +83,7 @@ export const BorrowerAssetSearch = ({
   const [triggerAssets, searchedAssets] = useLazyGetNftAssetsQuery();
   const myAssets = useSelector((state: RootState) =>
     selectAssetsByQuery(state, {
-      wallet: address,
+      wallet: isImpersonating ? impersonateAddress : address,
       status: "All",
     })
   );
@@ -91,7 +93,7 @@ export const BorrowerAssetSearch = ({
       collections.findIndex(
         (collection) =>
           asset.assetContractAddress.toLowerCase() ===
-          collection.contractAddress.toLowerCase()
+          collection.contractAddress?.toLowerCase()
       ) !== -1
     );
   });
@@ -99,7 +101,7 @@ export const BorrowerAssetSearch = ({
   useEffect(() => {
     if (!address) return;
 
-    triggerOwnedCollections({ wallet: address });
+    triggerOwnedCollections({ wallet: isImpersonating ? impersonateAddress : address });
   }, [address]);
 
   const onChangeKeyword = (value: string) => {
@@ -121,16 +123,27 @@ export const BorrowerAssetSearch = ({
     if (!searchedCollections.isSuccess) return;
     if (!searchedOwnedCollections.isSuccess) return;
 
-    const filteredCollections = searchedCollections.data
+    const filteredCollections = searchedOwnedCollections.data.data
+      .filter((item) => {
+        let match = item.name?.toLowerCase().includes(keyword.toLowerCase());
+        if (keyword?.toLowerCase()?.substring(0, 2) === "0x") {
+          match =
+            match || item.contractAddress?.toLowerCase().includes(keyword?.toLowerCase());
+        }
+        return match;
+      })
       .map((item) => {
-        // todo: fix owned count of collection
-        const ownedCount =
-          searchedOwnedCollections.data.find((sub) => sub.slug === item.slug)
-            ?.numNftsOwned || 0;
+        const _collection =
+          searchedCollections.data.find((sub) => sub.slug === item.slug) ||
+          ({} as Collection);
         return {
-          ...item,
+          ..._collection,
+          imageUrl: item.imageUrl || _collection.imageUrl,
+          slug: item.slug || _collection.slug,
+          name: item.name || _collection.name,
+          contractAddress: item.contractAddress || _collection.contractAddress,
           ownedCount:
-            ownedCount +
+            item.numNftsOwned +
             assetsInEscrow.filter(
               (asset) => asset.assetContractAddress === item.contractAddress
             ).length,
@@ -144,14 +157,18 @@ export const BorrowerAssetSearch = ({
 
     setCollections(filteredCollections);
 
-    for (let i = 0; i < filteredCollections.length; i++) {
-      triggerAssets({
-        limit: 3,
-        walletAddress: address,
-        contractAddress: filteredCollections[i].contractAddress,
-      });
+    if (filteredCollections.length > 0) {
+      for (let i = 0; i < filteredCollections.length; i++) {
+        triggerAssets({
+          limit: 3,
+          walletAddress: isImpersonating ? impersonateAddress : address,
+          contractAddress: filteredCollections[i].contractAddress,
+        });
+      }
+    } else {
+      setAssets([]);
     }
-  }, [searchedCollections.data, searchedCollections.fulfilledTimeStamp]);
+  }, [searchedCollections.data, searchedCollections.fulfilledTimeStamp, keyword]);
 
   useEffect(() => {
     if (!searchedAssets.isSuccess) return;
@@ -226,8 +243,10 @@ export const BorrowerAssetSearch = ({
               zIndex: "10",
               width: "100%",
               borderRadius: "20px",
+              maxHeight: "350px",
+              overflow: "auto",
               background: `${themeType === "light" ? "white" : "black"}`,
-              boxShadow: "0px 0px 12px 0px #7e9aa926",
+              boxShadow: "4px 14px 12px 20px #7e9aa926",
             }}
           >
             {(searchedCollections.isFetching ||
@@ -251,7 +270,7 @@ export const BorrowerAssetSearch = ({
               collections?.slice(0, 3).map((collection) => {
                 return (
                   <Box
-                    key={collection.name}
+                    key={collection.contractAddress}
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -262,7 +281,10 @@ export const BorrowerAssetSearch = ({
                       background: `${themeType === "light" ? "white" : "black"}`,
                       cursor: "pointer",
                     }}
-                    onClick={() => setCollection(collection)}
+                    onClick={() => {
+                      setIsDropdown(false);
+                      setCollection(collection);
+                    }}
                   >
                     <Badge
                       badgeContent={collection.ownedCount}
@@ -310,11 +332,11 @@ export const BorrowerAssetSearch = ({
             )}
             {!searchedAssets.isFetching &&
               assets &&
-              assets?.slice(0, 3).map((asset) => {
+              assets?.slice(0, 3).map((asset, index) => {
                 return (
                   <Link
                     to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
-                    key={asset.name}
+                    key={`${asset.assetContractAddress}-${asset.name}-${index}`}
                   >
                     <Box
                       sx={{
@@ -362,6 +384,27 @@ export const BorrowerAssetSearch = ({
                   </Link>
                 );
               })}
+          </Box>
+        )}
+      {isDropdown &&
+        keyword &&
+        !searchedCollections.isFetching &&
+        (!collections || collections?.length == 0) &&
+        !searchedAssets.isFetching &&
+        (!assets || assets?.length == 0) && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "60px",
+              padding: "40px 28px 20px 28px",
+              zIndex: "10",
+              width: "100%",
+              borderRadius: "20px",
+              background: `${themeType === "light" ? "white" : "black"}`,
+              boxShadow: "0px 0px 12px 0px #7e9aa926",
+            }}
+          >
+            <Typography>No items</Typography>
           </Box>
         )}
     </Box>

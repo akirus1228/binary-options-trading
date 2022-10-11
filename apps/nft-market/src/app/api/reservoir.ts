@@ -233,7 +233,7 @@ export const reservoirApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(updateAssetsFromReservoir(data.tokens));
         } catch (e) {
-          console.info("Opensea failing. Reverting to backup");
+          console.info("Reservoir failing. Reverting to backup");
         }
       },
     }),

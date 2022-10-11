@@ -40,18 +40,16 @@ export const createListing = createAsyncThunk(
   async ({ asset, term }: ListingAsyncThunk, { getState, rejectWithValue, dispatch }) => {
     const thisState: any = getState();
     if (thisState.backend.authSignature) {
-      const listing = await BackendApi.createListing(
+      const result: any = await BackendApi.createListing(
         thisState.backend.authSignature,
         asset,
         term
       );
-      if (typeof listing !== "string") {
-        dispatch(updateListing(listing));
-        dispatch(updateAsset({ ...listing.asset, owner: thisState.backend.user }));
-      } else {
-        return rejectWithValue(listing);
+      if (result?.id) {
+        dispatch(updateListing(result));
+        dispatch(updateAsset({ ...result.asset, owner: thisState.backend.user }));
       }
-      return listing;
+      return result;
     } else {
       return rejectWithValue("No authorization found.");
     }

@@ -72,7 +72,7 @@ const BorrowerOnlyListed = ({
           {currency?.symbol}
         </span>
         <span> at a </span>
-        <span className={style["strong"]}>{listing.term.apr}% APY</span>
+        <span className={style["strong"]}>{listing.term.apr}% APR</span>
         <span> over </span>
         <span className={style["strong"]}>
           {prettifySeconds(listing.term.duration * 86400, "day")}
@@ -152,7 +152,7 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
       !loan ||
       loan.contractLoanId == null ||
       !provider ||
-      ![1, 4].includes(chainId ?? 0)
+      !(desiredNetworkId === chainId)
     ) {
       setIsLoading(false);
       return;

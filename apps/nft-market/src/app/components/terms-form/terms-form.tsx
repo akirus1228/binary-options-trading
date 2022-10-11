@@ -1,8 +1,8 @@
 import {
-  isDev,
   checkErc20Allowance,
   checkNftPermission,
   loadPlatformFee,
+  networks,
   requestErc20Allowance,
   requestNftPermission,
   selectErc20AllowanceByAddress,
@@ -305,7 +305,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       return;
     }
     // send listing data to backend
-    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -323,33 +322,46 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       signature: "",
       currencyAddress: currency?.currentAddress,
     };
-    term.signature = await signTerms(
-      provider,
-      asset.owner?.address || "",
-      chainId,
-      asset.assetContractAddress,
-      asset.tokenId,
-      term,
-      currency,
-      dispatch
-    );
-    if (term.signature) {
-      try {
-        await dispatch(createListing({ term, asset })).unwrap();
-        await dispatch(addAlert({ message: "Listing created" }));
-      } catch (e) {
-        await dispatch(
-          addAlert({
-            severity: "error",
-            title: "Failed to create listing",
-            message: e as string,
-          })
-        );
-      } finally {
+    try {
+      setIsPending(true);
+      term.signature = await signTerms(
+        provider,
+        asset.owner?.address || "",
+        chainId,
+        asset.assetContractAddress,
+        asset.tokenId,
+        term,
+        currency,
+        dispatch
+      );
+      if (!term.signature || term.signature === "") {
         props.onClose(true);
+        return;
       }
-    } else {
+
+      const result: any = await dispatch(createListing({ term, asset })).unwrap();
+      if (result?.response) {
+        if (result?.response?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to list this asset because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(
+            addAlert({ message: result?.response?.data.message, severity: "error" })
+          );
+        }
+      } else {
+        dispatch(addAlert({ message: "This asset is listed." }));
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
       setIsPending(false);
+      props.onClose(true);
     }
     return;
   };
@@ -357,7 +369,6 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const handleUpdateTerms = async () => {
     if (!provider || !chainId || !props.listing) return;
     // send listing data to backend
-    setIsPending(true);
     let asset: Asset;
     if (props.asset.status === AssetStatus.New) {
       asset = { ...props.asset, owner: user };
@@ -375,6 +386,7 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currencyAddress: currency?.currentAddress,
     };
     try {
+      setIsPending(true);
       term.signature = await signTerms(
         provider,
         asset.owner?.address || "",
@@ -386,22 +398,31 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         dispatch
       );
       if (!term.signature || term.signature === "") {
-        // user rejected signature
-        // error message being dispatched from another catch
-        // dispatch(addAlert({ message: "Signature rejected. Terms not updated.", severity: "error" }));
         props.onClose(true);
         return;
       }
-
-      await updateTerms(term);
-      dispatch(addAlert({ message: "Terms have been updated." }));
-      props.onClose(true);
-    } catch (err) {
-      // most likely the user rejected the signature
+      const result: any = await updateTerms(term);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to update a term because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Terms have been updated." }));
+      }
+    } catch (e) {
+      console.log(e);
     } finally {
       setIsPending(false);
+      props.onClose(true);
     }
-
     return;
   };
 
@@ -509,31 +530,55 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
       currencyAddress: currency?.currentAddress,
     };
 
-    const signature = await signTerms(
-      provider,
-      props.listing.asset.wallet || "",
-      desiredNetworkId,
-      props.asset.assetContractAddress,
-      props.asset.tokenId,
-      preSigTerm,
-      currency,
-      dispatch
-    );
-    if (!signature) return;
+    try {
+      setIsPending(true);
+      const signature = await signTerms(
+        provider,
+        props.listing.asset.wallet || "",
+        desiredNetworkId,
+        props.asset.assetContractAddress,
+        props.asset.tokenId,
+        preSigTerm,
+        currency,
+        dispatch
+      );
+      if (!signature || signature === "") {
+        props.onClose(true);
+        return;
+      }
+      const term: Terms = {
+        ...preSigTerm,
+        signature,
+      };
 
-    const term: Terms = {
-      ...preSigTerm,
-      signature,
-    };
-
-    const offer: Offer = {
-      lender: user,
-      assetListing: props.listing,
-      term,
-      status: OfferStatus.Ready,
-    };
-    createOffer(offer);
-    dispatch(addAlert({ message: "Offer sent" }));
+      const offer: Offer = {
+        lender: user,
+        assetListing: props.listing,
+        term,
+        status: OfferStatus.Ready,
+      };
+      const result: any = await createOffer(offer);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to send an offer because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer sent." }));
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsPending(false);
+      props.onClose(true);
+    }
     props.onClose(true);
   };
 
@@ -548,15 +593,26 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
   const handleRequestAllowance = useCallback(() => {
     if (provider && address && props.listing) {
       setIsPending(true);
+
+      let approveAmounts;
+      if (
+        currency.currentAddress === networks[desiredNetworkId].addresses["USDT_ADDRESS"]
+      ) {
+        approveAmounts = ethers.constants.MaxUint256;
+      } else {
+        approveAmounts = ethers.utils.parseUnits(
+          (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString(),
+          currency.decimals
+        );
+      }
+
       dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
           provider,
           walletAddress: address,
           assetAddress: currency?.currentAddress,
-          amount: ethers.utils.parseEther(
-            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
-          ),
+          amount: approveAmounts,
         })
       );
     }
@@ -581,21 +637,27 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
               sx={{ background: "transparent" }}
               className="borderless"
             >
-              {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => (
-                <MenuItem
-                  value={currencyDetails.symbol}
-                  key={`currency-option-item-${tokenId}`}
-                >
-                  <Box className="flex fr ai-c">
-                    <img
-                      style={{ height: "28px", width: "28px", marginRight: "5px" }}
-                      src={currencyDetails.icon}
-                      alt={`${currencyDetails.symbol} Token Icon`}
-                    />
-                    {currencyDetails.symbol}
-                  </Box>
-                </MenuItem>
-              ))}
+              {Object.entries(currencyInfo).map(([tokenId, currencyDetails]) => {
+                // Hide usdb
+                if (tokenId.toLowerCase() === "usdb_address") {
+                  return null;
+                }
+                return (
+                  <MenuItem
+                    value={currencyDetails.symbol}
+                    key={`currency-option-item-${tokenId}`}
+                  >
+                    <Box className="flex fr ai-c">
+                      <img
+                        style={{ height: "28px", width: "28px", marginRight: "5px" }}
+                        src={currencyDetails.icon}
+                        alt={`${currencyDetails.symbol} Token Icon`}
+                      />
+                      {currencyDetails.symbol}
+                    </Box>
+                  </MenuItem>
+                );
+              })}
             </Select>
           </Box>
           <Box className={`flex fr ${style["rightSide"]}`}>
@@ -719,8 +781,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         typeof platformFees[currency?.currentAddress] !== "undefined" && // has platform fees
         !insufficientBalance && // has sufficient balance
         erc20Allowance.gte(
-          ethers.utils.parseEther(
-            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
+          ethers.utils.parseUnits(
+            (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString(),
+            currency?.decimals
           )
         ) && (
           <Button
@@ -743,8 +806,9 @@ export const TermsForm = (props: TermsFormProps): JSX.Element => {
         !insufficientBalance &&
         (!erc20Allowance ||
           erc20Allowance.lt(
-            ethers.utils.parseEther(
-              (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString()
+            ethers.utils.parseUnits(
+              (Number(amount) * (1 + platformFees[currency?.currentAddress])).toString(),
+              currency.decimals
             )
           )) && (
           <Button

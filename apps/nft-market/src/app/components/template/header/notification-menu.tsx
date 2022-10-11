@@ -132,7 +132,7 @@ export const NotificationMenu = (): JSX.Element => {
         <Box className="flex fr fj-sb" sx={{ mt: "1em" }}>
           <span>Notifications</span>
           <Link
-            to={"/my-account/assets"}
+            to={"/my-account/activity"}
             style={{ color: "#8991A2" }}
             onClick={handleClose}
           >

@@ -57,17 +57,19 @@ export const currencyInfo: CurrencyInfo = {
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["WETH_ADDRESS"],
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["WETH_ADDRESS"],
+      [NetworkIds.Goerli]: networks[NetworkIds.Goerli].addresses["WETH_ADDRESS"],
     },
     coingeckoStub: "weth",
     decimals: 18,
   },
   USDB_ADDRESS: {
     symbol: "USDB",
-    name: "USDBalance",
+    name: "USD Balance",
     icon: USDBToken,
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["USDB_ADDRESS"],
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDB_ADDRESS"],
+      [NetworkIds.Goerli]: networks[NetworkIds.Goerli].addresses["USDB_ADDRESS"],
     },
     coingeckoStub: "usd-balance",
     decimals: 18,
@@ -79,6 +81,7 @@ export const currencyInfo: CurrencyInfo = {
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["DAI_ADDRESS"],
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["DAI_ADDRESS"],
+      [NetworkIds.Goerli]: networks[NetworkIds.Goerli].addresses["DAI_ADDRESS"],
     },
     coingeckoStub: "dai",
     decimals: 18,
@@ -90,6 +93,7 @@ export const currencyInfo: CurrencyInfo = {
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["WBTC_ADDRESS"],
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["WBTC_ADDRESS"],
+      [NetworkIds.Goerli]: networks[NetworkIds.Goerli].addresses["WBTC_ADDRESS"],
     },
     coingeckoStub: "wrapped-bitcoin",
     decimals: 8,
@@ -101,6 +105,7 @@ export const currencyInfo: CurrencyInfo = {
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["USDC_ADDRESS"],
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDC_ADDRESS"],
+      [NetworkIds.Goerli]: networks[NetworkIds.Goerli].addresses["USDC_ADDRESS"],
     },
     coingeckoStub: "usd-coin",
     decimals: 6,
@@ -112,9 +117,10 @@ export const currencyInfo: CurrencyInfo = {
     addresses: {
       [NetworkIds.Ethereum]: addresses[NetworkIds.Ethereum]["USDT_ADDRESS"],
       [NetworkIds.Rinkeby]: networks[NetworkIds.Rinkeby].addresses["USDT_ADDRESS"],
+      [NetworkIds.Goerli]: networks[NetworkIds.Goerli].addresses["USDT_ADDRESS"],
     },
     coingeckoStub: "tether",
-    decimals: isDev ? 18 : 6,
+    decimals: 6,
   },
 };
 
@@ -148,7 +154,7 @@ export const getSymbolFromAddress = (currencyAddress: string): string => {
   return currencyDetails[1].symbol;
 };
 
-export const activeNetworks = [NetworkIds.Ethereum, NetworkIds.Rinkeby];
+export const activeNetworks = [NetworkIds.Ethereum, NetworkIds.Goerli];
 
 export class erc20Currency implements Erc20Currency {
   readonly symbol: string;

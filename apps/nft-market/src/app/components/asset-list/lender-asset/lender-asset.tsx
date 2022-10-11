@@ -11,7 +11,7 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import PreviewImage from "../preview-image/preview-image";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { formatCurrency, capitalizeFirstLetter } from "@fantohm/shared-helpers";
 import { Asset, AssetStatus } from "../../../types/backend-types";
 import { AppDispatch, RootState } from "../../../store";
@@ -23,17 +23,18 @@ import { loadCurrencyFromAddress } from "../../../store/reducers/currency-slice"
 import { selectCurrencyByAddress } from "../../../store/selectors/currency-selectors";
 import style from "./lender-asset.module.scss";
 import search from "../../../../assets/icons/search.svg";
+import searchDark from "../../../../assets/icons/search-dark.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
+import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
-import { useBestImage } from "../../../hooks/use-best-image";
+import { useMediaQuery } from "@material-ui/core";
 
 export type LenderAssetProps = {
   asset: Asset;
 };
 
 export function LenderAsset({ asset }: LenderAssetProps) {
-  const imageUrl = useBestImage(asset, 1024);
   const dispatch: AppDispatch = useDispatch();
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
@@ -41,6 +42,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
   );
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
+  const isTablet = useMediaQuery("(min-width:576px)");
 
   const { repaymentAmount } = useTermDetails(listing?.term);
   const chipColor = useMemo(() => {
@@ -64,7 +66,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
 
   const viewLinks = [
     {
-      startIcon: search,
+      startIcon: themeType === "dark" ? searchDark : search,
       alt: "Search",
       title: "View Listing",
       url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
@@ -72,10 +74,10 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       isSelfTab: true,
     },
     {
-      startIcon: etherScan,
+      startIcon: themeType === "dark" ? etherScanDark : etherScan,
       alt: "EtherScan",
       title: "View on Etherscan",
-      url: `https://${isDev ? "rinkeby." : ""}etherscan.io/token/${
+      url: `https://${isDev ? "goerli." : ""}etherscan.io/token/${
         asset?.assetContractAddress
       }?a=${asset?.tokenId}`,
       endIcon: grayArrowRightUp,
@@ -88,7 +90,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       url: `${
         !isDev
           ? "https://opensea.io/assets/ethereum/"
-          : "https://testnets.opensea.io/assets/rinkeby/"
+          : "https://testnets.opensea.io/assets/goerli/"
       }${asset.assetContractAddress}/${asset.tokenId}`,
       endIcon: grayArrowRightUp,
       isSelfTab: false,
@@ -99,40 +101,44 @@ export function LenderAsset({ asset }: LenderAssetProps) {
     dispatch(loadCurrencyFromAddress(listing?.term?.currencyAddress));
   }, [listing]);
 
-  if (asset === null || !asset || !listing) {
+  if (!asset || !listing) {
     return <h3>Loading...</h3>;
   }
 
   return (
     <Paper
       style={{
-        borderRadius: "28px",
+        borderRadius: isTablet ? "28px" : "14px",
         display: "flex",
         flexDirection: "column",
         padding: "0",
         position: "relative",
+        paddingTop: 0,
       }}
       className={style["assetBox"]}
     >
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: isTablet ? "space-between" : "center",
           position: "absolute",
           width: "100%",
-          zIndex: 10,
-          mt: "20px",
-          px: "10px",
+          mt: isTablet ? "20px" : "0px",
+          paddingLeft: isTablet ? "10px" : 0,
+          paddingRight: isTablet ? "10px" : 0,
         }}
       >
         <Chip
           label={capitalizeFirstLetter(asset?.status.toLowerCase()) || "Unlisted"}
-          className={chipColor}
+          className={`nft-status ${chipColor}`}
+          style={{ zIndex: "1" }}
         />
         <IconButton
           sx={{
-            position: "relative",
+            position: isTablet ? "relative" : "absolute",
             zIndex: 10,
+            right: isTablet ? "0" : "-4px",
+            top: isTablet ? "0" : "-8px",
           }}
           className={style["moreButton"]}
           aria-haspopup="true"
@@ -158,7 +164,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
               href={link.url}
               style={{ textDecoration: "none" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
-              onClick={(e) => {
+              onClick={() => {
                 setFlagMoreDropDown(null);
               }}
             >
@@ -181,6 +187,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
                     style={{
                       fontWeight: "normal",
                       fontSize: "1em",
+                      textAlign: "center",
                       color: `${themeType === "light" ? "black" : "white"}`,
                     }}
                   >
@@ -202,14 +209,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         className="flex"
         style={{ flexGrow: "1" }}
       >
-        {asset.tokenId && (
-          <PreviewImage
-            url={imageUrl}
-            name={asset.name || "placeholder name"}
-            contractAddress={asset.assetContractAddress}
-            tokenId={asset.tokenId}
-          />
-        )}
+        {asset.tokenId && <PreviewImage asset={asset} />}
       </RouterLink>
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
@@ -223,7 +223,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
             style={{ color: "rgba(255,255,255,0.7)" }}
             className={style["termHeading"]}
           >
-            APY
+            APR
           </span>
         </Box>
         <Box className="flex fr fj-sb ai-c w100">
@@ -275,7 +275,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           }}
         >
           <Box
-            className="flex fr fj-sb w100"
+            className={`${style["asset-loan-info"]} w100`}
             sx={{
               alignItems: "top",
               flexFlow: {
@@ -285,7 +285,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
           >
             <Box
               sx={{
-                width: "50%",
+                flex: 1,
                 flexFlow: "wrap",
                 alignItems: "center",
                 alignContent: "center",
@@ -318,7 +318,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
             <Box
               className={style["interestElem"]}
               sx={{
-                width: "50%",
+                flex: 1,
                 flexFlow: "wrap",
               }}
             >

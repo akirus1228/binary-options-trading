@@ -18,6 +18,7 @@ import BlogFeaturedPost from "../../components/blog-featured-page/blog-featured-
 import BlogPost from "../../components/blog-page/blog-post";
 import { AboutDivider } from "@fantohm/shared/images";
 import { styled } from "@material-ui/core";
+import { loadAppDetails } from "../../store/reducers/app-slice";
 
 export const BlogPage = (): JSX.Element => {
   const [email, setEmail] = useState("");
@@ -69,6 +70,11 @@ export const BlogPage = (): JSX.Element => {
     dispatch(info("Success!"));
     return;
   };
+
+  useEffect(() => {
+    dispatch(loadAppDetails());
+  }, []);
+
   useEffect(() => {
     if (allBlogPosts && allBlogPosts.blogPosts) {
       if (sortValue === "tutorials") {

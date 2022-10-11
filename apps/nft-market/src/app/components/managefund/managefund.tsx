@@ -29,6 +29,8 @@ import {
   useWeb3Context,
   selectErc20AllowanceByAddress,
   checkErc20Allowance,
+  networks,
+  defaultNetworkId,
 } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
 import { desiredNetworkId } from "../../constants/network";
@@ -112,13 +114,23 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
   const handleRequestAllowance = useCallback(async () => {
     if (provider && address) {
       setIsPending(true);
+
+      let approveAmounts;
+      if (
+        currency.currentAddress === networks[desiredNetworkId].addresses["USDT_ADDRESS"]
+      ) {
+        approveAmounts = ethers.constants.MaxUint256;
+      } else {
+        approveAmounts = ethers.utils.parseUnits(amount, currency.decimals);
+      }
+
       const result = await dispatch(
         requestErc20Allowance({
           networkId: desiredNetworkId,
           provider,
           walletAddress: address,
           assetAddress: currency?.currentAddress,
-          amount: ethers.utils.parseUnits(amount, currency.decimals),
+          amount: approveAmounts,
         })
       ).unwrap();
       if (result) {
@@ -262,32 +274,38 @@ export const ManageFund = (props: ManageFundProps): JSX.Element => {
                     }}
                   >
                     {Object.entries(currencyInfo).map(
-                      ([tokenId, currencyDetails], index) => (
-                        <MenuItem
-                          value={currencyDetails.symbol}
-                          key={`currency-option-item-${tokenId}`}
-                          sx={{
-                            paddingTop: "2px",
-                            paddingBottom: "2px",
-                            borderTop: index === 0 ? "" : "1px solid #CCC",
-                          }}
-                        >
-                          <Box className="flex fr ai-c">
-                            <img
-                              style={{
-                                height: "30px",
-                                width: "30px",
-                                marginRight: "5px",
-                              }}
-                              src={currencyDetails.icon}
-                              alt={`${currencyDetails.symbol} Token Icon`}
-                            />
-                            <p style={{ fontSize: "16px" }}>
-                              {currencyDetails.symbol} - {currencyDetails.name}
-                            </p>
-                          </Box>
-                        </MenuItem>
-                      )
+                      ([tokenId, currencyDetails], index) => {
+                        // Hide usdb
+                        if (tokenId.toLowerCase() == "usdb_address") {
+                          return null;
+                        }
+                        return (
+                          <MenuItem
+                            value={currencyDetails.symbol}
+                            key={`currency-option-item-${tokenId}`}
+                            sx={{
+                              paddingTop: "2px",
+                              paddingBottom: "2px",
+                              borderTop: index === 0 ? "" : "1px solid #CCC",
+                            }}
+                          >
+                            <Box className="flex fr ai-c">
+                              <img
+                                style={{
+                                  height: "30px",
+                                  width: "30px",
+                                  marginRight: "5px",
+                                }}
+                                src={currencyDetails.icon}
+                                alt={`${currencyDetails.symbol} Token Icon`}
+                              />
+                              <p style={{ fontSize: "16px" }}>
+                                {currencyDetails.symbol} - {currencyDetails.name}
+                              </p>
+                            </Box>
+                          </MenuItem>
+                        );
+                      }
                     )}
                   </Select>
                 </Box>

@@ -74,6 +74,12 @@ export function MyAccountAssets() {
   });
 
   const myAssets = useSelector((state: RootState) => selectAssetsByQuery(state, feQuery));
+  const allMyAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      status: "All",
+      wallet: address,
+    })
+  );
   const { authSignature } = useSelector((state: RootState) => state.backend);
 
   // load assets from opensea api
@@ -85,7 +91,7 @@ export function MyAccountAssets() {
 
   // using the opensea assets, crosscheck with backend api for correlated data
   useGetListingsQuery(beQuery, {
-    skip: !beQuery.openseaIds || beQuery.openseaIds?.length < 1 || !authSignature,
+    skip: !beQuery.contractAddresses || !authSignature,
   });
 
   const getStatusType = (status: string): AssetStatus | "All" => {
@@ -99,18 +105,23 @@ export function MyAccountAssets() {
       case "In Escrow":
         return AssetStatus.Locked;
       default:
-        return AssetStatus.New;
+        return "All";
     }
   };
 
   const handleStatusChange = useCallback(
     (event: SelectChangeEvent<string>) => {
-      if (!["All", "Unlisted", "Listed", "In Escrow"].includes(event.target.value))
+      if (
+        !["All", "Unlisted", "Listed", "In Escrow", "Unusable"].includes(
+          event.target.value
+        )
+      )
         return;
       setStatus(event.target.value);
       const updatedQuery: FrontendAssetFilterQuery = {
         ...feQuery,
         status: getStatusType(event.target.value),
+        usable: event.target.value === "Unusable" ? false : undefined,
       };
       setFeQuery(updatedQuery);
     },
@@ -120,9 +131,12 @@ export function MyAccountAssets() {
   useEffect(() => {
     const newQuery = {
       ...beQuery,
-      openseaIds: npResponse?.assets?.map((asset: Asset) =>
-        (asset.openseaId || "").toString()
-      ),
+      contractAddresses: npResponse?.assets
+        ?.map((asset: Asset) => (asset.assetContractAddress || "").toString())
+        .join(","),
+      tokenIds: npResponse?.assets
+        ?.map((asset: Asset) => (asset.tokenId || "").toString())
+        .join(","),
     };
     setBeQuery(newQuery);
     if (npResponse && npResponse.continuation) {
@@ -182,9 +196,15 @@ export function MyAccountAssets() {
               <MenuItem value="Listed">Listed</MenuItem>
               <MenuItem value="Unlisted">Unlisted</MenuItem>
               <MenuItem value="In Escrow">In Escrow</MenuItem>
+              <MenuItem value="Unusable">Unusable</MenuItem>
             </Select>
           </Box>
           <AssetList
+            allAssetsCount={
+              feQuery.status === AssetStatus.Locked && loans
+                ? assetsToShow.length
+                : allMyAssets.length
+            }
             assets={assetsToShow}
             type="borrow"
             hasMore={hasNext}

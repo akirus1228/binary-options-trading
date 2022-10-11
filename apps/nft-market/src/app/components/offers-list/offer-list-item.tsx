@@ -1,15 +1,6 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  IconButton,
-  Menu,
-  Tooltip,
-} from "@mui/material";
+import { Avatar, Box, Button, Chip, CircularProgress, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -37,7 +28,7 @@ import {
   useWeb3Context,
   checkNftPermission,
   prettifySeconds,
-  networks,
+  getLendingAddressConfig,
 } from "@fantohm/shared-web3";
 import style from "./offers-list.module.scss";
 import SimpleProfile from "../simple-profile/simple-profile";
@@ -49,7 +40,6 @@ import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import { addAlert } from "../../store/reducers/app-slice";
 import MakeOffer from "../make-offer/make-offer";
 import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
-import { useBestImage } from "../../hooks/use-best-image";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -75,12 +65,11 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   }, [offer]);
 
   // create loan backend api call
-  const [createLoan, { data: loanData, isLoading: isCreating, reset: resetCreateLoan }] =
+  const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
     useCreateLoanMutation();
   const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
     useUpdateLoanMutation();
-  const [resetPartialLoan, { isLoading: isResetting, reset: resetResetPartialLoan }] =
-    useResetPartialLoanMutation();
+  const [resetPartialLoan] = useResetPartialLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
   const [deleteOffer, { isLoading: isDeletingOffer }] = useDeleteOfferMutation();
@@ -176,7 +165,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   // automatically trigger accept offer after setting up perms
   useEffect(() => {
     if (isRequestingPerms && requestPermStatus !== "loading") {
-      handleAcceptOffer();
+      handleAcceptOffer().then();
     }
   }, [requestPermStatus, isRequestingPerms]);
 
@@ -196,9 +185,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         status: ListingStatus.Completed,
         asset: { ...asset, status: AssetStatus.Locked },
       },
-      lendingContractAddress:
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS_V2"] ||
-        networks[desiredNetworkId].addresses["USDB_LENDING_ADDRESS"],
+      lendingContractAddress: getLendingAddressConfig(desiredNetworkId).currentVersion,
       term: offer.term,
       status: LoanStatus.Active,
       offerId: offer.id,
@@ -210,12 +197,26 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       networkId: desiredNetworkId,
       currencyAddress: offer.term.currencyAddress,
     };
-    let createLoanResult;
+    let createLoanResult: any;
     try {
-      createLoanResult = await createLoan(createLoanRequest).unwrap();
-      if (!createLoanResult) {
-        setIsPending(false);
-        dispatch(addAlert({ message: "Failed to create a loan", severity: "error" }));
+      createLoanResult = await createLoan(createLoanRequest);
+      if (!createLoanResult || (createLoanResult && createLoanResult?.error)) {
+        if (createLoanResult?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to create a loan because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(
+            addAlert({
+              message: createLoanResult?.error?.data.message,
+              severity: "error",
+            })
+          );
+        }
         return;
       }
       const createLoanContractResult = await dispatch(
@@ -225,12 +226,12 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       if (!createLoanContractResult) {
         setIsPending(false);
         resetCreateLoan();
-        resetPartialLoan(createLoanResult?.id || "");
+        resetPartialLoan(createLoanResult?.data?.id || "");
         return; //todo: throw nice error
       }
 
       createLoanRequest.contractLoanId = createLoanContractResult as number;
-      createLoanRequest.id = createLoanResult.id;
+      createLoanRequest.id = createLoanResult?.data?.id;
       await updateLoan(createLoanRequest).unwrap();
 
       resetUpdateLoan();
@@ -249,17 +250,60 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
           })
         );
       }
-      if (createLoanResult) {
-        resetPartialLoan(createLoanResult?.id);
+      if (createLoanResult?.data) {
+        resetPartialLoan(createLoanResult?.data?.id);
       }
     } finally {
       setIsPending(false);
     }
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
 
+  const handleRejectOffer = useCallback(async () => {
+    try {
+      const result: any = await updateOffer({
+        ...offer,
+        status: OfferStatus.Rejected,
+      });
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message: "Failed to reject an offer.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer rejected" }));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [offer.id]);
+
   const handleDeleteOffer = useCallback(async () => {
-    deleteOffer(offer);
-    dispatch(addAlert({ message: "Offer removed" }));
+    try {
+      const result: any = await deleteOffer(offer);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to remove an offer because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer removed" }));
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }, [offer.id]);
 
   const offerExpires = useMemo(() => {
@@ -275,18 +319,6 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     const createdAgo = Date.now() - offerDateTime.getTime();
     return prettifySeconds(createdAgo / 1000);
   }, [offer.term]);
-
-  const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const actionsOpen = Boolean(actionMenuAnchorEl);
-
-  const handleOpenActionClick = (event: MouseEvent<HTMLElement>) => {
-    setActionMenuAnchorEl(event.currentTarget);
-  };
-  const handleActionMenuClose = () => {
-    setActionMenuAnchorEl(null);
-  };
-
-  const bestImageUrl = useBestImage(offer.assetListing.asset, 150);
 
   const getFieldData = (field: OffersListFields): JSX.Element | string => {
     switch (field) {
@@ -407,7 +439,16 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
       case OffersListFields.EXPIRATION:
         return offerExpires;
       case OffersListFields.ASSET:
-        return <Avatar src={bestImageUrl || ""} />;
+        return (
+          <Avatar
+            src={
+              offer.assetListing.asset?.imageUrl ||
+              offer.assetListing.asset?.gifUrl ||
+              offer.assetListing.asset?.threeDUrl ||
+              ""
+            }
+          />
+        );
       case OffersListFields.NAME:
         return (
           <Link
@@ -430,7 +471,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             }}
           ></Chip>
         ) : (
-          <></>
+          ""
         );
       default:
         return "?";
@@ -485,14 +526,24 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                   <CircularProgress />
                 </Button>
               ) : (
-                <Button
-                  variant="outlined"
-                  sx={{ width: "150px" }}
-                  className="offer slim"
-                  onClick={handleRequestPermission}
-                >
-                  Accept
-                </Button>
+                <Box sx={{ display: "flex" }}>
+                  <Button
+                    variant="contained"
+                    sx={{ my: "10px", mr: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRequestPermission}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ my: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRejectOffer}
+                  >
+                    Reject
+                  </Button>
+                </Box>
               ))}
             {isOwner &&
               hasPermission &&
@@ -502,14 +553,24 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
                   <CircularProgress />
                 </Button>
               ) : (
-                <Button
-                  variant="outlined"
-                  sx={{ width: "150px" }}
-                  className="offer slim"
-                  onClick={handleAcceptOffer}
-                >
-                  Accept
-                </Button>
+                <Box sx={{ display: "flex" }}>
+                  <Button
+                    variant="contained"
+                    sx={{ my: "10px", mr: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleAcceptOffer}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ my: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRejectOffer}
+                  >
+                    Reject
+                  </Button>
+                </Box>
               ))}
             {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
               <Box sx={{ display: "flex" }}>

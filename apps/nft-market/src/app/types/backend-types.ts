@@ -44,6 +44,8 @@ export enum CollectibleMediaType {
   Video = "VIDEO",
   Gif = "GIF",
   ThreeD = "THREE_D",
+  Html = "HTML",
+  Audio = "AUDIO",
 }
 
 export enum AssetChain {
@@ -135,6 +137,7 @@ export type BackendAsset = {
   assetContractAddress: string;
   chain: Chain;
   wallet: string;
+  usable: boolean;
 } & StandardBackendObject;
 
 export type Asset = BackendAsset & {
@@ -164,6 +167,7 @@ export enum NotificationContext {
   OfferAccepted = "OFFER_ACCEPTED",
   OfferUpdated = "OFFER_UPDATED",
   OfferRemoved = "OFFER_REMOVED",
+  OfferRejected = "OFFER_REJECTED",
   ListingCancelled = "LISTING_CANCELLED",
 }
 
@@ -252,6 +256,7 @@ export enum OfferStatus {
   Complete = "COMPLETE",
   Expired = "EXPIRED",
   Ready = "READY",
+  Rejected = "REJECTED",
 }
 
 export type Offer = {
@@ -294,9 +299,8 @@ export type FrontendAssetFilterQuery = Omit<Partial<Asset>, "status"> & {
 
 export type BackendAssetQueryParams = {
   status?: AssetStatus;
-  openseaIds?: string[];
-  contractAddress?: string;
-  tokenId?: string;
+  contractAddresses?: string;
+  tokenIds?: string;
   mediaType?: CollectibleMediaType;
 } & BackendStandardQuery;
 
