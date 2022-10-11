@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react/jsx-no-useless-fragment */
 import { Box, Button, Grid } from "@mui/material";
 import { useNavigate, useHref } from "react-router-dom";
 import style from "./balance-about-page.module.scss";
@@ -48,13 +51,13 @@ export function BalanceAboutTile({
     if (isHttpLink) window.open(toLink, "_blank");
     else if (learnMore) window.open(learnMore);
   }, [navigate, docsLink, learnMore]);
-  const setOpacity = link ? {} : { opacity: "0.4" };
+
   return (
     <Grid
       container
       rowSpacing={6}
       className={style["productGrid"]}
-      style={{ marginTop: "50px" }}
+      style={{ marginTop: "100px" }}
     >
       <Grid
         item
@@ -65,8 +68,9 @@ export function BalanceAboutTile({
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          paddingLeft: { sm: "0%", md: "10%" },
-          paddingRight: { sm: "0%", md: "10%" },
+          padding: "50px",
+          paddingLeft: { sm: "0%", md: "5%" },
+          paddingRight: { sm: "0%", md: "5%" },
           width: { sm: "100%", md: "100%" },
         }}
       >
@@ -87,7 +91,8 @@ export function BalanceAboutTile({
           justifyContent: "start",
           alignItems: "start",
           paddingTop: "30px",
-          paddingRight: "30px",
+          paddingLeft: "50px",
+          paddingRight: "100px",
         }}
       >
         <Box
@@ -98,11 +103,16 @@ export function BalanceAboutTile({
           className={style["iconLinkContainer"]}
         >
           <Grid item xs={12} md={12}>
-            <h2 className={style["title"]}>{title}</h2>
+            <h2
+              className={style["title"]}
+              style={{ marginBottom: itemid === "ecosystem" ? "40px" : "0px" }}
+            >
+              {title}
+            </h2>
           </Grid>
 
           <Grid item xs={12} md={12}>
-            <h3 className={style["text"]}>{text}</h3>
+            <h3 className={style["text"]} dangerouslySetInnerHTML={{ __html: text }} />
           </Grid>
           <Grid
             item
@@ -117,22 +127,24 @@ export function BalanceAboutTile({
             style={{ color: "primary" }}
           >
             {link === undefined ? (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleOnDocsClick}
-                sx={{
-                  px: "4em",
-                  display: { md: "flex" },
-                  color: themeType === "dark" ? "#FFFFFF" : "#000000",
-                  borderColor: themeType === "dark" ? "#FFFFFF" : "#000000",
-                }}
-                style={{ color: "primary" }}
-                className={style["link"]}
-                disabled={true}
-              >
-                Coming Soon
-              </Button>
+              itemid !== "ecosystem" && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleOnDocsClick}
+                  sx={{
+                    px: "4em",
+                    display: { md: "flex" },
+                    color: themeType === "dark" ? "#FFFFFF" : "#000000",
+                    borderColor: themeType === "dark" ? "#FFFFFF" : "#000000",
+                  }}
+                  style={{ color: "primary" }}
+                  className={style["link"]}
+                  disabled={true}
+                >
+                  Coming soon
+                </Button>
+              )
             ) : (
               <Button
                 variant="contained"
@@ -147,10 +159,10 @@ export function BalanceAboutTile({
                 className={style["link"]}
                 disabled={false}
               >
-                Enter App
+                {itemid === "balance-pass" ? "View on Opensea" : "Enter app"}
               </Button>
             )}
-            {itemid === undefined ? <a id={itemid}></a> : <a id={itemid}></a>}
+            {itemid === undefined ? <a id={itemid} /> : <a id={itemid} />}
             {docsLink !== undefined ? (
               <Button
                 variant="contained"
@@ -201,8 +213,8 @@ export function BalanceAboutTile({
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          paddingTop: "30px",
         }}
+        style={{ paddingTop: "50px" }}
       >
         <img src={AboutDivider as string} alt="divider" style={{ width: "100%" }} />
       </Grid>

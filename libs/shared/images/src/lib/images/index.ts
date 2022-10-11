@@ -46,6 +46,9 @@ import AboutFinancialNFT from "./about_page/About_Financial_NFT.webp";
 import AboutUSDB from "./about_page/About_USDB.webp";
 import AboutUSDBBank from "./about_page/About_USDB_Bank.webp";
 import AboutNFTMarketplace from "./about_page/About_NFT_Marketplace.jpg";
+import AboutLiqd from "./Liqd.webp";
+import AboutBalancePass from "./Balance Pass.webp";
+import AboutUSDBVaults from "./USDB Vaults.webp";
 import AboutBalanceEcosystem from "./about_page/About_Balance_ecosystem.webp";
 import BeetsIconDark from "./partners/BeetsDark.png";
 import CIconDark from "./partners/CDark.png";
@@ -145,6 +148,9 @@ export {
   AboutUSDBBank,
   AboutBalanceEcosystem,
   AboutNFTMarketplace,
+  AboutLiqd,
+  AboutBalancePass,
+  AboutUSDBVaults,
   BeetsIconDark,
   CIconDark,
   CoinTelegraphIconDark,

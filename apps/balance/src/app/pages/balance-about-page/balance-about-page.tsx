@@ -1,33 +1,15 @@
-import {
-  Box,
-  Button,
-  Grid,
-  Icon,
-  Input,
-  OutlinedInput,
-  Paper,
-  Typography,
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import Headline from "../../components/headline/headline";
-import Logo from "../../components/logo/logo";
+import { Button, Grid, OutlinedInput, Paper, Typography } from "@mui/material";
+import { useState } from "react";
 import style from "./balance-about-page.module.scss";
 import {
-  TeammateProfile,
-  Teammate,
-} from "../../components/teammate-profile/teammate-profile";
-import {
   AboutBridge,
-  AboutDivider,
   AboutFHM,
-  AboutFinancialNFT,
-  AboutLiquidity,
   AboutUSDB,
-  AboutUSDBBank,
   AboutBalanceEcosystem,
-  AboutNFTMarketplace,
+  AboutLiqd,
   BalanceHeroImage,
+  AboutBalancePass,
+  AboutUSDBVaults,
 } from "@fantohm/shared/images";
 import BalanceAboutTile from "./balance-about-tile";
 import Head from "../../components/template/head";
@@ -126,118 +108,35 @@ export const BalanceAboutPage = (): JSX.Element => {
         "About",
         "Balance ecosystem is an economy of conjoined banking and commerce initiatives. USDB stablecoin, FHM, DEX, Bridges, Liquidity Solutions, USDB Bank & Liqdnft are some key products."
       )}
-      <Box style={{ textAlign: "center", paddingTop: "50px" }}>
-        <Typography
-          variant="h1"
-          sx={{
-            fontSize: { xs: "60px", md: "60px" },
-            fontWeight: "500",
-          }}
-          className={style["title"]}
-        >
-          About Us
-        </Typography>
-      </Box>
-      <Grid
-        container
-        rowSpacing={6}
-        className={style["productGrid"]}
-        style={{ marginTop: "50px", paddingRight: "30px" }}
-      >
-        <Grid
-          item
-          xs={6}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingLeft: { sm: "0%", md: "5%" },
-            paddingRight: { sm: "0%", md: "5%" },
-            width: { sm: "300px", md: "100%" },
-          }}
-        >
-          <img
-            src={AboutBalanceEcosystem as string}
-            style={{ width: "100%" }}
-            className={style["image"]}
-            alt="BalanceEcosystem"
-          />
-        </Grid>
-        <Grid
-          item
-          sm={12}
-          md={6}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "start",
-            alignItems: "center",
-            paddingTop: "30px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-            className={style["iconLinkContainer"]}
-          >
-            <Grid item xs={10} md={12}>
-              <h2 className={style["title"]}>The Balance Ecosystem</h2>
-            </Grid>
-
-            <Grid item xs={10} md={12}>
-              <h3 className={style["text"]}>
-                The Balance Ecosystem is an open-source economy of conjoined banking and
-                commerce initiatives formed in March of 2022 with the unveiling of
-                investment opportunities derived solely from the technical application,
-                maintenance, and consumer use of USDB.
-              </h3>
-            </Grid>
-            <Grid item xs={10} md={12}>
-              <h3 className={style["text"]}>
-                The Balance Ecosystem depends on the administration of the Balance
-                Organisation to produce and refine the collected systems of FHM & USDB’s
-                use cases until such a time as they might be further decentralised.
-                Through a continuing dialogue between the Balance Organisation and the FHM
-                Stakeholders’ DAO via governance throughout the development and
-                implementation of these systems, the Balance Ecosystem aims to produce the
-                first, ever, decentralised reserve currency.
-              </h3>
-            </Grid>
-          </Box>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: "30px",
-          }}
-        >
-          <img src={AboutDivider as string} alt="divider" style={{ width: "100%" }} />
-        </Grid>
-      </Grid>
       <BalanceAboutTile
-        icon={AboutUSDB}
-        itemid="usdb"
-        title="USDB Stablecoin"
-        text="USDB is the Swiss Army Knife of stable coins, combining the benefits of algorithmic supply backing, protocol owned liquidity, traditional banking, and decentralized finance. There are 5 strategies to be employed in maintaining its peg. Over this next epoch of adoption, as USDB gains more use cases, each of these strategies will be deployed or refined as necessary."
-        link="https://www.usdbalance.com/"
-        docsLink="https://fantohm.gitbook.io/documentation/usdb/introduction"
+        icon={AboutBalanceEcosystem}
+        itemid="ecosystem"
+        title="The Balance Ecosystem"
+        text="The Balance Ecosystem is an open-source economy of conjoined banking and commerce initiatives formed in March of 2022 with the unveiling of investment opportunities derived solely from the technical application, maintenance, and consumer use of USDB.<br/><br/>The Balance Ecosystem depends on the administration of the Balance Organisation to produce and refine the collected systems of FHM & USDB’s use cases until such a time as they might be further decentralised. Through a continuing dialogue between the Balance Organisation and the FHM Stakeholders’ DAO via governance throughout the development and implementation of these systems, the Balance Ecosystem aims to produce the first, ever, decentralised reserve currency."
       />
       <BalanceAboutTile
         icon={AboutFHM}
         itemid="fhm"
         title="FHM Protocol"
-        text="FHM is a Reserve & Rewards Protocol inspired by the Protocol Owned Liquidity software developments of OHM. FHM features compounding, single disbursement bonds as the safest possible bonding mechanism to ensure the longevity of exchange liquidity in relation to neighbouring protocols with similar principles."
+        text="FHM is a Reserve & Rewards Protocol inspired by the Protocol Owned Liquidity software developments of OHM. FHM plays a core part in the Balance ecosystem and acts as the liquidity provider thanks to the POL model. FHM features compounding, single disbursement bonds as the safest possible bonding mechanism to ensure the longevity of exchange liquidity in relation to neighbouring protocols with similar principles."
         link="https://fantohm.com/"
-        docsLink="https://fantohm.gitbook.io/documentation/"
-        learnMore="/fhm"
+        // docsLink="https://fantohm.gitbook.io/documentation/"
+        // learnMore="/fhm"
+      />
+      <BalanceAboutTile
+        icon={AboutLiqd}
+        itemid="marketplace"
+        title="Liqd"
+        text="Liqd is an NFT marketplace built to enable the collateralisation of NFTs. The platform enables individuals who hold NFT assets to unlock liquidity by borrowing against the value of their asset(s).<br/><br/>
+        In turn, Liqd unlocks a peer-to-peer lending opportunity for crypto holding individuals to lend capital for a set interest rate, backed by the value of the underlying NFT asset."
+      />
+      <BalanceAboutTile
+        icon={AboutUSDB}
+        itemid="usdb"
+        title="USDB Stablecoin"
+        text="USDB is a stablecoin built for economic adoption. It combines the benefits of algorithmic supply backing, protocol owned liquidity, traditional banking, and decentralised finance.<br/><br/>USDB is uniquely aligned for the cross chain expansion of the protocol. Its use allows the Balance Organisation to store and transfer value on, off and between chains most effectively and efficiently. The ability to capture, store and transfer liquidity across several chains will be advantageous when building out new products under the Balance organisation."
+        link="https://www.usdbalance.com/"
+        docsLink="https://fantohm.gitbook.io/documentation/usdb/introduction"
       />
       <BalanceAboutTile
         icon={AboutBridge}
@@ -247,38 +146,25 @@ export const BalanceAboutPage = (): JSX.Element => {
         link="https://app.fantohm.com/#/dex"
       />
       <BalanceAboutTile
-        icon={AboutLiquidity}
-        itemid="liquidity"
-        title="Liquidity Solution"
-        text="We understand that managing token liquidity is tough. We’ve built the perfect solution to help projects maximise the liquidity they can unlock. Making sure deep liquidity is available for your ecosystem. Helping you achieve your long-term mission and short-term needs."
-        link="https://beets.fi/#/pool/0xd5e946b5619fff054c40d38c976f1d06c1e2fa820002000000000000000003ac"
-        learnMore="./../../../assets/USDB_Liquiduty_Solution.pdf"
+        icon={AboutBalancePass}
+        itemid="balance-pass"
+        title="Balance Pass"
+        text="The Balance Pass is a limited collection of 350 NFTs created to unlock perks and exclusive access throughout the Balance Ecosystem. Additionally, Balance pass holders have the ability to gain access to whitelist opportunities for upcoming mints as well as alpha thanks to our strategic partnerships with Leading Alpha groups."
+        link="https://opensea.io/collection/balance-pass"
       />
       <BalanceAboutTile
-        icon={AboutUSDBBank}
-        itemid="usdbbank"
-        title="USDB Bank"
-        text="We are building a lending and borrowing structure that will fall under our USDBank which you may have already seen teased in the usdbalance.com site ui."
-      />
-      <BalanceAboutTile
-        icon={AboutNFTMarketplace}
-        itemid="marketplace"
-        title="LiqdNFTs"
-        text="Liqd is an non-fungible token (NFT) marketplace built to enable the lending and borrowing of blue chip NFTs. The platform enables individuals who hold blue chip NFT assets to unlock liquidity by borrowing against the value of their asset(s).
-        In turn, Liqd unlocks a peer-to-peer lending opportunity for crypto holding individuals to lend capital for a set interest rate, backed by the value of the underlying NFT asset."
-      />
-      <BalanceAboutTile
-        icon={AboutFinancialNFT}
-        itemid="financialnft"
-        title="Financial NFTs"
-        text="We are building a financial NFTs that will act as a receipt for a new game-changing financial product."
+        icon={AboutUSDBVaults}
+        itemid="usdb-vaults"
+        title="USDB Vaults"
+        text="The Liquidity Vaults are a means in which Balance can help provide finance to other DeFi protocols in the space. In order to receive financing, each protocol needs to establish a Liquidity Vault with supporting documentation, including the amount of financing sought and the return on investment. After viewing prospective vaults, users can deposit tokens into those vaults that interest them.<br/><br/>In exchange for depositing their investment tokens into a vault, users receive a receipt token that represents their share of the vault. The receipt token is a tradeable and transferable NFT giving users access to the high staking rewards from locking in their capital, yet flexibility to liquidate their position at any time."
+        link="https://www.usdbalance.com/"
       />
       <Grid
         item
         className="email-div"
         md={12}
         order={{ lg: 1 }}
-        style={{ marginBottom: "100px", marginTop: "100px" }}
+        style={{ marginBottom: "200px", marginTop: "50px" }}
         sx={{
           width: { xs: "90%", md: "90%" },
           marginLeft: { xs: "5%", md: "5%" },
