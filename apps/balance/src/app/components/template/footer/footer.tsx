@@ -10,22 +10,31 @@ import { RootState } from "../../../store";
 
 export const Footer = (): JSX.Element => {
   const themeType = useSelector((state: RootState) => state.app.theme);
+
   return (
-    <AppBar position="static" color="transparent" elevation={0} style={{ margin: 0 }}>
+    <AppBar
+      position="static"
+      color="transparent"
+      elevation={0}
+      style={{
+        margin: 0,
+        background: themeType === "light" ? "#F3F3F3" : "#0C0C0C",
+        borderRadius: "0px",
+      }}
+    >
       <Container maxWidth="xl" sx={{ my: { xs: "30px", sm: "100px" } }}>
         <Toolbar disableGutters>
           <Grid container spacing={2} sx={{ px: { xs: "40px", md: "0" } }}>
             <Grid item xs={12} md={5}>
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Box width="300px" mb="30px">
+                <Box width="400px" mb="30px">
                   <Link to="/">
-                    <Logo />
+                    <Logo style={{ width: "300px" }} />
                   </Link>
                   <Typography
                     variant="subtitle2"
                     color="primary"
-                    className="font-weight-bold"
-                    style={{ marginTop: "15px" }}
+                    style={{ marginTop: "15px", fontWeight: 300, lineHeight: "26px" }}
                   >
                     Our organization includes financial engineers and developers with top
                     level mastery within the fields of risk management and software
@@ -43,7 +52,7 @@ export const Footer = (): JSX.Element => {
                         variant="h6"
                         color="textPrimary"
                         className="font-weight-bolder"
-                        style={{ marginBottom: "20px" }}
+                        style={{ marginBottom: "30px" }}
                       >
                         {item.label}
                       </Typography>
@@ -51,10 +60,10 @@ export const Footer = (): JSX.Element => {
                         <MenuLink
                           href={page?.params?.comingSoon ? "#" : page.href}
                           key={page.title}
-                          style={{ marginBottom: "10px" }}
+                          style={{ marginBottom: "15px" }}
                         >
                           <Typography
-                            color="textPrimary"
+                            color="gray"
                             style={{ opacity: page?.params?.comingSoon ? 0.2 : 1 }}
                           >
                             {page.title}
@@ -77,7 +86,7 @@ export const Footer = (): JSX.Element => {
           flexDirection: { xs: "column", sm: "row" },
           justifyContent: "center",
           alignItems: "center",
-          py: "10px",
+          py: "25px",
         }}
       >
         <Typography color="white" textAlign="center">
@@ -95,7 +104,7 @@ export const Footer = (): JSX.Element => {
           </Box>
           <Typography color="white" textAlign="center">
             <a href="mailto:hello@usdbalance.com" style={{ color: "white" }}>
-              info@balance.capital
+              info@balanceusd.com
             </a>
           </Typography>
           <Box
@@ -104,8 +113,13 @@ export const Footer = (): JSX.Element => {
               mt: "3px",
               display: { xs: "none", sm: "block" },
             }}
-          ></Box>
+          >
+            <Typography color="white">*</Typography>
+          </Box>
         </Box>
+        <Typography color="white" textAlign="center">
+          Privacy Policy
+        </Typography>
       </Box>
     </AppBar>
   );
