@@ -49,6 +49,7 @@ const pages: Page[] = [
   // { title: "Feedback & Issues", href: "https://liqd.nolt.io/", external: true },
   // { title: "About", href: "/", hash: "#about-section" },
   { title: "Blog", href: "/blog" },
+  { title: "Referral", href: "/referral" },
 ];
 
 export const Header = (): JSX.Element => {

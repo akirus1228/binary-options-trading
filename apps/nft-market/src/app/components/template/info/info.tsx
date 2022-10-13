@@ -2,24 +2,26 @@ import { useEffect, useState, MouseEvent } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
+import Typography from "@mui/material/Typography";
 import { Dialog, Link, useMediaQuery, useTheme, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { HashLink } from "react-router-hash-link";
+import { useSelector } from "react-redux";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { useLocation } from "react-router-dom";
 import { addAlert } from "../../../store/reducers/app-slice";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../store";
-
+import { AppDispatch, RootState } from "../../../store";
 import infoSvg from "../../../../assets/icons/info.svg";
+import infoDarkSvg from "../../../../assets/icons/info-dark.svg";
 import infoClosePng from "../../../../assets/images/info-close.png";
 import infoIconPng from "../../../../assets/images/info-icon.png";
-import Typography from "@mui/material/Typography";
-import style from "./info.module.scss";
 import { useSendReportMutation } from "../../../api/backend-api";
+import style from "./info.module.scss";
 
 export const InfoBtn = (): JSX.Element => {
   const location = useLocation();
+  const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [formOpen, setFormOpen] = useState<boolean>(false);
@@ -71,6 +73,8 @@ export const InfoBtn = (): JSX.Element => {
     sendReport(reportParam);
     dispatch(addAlert({ message: "Report sent!" }));
   };
+  const backgroundColor = () =>
+    themeType === "dark" ? "#fff !important" : "#16181A !important";
 
   return (
     <>
@@ -85,7 +89,7 @@ export const InfoBtn = (): JSX.Element => {
         <IconButton
           onClick={handleClick}
           sx={{
-            background: "#16181A !important",
+            background: backgroundColor(),
             width: { xs: "49px", lg: "64px" },
             height: { xs: "49px", lg: "64px" },
           }}
@@ -95,7 +99,7 @@ export const InfoBtn = (): JSX.Element => {
         >
           <Avatar
             sx={{ width: { xs: "29px", lg: "37px" }, height: { xs: "29px", lg: "37px" } }}
-            src={infoSvg}
+            src={themeType === "dark" ? infoDarkSvg : infoSvg}
           />
         </IconButton>
         <Menu
@@ -105,7 +109,7 @@ export const InfoBtn = (): JSX.Element => {
           onClose={handleClose}
           PaperProps={{
             sx: {
-              background: "#16181A",
+              background: backgroundColor(),
               overflow: "visible",
               width: "406px",
               height: "175px",

@@ -1,7 +1,6 @@
 import { useMediaQuery } from "@material-ui/core";
 import { Box } from "@mui/material";
 
-import { useBestImage } from "../../../hooks/use-best-image";
 import { Asset, CollectibleMediaType } from "../../../types/backend-types";
 import style from "./preview-image.module.scss";
 
@@ -14,7 +13,6 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
   const latestAsset =
     props.metaDataResponse !== undefined ? props.metaDataResponse : props.asset;
   const isTablet = useMediaQuery("(min-width:576px)");
-  const imageUrl = useBestImage(latestAsset, 1024);
 
   return (
     <Box
@@ -32,7 +30,7 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
           latestAsset.thumbUrl) && (
           <img
             className={style["assetImg"]}
-            src={imageUrl || ""}
+            src={latestAsset.imageUrl || ""}
             alt={latestAsset?.name || ""}
             style={{
               height: "100%",
@@ -53,16 +51,29 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
             <source src={latestAsset.videoUrl} />
           </video>
         )}
-      {latestAsset.mediaType === CollectibleMediaType.Image && imageUrl && (
+      {latestAsset.mediaType === CollectibleMediaType.Image && latestAsset.imageUrl && (
         <img
           className={style["assetImg"]}
-          src={imageUrl || ""}
+          src={latestAsset.imageUrl || ""}
           alt={latestAsset.name || ""}
           style={{
             height: "100%",
             left: "50%",
             transform: "translateX(-50%)",
           }}
+        />
+      )}
+      {latestAsset.mediaType === CollectibleMediaType.Audio && latestAsset.videoUrl && (
+        <Box sx={{ width: "100%", background: "#dfdada" }}>
+          <img src={latestAsset.imageUrl || ""} alt={latestAsset.name || "unknown"} />
+          <audio controls src={latestAsset.videoUrl} className={style["audio"]} />
+        </Box>
+      )}
+      {latestAsset.mediaType === CollectibleMediaType.Html && latestAsset.videoUrl && (
+        <iframe
+          title={latestAsset?.name || ""}
+          src={latestAsset.videoUrl}
+          className={style["iframe"]}
         />
       )}
     </Box>

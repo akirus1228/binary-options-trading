@@ -28,7 +28,6 @@ export const LendPage = (): JSX.Element => {
     skip: 0,
     take,
     status: ListingStatus.Listed,
-    sortQuery: "asset_listing.createdAt:DESC",
   });
   const { user } = useSelector((state: RootState) => state.backend);
   const [trigger, listingsResult] = useLazyGetListingsQuery();

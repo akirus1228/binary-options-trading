@@ -21,7 +21,6 @@ import { useTermDetails } from "../../hooks/use-term-details";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useNavigate } from "react-router-dom";
 import { prettifySeconds } from "@fantohm/shared-web3";
-import { useBestImage } from "../../hooks/use-best-image";
 
 export interface NotificationMessageProps {
   notification: Notification;
@@ -319,7 +318,7 @@ const OfferRemovedBorrower = ({ asset, short, terms }: MessageProp): JSX.Element
   );
 };
 
-const ListingCancelledLender = ({ asset, short, terms }: MessageProp): JSX.Element => {
+const ListingCancelledLender = ({ asset, short }: MessageProp): JSX.Element => {
   // const { repaymentAmount, currencyPrice } = useTermDetails(terms);
   const shortMsg = <span>The listing for {getBlueText(asset.name)} was cancelled</span>;
   const longMsg = (
@@ -336,7 +335,7 @@ const ListingCancelledLender = ({ asset, short, terms }: MessageProp): JSX.Eleme
   );
 };
 
-const ListingCancelledBorrower = ({ asset, short, terms }: MessageProp): JSX.Element => {
+const ListingCancelledBorrower = ({ asset, short }: MessageProp): JSX.Element => {
   //const { repaymentAmount, currencyPrice } = useTermDetails(terms);
   const shortMsg = (
     <span>The listing on {getBlueText(asset.name)} has been cancelled</span>
@@ -407,8 +406,6 @@ export const NotificationMessage = ({
         break;
     }
   }, [notification.context]);
-
-  const bestImageUrl = useBestImage(asset ?? null, 150);
 
   // loan is loaded
   const avatarSrc = useMemo(() => {
@@ -498,7 +495,11 @@ export const NotificationMessage = ({
             : OfferRemovedBorrower;
         break;
     }
-    return <MsgType {...msgParams} />;
+    if (MsgType) {
+      return <MsgType {...msgParams} />;
+    } else {
+      return null;
+    }
   }, [notification.context, asset, borrower, lender, terms, short]);
 
   const handleRecordClick = useCallback(() => {
@@ -516,7 +517,7 @@ export const NotificationMessage = ({
         style={{ width: "100%", justifyContent: "space-between" }}
       >
         <Avatar
-          src={bestImageUrl}
+          src={asset ? asset?.imageUrl || asset?.gifUrl || asset?.threeDUrl || "" : ""}
           sx={{ mr: "1em", borderRadius: "50%" }}
           variant="circular"
         />

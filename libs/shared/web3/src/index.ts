@@ -25,6 +25,7 @@ export * from "./lib/helpers/index";
 export * from "./lib/helpers/environment";
 export * from "./lib/helpers/contract-type";
 export * from "./lib/helpers/usdb-lending-address";
+export * from "./lib/helpers/merkle-distributor-address";
 export * from "./lib/constants";
 export * from "./lib/wallet";
 export * from "./lib/apis";

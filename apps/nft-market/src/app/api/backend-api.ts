@@ -1,6 +1,11 @@
 // external libs
 import axios, { AxiosResponse } from "axios";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+  retry,
+} from "@reduxjs/toolkit/query/react";
 import { JsonRpcProvider } from "@ethersproject/providers";
 
 // internal libs
@@ -8,7 +13,6 @@ import {
   AllAssetsResponse,
   AllListingsResponse,
   Asset,
-  CreateAssetResponse,
   CreateListingRequest,
   Listing,
   LoginResponse,
@@ -30,6 +34,8 @@ import {
   BackendNftAssetsQueryParams,
   BackendNftAssetsQueryResponse,
   SendReport,
+  AffiliateData,
+  SaveAffiliateResponse,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -83,6 +89,79 @@ export const createListing = async (
     });
 };
 
+export const getAffiliateAddresses = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/all?affiliate=${address}`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<any>) => {
+      return {
+        referredAddresses: resp.data.data,
+      };
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const getAffiliateFees = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/fee/${address}?proof=true`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<any>) => {
+      return {
+        affiliateFees: resp.data.affiliateFees,
+        proofs: resp.data.proofs,
+      };
+      // return resp.data;
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const saveAffiliate = async (
+  signature: string,
+  address: string,
+  referralCode: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate`;
+  return axios
+    .post(
+      url,
+      {
+        user: address,
+        affiliate: referralCode,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${signature}`,
+        },
+      }
+    )
+    .then((resp: AxiosResponse<SaveAffiliateResponse>): AffiliateData => {
+      return {
+        referralCode: resp.data.data.affiliate,
+      };
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
 export const handleSignMessage = async (
   address: string,
   provider: JsonRpcProvider
@@ -112,6 +191,29 @@ const standardQueryParams: BackendStandardQuery = {
   take: 50,
 };
 
+const staggeredBaseQuery = retry(
+  async (args: string | FetchArgs, api, extraOptions) => {
+    const result = await fetchBaseQuery({
+      baseUrl: NFT_MARKETPLACE_API_URL,
+      prepareHeaders: (headers, { getState }) => {
+        const signature = (getState() as RootState).backend.authSignature;
+        headers.set("authorization", `Bearer ${signature}`);
+        return headers;
+      },
+    })(args, api, extraOptions);
+    if (result.error) {
+      // fail immediatly if it's a 500 error
+      if (result.error?.status === 500) {
+        retry.fail(result.error);
+      }
+    }
+    return result;
+  },
+  {
+    maxRetries: 5,
+  }
+);
+
 export const backendApi = createApi({
   reducerPath: "backendApi",
   tagTypes: [
@@ -127,14 +229,7 @@ export const backendApi = createApi({
     "User",
     "Mail",
   ],
-  baseQuery: fetchBaseQuery({
-    baseUrl: NFT_MARKETPLACE_API_URL,
-    prepareHeaders: (headers, { getState }) => {
-      const signature = (getState() as RootState).backend.authSignature;
-      headers.set("authorization", `Bearer ${signature}`);
-      return headers;
-    },
-  }),
+  baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
     // Assets
     getAssets: builder.query<Asset[], Partial<BackendAssetQueryParams>>({
@@ -584,18 +679,23 @@ export const backendApi = createApi({
     }),
     getNftCollections: builder.query<
       {
-        name: string;
-        slug: string;
-        imageUrl: string;
-        contractAddress: string;
-        numNftsOwned: 105;
-      }[],
+        data: {
+          name: string;
+          slug: string;
+          imageUrl: string;
+          contractAddress: string;
+          numNftsOwned: 105;
+        }[];
+      },
       {
         wallet: string;
+        limit?: number;
       }
     >({
       query: (queryParams) => ({
-        url: `collection/fetchAllByWallet/${queryParams.wallet}`,
+        url: `collection/fetchAllByWallet?walletAddress=${queryParams.wallet}&limit=${
+          queryParams.limit || 50
+        }`,
       }),
     }),
     sendReport: builder.mutation<SendReport, Partial<SendReport>>({

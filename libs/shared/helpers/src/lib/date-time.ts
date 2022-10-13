@@ -23,6 +23,6 @@ export const formatDateTimeString = (time: Date, isOnlyDate = false) => {
       : `${month}-${Number(day) < 10 ? "0" + day : day}-${year}`;
 
   return `${formattedDate}${
-    isOnlyDate ? "" : ", " + hours + ":" + seconds + ":" + minutes + " UTC"
+    isOnlyDate ? "" : ", " + hours + ":" + minutes + ":" + seconds + " UTC"
   }`;
 };

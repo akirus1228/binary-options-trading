@@ -152,7 +152,7 @@ export const StatusInfo = ({ asset, listing, loan }: StatusInfoProps): JSX.Eleme
       !loan ||
       loan.contractLoanId == null ||
       !provider ||
-      ![1, 4].includes(chainId ?? 0)
+      !(desiredNetworkId === chainId)
     ) {
       setIsLoading(false);
       return;

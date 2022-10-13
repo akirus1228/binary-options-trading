@@ -1,5 +1,11 @@
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Backdrop, Box, Button, CssBaseline, Fade, Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
@@ -13,7 +19,6 @@ import {
 } from "@fantohm/shared-web3";
 import { Header, Footer } from "./components/template";
 // import { Messages } from "./components/messages/messages";
-import { HomePage } from "./pages/home/home-page";
 import { RootState } from "./store";
 import { BorrowPage } from "./pages/borrow-page/borrow-page";
 import { LendPage } from "./pages/lend-page/lend-page";
@@ -23,7 +28,7 @@ import MyAccountLoans from "./pages/my-account-page/my-account-loans/my-account-
 import MyAccountOffers from "./pages/my-account-page/my-account-offers/my-account-offers";
 import MyAccountAssets from "./pages/my-account-page/my-account-assets/my-account-assets";
 import MyAccountActivity from "./pages/my-account-page/my-account-activity/my-account-activity";
-import { loadAppDetails, setCheckedConnection } from "./store/reducers/app-slice";
+import { setCheckedConnection } from "./store/reducers/app-slice";
 import { authorizeAccount, logout } from "./store/reducers/backend-slice";
 import Typography from "@mui/material/Typography";
 import { AssetDetailsPage } from "./pages/asset-details-page/asset-details-page";
@@ -38,6 +43,8 @@ import TermsPage from "./components/Terms-Condition/terms";
 import { NewHomePage } from "./pages/home-page";
 import HelpPage from "./components/help/help";
 import { InfoBtn } from "./components/template/info/info";
+import Referral from "./pages/referral";
+import { saveAffiliateCode } from "./store/reducers/affiliate-slice";
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -61,6 +68,7 @@ export const App = (): JSX.Element => {
   const { user, authorizedAccount, accountStatus } = useSelector(
     (state: RootState) => state.backend
   );
+  const { authSignature } = useSelector((state: RootState) => state.backend);
 
   const [promptTerms, setPromptTerms] = useState<boolean>(true);
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -106,7 +114,7 @@ export const App = (): JSX.Element => {
     // if there's a cached provider, try and connect
     if (hasCachedProvider && hasCachedProvider() && !connected) {
       try {
-        connect(true, isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+        connect(true, isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
       } catch (e) {
         console.log("Connection metamask error", e);
       }
@@ -164,6 +172,25 @@ export const App = (): JSX.Element => {
     }
   }, [provider, address, connected]);
 
+  // Affilate system
+  const [params] = useSearchParams();
+  const referralCode = params.get("ref");
+
+  const isWalletConnected = useMemo(() => {
+    return address && authSignature && connected && chainId === desiredNetworkId;
+  }, [address, authSignature, connected, chainId]);
+
+  useEffect(() => {
+    if (address && connected && referralCode && isWalletConnected) {
+      dispatch(
+        saveAffiliateCode({
+          address,
+          referralCode,
+        })
+      );
+    }
+  }, [address, connected, referralCode, isWalletConnected]);
+
   // User has switched back to the tab
   const onFocus = () => {
     localStorage.setItem("tabFocused", "true");
@@ -175,9 +202,6 @@ export const App = (): JSX.Element => {
   };
 
   useEffect(() => {
-    // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
-    dispatch(loadAppDetails());
-
     window.addEventListener("focus", onFocus);
     window.addEventListener("blur", onBlur);
     // Specify how to clean up after this effect:
@@ -199,7 +223,7 @@ export const App = (): JSX.Element => {
     setIsChecked(!isChecked);
   };
 
-  saveNetworkId(isDev ? NetworkIds.Rinkeby : NetworkIds.Ethereum);
+  saveNetworkId(isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
 
   return (
     <ThemeProvider theme={theme}>
@@ -291,6 +315,7 @@ export const App = (): JSX.Element => {
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/term" element={<TermsPage />} />
               <Route path="/help" element={<HelpPage />} />
+              <Route path="/referral" element={<Referral />} />
               <Route
                 path="/th"
                 element={
