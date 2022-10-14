@@ -25,8 +25,8 @@ export const InfoBtn = (): JSX.Element => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [formOpen, setFormOpen] = useState<boolean>(false);
-  const [nftContract, setNftContract] = useState<string>("");
-  const [nftTokenID, setNftTokenID] = useState<string>("");
+  const [nftContract, setNftContract] = useState<string>();
+  const [nftTokenID, setNftTokenID] = useState<string>();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch: AppDispatch = useDispatch();
@@ -46,6 +46,9 @@ export const InfoBtn = (): JSX.Element => {
     if (paramArr[1] === "asset") {
       setNftContract(paramArr[2]);
       setNftTokenID(paramArr[3]);
+    } else {
+      setNftContract(undefined);
+      setNftTokenID(undefined);
     }
   }, [location]);
 
@@ -112,7 +115,7 @@ export const InfoBtn = (): JSX.Element => {
               background: backgroundColor(),
               overflow: "visible",
               width: "406px",
-              height: "175px",
+              paddingBottom: "28px !important",
               top: "auto !important",
               bottom: { xs: "68px", lg: "84px" },
               "& ul": {
@@ -188,34 +191,36 @@ export const InfoBtn = (): JSX.Element => {
                 </Link>
               </Typography>
             </Box>
-            <Box
-              sx={{
-                display: "flex",
-                gap: "10px",
-                alignItems: "center",
-                mt: "10px",
-              }}
-            >
-              <Avatar
-                sx={{ width: "23px", height: "23px" }}
-                onClick={handleClose}
-                src={infoIconPng}
-              />
-              <Typography sx={{ fontSize: "14px" }}>
-                My NFT isn't showing. Click{" "}
-                <Link
-                  style={{
-                    color: "#fff",
-                    borderBottom: "1px solid #fff",
-                    cursor: "pointer",
-                  }}
-                  target="_blank"
-                  onClick={handleFormOpen}
-                >
-                  here
-                </Link>
-              </Typography>
-            </Box>
+            {nftContract && nftTokenID && (
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "10px",
+                  alignItems: "center",
+                  mt: "10px",
+                }}
+              >
+                <Avatar
+                  sx={{ width: "23px", height: "23px" }}
+                  onClick={handleClose}
+                  src={infoIconPng}
+                />
+                <Typography sx={{ fontSize: "14px" }}>
+                  My NFT isn't showing. Click{" "}
+                  <Link
+                    style={{
+                      color: "#fff",
+                      borderBottom: "1px solid #fff",
+                      cursor: "pointer",
+                    }}
+                    target="_blank"
+                    onClick={handleFormOpen}
+                  >
+                    here
+                  </Link>
+                </Typography>
+              </Box>
+            )}
           </Box>
           <Box
             sx={{
