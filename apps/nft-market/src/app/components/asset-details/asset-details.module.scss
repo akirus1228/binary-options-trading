@@ -1,6 +1,7 @@
 h1 {
   font-weight: 500;
 }
+
 .imgContainer {
   border-radius: 30px;
   overflow: hidden;
@@ -15,7 +16,17 @@ h1 {
     height: 100%;
     width: 100%;
   }
+
   video {
+    height: 100%;
+    width: 100%;
+  }
+
+  audio {
+    width: 100%;
+  }
+
+  iframe {
     height: 100%;
     width: 100%;
   }
@@ -27,6 +38,7 @@ h1 {
     margin-top: 0 !important;
   }
 }
+
 .moreButton {
   color: #000 !important;
   background: #fff !important;
@@ -54,6 +66,7 @@ body[class*=darkTheme] {
     min-height: 300px !important;
   }
 }
+
 .audio {
   width: 100%;
   background: transparent;

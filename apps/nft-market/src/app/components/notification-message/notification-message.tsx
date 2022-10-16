@@ -1,5 +1,6 @@
 import { Avatar, Badge, Box } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   useGetListingQuery,
   useGetLoanQuery,
@@ -21,6 +22,9 @@ import { useTermDetails } from "../../hooks/use-term-details";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useNavigate } from "react-router-dom";
 import { prettifySeconds } from "@fantohm/shared-web3";
+import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
+import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
+import { RootState } from "../../store";
 
 export interface NotificationMessageProps {
   notification: Notification;
@@ -358,6 +362,7 @@ export const NotificationMessage = ({
   short,
   isMenu,
 }: NotificationMessageProps): JSX.Element => {
+  const themeType = useSelector((state: RootState) => state.theme.mode);
   const [assetListingId, setAssetListingId] = useState<string>();
   const [loanId, setLoanId] = useState<string>();
   const [offerId, setOfferId] = useState<string>();
@@ -517,7 +522,16 @@ export const NotificationMessage = ({
         style={{ width: "100%", justifyContent: "space-between" }}
       >
         <Avatar
-          src={asset ? asset?.imageUrl || asset?.gifUrl || asset?.threeDUrl || "" : ""}
+          src={
+            asset
+              ? asset?.imageUrl ||
+                asset?.gifUrl ||
+                asset?.threeDUrl ||
+                (themeType === "dark"
+                  ? previewNotAvailableDark
+                  : previewNotAvailableLight)
+              : ""
+          }
           sx={{ mr: "1em", borderRadius: "50%" }}
           variant="circular"
         />
