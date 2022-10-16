@@ -22,11 +22,14 @@ import {
   LoanStatus,
 } from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
+import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
+import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
 
 export const BorrowPage = (): JSX.Element => {
   const take = 20;
   const { address } = useWeb3Context();
   const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+  const themeType = useSelector((state: RootState) => state.theme.mode);
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
   const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
   // query to pass to opensea to pull data
@@ -161,7 +164,10 @@ export const BorrowPage = (): JSX.Element => {
       <HeaderBlurryImage
         url={
           myAssets.length > 0
-            ? blurAsset?.imageUrl || blurAsset?.gifUrl || blurAsset?.threeDUrl
+            ? blurAsset?.imageUrl ||
+              blurAsset?.gifUrl ||
+              blurAsset?.threeDUrl ||
+              (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
             : ""
         }
         height="300px"

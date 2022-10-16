@@ -47,9 +47,9 @@ export const updateAssetsFromNftPort = createAsyncThunk(
   async (nftPortAssets: NftPortAsset[], { dispatch }) => {
     const newAssetAry = await nftPortAssetsToAssets(nftPortAssets);
 
-    const ethcallProvider = new Provider(await chains[desiredNetworkId].provider);
-    await ethcallProvider.init();
-    const owners = await ethcallProvider.all(
+    const ethCallProvider = new Provider(await chains[desiredNetworkId].provider);
+    await ethCallProvider.init();
+    const owners = await ethCallProvider.all(
       newAssetAry.map((asset) => {
         const nftContract = new Contract(asset.assetContractAddress, ierc721Abi);
         return nftContract["ownerOf"](asset.tokenId);
