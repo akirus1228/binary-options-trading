@@ -41,7 +41,7 @@ export function MyAccountAssets() {
   }, [user, params["walletAddress"]]);
   const address = isImpersonating ? impersonateAddress : walletAddress;
 
-  const take = 20;
+  const take = 18;
   const [status, setStatus] = useState<string>("All");
   const [continuation, setContinuation] = useState("");
   const [hasNext, setHasNext] = useState(true);

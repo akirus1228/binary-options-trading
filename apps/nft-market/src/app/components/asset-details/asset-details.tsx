@@ -13,9 +13,13 @@ import {
   SxProps,
   Theme,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { isDev, useWeb3Context } from "@fantohm/shared-web3";
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { useDispatch, useSelector } from "react-redux";
+import React, { useMemo, useState } from "react";
+
 import {
   useGetCollectionsQuery,
   useGetLoansQuery,
@@ -24,7 +28,7 @@ import {
 } from "../../api/backend-api";
 import { useWalletAsset } from "../../hooks/use-wallet-asset";
 import { AppDispatch, RootState } from "../../store";
-import { checkNullAsset } from "../../helpers/data-translations";
+import { addAlert } from "../../store/reducers/app-slice";
 import {
   AssetStatus,
   CollectibleMediaType,
@@ -35,17 +39,15 @@ import {
 import AssetOwnerTag from "../asset-owner-tag/asset-owner-tag";
 import QuickStatus from "./quick-status/quick-status";
 import StatusInfo from "./status-info/status-info";
-import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
-import style from "./asset-details.module.scss";
-import React, { useMemo, useState } from "react";
+import PriceInfo from "./price-info/price-info";
 import grayArrowRightUp from "../../../assets/icons/gray-arrow-right-up.svg";
 import etherScan from "../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../assets/icons/etherscan-dark.svg";
 import openSea from "../../../assets/icons/opensea-icon.svg";
 import BlueChip from "../../../assets/icons/blue-chip.svg";
-import PriceInfo from "./price-info/price-info";
-import { addAlert } from "../../store/reducers/app-slice";
-import { useMediaQuery } from "@mui/material";
+import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
+import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
+import style from "./asset-details.module.scss";
 
 export interface AssetDetailsProps {
   contractAddress: string;
@@ -157,7 +159,7 @@ export const AssetDetails = ({
   return (
     <Container sx={sx} className={style["assetRow"]}>
       {/* <HeaderBlurryImage url={asset?.imageUrl} height={"355px"} /> */}
-      {asset && checkNullAsset(asset) ? (
+      {asset ? (
         <Grid container columnSpacing={10} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={6}>
             <Box className={style["imgContainer"]}>
@@ -172,12 +174,41 @@ export const AssetDetails = ({
               {asset.mediaType === CollectibleMediaType.ThreeD && asset.threeDUrl && (
                 <img src={asset.threeDUrl || ""} alt={asset.name || "unknown"} />
               )}
-              {asset.mediaType === CollectibleMediaType.Image && asset.imageUrl && (
-                <img src={asset.imageUrl || ""} alt={asset.name || "unknown"} />
-              )}
+              {asset.mediaType === CollectibleMediaType.Image &&
+                ((asset?.imageUrl || "").startsWith("<svg") ? (
+                  <Box
+                    sx={{ width: "100%" }}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        asset.imageUrl ||
+                        (themeType === "dark"
+                          ? previewNotAvailableDark
+                          : previewNotAvailableLight),
+                    }}
+                  />
+                ) : (
+                  <img
+                    className={style["assetImg"]}
+                    src={
+                      asset.imageUrl ||
+                      (themeType === "dark"
+                        ? previewNotAvailableDark
+                        : previewNotAvailableLight)
+                    }
+                    alt={asset.name || "unknown"}
+                  />
+                ))}
               {asset.mediaType === CollectibleMediaType.Audio && asset.videoUrl && (
                 <Box sx={{ width: "100%", background: "#dfdada" }}>
-                  <img src={asset.imageUrl || ""} alt={asset.name || "unknown"} />
+                  <img
+                    src={
+                      asset.fileUrl ||
+                      (themeType === "dark"
+                        ? previewNotAvailableDark
+                        : previewNotAvailableLight)
+                    }
+                    alt={asset.name || "unknown"}
+                  />
                   <audio
                     controls
                     src={asset.videoUrl}

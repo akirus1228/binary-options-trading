@@ -40,6 +40,8 @@ import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import { addAlert } from "../../store/reducers/app-slice";
 import MakeOffer from "../make-offer/make-offer";
 import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
+import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
+import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -50,6 +52,7 @@ type AppDispatch = typeof store.dispatch;
 
 export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
+  const themeType = useSelector((state: RootState) => state.theme.mode);
   const [isPending, setIsPending] = useState(false);
   const [isRequestingPerms, setIsRequestingPerms] = useState(false);
   const { user } = useSelector((state: RootState) => state.backend);
@@ -445,7 +448,7 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
               offer.assetListing.asset?.imageUrl ||
               offer.assetListing.asset?.gifUrl ||
               offer.assetListing.asset?.threeDUrl ||
-              ""
+              (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
             }
           />
         );

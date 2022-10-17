@@ -165,6 +165,10 @@ export type BackendAsset = {
   gifUrl: Nullable<string>;
   videoUrl: Nullable<string>;
   threeDUrl: Nullable<string>;
+  fileUrl?: Nullable<string>;
+  magicUrl?: Nullable<string>;
+  contentType?: Nullable<string>;
+  contentLength?: number;
   thumbUrl: string;
   isOwned: boolean;
   owner: Owner;
