@@ -20,11 +20,13 @@ import search from "../../../../assets/icons/search.svg";
 import searchDark from "../../../../assets/icons/search-dark.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
+import refresh from "../../../../assets/icons/refresh.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { useMediaQuery } from "@material-ui/core";
+import { useGetNftAssetQuery } from "../../../api/backend-api";
 
 export interface BorrowerAssetProps {
   asset: Asset;
@@ -32,8 +34,17 @@ export interface BorrowerAssetProps {
 
 export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
+  const [addressToRefresh, setAddressToRefresh] = useState<string>("");
+  const [tokenIdToRefresh, setTokenIdToRefresh] = useState<string>("");
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const isTablet = useMediaQuery("(min-width:576px)");
+  const { data: metaDataResponse, isLoading: isMetaDataLoading } = useGetNftAssetQuery(
+    {
+      contractAddress: addressToRefresh,
+      tokenId: tokenIdToRefresh,
+    },
+    { skip: !addressToRefresh || !tokenIdToRefresh }
+  );
 
   const chipColor = useMemo(() => {
     if (!asset) return;
@@ -54,12 +65,24 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
     setFlagMoreDropDown(event.currentTarget);
   };
 
+  const refreshMetaData = () => {
+    setAddressToRefresh(asset.assetContractAddress);
+    setTokenIdToRefresh(asset.tokenId);
+  };
+
   const viewLinks = [
     {
       startIcon: themeType === "dark" ? searchDark : search,
       alt: "Search",
       title: "View Listing",
       url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
+      endIcon: null,
+      isSelfTab: true,
+    },
+    {
+      startIcon: refresh,
+      alt: "Refresh",
+      title: "Refresh Metadata",
       endIcon: null,
       isSelfTab: true,
     },
@@ -166,9 +189,12 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
               <Link
                 key={link.title}
                 href={link.url}
-                style={{ textDecoration: "none" }}
+                style={{ textDecoration: "none", cursor: "pointer" }}
                 target={`${link.isSelfTab ? "_self" : "_blank"}`}
-                onClick={() => setFlagMoreDropDown(null)}
+                onClick={() => {
+                  if (link.alt === "Refresh") refreshMetaData();
+                  setFlagMoreDropDown(null);
+                }}
               >
                 <Box
                   sx={{
@@ -210,7 +236,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
             to={`/asset/${asset.assetContractAddress}/${asset.tokenId}`}
             className={style["assetImage"]}
           >
-            <PreviewImage asset={asset} />
+            <PreviewImage asset={asset} metaDataResponse={metaDataResponse} />
           </RouterLink>
         )}
         <Box className="flex fc fj-c ai-c">

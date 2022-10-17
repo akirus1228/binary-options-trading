@@ -33,6 +33,7 @@ import {
   NftPrice,
   BackendNftAssetsQueryParams,
   BackendNftAssetsQueryResponse,
+  SendReport,
   AffiliateData,
   SaveAffiliateResponse,
 } from "../types/backend-types";
@@ -226,6 +227,7 @@ export const backendApi = createApi({
     "PlatformWalletInfo",
     "Terms",
     "User",
+    "Mail",
   ],
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
@@ -696,6 +698,16 @@ export const backendApi = createApi({
         }`,
       }),
     }),
+    sendReport: builder.mutation<SendReport, Partial<SendReport>>({
+      query: (body) => {
+        return {
+          url: `mail`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Mail"],
+    }),
   }),
 });
 
@@ -735,4 +747,5 @@ export const {
   useGetNftAssetQuery,
   useLazyGetNftCollectionsQuery,
   useGetNftCollectionsQuery,
+  useSendReportMutation,
 } = backendApi;

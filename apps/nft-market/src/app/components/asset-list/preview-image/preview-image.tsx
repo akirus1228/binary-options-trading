@@ -10,12 +10,14 @@ import style from "./preview-image.module.scss";
 
 export interface PreviewImageProps {
   asset: Asset;
+  metaDataResponse: Asset | undefined;
 }
 
 export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const isTablet = useMediaQuery("(min-width:576px)");
-  const { asset } = props;
+  const asset =
+    props.metaDataResponse !== undefined ? props.metaDataResponse : props.asset;
 
   return (
     <Box

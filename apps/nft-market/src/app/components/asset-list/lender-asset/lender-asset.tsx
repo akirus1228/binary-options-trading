@@ -27,8 +27,10 @@ import searchDark from "../../../../assets/icons/search-dark.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
+import refresh from "../../../../assets/icons/refresh.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useMediaQuery } from "@material-ui/core";
+import { useGetNftAssetQuery } from "../../../api/backend-api";
 
 export type LenderAssetProps = {
   asset: Asset;
@@ -36,10 +38,22 @@ export type LenderAssetProps = {
 
 export function LenderAsset({ asset }: LenderAssetProps) {
   const dispatch: AppDispatch = useDispatch();
+  const [addressToRefresh, setAddressToRefresh] = useState<string>("");
+  const [tokenIdToRefresh, setTokenIdToRefresh] = useState<string>("");
   const listing = useSelector((state: RootState) => selectListingFromAsset(state, asset));
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, listing?.term?.currencyAddress || "")
   );
+
+  // load asset data from backend
+  const { data: metaDataResponse, isLoading: isMetaDataLoading } = useGetNftAssetQuery(
+    {
+      contractAddress: addressToRefresh,
+      tokenId: tokenIdToRefresh,
+    },
+    { skip: !addressToRefresh || !tokenIdToRefresh }
+  );
+
   const [flagMoreDropDown, setFlagMoreDropDown] = useState<null | HTMLElement>(null);
   const themeType = useSelector((state: RootState) => state.theme.mode);
   const isTablet = useMediaQuery("(min-width:576px)");
@@ -64,12 +78,24 @@ export function LenderAsset({ asset }: LenderAssetProps) {
     setFlagMoreDropDown(event.currentTarget);
   };
 
+  const refreshMetaData = () => {
+    setAddressToRefresh(asset.assetContractAddress);
+    setTokenIdToRefresh(asset.tokenId);
+  };
+
   const viewLinks = [
     {
       startIcon: themeType === "dark" ? searchDark : search,
       alt: "Search",
       title: "View Listing",
       url: `/asset/${asset.assetContractAddress}/${asset.tokenId}`,
+      endIcon: null,
+      isSelfTab: true,
+    },
+    {
+      startIcon: refresh,
+      alt: "Refresh",
+      title: "Refresh Metadata",
       endIcon: null,
       isSelfTab: true,
     },
@@ -162,9 +188,10 @@ export function LenderAsset({ asset }: LenderAssetProps) {
             <Link
               key={link.title}
               href={link.url}
-              style={{ textDecoration: "none" }}
+              style={{ textDecoration: "none", cursor: "pointer" }}
               target={`${link.isSelfTab ? "_self" : "_blank"}`}
               onClick={() => {
+                if (link.alt === "Refresh") refreshMetaData();
                 setFlagMoreDropDown(null);
               }}
             >
@@ -209,7 +236,9 @@ export function LenderAsset({ asset }: LenderAssetProps) {
         className="flex"
         style={{ flexGrow: "1" }}
       >
-        {asset.tokenId && <PreviewImage asset={asset} />}
+        {asset.tokenId && (
+          <PreviewImage asset={asset} metaDataResponse={metaDataResponse} />
+        )}
       </RouterLink>
       <Box className={style["assetSpecs"]}>
         <Box className="flex fr fj-sb ai-c w100" style={{ margin: "15px 0 0 0" }}>
