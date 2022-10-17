@@ -30,6 +30,8 @@ import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
 import { getLoanDetailsFromContract, LoanDetails } from "../../store/reducers/loan-slice";
 import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
 import { Loan, LoanStatus } from "../../types/backend-types";
+import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
+import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
 
 type MyAccountActiveLoansTableProps = {
   loans: Loan[] | undefined;
@@ -41,6 +43,7 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
   const { user } = useSelector((state: RootState) => state.backend);
   const { repaymentTotal, repaymentAmount } = useTermDetails(loan.term);
   const [loanDetails, setLoanDetails] = useState<LoanDetails>();
+  const themeType = useSelector((state: RootState) => state.theme.mode);
 
   const currency = useSelector((state: RootState) =>
     selectCurrencyByAddress(state, loan.term.currencyAddress)
@@ -75,7 +78,7 @@ const LoanRow = ({ loan }: { loan: Loan }): JSX.Element => {
             loan.assetListing.asset?.imageUrl ||
             loan.assetListing.asset?.gifUrl ||
             loan.assetListing.asset?.threeDUrl ||
-            ""
+            (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
           }
         />
       </PaperTableCell>
