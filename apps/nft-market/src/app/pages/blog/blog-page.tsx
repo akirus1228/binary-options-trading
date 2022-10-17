@@ -321,7 +321,7 @@ export const BlogPage = (): JSX.Element => {
                     container
                     style={{
                       width: "50%",
-                      marginLeft: "55px",
+                      maxWidth: "600px",
                     }}
                     sx={{
                       display: "flex",
@@ -362,6 +362,9 @@ export const BlogPage = (): JSX.Element => {
                       <Button
                         variant="contained"
                         color="primary"
+                        style={{
+                          width: "100%",
+                        }}
                         sx={{ px: "3em", display: { md: "flex" } }}
                         className={style["link"]}
                         onClick={onSubmitEmail}
