@@ -24,7 +24,7 @@ import {
 import style from "./borrow-page.module.scss";
 
 export const BorrowPage = (): JSX.Element => {
-  const take = 20;
+  const take = 18;
   const { address } = useWeb3Context();
   const { impersonateAddress, isImpersonating } = useImpersonateAccount();
   const { user, authSignature } = useSelector((state: RootState) => state.backend);
@@ -49,7 +49,7 @@ export const BorrowPage = (): JSX.Element => {
   // query to use on backend api call, to pull data we have
   const [getListingQuery, setGetListingQuery] = useState<BackendAssetQueryParams>({
     skip: 0,
-    take: 20,
+    take: 18,
   });
 
   // query assets in escrow
