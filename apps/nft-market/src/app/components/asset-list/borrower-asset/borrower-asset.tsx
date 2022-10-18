@@ -21,6 +21,7 @@ import searchDark from "../../../../assets/icons/search-dark.svg";
 import etherScan from "../../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import refresh from "../../../../assets/icons/refresh.svg";
+import refreshDark from "../../../../assets/icons/refresh-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useSelector } from "react-redux";
@@ -80,7 +81,7 @@ export const BorrowerAsset = ({ asset }: BorrowerAssetProps): JSX.Element => {
       isSelfTab: true,
     },
     {
-      startIcon: refresh,
+      startIcon: themeType === "dark" ? refreshDark : refresh,
       alt: "Refresh",
       title: "Refresh Metadata",
       endIcon: null,

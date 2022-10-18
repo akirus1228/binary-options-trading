@@ -28,6 +28,7 @@ import etherScan from "../../../../assets/icons/etherscan.svg";
 import etherScanDark from "../../../../assets/icons/etherscan-dark.svg";
 import grayArrowRightUp from "../../../../assets/icons/gray-arrow-right-up.svg";
 import refresh from "../../../../assets/icons/refresh.svg";
+import refreshDark from "../../../../assets/icons/refresh-dark.svg";
 import openSea from "../../../../assets/icons/opensea-icon.svg";
 import { useMediaQuery } from "@material-ui/core";
 import { useGetNftAssetQuery } from "../../../api/backend-api";
@@ -93,7 +94,7 @@ export function LenderAsset({ asset }: LenderAssetProps) {
       isSelfTab: true,
     },
     {
-      startIcon: refresh,
+      startIcon: themeType === "dark" ? refreshDark : refresh,
       alt: "Refresh",
       title: "Refresh Metadata",
       endIcon: null,
