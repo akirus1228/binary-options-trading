@@ -202,7 +202,7 @@ const staggeredBaseQuery = retry(
       },
     })(args, api, extraOptions);
     if (result.error) {
-      // fail immediatly if it's a 500 error
+      // fail immediately if it's a 500 error
       if (result.error?.status === 500) {
         retry.fail(result.error);
       }

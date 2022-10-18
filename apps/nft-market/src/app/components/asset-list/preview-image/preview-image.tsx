@@ -29,6 +29,7 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
         borderRadius: isTablet ? "28px" : "14px",
         overflow: "hidden",
       }}
+      className={style["imgContainer"]}
     >
       {asset.mediaType === CollectibleMediaType.Video && asset.videoUrl && (
         <video controls>
