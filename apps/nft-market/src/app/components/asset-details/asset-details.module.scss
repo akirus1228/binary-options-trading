@@ -31,6 +31,14 @@ h1 {
     width: 100%;
     border: none;
   }
+
+  model-viewer {
+    width: 100%;
+    min-height: 460px;
+    @media (max-width: 576px) {
+      min-height: 250px !important;
+    }
+  }
 }
 
 .assetRow {
