@@ -19,6 +19,7 @@ import { isDev, useWeb3Context } from "@fantohm/shared-web3";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useMemo, useState } from "react";
+import "@google/model-viewer";
 
 import {
   useGetCollectionsQuery,
@@ -48,6 +49,25 @@ import BlueChip from "../../../assets/icons/blue-chip.svg";
 import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
 import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
 import style from "./asset-details.module.scss";
+import { Nullable } from "../../types/backend-types";
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      "model-viewer": MyElementAttributes;
+    }
+
+    interface MyElementAttributes {
+      src: Nullable<string>;
+      poster: Nullable<string>;
+      "auto-rotate": Nullable<string>;
+      autoplay: Nullable<string>;
+      "camera-controls": Nullable<string>;
+      "ar-status": Nullable<string>;
+    }
+  }
+}
 
 export interface AssetDetailsProps {
   contractAddress: string;
@@ -169,11 +189,37 @@ export const AssetDetails = ({
                 </video>
               )}
               {asset.mediaType === CollectibleMediaType.Gif && asset.gifUrl && (
-                <img src={asset.gifUrl || ""} alt={asset.name || "unknown"} />
+                <img
+                  src={
+                    asset.gifUrl ||
+                    (themeType === "dark"
+                      ? previewNotAvailableDark
+                      : previewNotAvailableLight)
+                  }
+                  alt={asset.name || "unknown"}
+                />
               )}
-              {asset.mediaType === CollectibleMediaType.ThreeD && asset.threeDUrl && (
-                <img src={asset.threeDUrl || ""} alt={asset.name || "unknown"} />
-              )}
+              {asset.mediaType === CollectibleMediaType.ThreeD &&
+                (asset?.threeDUrl ? (
+                  <model-viewer
+                    poster={asset?.fileUrl || ""}
+                    auto-rotate="true"
+                    autoplay="true"
+                    camera-controls="true"
+                    src={asset?.threeDUrl || ""}
+                    ar-status="not-presenting"
+                  ></model-viewer>
+                ) : (
+                  <img
+                    src={
+                      asset.fileUrl ||
+                      (themeType === "dark"
+                        ? previewNotAvailableDark
+                        : previewNotAvailableLight)
+                    }
+                    alt={asset.name || "unknown"}
+                  />
+                ))}
               {asset.mediaType === CollectibleMediaType.Image &&
                 ((asset?.imageUrl || "").startsWith("<svg") ? (
                   <Box

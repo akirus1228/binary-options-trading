@@ -39,7 +39,10 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
       {asset.mediaType === CollectibleMediaType.Gif && asset.gifUrl && (
         <img
           className={style["assetImg"]}
-          src={asset.gifUrl || ""}
+          src={
+            asset.gifUrl ||
+            (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
+          }
           alt={props.asset?.name || ""}
           style={{
             height: "100%",
@@ -51,7 +54,10 @@ export const PreviewImage = (props: PreviewImageProps): JSX.Element => {
       {asset.mediaType === CollectibleMediaType.ThreeD && asset.threeDUrl && (
         <img
           className={style["assetImg"]}
-          src={asset.threeDUrl || ""}
+          src={
+            asset.fileUrl ||
+            (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
+          }
           alt={props.asset?.name || ""}
           style={{
             height: "100%",
