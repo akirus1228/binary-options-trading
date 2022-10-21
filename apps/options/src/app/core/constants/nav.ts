@@ -1,0 +1,8 @@
+import { NavItemProp } from "../types/nav";
+
+export const NavItems: NavItemProp[] = [
+  { title: "Trade", href: "/trade" },
+  { title: "Markets", href: "/markets" },
+  { title: "Leaderboard", href: "/leaderboard" },
+  { title: "Pools", href: "/pools" },
+];

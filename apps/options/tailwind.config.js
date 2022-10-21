@@ -27,12 +27,9 @@ module.exports = {
   important: true,
   theme: {
     screens: {
-      msm: "320px",
-      mmd: "375px",
-      mlg: "425px",
-      lap: "890px",
+      "xs": "320px",
       sm: "640px",
-      md: "768px",
+      md: "870px",
       lg: "1024px",
       xl: "1280px",
       "2xl": "1536px",
@@ -47,8 +44,10 @@ module.exports = {
       success: "#12b3a8",
       danger: "#ff586c",
       bunker: "#0E1415",
+      woodsmoke: "#0B0F10",
       lightgray: "#65717E",
       lightblue: "#4B616C",
+      ...colors,
     },
     spacing: {
       ...range(minSpacingPixel, maxSpacingPixel, spacingPixelIncrement).reduce(
