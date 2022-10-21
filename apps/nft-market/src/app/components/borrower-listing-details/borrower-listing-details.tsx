@@ -78,7 +78,7 @@ export const BorrowerListingDetails = (
     setDialogCancelListingOpen(false);
   };
 
-  if (typeof listing.term === "undefined") {
+  if (typeof listing?.term === "undefined") {
     return <h3>Loading...</h3>;
   }
 
