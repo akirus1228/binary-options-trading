@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "../../core/types/types";
 
-interface TradingPadProps {
+export interface TradingPadProps {
   sourceToken: string;
   underlyingToken: CryptoCurrency;
 }

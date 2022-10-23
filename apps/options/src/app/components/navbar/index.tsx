@@ -7,7 +7,7 @@ import Logo from "../logo";
 import SearchBar from "./search";
 import ConnectWallet from "./connect-wallet";
 import { NavItemProp } from "../../core/types/types";
-import { NavItems } from "../../core/constants/nav";
+import { NavItems } from "../../core/constants";
 
 const Navbar = (): JSX.Element => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
