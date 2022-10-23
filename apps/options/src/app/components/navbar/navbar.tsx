@@ -3,7 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { MouseEvent, useState } from "react";
 import { Link } from "react-router-dom";
 
-import Logo from "../logo";
+import Logo from "../logo/logo";
 import SearchBar from "./search";
 import ConnectWallet from "./connect-wallet";
 import { NavItemProp } from "../../core/types/types";

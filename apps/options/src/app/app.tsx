@@ -3,7 +3,7 @@ import HomePage from "./pages/home/home-page";
 import Markets from "./pages/markets/markets";
 import Leaderboard from "./pages/leaderboard/leaderboard";
 import Pools from "./pages/pools/pools";
-import Navbar from "./components/navbar";
+import Navbar from "./components/navbar/navbar";
 
 export function App() {
   return (

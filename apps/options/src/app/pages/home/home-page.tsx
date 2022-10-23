@@ -3,6 +3,7 @@ import "react-multi-carousel/lib/styles.css";
 
 import TradingPad from "../../components/trading/trading-pad";
 import TradingMarket from "../../components/trading/trading-market";
+import TradingExperience from "../../components/trading-experience/trading-experience";
 import { CryptoCurrency } from "../../core/types/types";
 import { BettingCryptoCurrencies, responsive } from "../../core/constants";
 
@@ -47,6 +48,13 @@ export const HomePage = (): JSX.Element => {
         {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
           return <TradingMarket sourceToken="DAI" underlyingToken={item} />;
         })}
+      </div>
+      <div className="xs:px-10 sm:px-30 md:px-70">
+        <TradingExperience />
+      </div>
+      <div className="flex justify-between">
+        {/* <TradingCommunity />
+        <DemoAccount /> */}
       </div>
     </div>
   );
