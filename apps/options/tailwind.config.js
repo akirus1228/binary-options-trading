@@ -45,8 +45,10 @@ module.exports = {
       danger: "#ff586c",
       bunker: "#0E1415",
       woodsmoke: "#0B0F10",
+      lightsmoke: "#0D1012",
       lightgray: "#65717E",
       lightblue: "#4B616C",
+      heavybunker: "#090b0e",
       ...colors,
     },
     spacing: {

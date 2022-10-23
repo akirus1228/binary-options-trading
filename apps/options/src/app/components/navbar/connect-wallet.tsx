@@ -6,15 +6,14 @@ const ConnectWallet = () => {
   const [isConnected, setConnected] = useState(false);
   const [isInvisible, setInvisible] = useState(false);
   const [ETHAmount, setETHAmount] = useState<number>(0.0);
-  console.log(ETHAmount);
+
   const handleClick = () => {
     setConnected(!isConnected);
-    console.log("clicked!");
   };
 
   return (
     <div
-      className={`xs:150 sm:w-350 flex items-center p-5 ml-5
+      className={`xs:150 sm:w-320 flex items-center p-5 ml-5
         ${
           isConnected ? "justify-between border border-second rounded-2xl" : "justify-end"
         } 

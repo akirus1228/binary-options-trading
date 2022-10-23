@@ -17,7 +17,7 @@ import {
 
 export const HomePage = (): JSX.Element => {
   return (
-    <div className="bg-black">
+    <div className="bg-heavybunker">
       <div className="landing-page bg-[url('./assets/images/bg-img.png')] bg-cover">
         <div className="h-screen w-full xs:px-30 sm:px-60 md:px-90 pt-150">
           <div className="xs:w-270 sm:w-500 flex flex-col with-520">
@@ -34,7 +34,7 @@ export const HomePage = (): JSX.Element => {
               </button>
             </div>
           </div>
-          <Carousel className="pt-120" responsive={responsive}>
+          <Carousel className="pt-120 " responsive={responsive}>
             {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
               return (
                 <TradingPad sourceToken="DAI" underlyingToken={item} key={item.symbol} />
@@ -44,7 +44,7 @@ export const HomePage = (): JSX.Element => {
         </div>
       </div>
       <div className="trending-markets xs:px-10 sm:px-30 md:px-70">
-        <p className="trending-markets-title xs:text-30 sm:text-40 text-primary">
+        <p className="trending-markets-title xs:text-30 sm:text-40 text-primary mb-30">
           Trending markets
         </p>
         <div className="pads-title grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 px-20 xs:text-15 sm:text-20 text-lightgray">

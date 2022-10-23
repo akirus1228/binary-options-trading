@@ -21,49 +21,8 @@ const Navbar = (): JSX.Element => {
   };
 
   return (
-    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-bunker xs:p-5 sm:p-20 text-primary">
+    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-bunker xs:p-5 sm:py-20 sm:px-20 lg:px-40 text-primary">
       <div className="flex items-center">
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="menu-appbar"
-          aria-haspopup="true"
-          onClick={handleOpenNavMenu}
-          color="inherit"
-          className="xs:block md:hidden"
-        >
-          <MenuIcon />
-        </IconButton>
-        <Menu
-          id="basic-menu"
-          className="flex flex-col"
-          anchorEl={anchorElNav}
-          open={Boolean(anchorElNav)}
-          onClose={handleCloseNavMenu}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-          sx={{
-            "& .MuiList-root": {
-              padding: "0px",
-            },
-          }}
-        >
-          {NavItems.map((item: NavItemProp) => (
-            <div
-              className="flex justify-center bg-gray-500 text-white px-40 py-10 cursor-default"
-              key={item.title}
-            >
-              <Link
-                onClick={handleCloseNavMenu}
-                to={item.href}
-                className="cursor-default"
-              >
-                {item.title}
-              </Link>
-            </div>
-          ))}
-        </Menu>
         <Logo />
       </div>
       <SearchBar />
@@ -73,14 +32,63 @@ const Navbar = (): JSX.Element => {
             <Link
               to={items.href}
               key={index}
-              className="h-90 flex items-center xs:text-18 md:20 text-primary xs:px-10 md:px-15 cursor-default border-b-2 border-b-bunker hover:border-b-success"
+              className="h-90 flex items-center text-18 text-primary xs:px-10 xl:px-20 cursor-default border-b-2 border-b-bunker hover:border-b-success"
             >
               {items.title}
             </Link>
           );
         })}
       </div>
-      <ConnectWallet />
+      <div className="flex">
+        <div className="flex justify-center">
+          <ConnectWallet />
+        </div>
+        <div className="xs:block md:hidden">
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleOpenNavMenu}
+            color="inherit"
+            className="xs:w-20 sm:w-auto flex justify-center items-center"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            id="basic-menu"
+            className="flex flex-col"
+            anchorEl={anchorElNav}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+            sx={{
+              "& .MuiList-root": {
+                padding: "0px",
+              },
+            }}
+          >
+            {NavItems.map((item: NavItemProp) => {
+              return (
+                <div
+                  className="flex justify-center bg-gray-500 text-white px-40 py-10 cursor-default"
+                  key={item.title}
+                >
+                  <Link
+                    onClick={handleCloseNavMenu}
+                    to={item.href}
+                    className="cursor-default"
+                  >
+                    {item.title}
+                  </Link>
+                </div>
+              );
+            })}
+          </Menu>
+        </div>
+      </div>
     </div>
   );
 };

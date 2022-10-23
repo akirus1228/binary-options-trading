@@ -13,6 +13,7 @@ export type NetworkId = number;
 export enum NetworkIds {
   Ethereum = 1,
   Rinkeby = 4,
+  Goerli = 5,
   Bsc = 56,
   FantomOpera = 250,
   FantomTestnet = 4002,
