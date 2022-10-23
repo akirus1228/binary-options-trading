@@ -4,6 +4,8 @@ import "react-multi-carousel/lib/styles.css";
 import TradingPad from "../../components/trading/trading-pad";
 import TradingMarket from "../../components/trading/trading-market";
 import TradingExperience from "../../components/trading-experience/trading-experience";
+import DemoAccount from "../../components/demo-account/demo-account";
+import TradingCommunity from "../../components/trading-community/trading-community";
 import { CryptoCurrency } from "../../core/types/types";
 import { BettingCryptoCurrencies, responsive } from "../../core/constants";
 
@@ -28,7 +30,9 @@ export const HomePage = (): JSX.Element => {
           </div>
           <Carousel className="pt-120" responsive={responsive}>
             {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
-              return <TradingPad sourceToken="DAI" underlyingToken={item} />;
+              return (
+                <TradingPad sourceToken="DAI" underlyingToken={item} key={item.symbol} />
+              );
             })}
           </Carousel>
         </div>
@@ -46,15 +50,17 @@ export const HomePage = (): JSX.Element => {
           <div className="xs:hidden sm:block"></div>
         </div>
         {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
-          return <TradingMarket sourceToken="DAI" underlyingToken={item} />;
+          return (
+            <TradingMarket sourceToken="DAI" underlyingToken={item} key={item.symbol} />
+          );
         })}
       </div>
       <div className="xs:px-10 sm:px-30 md:px-70">
         <TradingExperience />
       </div>
-      <div className="flex justify-between">
-        {/* <TradingCommunity />
-        <DemoAccount /> */}
+      <div className="grid xs:grid-rows-2 lg:grid-rows-1 xs:grid-cols-1 lg:grid-cols-2 xs:gap-0 lg:gap-80 xs:px-10 sm:px-30 md:px-70">
+        <TradingCommunity />
+        <DemoAccount />
       </div>
     </div>
   );
