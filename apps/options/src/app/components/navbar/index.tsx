@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Logo from "../logo";
 import SearchBar from "./search";
 import ConnectWallet from "./connect-wallet";
-import { NavItemProp } from "../../core/types/nav";
+import { NavItemProp } from "../../core/types/types";
 import { NavItems } from "../../core/constants/nav";
 
 const Navbar = (): JSX.Element => {
