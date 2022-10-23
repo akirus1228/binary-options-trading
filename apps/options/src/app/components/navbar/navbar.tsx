@@ -50,7 +50,10 @@ const Navbar = (): JSX.Element => {
           }}
         >
           {NavItems.map((item: NavItemProp) => (
-            <div className="flex justify-center bg-gray-500 text-white px-40 py-10 cursor-default">
+            <div
+              className="flex justify-center bg-gray-500 text-white px-40 py-10 cursor-default"
+              key={item.title}
+            >
               <Link
                 onClick={handleCloseNavMenu}
                 to={item.href}

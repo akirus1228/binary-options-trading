@@ -8,7 +8,8 @@ const DemoAccount = () => {
           Free demo account
         </p>
         <p className="xs:text-19 lg:text-15 text-second mb-40 w-230">
-          New to binary options? No problem. Get started with a demo account to learn the basics.
+          New to binary options? No problem. Get started with a demo account to learn the
+          basics.
         </p>
         <ArrowIcon text="ENTER APP" revert={true} status={"up"} />
       </div>

@@ -1,17 +1,23 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
+import Logo from "../../components/logo/logo";
 import TradingPad from "../../components/trading/trading-pad";
 import TradingMarket from "../../components/trading/trading-market";
 import TradingExperience from "../../components/trading-experience/trading-experience";
 import DemoAccount from "../../components/demo-account/demo-account";
 import TradingCommunity from "../../components/trading-community/trading-community";
-import { CryptoCurrency } from "../../core/types/types";
-import { BettingCryptoCurrencies, responsive } from "../../core/constants";
+import { CryptoCurrency, NavItemProp } from "../../core/types/types";
+import {
+  BettingCryptoCurrencies,
+  NavItems,
+  responsive,
+  CommunityTools,
+} from "../../core/constants";
 
 export const HomePage = (): JSX.Element => {
   return (
-    <div className="bg-black pb-30">
+    <div className="bg-black">
       <div className="landing-page bg-[url('./assets/images/bg-img.png')] bg-cover">
         <div className="h-screen w-full xs:px-30 sm:px-60 md:px-90 pt-150">
           <div className="xs:w-270 sm:w-500 flex flex-col with-520">
@@ -62,6 +68,39 @@ export const HomePage = (): JSX.Element => {
         <TradingCommunity />
         <DemoAccount />
       </div>
+      <div className="xs:hidden md:flex  flex-col justify-center items-center py-90 text-second text-16">
+        <p>
+          Hi-Lo is a{" "}
+          <a
+            href="http://balance.capital"
+            target={"_blank"}
+            rel="noreferrer"
+            className="underline"
+          >
+            balance.capital
+          </a>{" "}
+          product.
+        </p>
+        <p>
+          *Trading binary options carries substantial financial and other risks. Hi-Lo
+          does not provide financial advice.
+        </p>
+      </div>
+      <footer className="bg-bunker h-90 flex justify-between items-center px-30 text-second text-18 xs:mt-90 md:mt-0">
+        <div className="xs:hidden md:flex menu md:w-1/3 justify-between items-center">
+          {NavItems.map((item: NavItemProp) => {
+            return <div>{item.title}</div>;
+          })}
+        </div>
+        <div className="h-full flex justify-center items-center xs:w-full md:w-1/3">
+          <Logo dark />
+        </div>
+        <div className="xs:hidden md:flex community-tool md:w-1/3 justify-between items-center">
+          {CommunityTools.map((item: NavItemProp) => {
+            return <div>{item.title}</div>;
+          })}
+        </div>
+      </footer>
     </div>
   );
 };

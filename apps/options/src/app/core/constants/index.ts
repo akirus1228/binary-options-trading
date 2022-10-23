@@ -36,3 +36,9 @@ export const BettingCryptoCurrencies: CryptoCurrency[] = [
   { name: "Cosmos", symbol: "ATOM" },
   { name: "Polygon", symbol: "MATIC" },
 ];
+
+export const CommunityTools: NavItemProp[] = [
+  { title: "Discord", href: "" },
+  { title: "Twitter", href: "" },
+  { title: "Report & problem", href: "" },
+];
