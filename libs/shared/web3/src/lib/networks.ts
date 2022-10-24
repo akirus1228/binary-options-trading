@@ -370,6 +370,7 @@ export const networks: INetworks = {
     USDB_LENDING_ADDRESSES: [
       "0x1888BB30f9EdD63b265942F3E3D061F186f38079",
       "0x71828E1A0b634c7A661dFC2B4Ae8486d3a88B15d",
+      "0x74f9f75747550fbca6510610450fe91b5ed765fe",
     ],
   },
   [NetworkIds.Ethereum]: {
