@@ -1,5 +1,6 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { Link } from "react-router-dom";
 
 import Logo from "../../components/logo/logo";
 import TradingPad from "../../components/trading/trading-pad";
@@ -18,7 +19,7 @@ import {
 export const HomePage = (): JSX.Element => {
   return (
     <div className="bg-heavybunker">
-      <div className="landing-page bg-[url('./assets/images/bg-img.png')] bg-cover">
+      <div className="landing-page bg-contain xs:bg-[url('./assets/images/bg-img-xs.png')] sm:bg-[url('./assets/images/bg-img-lg.png')] xl:bg-[url('./assets/images/bg-img-xl.png')] bg-no-repeat">
         <div className="h-screen w-full xs:px-30 sm:px-60 md:px-90 pt-150">
           <div className="xs:w-270 sm:w-500 flex flex-col with-520">
             <p className="text-success text-15 xs:mb-5 sm:mb-10">CRYPTO BINARY OPTIONS</p>
@@ -34,7 +35,12 @@ export const HomePage = (): JSX.Element => {
               </button>
             </div>
           </div>
-          <Carousel className="pt-120 " responsive={responsive}>
+          <Carousel
+            className="pt-120 "
+            partialVisbile={true}
+            responsive={responsive}
+            arrows={false}
+          >
             {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
               return (
                 <TradingPad sourceToken="DAI" underlyingToken={item} key={item.symbol} />
@@ -86,10 +92,14 @@ export const HomePage = (): JSX.Element => {
           does not provide financial advice.
         </p>
       </div>
-      <footer className="bg-bunker h-90 flex justify-between items-center px-30 text-second text-18 xs:mt-90 md:mt-0">
+      <footer className="bg-bunker h-90 flex justify-between items-center md:px-40 lg:px-60 text-second text-18 xs:mt-90 md:mt-0">
         <div className="xs:hidden md:flex menu md:w-1/3 justify-between items-center">
           {NavItems.map((item: NavItemProp) => {
-            return <div>{item.title}</div>;
+            return (
+              <Link key={item.title} to={item.href}>
+                {item.title}
+              </Link>
+            );
           })}
         </div>
         <div className="h-full flex justify-center items-center xs:w-full md:w-1/3">
@@ -97,7 +107,7 @@ export const HomePage = (): JSX.Element => {
         </div>
         <div className="xs:hidden md:flex community-tool md:w-1/3 justify-between items-center">
           {CommunityTools.map((item: NavItemProp) => {
-            return <div>{item.title}</div>;
+            return <div key={item.title}>{item.title}</div>;
           })}
         </div>
       </footer>

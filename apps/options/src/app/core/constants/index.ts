@@ -3,20 +3,36 @@ import { NavItemProp } from "../types/types";
 
 export const responsive = {
   superLargeDesktop: {
-    // the naming can be any, depends on you.
-    breakpoint: { max: 4000, min: 1600 },
-    items: 4,
-  },
-  desktop: {
-    breakpoint: { max: 1600, min: 1250 },
+    breakpoint: { max: 1560, min: 1280 },
     items: 3,
   },
-  tablet: {
-    breakpoint: { max: 1250, min: 900 },
+  laptopL: {
+    breakpoint: { max: 1280, min: 1024 },
     items: 2,
+    paritialVisibilityGutter: 50,
+  },
+  laptop: {
+    breakpoint: { max: 860, min: 768 },
+    items: 1,
+    paritialVisibilityGutter: 180,
+  },
+  table: {
+    breakpoint: { max: 768, min: 425 },
+    items: 1,
+    paritialVisibilityGutter: 100,
+  },
+  mobileL: {
+    breakpoint: { max: 425, min: 375 },
+    items: 1,
+    paritialVisibilityGutter: 30,
+  },
+  mobileM: {
+    breakpoint: { max: 375, min: 320 },
+    items: 1,
+    paritialVisibilityGutter: 15,
   },
   mobile: {
-    breakpoint: { max: 900, min: 0 },
+    breakpoint: { max: 320, min: 0 },
     items: 1,
   },
 };
