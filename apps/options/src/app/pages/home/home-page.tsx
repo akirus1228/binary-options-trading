@@ -19,7 +19,7 @@ import {
 export const HomePage = (): JSX.Element => {
   return (
     <div className="bg-heavybunker">
-      <div className="landing-page bg-contain xs:bg-[url('./assets/images/bg-img-xs.png')] sm:bg-[url('./assets/images/bg-img-lg.png')] xl:bg-[url('./assets/images/bg-img-xl.png')] bg-no-repeat">
+      <div className="landing-page xs:bg-contain lg:bg-cover xs:bg-[url('./assets/images/bg-img-xs.png')] sm:bg-[url('./assets/images/bg-img-lg.png')] xl:bg-[url('./assets/images/bg-img-xl.png')] bg-no-repeat">
         <div className="h-screen w-full xs:px-30 sm:px-60 md:px-90 pt-150">
           <div className="xs:w-270 sm:w-500 flex flex-col with-520">
             <p className="text-success text-15 xs:mb-5 sm:mb-10">CRYPTO BINARY OPTIONS</p>
