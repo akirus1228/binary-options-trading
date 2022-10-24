@@ -1,84 +1,219 @@
-import { useWeb3Context } from "@fantohm/shared-web3";
+import { useWeb3Context, useImpersonateAccount } from "@fantohm/shared-web3";
 import { Box, CircularProgress, Container, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetListingsQuery } from "../../api/backend-api";
-import { OpenseaAsset, useGetOpenseaAssetsQuery } from "../../api/opensea";
+import {
+  useGetListingsQuery,
+  useGetLoansQuery,
+  useGetNftAssetsQuery,
+} from "../../api/backend-api";
 import BorrowerAssetFilter from "../../components/asset-filter/borrower-asset-filter/borrower-asset-filter";
 import AssetList from "../../components/asset-list/asset-list";
 import HeaderBlurryImage from "../../components/header-blurry-image/header-blurry-image";
 import { RootState } from "../../store";
-import { OpenseaAssetQueryParam } from "../../store/reducers/interfaces";
-import { selectMyAssets } from "../../store/selectors/asset-selectors";
-import { Asset, BackendAssetQueryParams } from "../../types/backend-types";
+import { selectAssetsByQuery } from "../../store/selectors/asset-selectors";
+import {
+  Asset,
+  AssetStatus,
+  BackendAssetQueryParams,
+  BackendLoanQueryParams,
+  BackendNftAssetsQueryParams,
+  FrontendAssetFilterQuery,
+  LoanStatus,
+} from "../../types/backend-types";
 import style from "./borrow-page.module.scss";
+import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
+import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
 
 export const BorrowPage = (): JSX.Element => {
+  const take = 18;
   const { address } = useWeb3Context();
-  const [displayAssets, setDisplayAssets] = useState<Asset[]>();
-  const [osQuery, setOsQuery] = useState<OpenseaAssetQueryParam>({
-    limit: 50,
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+  const themeType = useSelector((state: RootState) => state.theme.mode);
+  const { user, authSignature } = useSelector((state: RootState) => state.backend);
+  const isOpenseaUp = useSelector((state: RootState) => state.app.isOpenseaUp);
+  // query to pass to opensea to pull data
+  const [nftPortQuery, setNftPortQuery] = useState<BackendNftAssetsQueryParams>({
+    limit: take,
+    walletAddress: isImpersonating ? impersonateAddress : user.address,
   });
-  const [beQuery, setBeQuery] = useState<BackendAssetQueryParams>({
+
+  const actualAddress = isImpersonating ? impersonateAddress : address;
+
+  const [continuation, setContinuation] = useState("");
+  const [hasNext, setHasNext] = useState(true);
+
+  // query to use on frontend to filter cached results and ultimately display
+  const [assetQuery, setAssetQuery] = useState<FrontendAssetFilterQuery>({
+    status: "All",
+    wallet: actualAddress,
+  });
+
+  // query to use on backend api call, to pull data we have
+  const [getListingQuery, setGetListingQuery] = useState<BackendAssetQueryParams>({
+    skip: 0,
+    take: 18,
+  });
+
+  // query assets in escrow
+  const [loansQuery, setLoansQuery] = useState<BackendLoanQueryParams>({
     skip: 0,
     take: 50,
+    walletAddress: actualAddress,
+    status: LoanStatus.Active,
   });
-  const myAssets = useSelector((state: RootState) => selectMyAssets(state, address));
-  const { authSignature } = useSelector((state: RootState) => state.backend);
 
-  // load assets from opensea api
-  const { data: assets, isLoading: assetsLoading } = useGetOpenseaAssetsQuery(osQuery, {
-    skip: !address,
+  // load assets from nftport api
+  const { data: npResponse, isLoading: assetsLoading } = useGetNftAssetsQuery(
+    nftPortQuery,
+    {
+      skip: !nftPortQuery.walletAddress || !isOpenseaUp,
+    }
+  );
+
+  const { data: loans, isLoading: isLoansLoading } = useGetLoansQuery(loansQuery, {
+    skip:
+      !address ||
+      (assetQuery.status !== AssetStatus.Locked && assetQuery.status !== "All"),
   });
 
   // using the opensea assets, crosscheck with backend api for correlated data
-  const { isLoading: isAssetLoading } = useGetListingsQuery(beQuery, {
-    skip: !assets || !authSignature,
+  const { isLoading: isAssetLoading } = useGetListingsQuery(getListingQuery, {
+    skip: !getListingQuery.contractAddresses || !authSignature,
   });
+
+  const myAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, assetQuery)
+  );
+  const allMyAssets = useSelector((state: RootState) =>
+    selectAssetsByQuery(state, {
+      status: "All",
+      wallet: actualAddress,
+    })
+  );
 
   useEffect(() => {
     const newQuery = {
-      ...beQuery,
-      openseaIds: assets?.map((asset: OpenseaAsset) => asset.id.toString()),
+      ...getListingQuery,
+      contractAddresses: npResponse?.assets
+        ?.map((asset: Asset) => (asset.assetContractAddress || "").toString())
+        .join(","),
+      tokenIds: npResponse?.assets
+        ?.map((asset: Asset) => (asset.tokenId || "").toString())
+        .join(","),
     };
-    setBeQuery(newQuery);
-  }, [assets]);
+    setGetListingQuery(newQuery);
+    // store the next page cursor ID
+    if (npResponse && npResponse.continuation) {
+      setContinuation(npResponse?.continuation || "");
+    } else if (npResponse && npResponse.continuation === null) {
+      setHasNext(false);
+    }
+  }, [npResponse, npResponse?.assets]);
 
   useEffect(() => {
-    const updatedQuery = {
-      ...osQuery,
-      owner: address,
-    };
-    setOsQuery(updatedQuery);
-  }, [address]);
+    setNftPortQuery({
+      ...nftPortQuery,
+      walletAddress: actualAddress,
+    });
+    setAssetQuery({
+      ...assetQuery,
+      wallet: actualAddress,
+    });
+    setLoansQuery({
+      ...loansQuery,
+      borrowerAddress: actualAddress,
+    });
+  }, [address, actualAddress]);
+
+  const assetsInEscrow =
+    loans
+      ?.map((loan) => loan.assetListing.asset)
+      .filter((asset) => asset.status === AssetStatus.Locked) || [];
+
+  const assetsToShow: Asset[] = useMemo(() => {
+    return (
+      assetQuery.status === AssetStatus.Locked && loans
+        ? assetsInEscrow
+        : assetQuery.status === "All"
+        ? [
+            ...myAssets,
+            ...assetsInEscrow.filter((asset) => asset.owner.address !== actualAddress),
+          ]
+        : myAssets
+    ).sort((assetA: Asset, assetB: Asset) =>
+      // always sort escrow to top to avoid infinite scroll injecting in the middle
+      assetA.status === AssetStatus.Locked && assetB.status !== AssetStatus.Locked
+        ? -1
+        : 1
+    );
+  }, [assetsInEscrow, assetQuery.status, myAssets]);
+
+  const isWalletConnected = address && authSignature;
+
+  const fetchMoreData = () => {
+    setNftPortQuery({ ...nftPortQuery, continuation: continuation });
+  };
+
+  const blurAsset = myAssets.find(
+    (asset) => asset?.imageUrl || asset?.gifUrl || asset?.threeDUrl
+  );
 
   return (
     <Container className={style["borrowPageContainer"]} maxWidth={`xl`}>
       <HeaderBlurryImage
-        url={myAssets.length > 0 ? myAssets[0].imageUrl : undefined}
+        url={
+          myAssets.length > 0
+            ? blurAsset?.imageUrl ||
+              blurAsset?.gifUrl ||
+              blurAsset?.threeDUrl ||
+              (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
+            : ""
+        }
         height="300px"
       />
       <Box className="flex fr fj-sb ai-c">
-        <h1>Choose an asset to collateralize</h1>
-        <span>{myAssets.length} assets available</span>
+        <h1>Choose an asset to borrow against</h1>
       </Box>
       <Box sx={{ mt: "3em" }}>
-        <Grid container maxWidth="xl" columnSpacing={5}>
-          <Grid item xs={0} md={3}>
-            <BorrowerAssetFilter query={beQuery} setQuery={setBeQuery} />
+        <Grid container columnSpacing={5}>
+          <Grid item xs={12} md={3}>
+            <BorrowerAssetFilter query={assetQuery} setQuery={setAssetQuery} />
           </Grid>
           <Grid item xs={12} md={9}>
-            {(assetsLoading || isAssetLoading) && (
-              <Box className="flex fr fj-c">
-                <CircularProgress />
-              </Box>
-            )}
-            {(!address || !authSignature) && (
+            {!isWalletConnected && (
               <Box className="flex fr fj-c">
                 <h1>Please connect your wallet.</h1>
               </Box>
             )}
-            <AssetList assets={myAssets} type="borrow" />
+            {isWalletConnected && (assetsLoading || isLoansLoading || isAssetLoading) && (
+              <Box className="flex fr fj-c">
+                <CircularProgress />
+              </Box>
+            )}
+            {isWalletConnected &&
+              !(assetsLoading || isLoansLoading || isAssetLoading) &&
+              (!assetsToShow || assetsToShow.length === 0) && (
+                <Box
+                  className="flex fr fj-c"
+                  sx={{
+                    mt: "5rem",
+                    fontWeight: "400",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  No assets have been found in your wallet
+                </Box>
+              )}
+            {assetsToShow && assetsToShow.length > 0 && (
+              <AssetList
+                allAssetsCount={allMyAssets.length + assetsInEscrow.length}
+                assets={assetsToShow}
+                type="borrow"
+                fetchData={fetchMoreData}
+                hasMore={hasNext}
+              />
+            )}
           </Grid>
         </Grid>
       </Box>

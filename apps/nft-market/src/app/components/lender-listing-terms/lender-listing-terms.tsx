@@ -1,247 +1,243 @@
 import {
-  addresses,
-  checkErc20Allowance,
-  isDev,
-  NetworkIds,
-  requestErc20Allowance,
-  selectErc20AllowanceByAddress,
-  useWeb3Context,
-} from "@fantohm/shared-web3";
-import { Box, Button, Container, Paper, SxProps, Theme, Typography } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+  Box,
+  Button,
+  Container,
+  Paper,
+  SxProps,
+  Theme,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useCreateLoanMutation, useGetAssetQuery } from "../../api/backend-api";
-import { contractCreateLoan } from "../../store/reducers/loan-slice";
-import {
-  AssetStatus,
-  BackendLoadingStatus,
-  Listing,
-  ListingStatus,
-  Loan,
-  LoanStatus,
-  Terms,
-} from "../../types/backend-types";
+import { useDeleteOfferMutation, useGetAssetQuery } from "../../api/backend-api";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
+import { Listing, Offer, OfferStatus } from "../../types/backend-types";
 import style from "./lender-listing-terms.module.scss";
-import store, { RootState } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 import { useTermDetails } from "../../hooks/use-term-details";
 import { MakeOffer } from "../make-offer/make-offer";
-import { BigNumber, ethers } from "ethers";
+import LoanConfirmation from "../loan-confirmation/loan-confirmation";
+import { formatCurrency } from "@fantohm/shared-helpers";
+import { prettifySeconds, useWeb3Context } from "@fantohm/shared-web3";
+import OfferConfirmDialog from "../offer-confirm-modal/offer-confirm-dialog";
+import { addAlert } from "../../store/reducers/app-slice";
+import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
 
 export interface LenderListingTermsProps {
+  offers: Offer[];
   listing: Listing;
   sx?: SxProps<Theme>;
 }
 
-type AppDispatch = typeof store.dispatch;
-
 export function LenderListingTerms(props: LenderListingTermsProps) {
   const dispatch: AppDispatch = useDispatch();
-  const { provider, chainId, address } = useWeb3Context();
-  // local store of term to pass between methods
-  const [cachedTerms, setCachedTerms] = useState<Terms>({} as Terms);
+  const { address } = useWeb3Context();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [removeOfferConfirmDialogOpen, setRemoveOfferConfirmDialogOpen] = useState(false);
+  const [deleteOffer] = useDeleteOfferMutation();
   // logged in user
-  const { user, authSignature } = useSelector((state: RootState) => state.backend);
-  // status of contract calls for allowance and platform fee
-  const { checkErc20AllowanceStatus, requestErc20AllowanceStatus, platformFee } =
-    useSelector((state: RootState) => state.wallet);
+  const { authSignature } = useSelector((state: RootState) => state.backend);
   // status that tracks the status of a createLoan contract call
-  const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
-  // select the USDB allowance provided to lending contract for this address
-  const allowance = useSelector((state: RootState) =>
-    selectErc20AllowanceByAddress(state, {
-      walletAddress: address,
-      erc20TokenAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
-    })
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, props.listing.term.currencyAddress)
+  );
+
+  const myOffer = props.offers.find(
+    (offer) =>
+      offer.lender.address.toLowerCase() === address.toLowerCase() &&
+      offer.status === OfferStatus.Ready
   );
 
   // helper to calculate term details like repayment amount
   const { repaymentAmount } = useTermDetails(props.listing.term);
-  // createloan backend api call
-  const [
-    createLoan,
-    { isLoading: isCreating, error: createLoanError, data: createLoanData },
-  ] = useCreateLoanMutation();
 
   // query assets from the backend API
-  const { data: asset, isLoading: isAssetLoading } = useGetAssetQuery(
-    props.listing.asset.id,
-    { skip: !props.listing.asset || !authSignature }
-  );
+  useGetAssetQuery(props.listing.asset.id, {
+    skip: !props.listing.asset || !authSignature,
+  });
 
-  // click accept term button
-  const handleAcceptTerms = useCallback(async () => {
-    if (
-      !allowance ||
-      allowance.lt(
-        ethers.utils.parseEther(
-          (props.listing.term.amount * (1 + platformFee)).toString()
-        )
-      )
-    ) {
-      console.warn("Insufficiant allownace. Trigger request");
-      return;
-    }
-    if (!provider || !chainId || !address || !asset || !asset.owner) {
-      console.warn("missing critical data");
-      return;
-    }
-    const createLoanRequest: Loan = {
-      lender: user,
-      borrower: asset.owner,
-      assetListing: {
-        ...props.listing,
-        status: ListingStatus.Completed,
-        asset: { ...props.listing.asset, status: AssetStatus.Locked },
-      },
-      term: props.listing.term,
-      status: LoanStatus.Active,
-    };
-
-    const createLoanParams = {
-      loan: createLoanRequest,
-      provider,
-      networkId: chainId,
-    };
-    const createLoanResult = await dispatch(
-      contractCreateLoan(createLoanParams)
-    ).unwrap();
-    if (createLoanResult) {
-      createLoanRequest.contractLoanId = createLoanResult;
-      createLoan(createLoanRequest);
-    }
-  }, [props.listing, provider, chainId, asset, allowance, user.address]);
-
-  // contract call creation status update
-  useEffect(() => {
-    // contract call successfully completed
-    if (loanCreationStatus === BackendLoadingStatus.succeeded) {
-      // todo: display success notification growl
-    } else if (loanCreationStatus === BackendLoadingStatus.failed) {
-      // todo: display error notification growl
-    }
-  }, [loanCreationStatus]);
-
-  // request allowance necessary to complete txn
-  const handleRequestAllowance = useCallback(() => {
-    if (provider && address)
-      dispatch(
-        requestErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
-          provider,
-          walletAddress: address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
-          amount: ethers.utils.parseEther(
-            (props.listing.term.amount * (1 + platformFee)).toString()
-          ),
-        })
-      );
-  }, [chainId, address, props.listing.term.amount, provider]);
-
-  // check to see if we have an approval for the amount required for this txn
-  useEffect(() => {
-    if (chainId && address && provider) {
-      dispatch(
-        checkErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
-          provider,
-          walletAddress: address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
-        })
-      );
-    }
-  }, [chainId, address, provider]);
-
-  const hasAllowance = useMemo(() => {
-    return (
-      checkErc20AllowanceStatus === "idle" &&
-      requestErc20AllowanceStatus === "idle" &&
-      allowance.gte(
-        ethers.utils.parseEther(
-          (props.listing.term.amount * (1 + platformFee)).toString()
-        )
-      )
-    );
-  }, [
-    checkErc20AllowanceStatus,
-    requestErc20AllowanceStatus,
-    allowance,
-    props.listing.term.amount,
-    platformFee,
-  ]);
-
-  // make offer code
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const handleMakeOffer = () => {
-    setDialogOpen(true);
+  const onEditOfferDialogClose = () => {
+    setEditOfferDialogOpen(false);
   };
 
-  const onListDialogClose = (accepted: boolean) => {
-    setDialogOpen(false);
+  const onEditOfferDialogOpen = () => {
+    setEditOfferDialogOpen(true);
+  };
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(props.listing.term.currencyAddress));
+  }, []);
+
+  // make offer code
+  const [createOfferDialogOpen, setCreateOfferDialogOpen] = useState(false);
+  const [editOfferDialogOpen, setEditOfferDialogOpen] = useState(false);
+
+  const handleMakeOffer = () => {
+    if (!myOffer) {
+      setCreateOfferDialogOpen(true);
+    } else {
+      setConfirmOpen(true);
+    }
+  };
+
+  const handleDeleteOffer = useCallback(async () => {
+    if (!myOffer) {
+      return;
+    }
+    const result: any = await deleteOffer(myOffer);
+
+    if (result?.error) {
+      if (result?.error?.status === 403) {
+        dispatch(
+          addAlert({
+            message:
+              "Failed to remove an offer because your signature is expired or invalid.",
+            severity: "error",
+          })
+        );
+      } else {
+        dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+      }
+    } else {
+      dispatch(addAlert({ message: "Offer removed" }));
+    }
+  }, [myOffer]);
+
+  const onListDialogClose = () => {
+    setCreateOfferDialogOpen(false);
   };
 
   return (
-    <Container sx={props.sx}>
-      <MakeOffer onClose={onListDialogClose} open={dialogOpen} listing={props.listing} />
+    <Container sx={props.sx} className={style["assetRow"]}>
+      <MakeOffer
+        onClose={onListDialogClose}
+        open={createOfferDialogOpen}
+        listing={props.listing}
+      />
+      {myOffer && (
+        <MakeOffer
+          onClose={onEditOfferDialogClose}
+          open={editOfferDialogOpen}
+          /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+          // @ts-ignore
+          listing={myOffer.assetListing}
+          isEdit={true}
+          offerTerm={myOffer.term}
+        />
+      )}
+      <RemoveOfferConfirmDialog
+        open={removeOfferConfirmDialogOpen}
+        setOpen={setRemoveOfferConfirmDialogOpen}
+        onRemove={handleDeleteOffer}
+      />
+      <OfferConfirmDialog
+        open={confirmOpen}
+        setOpen={setConfirmOpen}
+        onEdit={onEditOfferDialogOpen}
+        onRemove={() => setRemoveOfferConfirmDialogOpen(true)}
+      ></OfferConfirmDialog>
       <Paper>
-        <Box className="flex fr fj-sa fw">
+        <Box className="flex fr fj-sa fw" sx={{ alignItems: "center" }}>
           <Box className="flex fc">
-            <Typography className={style["label"]}>Principal</Typography>
-            <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {props.listing.term.amount.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              Loan amount
             </Typography>
+            <Box sx={{ display: "flex" }}>
+              <img
+                src={currency?.icon}
+                alt={currency?.symbol}
+                style={{ width: "20px", marginRight: "7px" }}
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (props.listing.term.amount * currency?.lastPrice).toLocaleString(
+                    "en-US",
+                    {
+                      style: "currency",
+                      currency: "USD",
+                    }
+                  )
+                }
+              >
+                <Typography className={`${style["data"]} ${style["primary"]}`}>
+                  {formatCurrency(
+                    props.listing.term.amount,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
+                </Typography>
+              </Tooltip>
+            </Box>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>Repayment</Typography>
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              Repayment
+            </Typography>
+            <Box sx={{ display: "flex" }}>
+              <img
+                src={currency?.icon}
+                alt={currency?.symbol}
+                style={{ width: "20px", marginRight: "7px" }}
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (repaymentAmount * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography className={`${style["data"]}`}>
+                  {formatCurrency(
+                    repaymentAmount,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
+                </Typography>
+              </Tooltip>
+            </Box>
+          </Box>
+          <Box className="flex fc">
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              Duration
+            </Typography>
             <Typography className={`${style["data"]}`}>
-              {repaymentAmount.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+              {prettifySeconds(props.listing.term.duration * 86400, "day")}
             </Typography>
           </Box>
           <Box className="flex fc">
-            <Typography className={style["label"]}>Duration</Typography>
-            <Typography className={`${style["data"]}`}>
-              {props.listing.term.duration} days
+            <Typography
+              className={style["label"]}
+              sx={{ color: "#8991A2;", fontSize: "0.875rem" }}
+            >
+              APR
             </Typography>
-          </Box>
-          <Box className="flex fc">
-            <Typography className={style["label"]}>APY</Typography>
             <Typography className={`${style["data"]}`}>
               {props.listing.term.apr}%
             </Typography>
           </Box>
-          <Box className="flex fc">
-            <Button variant="contained" onClick={handleMakeOffer}>
+          <Box className="flex fc" sx={{ mt: { xs: "10px", md: "0" } }}>
+            <LoanConfirmation listing={props.listing} />
+          </Box>
+          <Box className="flex fc" sx={{ mt: { xs: "10px", md: "0" } }}>
+            <Button variant="outlined" onClick={handleMakeOffer}>
               Make Offer
             </Button>
-          </Box>
-          <Box className="flex fc">
-            {!hasAllowance && (
-              <Button variant="outlined" onClick={handleRequestAllowance}>
-                Provide Allowance to Your USDB
-              </Button>
-            )}
-            {hasAllowance && !isCreating && loanCreationStatus !== "loading" && (
-              <Button
-                variant="outlined"
-                onClick={handleAcceptTerms}
-                disabled={isCreating}
-              >
-                Accept Terms
-              </Button>
-            )}
-            {(checkErc20AllowanceStatus === "loading" ||
-              requestErc20AllowanceStatus === "loading" ||
-              isCreating ||
-              loanCreationStatus === "loading") && (
-              <Button variant="outlined" disabled={true}>
-                Pending...
-              </Button>
-            )}
           </Box>
         </Box>
       </Paper>

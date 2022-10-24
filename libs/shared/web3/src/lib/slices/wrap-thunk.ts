@@ -9,7 +9,6 @@ import { error, info } from "./messages-slice";
 import {
   IActionValueAsyncThunk,
   IChangeApprovalAsyncThunk,
-  IJsonRPCError,
   IWrapDetails,
 } from "./interfaces";
 import { segmentUA } from "../helpers/user-analytic-helpers";
@@ -211,7 +210,11 @@ export const changeWrap = createAsyncThunk(
         e.error.code === -32603 &&
         e.error.message.indexOf("ds-math-sub-underflow") >= 0
       ) {
-        dispatch(error("You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"));
+        dispatch(
+          error(
+            "You may be trying to bridge more than your balance! Error code: 32603. Message: ds-math-sub-underflow"
+          )
+        );
       } else {
         dispatch(error(`Unknown error: ${e.error.message}`));
       }

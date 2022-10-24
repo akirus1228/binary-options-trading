@@ -4,17 +4,12 @@ import {
   ierc20Abi,
   usdbContractAbi as usdbAbi,
   daiContractAbi as daiAbi,
-  sOhmv2Abi as sOHMv2,
-  wsOhmAbi as wsOHM,
-  olympusStakingv2Abi as OlympusStaking,
   masterChefAbi as masterchefAbi,
   usdbNftAbi,
   sOhmAbi,
 } from "../abi";
-
 import { setAll, trim } from "../helpers";
-
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   IApprovePoolAsyncThunk,
   IBaseAddressAsyncThunk,
@@ -27,7 +22,6 @@ import {
 } from "./interfaces";
 import { chains } from "../providers";
 import { BondAction, BondType, PaymentToken } from "../lib/bond";
-
 import { findOrLoadMarketPrice } from "./bond-slice";
 import { truncateDecimals } from "@fantohm/shared-helpers";
 import { error, info } from "./messages-slice";
@@ -92,71 +86,10 @@ export const getBalances = createAsyncThunk(
   }
 );
 
-interface IUserAccountDetails {
-  balances: {
-    dai: string;
-    ohm: string;
-    sohm: string;
-    wsohm: string;
-    usdb: string;
-  };
-  staking: {
-    ohmStake: number;
-    ohmUnstake: number;
-  };
-  warmup: {
-    depositAmount: number;
-    warmUpAmount: number;
-    expiryBlock: number;
-  };
-  bonding: {
-    daiAllowance: number;
-  };
-  bridging: {
-    // for incoming (in FHM.m)
-    bridgeDownstreamAllowance: number;
-    // for outgoing (in FHM)
-    bridgeUpstreamAllowance: number;
-  };
-}
-
 export const loadAccountDetails = createAsyncThunk(
   "account/loadAccountDetails",
   async ({ networkId, address }: IBaseAddressAsyncThunk, { dispatch }) => {
     const provider = await chains[networkId].provider;
-
-    async function loadBridgeAccountDetails() {
-      let bridgeTokenBalance = 0;
-      let bridgeUpstreamAllowance = 0;
-      let bridgeDownstreamAllowance = 0;
-      if (
-        addresses[networkId]["BRIDGE_TOKEN_ADDRESS"] &&
-        addresses[networkId]["BRIDGE_ADDRESS"]
-      ) {
-        const ohmContract = new ethers.Contract(
-          addresses[networkId]["OHM_ADDRESS"] as string,
-          ierc20Abi,
-          provider
-        );
-        const bridgeContract = new ethers.Contract(
-          addresses[networkId]["BRIDGE_TOKEN_ADDRESS"] as string,
-          ierc20Abi,
-          provider
-        );
-        [bridgeTokenBalance, bridgeUpstreamAllowance, bridgeDownstreamAllowance] =
-          await Promise.all([
-            bridgeContract["balanceOf"](address),
-            ohmContract["allowance"](address, addresses[networkId]["BRIDGE_ADDRESS"]),
-            bridgeContract["allowance"](address, addresses[networkId]["BRIDGE_ADDRESS"]),
-          ]);
-      }
-
-      return {
-        bridgeTokenBalance,
-        bridgeUpstreamAllowance,
-        bridgeDownstreamAllowance,
-      };
-    }
 
     const daiContract = new ethers.Contract(
       addresses[networkId]["DAI_ADDRESS"] as string,
@@ -397,23 +330,23 @@ export const calculateUserBondDetails = createAsyncThunk(
       const userBonds =
         Number(amount) > 0.01
           ? [
-              {
-                amount: amount.toString(), // TODO can we just assume lp is totally balanced?
-                rewards: rewards.toString(),
-                rewardToken: PaymentToken.USDB,
-                rewardsInUsd: rewards.toString(),
-                interestDue: 0,
-                bondMaturationBlock,
-                pendingPayout,
-                secondsToVest: 0,
-                maturationSeconds: 0,
-                percentVestedFor, // No such thing as percentVestedFor for single sided
-                lpTokenAmount: "0",
-                iLBalance: "0",
-                pendingFHM: "0",
-                pricePaid: Number(ethers.utils.formatUnits(bondDetails["pricePaid"])),
-              } as IUserBond,
-            ]
+            {
+              amount: amount.toString(), // TODO can we just assume lp is totally balanced?
+              rewards: rewards.toString(),
+              rewardToken: PaymentToken.USDB,
+              rewardsInUsd: rewards.toString(),
+              interestDue: 0,
+              bondMaturationBlock,
+              pendingPayout,
+              secondsToVest: 0,
+              maturationSeconds: 0,
+              percentVestedFor, // No such thing as percentVestedFor for single sided
+              lpTokenAmount: "0",
+              iLBalance: "0",
+              pendingFHM: "0",
+              pricePaid: Number(ethers.utils.formatUnits(bondDetails["pricePaid"])),
+            } as IUserBond,
+          ]
           : [];
 
       return {
@@ -480,23 +413,23 @@ export const calculateUserBondDetails = createAsyncThunk(
     const userBonds =
       Number(amount) > 0.01
         ? [
-            {
-              amount: amount.toString(), // TODO can we just assume lp is totally balanced?
-              rewards: pendingFHM,
-              rewardToken: PaymentToken.FHM,
-              rewardsInUsd: rewardsInUsd.toString(),
-              interestDue,
-              bondMaturationBlock,
-              pendingPayout,
-              secondsToVest,
-              maturationSeconds,
-              percentVestedFor: 0, // No such thing as percentVestedFor for single sided
-              lpTokenAmount,
-              iLBalance,
-              pendingFHM,
-              pricePaid: 1,
-            },
-          ]
+          {
+            amount: amount.toString(), // TODO can we just assume lp is totally balanced?
+            rewards: pendingFHM,
+            rewardToken: PaymentToken.FHM,
+            rewardsInUsd: rewardsInUsd.toString(),
+            interestDue,
+            bondMaturationBlock,
+            pendingPayout,
+            secondsToVest,
+            maturationSeconds,
+            percentVestedFor: 0, // No such thing as percentVestedFor for single sided
+            lpTokenAmount,
+            iLBalance,
+            pendingFHM,
+            pricePaid: 1,
+          },
+        ]
         : [];
     return {
       bond: bond.name,

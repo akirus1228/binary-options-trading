@@ -2,13 +2,9 @@
   "root": true,
   "ignorePatterns": ["**/*"],
   "extends": ["prettier", "plugin:node/recommended"],
-  "plugins": [
-    "@nrwl/nx",
-    "@typescript-eslint",
-    "prettier"
-  ],
+  "plugins": ["@nrwl/nx", "@typescript-eslint", "prettier"],
   "rules": {
-    "prettier/prettier": ["error", {"endOfLine": "auto", "parser": "flow"}],
+    "prettier/prettier": ["error"],
     "import/prefer-default-export": "off",
     "prefer-destructuring": "off",
     "prefer-template": "off",
@@ -47,10 +43,7 @@
             ]
           }
         ],
-        "node/no-unsupported-features/es-syntax": [
-          "error",
-          { "ignores": ["modules"] }
-        ]
+        "node/no-unsupported-features/es-syntax": ["error", { "ignores": ["modules"] }]
       }
     },
     {

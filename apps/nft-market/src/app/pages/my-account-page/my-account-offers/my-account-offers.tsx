@@ -1,31 +1,31 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { useImpersonateAccount } from "@fantohm/shared-web3";
 import { useGetOffersQuery } from "../../../api/backend-api";
 import OffersList, {
   OffersListFields,
 } from "../../../components/offers-list/offers-list";
 import { RootState } from "../../../store";
 import { Offer, OfferStatus } from "../../../types/backend-types";
-import "./my-account-offers.module.scss";
+import style from "./my-account-offers.module.scss";
 
-/* eslint-disable-next-line */
-export type MyAccountOffersProps = {};
-
-export function MyAccountOffers(props: MyAccountOffersProps) {
+export function MyAccountOffers() {
   const { user } = useSelector((state: RootState) => state.backend);
+  const { impersonateAddress, isImpersonating } = useImpersonateAccount();
+  const userAddress = isImpersonating ? impersonateAddress : user.address;
 
   const { data: offersAsBorrower, isLoading: isOffersAsBorrowerLoading } =
     useGetOffersQuery(
       {
-        borrowerAddress: user.address,
+        borrowerAddress: userAddress,
       },
       { skip: !user }
     );
 
   const { data: offersAsLender, isLoading: isOffersAsLenderLoading } = useGetOffersQuery(
     {
-      lenderAddress: user.address,
+      lenderAddress: userAddress,
     },
     { skip: !user }
   );
@@ -70,7 +70,7 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
     OffersListFields.ASSET,
     OffersListFields.NAME,
     OffersListFields.REPAYMENT_TOTAL,
-    OffersListFields.REPAYMENT_AMOUNT,
+    OffersListFields.TOTAL_INTEREST,
     OffersListFields.APR,
     OffersListFields.DURATION,
     OffersListFields.EXPIRATION,
@@ -79,39 +79,50 @@ export function MyAccountOffers(props: MyAccountOffersProps) {
   ];
 
   return (
-    <Box className="flex fc fj-c ai-c">
-      <Box>
+    <Box className={`flex fc fj-c ai-c ${style["responsive_table"]}`} sx={{ mt: "50px" }}>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={activeOffersAsBorrower}
           fields={offerListFields}
-          isLoading={isOffersAsBorrowerLoading}
+          isLoading={isOffersAsBorrowerLoading && isOffersAsLenderLoading}
           title="Current offers as a borrower"
         />
       </Box>
-      <Box>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={activeOffersAsLender}
           fields={offerListFields}
-          isLoading={isOffersAsLenderLoading}
+          isLoading={false}
           title="Current offers as a lender"
         />
       </Box>
-      <Box>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={historicalOffersAsBorrower}
           fields={offerListFields}
-          isLoading={isOffersAsBorrowerLoading}
+          isLoading={false}
           title="Previous offers as a borrower"
         />
       </Box>
-      <Box>
+      <Box className={style["detailInfoBox"]}>
         <OffersList
           offers={historicalOffersAsLender}
           fields={offerListFields}
-          isLoading={isOffersAsLenderLoading}
+          isLoading={false}
           title="Previous offers as a lender"
         />
       </Box>
+      {!isOffersAsLenderLoading && !isOffersAsBorrowerLoading && (
+        <Box>
+          <Typography variant="h5" sx={{ mt: "20px", mb: "20px " }}>
+            {activeOffersAsBorrower.length === 0 &&
+              activeOffersAsLender.length === 0 &&
+              historicalOffersAsBorrower.length === 0 &&
+              historicalOffersAsLender.length === 0 &&
+              "You don`t currently have any offers"}
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 }

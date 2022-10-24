@@ -79,6 +79,7 @@ import full_UsdbNftBondDepository from "./bonds/UsdbNftBondDepository.json";
 
 //nft-lending
 import full_UsdbLending from "./UsdbLending.json";
+import merkle_distributor from "./BalanceMerkleDistributor.json";
 import full_StakingBackedNFTPool from "./StakingBackedNFTPool.json";
 import full_AmpsToken from "./AmpsToken.json";
 
@@ -161,5 +162,6 @@ export const passNFTAbi = full_PassNFT.abi;
 
 //nft-lending
 export const usdbLending = full_UsdbLending.abi;
+export const merkleDistributor = merkle_distributor;
 export const stakingBackedNFTPool = full_StakingBackedNFTPool.abi;
 export const ampsToken = full_AmpsToken.abi;

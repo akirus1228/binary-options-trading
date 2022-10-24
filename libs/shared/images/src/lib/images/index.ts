@@ -79,6 +79,14 @@ import Kanan from "./multisig/Kanan.png";
 import Sleepy_Neko from "./multisig/Sleepy_Neko.png";
 import Lilbobross from "./multisig/Lilbobross.png";
 import AtomicSwap from "./multisig/AtomicSwap.png";
+import SuccessCheck from "./success_check.png";
+import FailIcon from "./fail_icon.png";
+import emailIcon from "./email.svg";
+import linkedinIcon from "./linkedin.svg";
+import twitterIcon from "./Twitter.svg";
+import liqidIcon from "./liqidlogo.png";
+import instagramIcon from "./instagram.svg";
+import discordIcon from "./discord.svg";
 import BalanceTwitter from "./Balance_Twitter.png";
 import BlogBanner from "./Blog_Banner.png";
 import WaringIcon from "./warning.png";
@@ -180,6 +188,14 @@ export {
   Kanan,
   Sleepy_Neko,
   Lilbobross,
+  SuccessCheck,
+  FailIcon,
+  emailIcon,
+  twitterIcon,
+  linkedinIcon,
+  liqidIcon,
+  instagramIcon,
+  discordIcon,
   BalanceTwitter,
   BlogBanner,
   WaringIcon,

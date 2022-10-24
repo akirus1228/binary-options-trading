@@ -8,6 +8,7 @@ import BoredApeYachtClub from "../../../assets/images/bored-ape-yacht-club.png";
 import CryptoPunks from "../../../assets/images/crypto-punks.png";
 import Doodles from "../../../assets/images/doodles.png";
 
+import style from "./verified-collections.module.scss";
 export const VerifiedCollections = (): JSX.Element => {
   const collections = [
     {
@@ -29,7 +30,12 @@ export const VerifiedCollections = (): JSX.Element => {
       <Grid container spacing={2} sx={{ mt: "50px" }}>
         <Grid item xs={12} md={4}>
           <Box
-            sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              pr: "30px",
+            }}
           >
             <Typography variant="subtitle2" style={{ color: "#384BFF" }}>
               BlueChips only
@@ -38,9 +44,9 @@ export const VerifiedCollections = (): JSX.Element => {
               <Typography variant="h4">Verified Collections</Typography>
             </Box>
             <Typography variant="subtitle2">
-              To minimize risk and ensure we are providing a secure service, we are
-              starting with some of the most recognizable blue-chip NFT collections – with
-              more sets to be added soon.
+              We`re partnering with some of the top NFT collections in the space to ensure
+              a secure service for lenders — with more bluechip collections to be added
+              soon.
             </Typography>
             <Box
               sx={{
@@ -68,8 +74,8 @@ export const VerifiedCollections = (): JSX.Element => {
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} md={8}>
-          <Grid container spacing={1}>
+        <Grid item xs={12} md={8} className={style["collectionRow"]}>
+          <Grid container spacing={4}>
             {collections.map((collection: any, index: number) => {
               return (
                 <Grid item xs={12} md={4} key={`verified_collection_${index}`}>
@@ -78,6 +84,7 @@ export const VerifiedCollections = (): JSX.Element => {
                       borderRadius: "15px",
                       p: "10px",
                     }}
+                    className={style["collectionBoxElem"]}
                   >
                     <Box sx={{ width: "100%" }}>
                       <img
@@ -97,12 +104,18 @@ export const VerifiedCollections = (): JSX.Element => {
                           width: "calc(100% - 40px)",
                           borderRadius: "25px",
                           mt: "-25px",
-                          boxShadow: "0px 3px 30px #70707086",
-                          backDropFilter: "blur(30px)",
-                          background: "#FFFFFF 0% 0% no-repeat padding-box",
+                          backdropFilter: "blur(10px)",
+                          background: "rgba(255,255,255,0.5)",
                         }}
+                        className={style["collectionTitle"]}
                       >
-                        <Typography style={{ color: "#384BFF", fontSize: "12px" }}>
+                        <Typography
+                          style={{
+                            color: "#384BFF",
+                            fontSize: "12px",
+                            padding: "10px 0",
+                          }}
+                        >
                           {collection.title}
                         </Typography>
                         <Box sx={{ ml: "5px", mt: "3px" }}>

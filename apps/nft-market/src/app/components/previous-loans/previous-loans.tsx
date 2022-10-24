@@ -1,5 +1,9 @@
-import { useMemo } from "react";
-import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
+import { useEffect, useState } from "react";
+import {
+  addressEllipsis,
+  formatCurrency,
+  formatDateTimeString,
+} from "@fantohm/shared-helpers";
 import {
   PaperTable,
   PaperTableCell,
@@ -15,11 +19,18 @@ import {
   TableRow,
   Theme,
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { chains, prettifySeconds } from "@fantohm/shared-web3";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetLoansQuery } from "../../api/backend-api";
-import { RootState } from "../../store";
+import store, { RootState } from "../../store";
 import { Asset, Loan, LoanStatus } from "../../types/backend-types";
-//import style from "./previous-loans.module.scss";
+import { Erc20Currency } from "../../helpers/erc20Currency";
+import { selectCurrencies } from "../../store/selectors/currency-selectors";
+import { getLoanDetailsFromContract } from "../../store/reducers/loan-slice";
+import { desiredNetworkId } from "../../constants/network";
+import { LoanDetailsAsyncThunk } from "../../store/reducers/interfaces";
+
+type AppDispatch = typeof store.dispatch;
 
 export interface PreviousLoansProps {
   asset: Asset;
@@ -27,33 +38,85 @@ export interface PreviousLoansProps {
 }
 
 export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element => {
-  const { authSignature } = useSelector((state: RootState) => state.backend);
+  const dispatch: AppDispatch = useDispatch();
+  const [loans, setLoans] = useState<Loan[]>([]);
   const { data: completeLoans, isLoading: isCompleteLoansLoading } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
-      assetId: asset.id,
+      contractAddress: asset.assetContractAddress,
+      tokenId: asset.tokenId,
       status: LoanStatus.Complete,
     },
-    { skip: !asset || !authSignature }
+    { skip: !asset }
   );
 
   const { data: defaultedLoans, isLoading: isDefaultedLoading } = useGetLoansQuery(
     {
       take: 50,
       skip: 0,
-      assetId: asset.id,
+      contractAddress: asset.assetContractAddress,
+      tokenId: asset.tokenId,
       status: LoanStatus.Default,
     },
-    { skip: !asset || !authSignature }
+    { skip: !asset }
   );
 
-  const loans: Loan[] = useMemo(() => {
-    if (isDefaultedLoading || isCompleteLoansLoading) return [];
-    if (typeof defaultedLoans === "undefined" || typeof completeLoans === "undefined")
-      return [];
-    return [...completeLoans, ...defaultedLoans];
-  }, [completeLoans, defaultedLoans]);
+  const currencies = useSelector((state: RootState) => selectCurrencies(state));
+
+  useEffect(() => {
+    let active = true;
+    loadLoans().then();
+    return () => {
+      active = false;
+    };
+
+    async function loadLoans() {
+      if (!active) {
+        setLoans([]);
+        return;
+      }
+      if (!currencies) {
+        setLoans([]);
+        return;
+      }
+      if (isDefaultedLoading || isCompleteLoansLoading) {
+        setLoans([]);
+        return;
+      }
+      if (typeof defaultedLoans === "undefined" || typeof completeLoans === "undefined") {
+        setLoans([]);
+        return;
+      }
+      const allLoans = [...completeLoans, ...defaultedLoans];
+      const coveredLoans = await Promise.all(
+        allLoans.map(async (loan) => {
+          const match: [string, Erc20Currency] | undefined = Object.entries(
+            currencies
+          ).find(
+            ([, entryCurrency]) =>
+              entryCurrency.currentAddress.toLowerCase() ===
+              loan.term.currencyAddress.toLowerCase()
+          );
+          const staticProvider = await chains[desiredNetworkId].provider;
+          const loanDetail = await dispatch(
+            getLoanDetailsFromContract({
+              loan,
+              networkId: desiredNetworkId,
+              provider: staticProvider,
+            } as LoanDetailsAsyncThunk)
+          ).unwrap();
+          const currencyPrice = match ? match[1]?.lastPrice : 1;
+          return {
+            ...loan,
+            currencyPrice,
+            amountDue: loanDetail?.amountDue,
+          };
+        })
+      );
+      setLoans(coveredLoans);
+    }
+  }, [completeLoans, defaultedLoans, currencies]);
 
   if (
     !asset ||
@@ -78,49 +141,80 @@ export const PreviousLoans = ({ asset, sx }: PreviousLoansProps): JSX.Element =>
   return (
     <Box className="flex fc fj-fs" sx={{ mb: "5em", ...sx }}>
       <h2 style={{ marginBottom: "0" }}>Previous Loans</h2>
-      <TableContainer>
-        <PaperTable aria-label="Active investments">
+      <TableContainer sx={{ padding: "10px" }}>
+        <PaperTable
+          aria-label="Active investments"
+          sx={{ minWidth: "700px", borderSpacing: "0" }}
+        >
           <PaperTableHead>
             <TableRow>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Lender</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Borrower</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Value</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Repayment</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>APR</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Start Date</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Duration</PaperTableCell>
-              <PaperTableCell sx={{ fontSize: "16px" }}>Status</PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Lender
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Borrower
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Value
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Repayment
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                APR
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Start Date
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Duration
+              </PaperTableCell>
+              <PaperTableCell sx={{ fontSize: "0.875em", color: "#8991A2" }}>
+                Status
+              </PaperTableCell>
             </TableRow>
           </PaperTableHead>
           <TableBody>
-            {loans.map((loan: Loan, index: number) => (
-              <PaperTableRow key={`ma-invests-table-${index}`} id={`invests-${index}`}>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {addressEllipsis(loan.lender.id || "", 3)}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {addressEllipsis(loan.borrower.id || "", 3)}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {formatCurrency(loan.term.amount, 2)}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  repayment amount
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {loan.term.apr}%
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {new Date(
-                    Date.parse(loan.createdAt || "yesterday")
-                  ).toLocaleDateString()}
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>
-                  {loan.term.duration} days
-                </PaperTableCell>
-                <PaperTableCell sx={{ fontSize: "16px" }}>{loan.status}</PaperTableCell>
-              </PaperTableRow>
-            ))}
+            {loans
+              .sort(
+                (a, b) =>
+                  new Date(Date.parse(b.createdAt || "yesterday")).getTime() -
+                  new Date(Date.parse(a.createdAt || "yesterday")).getTime()
+              )
+              .map((loan: Loan, index: number) => (
+                <PaperTableRow key={`ma-invests-table-${index}`} id={`invests-${index}`}>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {addressEllipsis(loan.lender.address || "")}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {addressEllipsis(loan.borrower.address || "")}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {formatCurrency(loan.term.amount * (loan?.currencyPrice || 1), 2)}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {formatCurrency(
+                      (loan?.amountDue || 1) * (loan?.currencyPrice || 1),
+                      2
+                    )}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {loan.term.apr}%
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {formatDateTimeString(
+                      new Date(Date.parse(loan.createdAt || "yesterday")),
+                      true
+                    )}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {prettifySeconds(loan.term.duration * 86400, "day")}
+                  </PaperTableCell>
+                  <PaperTableCell sx={{ fontSize: "0.875em" }}>
+                    {loan.status}
+                  </PaperTableCell>
+                </PaperTableRow>
+              ))}
           </TableBody>
         </PaperTable>
       </TableContainer>

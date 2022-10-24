@@ -22,11 +22,12 @@ export type Collectible = {
   name: Nullable<string>;
   description: Nullable<string>;
   mediaType: CollectibleMediaType;
-  frameUrl: Nullable<string>;
-  imageUrl: Nullable<string>;
-  gifUrl: Nullable<string>;
-  videoUrl: Nullable<string>;
-  threeDUrl: Nullable<string>;
+  frameUrl: string;
+  imageUrl: string;
+  gifUrl: string;
+  videoUrl: string;
+  threeDUrl: string;
+  thumbUrl: string;
   isOwned: boolean;
   owner: Owner;
   dateCreated: Nullable<string>;

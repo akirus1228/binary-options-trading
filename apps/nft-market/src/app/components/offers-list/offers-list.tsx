@@ -9,16 +9,18 @@ export enum OffersListFields {
   LENDER_ADDRESS = "Lender",
   BORROWER_ADDRESS = "Borrower",
   OWNER_PROFILE = "Owner",
-  REPAYMENT_TOTAL = "Loan value",
-  REPAYMENT_AMOUNT = "Repayment",
-  INTEREST_DUE = "Interest due",
+  REPAYMENT_TOTAL = "Total Repayment",
+  PRINCIPAL = "Principal",
+  TOTAL_INTEREST = "Interest",
   APR = "APR",
   DURATION = "Duration",
   EXPIRATION = "Expires",
   ASSET = "Asset",
   NAME = "Name",
   STATUS = "Status",
+  CREATED_AGO = "Created",
 }
+
 export interface OffersListProps {
   offers: Offer[] | undefined;
   fields: OffersListFields[];
@@ -34,37 +36,67 @@ export const OffersList = ({
 }: OffersListProps): JSX.Element => {
   if (isLoading) {
     return (
-      <Box className="flex fr fj-c">
+      <Box className="flex fr fj-c" sx={{ mb: "30px" }}>
         <CircularProgress />
       </Box>
     );
   }
   if ((!offers || offers.length < 1) && !isLoading) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
   return (
-    <Container sx={{ pt: "4em", mt: "5em" }} maxWidth="xl">
-      <h2 className={style["title"]}>
-        {title || "Offers"} ({!!offers && offers.length})
-      </h2>
-      <PaperTable>
-        <PaperTableHead>
-          <TableRow>
-            {fields.map((field: OffersListFields, index: number) => (
-              <PaperTableCell key={`offer-table-header-${index}`}>{field}</PaperTableCell>
-            ))}
-            <PaperTableCell></PaperTableCell>
-          </TableRow>
-        </PaperTableHead>
-        <TableBody>
-          {offers &&
-            !isLoading &&
-            offers.map((offer: Offer, index: number) => (
-              <OfferListItem key={`offer-${index}`} offer={offer} fields={fields} />
-            ))}
-        </TableBody>
-      </PaperTable>
-    </Container>
+    <>
+      <Container sx={{ mt: "30px" }}>
+        <h2 className={style["title"]}>
+          {title || "Offers"} ({!!offers && offers.length})
+        </h2>
+      </Container>
+      <Container
+        className={style["offerContainer"]}
+        sx={{
+          overflow: "auto",
+          scrollbarWidth: "thin",
+          "&::-webkit-scrollbar": {
+            width: "0.4em",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "transparent",
+            borderRadius: "50px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#374FFF",
+            borderRadius: "50px",
+          },
+        }}
+      >
+        <PaperTable>
+          <PaperTableHead>
+            <TableRow>
+              {fields.map((field: OffersListFields, index: number) => (
+                <PaperTableCell
+                  key={`offer-table-header-${index}`}
+                  className={style["offersHead"]}
+                >
+                  {field}
+                </PaperTableCell>
+              ))}
+              <PaperTableCell></PaperTableCell>
+            </TableRow>
+          </PaperTableHead>
+          <TableBody>
+            {offers &&
+              !isLoading &&
+              offers.map(
+                (offer: Offer, index: number) =>
+                  offer?.assetListing && (
+                    <OfferListItem key={`offer-${index}`} offer={offer} fields={fields} />
+                  )
+              )}
+          </TableBody>
+        </PaperTable>
+      </Container>
+    </>
   );
 };
 

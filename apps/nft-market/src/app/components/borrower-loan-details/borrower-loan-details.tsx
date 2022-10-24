@@ -1,11 +1,10 @@
+import { formatCurrency } from "@fantohm/shared-helpers";
 import {
-  addresses,
   checkErc20Allowance,
-  isDev,
-  NetworkIds,
-  prettifySeconds,
+  error,
   requestErc20Allowance,
   selectErc20AllowanceByAddress,
+  selectErc20BalanceByAddress,
   useWeb3Context,
 } from "@fantohm/shared-web3";
 import {
@@ -17,9 +16,10 @@ import {
   Paper,
   SxProps,
   Theme,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../store";
 import { useUpdateLoanMutation } from "../../api/backend-api";
@@ -30,6 +30,10 @@ import {
 } from "../../store/reducers/loan-slice";
 import { Asset, AssetStatus, Loan, LoanStatus } from "../../types/backend-types";
 import style from "./borrower-loan-details.module.scss";
+import { desiredNetworkId } from "../../constants/network";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
+import { addAlert } from "../../store/reducers/app-slice";
 
 export interface BorrowerLoanDetailsProps {
   asset: Asset;
@@ -45,49 +49,77 @@ export const BorrowerLoanDetails = ({
   sx,
 }: BorrowerLoanDetailsProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
-  const { provider, chainId } = useWeb3Context();
+  const { provider } = useWeb3Context();
   const [isPending, setIsPending] = useState(false);
   const [loanDetails, setLoanDetails] = useState<LoanDetails>({} as LoanDetails);
   // select logged in user
   const { user } = useSelector((state: RootState) => state.backend);
   const { repayLoanStatus } = useSelector((state: RootState) => state.loans);
 
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, loan.term.currencyAddress)
+  );
+
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(loan.term.currencyAddress));
+  }, []);
+
   // status of allowance check or approval
   const { checkErc20AllowanceStatus, requestErc20AllowanceStatus } = useSelector(
     (state: RootState) => state.wallet
   );
 
-  // select the USDB allowance provided to lending contract for this address
-  const usdbAllowance = useSelector((state: RootState) =>
+  // select the currency allowance provided to lending contract for this address
+  const erc20Allowance = useSelector((state: RootState) =>
     selectErc20AllowanceByAddress(state, {
       walletAddress: user.address,
-      erc20TokenAddress:
-        addresses[isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum]["USDB_ADDRESS"],
+      erc20TokenAddress: loanDetails.currency || "",
     })
   );
+
+  const currencyBalance = useSelector((state: RootState) =>
+    selectErc20BalanceByAddress(state, currency?.currentAddress)
+  );
+
+  const notEnoughBalance = useMemo(() => {
+    return (
+      currencyBalance &&
+      loanDetails.amountDueGwei &&
+      currencyBalance.lt(loanDetails.amountDueGwei)
+    );
+  }, [currencyBalance, loanDetails.amountDueGwei]);
 
   const [updateLoan, { isLoading: isLoanUpdating }] = useUpdateLoanMutation();
 
   // check to see if we have an approval for the amount required for this txn
   useEffect(() => {
-    if (chainId && user.address && provider) {
+    if (
+      user.address &&
+      provider &&
+      loanDetails.currency &&
+      loanDetails.currency !== "0x0000000000000000000000000000000000000000" &&
+      !erc20Allowance
+    ) {
       dispatch(
         checkErc20Allowance({
-          networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+          networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
-          assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+          assetAddress: loanDetails.currency,
+          lendingContractAddress: loanDetails.lendingContractAddress,
         })
       );
     }
-  }, [chainId, user.address, provider]);
+  }, [user.address, provider, loanDetails.currency, erc20Allowance]);
 
   useEffect(() => {
-    if (!loan || !loan.contractLoanId || !provider) return;
+    if (!loan || loan.contractLoanId == null || !provider) {
+      return;
+    }
     dispatch(
       getLoanDetailsFromContract({
-        loanId: loan.contractLoanId,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        loan,
+        networkId: desiredNetworkId,
         provider,
       })
     )
@@ -96,32 +128,74 @@ export const BorrowerLoanDetails = ({
   }, [loan]);
 
   const handleRepayLoan = useCallback(async () => {
-    if (!loan.contractLoanId || !provider) return;
-    if (usdbAllowance && usdbAllowance.gte(loanDetails.amountDueGwei)) {
+    if (loan.contractLoanId == null || !provider) {
+      return;
+    }
+    if (erc20Allowance && erc20Allowance.gte(loanDetails.amountDueGwei)) {
       const repayLoanParams = {
-        loanId: loan.contractLoanId,
+        loan,
         amountDue: loanDetails.amountDueGwei,
         provider,
-        networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+        networkId: desiredNetworkId,
       };
-      const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
-      if (repayLoanResult === false) return; //todo: throw nice error
-      const updateLoanRequest: Loan = {
-        ...loan,
-        assetListing: {
-          ...loan.assetListing,
-          asset: { ...loan.assetListing.asset, status: AssetStatus.Ready },
-        },
-        status: LoanStatus.Complete,
-      };
-      updateLoan(updateLoanRequest);
+      try {
+        const repayLoanResult = await dispatch(repayLoan(repayLoanParams)).unwrap();
+        if (!repayLoanResult) {
+          return; //todo: throw nice error
+        }
+        const updateLoanRequest: Loan = {
+          ...loan,
+          assetListing: {
+            ...loan.assetListing,
+            asset: { ...loan.assetListing.asset, status: AssetStatus.Ready },
+          },
+          status: LoanStatus.Complete,
+        };
+        const result: any = await updateLoan(updateLoanRequest);
+        if (result?.error) {
+          if (result?.error?.status === 403) {
+            dispatch(
+              addAlert({
+                message:
+                  "Failed to repay a loan because your signature is expired or invalid.",
+                severity: "error",
+              })
+            );
+          } else {
+            dispatch(
+              addAlert({ message: result?.error?.data.message, severity: "error" })
+            );
+          }
+        } else {
+          dispatch(addAlert({ message: "Loan is repaid." }));
+        }
+      } catch (e: any) {
+        if (e.error === undefined) {
+          let message;
+          if (e.message === "Internal JSON-RPC error.") {
+            message = e.data.message;
+          } else {
+            message = e.message;
+          }
+          if (typeof message === "string") {
+            dispatch(
+              addAlert({ message: `Unknown error: ${message}`, severity: "error" })
+            );
+          }
+        } else {
+          dispatch(
+            addAlert({ message: `Unknown error: ${e.error.message}`, severity: "error" })
+          );
+        }
+        return;
+      }
     } else {
-      console.warn(`insufficiant allowance: ${usdbAllowance}`);
+      console.warn(`insufficient allowance: ${erc20Allowance}`);
     }
   }, [
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    usdbAllowance,
+    erc20Allowance,
     loanDetails.amountDueGwei,
   ]);
 
@@ -129,17 +203,18 @@ export const BorrowerLoanDetails = ({
     if (!provider) return;
     dispatch(
       requestErc20Allowance({
-        networkId: chainId || (isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum),
+        networkId: desiredNetworkId,
         provider,
         walletAddress: user.address,
-        assetAddress: addresses[chainId || NetworkIds.Ethereum]["USDB_ADDRESS"],
+        assetAddress: loanDetails.currency,
         amount: loanDetails.amountDueGwei,
+        lendingContractAddress: loanDetails.lendingContractAddress,
       })
     );
   }, [
     checkErc20AllowanceStatus,
     requestErc20AllowanceStatus,
-    usdbAllowance,
+    erc20Allowance,
     loanDetails.amountDueGwei,
   ]);
 
@@ -173,6 +248,25 @@ export const BorrowerLoanDetails = ({
     repayLoanStatus,
   ]);
 
+  const [currentBlockTime, setCurrentBlockTime] = useState<number>();
+
+  useEffect(() => {
+    if (!provider) {
+      return;
+    }
+    provider.getBlockNumber().then((blockNumber) => {
+      provider.getBlock(blockNumber).then((block) => {
+        setCurrentBlockTime(block?.timestamp);
+      });
+    });
+  }, [provider]);
+
+  const canRepay = useMemo(() => {
+    return (
+      loanDetails?.endTime && currentBlockTime && loanDetails.endTime >= currentBlockTime
+    );
+  }, [loanDetails, currentBlockTime]);
+
   if (!loan || !loan.term || !loanDetails.amountDue) {
     return (
       <Box className="flex fr fj-c">
@@ -180,56 +274,157 @@ export const BorrowerLoanDetails = ({
       </Box>
     );
   }
+
+  const getLoanExpires = () => {
+    if (loan && loan.term && loanDetails) {
+      if (!canRepay) {
+        return "Overdue";
+      }
+      const duration = loan.term.duration * 24 * 60 * 60;
+      const passedDays = Math.floor(
+        (duration - Math.max(loanDetails.endTime - Date.now() / 1000, 0)) / (24 * 60 * 60)
+      );
+
+      return Math.max(passedDays, 0) + " / " + loan.term.duration + " days";
+    }
+    return "";
+  };
+
+  const getLoanProgress = () => {
+    if (loan && loan.term && loanDetails) {
+      const duration = loan.term.duration * 24 * 60 * 60;
+      return (
+        ((duration - Math.max(loanDetails.endTime - Date.now() / 1000, 0)) * 100) /
+        duration
+      );
+    }
+
+    return 0;
+  };
+
   return (
     <Container sx={sx}>
       <Paper>
         <Box className="flex fr fj-sa fw">
           <Box className="flex fc">
+            <Typography className={style["label"]}>Loan amount</Typography>
+            <Typography
+              className={`${style["data"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src={currency.icon}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (loan.term.amount * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography component="span">
+                  {formatCurrency(
+                    loan.term.amount,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
+                </Typography>
+              </Tooltip>
+            </Typography>
+          </Box>
+          <Box className="flex fc">
             <Typography className={style["label"]}>Total repayment</Typography>
-            <Typography className={`${style["data"]} ${style["primary"]}`}>
-              {loanDetails.amountDue.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
+            <Typography
+              className={`${style["data"]} ${style["primary"]}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <img
+                src={currency.icon}
+                style={{ width: "20px", height: "20px", marginRight: "7px" }}
+                alt=""
+              />
+              <Tooltip
+                title={
+                  !!currency &&
+                  currency?.lastPrice &&
+                  "~" &&
+                  (loanDetails.amountDue * currency?.lastPrice).toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })
+                }
+              >
+                <Typography component="span">
+                  {formatCurrency(
+                    loanDetails.amountDue,
+                    Number(currency?.lastPrice) < 1.1 ? 2 : 5
+                  ).replace("$", "")}
+                </Typography>
+              </Tooltip>
             </Typography>
-          </Box>
-          <Box className="flex fc">
-            <Typography className={style["label"]}>Principal</Typography>
-            <Typography className={`${style["data"]}`}>
-              {loan.term.amount.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-              })}
-            </Typography>
-          </Box>
-          <Box className="flex fc">
-            <Typography className={style["label"]}>APY</Typography>
-            <Typography className={`${style["data"]}`}>{loan.term.apr}%</Typography>
           </Box>
           <Box className="flex fc">
             <Typography className={style["label"]}>Time until loan expires</Typography>
-            <Box className="flex fr w100">
-              <Typography className={`${style["data"]}`}>
-                {prettifySeconds(loanDetails.endTime - Date.now() / 1000)}
+            <Box className="flex fr w100" sx={{ alignItems: "center" }}>
+              <Typography
+                className={`${style["data"]}`}
+                sx={{ color: !canRepay ? "#fb1868" : undefined }}
+              >
+                {getLoanExpires()}
               </Typography>
-              <LinearProgress variant="determinate" value={10} />
+              <LinearProgress
+                variant="determinate"
+                className={canRepay ? style["progress-info"] : style["progress-error"]}
+                value={getLoanProgress()}
+                sx={{
+                  width: "10rem",
+                  marginLeft: "20px",
+                  height: "8px",
+                  borderRadius: "8px",
+                }}
+              />
             </Box>
           </Box>
           <Box className="flex fc">
-            {!!usdbAllowance &&
-              usdbAllowance.gte(loanDetails.amountDueGwei) &&
-              !isPending && (
-                <Button variant="contained" onClick={handleRepayLoan}>
-                  Repay loan
-                </Button>
-              )}
-            {(!usdbAllowance || usdbAllowance.lt(loanDetails.amountDueGwei)) &&
-              !isPending && (
-                <Button variant="contained" onClick={handleRequestAllowance}>
-                  Repay loan.
-                </Button>
-              )}
-            {isPending && <Button variant="contained">Pending...</Button>}
+            {canRepay && (
+              <>
+                {" "}
+                {!!erc20Allowance &&
+                  erc20Allowance.gte(loanDetails.amountDueGwei) &&
+                  !isPending && (
+                    <Button variant="contained" onClick={handleRepayLoan}>
+                      Repay loan
+                    </Button>
+                  )}
+                {(!erc20Allowance || erc20Allowance.lt(loanDetails.amountDueGwei)) &&
+                  !notEnoughBalance &&
+                  !isPending && (
+                    <Button variant="contained" onClick={handleRequestAllowance}>
+                      Approve {currency?.symbol} for repayment
+                    </Button>
+                  )}
+                {notEnoughBalance && (
+                  <Button variant="contained" disabled={true}>
+                    Insufficient Funds for Repayment
+                  </Button>
+                )}
+                {isPending && (
+                  <Button variant="contained">
+                    <CircularProgress color="inherit" />
+                  </Button>
+                )}
+              </>
+            )}
+            {!canRepay && !notEnoughBalance && (
+              <Button variant="contained" onClick={handleRepayLoan} disabled>
+                Repay loan
+              </Button>
+            )}
           </Box>
         </Box>
       </Paper>

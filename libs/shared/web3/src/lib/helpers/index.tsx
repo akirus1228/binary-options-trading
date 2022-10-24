@@ -123,15 +123,6 @@ export function shorten(str: string) {
   return `${str.slice(0, 6)}...${str.slice(str.length - 4)}`;
 }
 
-export function formatCurrency(c: number, precision = 0) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: precision,
-    minimumFractionDigits: precision,
-  }).format(c);
-}
-
 export function trim(number = 0, precision = 0) {
   if (!number) {
     return "0";
@@ -220,7 +211,7 @@ export function prettifySeconds(seconds: number, resolution?: string) {
 
   if (seconds <= 0) result = "Instant";
 
-  if (result === "") result = `${seconds} sec`;
+  if (result === "") result = `${Math.floor(seconds)} sec`;
 
   return result;
 }

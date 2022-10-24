@@ -36,6 +36,8 @@ import {
   allBonds,
 } from "@fantohm/shared-web3";
 import { formatCurrency, formatSeconds } from "@fantohm/shared-helpers";
+import { useNavigate } from "react-router-dom";
+
 import { RootState } from "../../../store";
 
 interface IStakingCardParams {
