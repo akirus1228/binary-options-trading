@@ -1,3 +1,4 @@
+import { Web3ContextProvider } from "@fantohm/shared-web3";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/home/home-page";
 import Markets from "./pages/markets/markets";

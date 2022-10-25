@@ -8,6 +8,7 @@ import SearchBar from "./search";
 import ConnectWallet from "./connect-wallet";
 import { NavItemProp } from "../../core/types/types";
 import { NavItems } from "../../core/constants";
+import UserMenu from "./user-menu";
 
 const Navbar = (): JSX.Element => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -39,11 +40,11 @@ const Navbar = (): JSX.Element => {
           );
         })}
       </div>
-      <div className="flex">
-        <div className="flex justify-center">
-          <ConnectWallet />
+      <div className="flex justify-end items-center">
+        <div className="flex">
+          <UserMenu />
         </div>
-        <div className="xs:block md:hidden">
+        <div className="xs:block md:hidden xs:ml-5 sm:ml-15">
           <IconButton
             size="large"
             aria-label="account of current user"
