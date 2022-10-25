@@ -40,6 +40,7 @@ interface INetwork {
   blockCountdownUrl: (block: number) => string;
   getEtherscanUrl: (txnHash: string) => string;
   getPoolTogetherUrls: (contractAddress: string) => string[];
+  getEtherscanAddress: (contractAddress: string) => string;
   poolGraphUrl: string;
   liquidityPoolReserveDecimals: {
     token0Decimals: number;
@@ -64,6 +65,8 @@ export const networks: INetworks = {
     epochInterval: 28800,
     blockCountdownUrl: (block) => `https://ftmscan.com/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://ftmscan.com/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://ftmscan.com/address/" + contractAddress,
     getPoolTogetherUrls: (contractAddress) => [
       `https://community.pooltogether.com/pools/mainnet/${contractAddress}/home`,
       `https://community.pooltogether.com/pools/mainnet/${contractAddress}/manage#stats`,
@@ -119,6 +122,8 @@ export const networks: INetworks = {
     epochInterval: 2880,
     blockCountdownUrl: (block) => `https://testnet.ftmscan.com/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://testnet.ftmscan.com/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://testnet.ftmscan.com/address/" + contractAddress,
     getPoolTogetherUrls: (contractAddress) => [
       `https://community.pooltogether.com/pools/rinkeby/${contractAddress}/home`,
       `https://community.pooltogether.com/pools/rinkeby/${contractAddress}/manage#stats`,
@@ -171,6 +176,8 @@ export const networks: INetworks = {
     blockCountdownUrl: (block) =>
       `https://moonriver.moonscan.io/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://moonriver.moonscan.io/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://moonriver.moonscan.io/address/" + contractAddress,
     getPoolTogetherUrls: (contractAddress) => [
       `https://community.pooltogether.com/pools/rinkeby/${contractAddress}/home`,
       `https://community.pooltogether.com/pools/rinkeby/${contractAddress}/manage#stats`,
@@ -217,6 +224,8 @@ export const networks: INetworks = {
     epochInterval: 1960,
     blockCountdownUrl: (block) => `https://moonbase.moonscan.io/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://moonbase.moonscan.io/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://moonbase.moonscan.io/address/" + contractAddress,
     getPoolTogetherUrls: (contractAddress) => [
       `https://community.pooltogether.com/pools/rinkeby/${contractAddress}/home`,
       `https://community.pooltogether.com/pools/rinkeby/${contractAddress}/manage#stats`,
@@ -276,6 +285,8 @@ export const networks: INetworks = {
     epochInterval: 687,
     blockCountdownUrl: (block) => `https://rinkeby.etherscan.io/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://rinkeby.etherscan.io/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://rinkeby.etherscan.io/address/" + contractAddress,
     getPoolTogetherUrls: () => [],
     poolGraphUrl: "https://api.thegraph.com/subgraphs/name/pooltogether/rinkeby-v3_4_3",
     liquidityPoolReserveDecimals: {
@@ -340,6 +351,8 @@ export const networks: INetworks = {
     epochInterval: 0,
     blockCountdownUrl: (block) => `https://goerli.etherscan.io/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://goerli.etherscan.io/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://goerli.etherscan.io/address/" + contractAddress,
     getPoolTogetherUrls: () => [],
     poolGraphUrl: "",
     liquidityPoolReserveDecimals: {
@@ -390,6 +403,8 @@ export const networks: INetworks = {
     epochInterval: 687,
     blockCountdownUrl: (block) => `https://etherscan.io/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://etherscan.io/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://etherscan.io/address/" + contractAddress,
     getPoolTogetherUrls: () => [],
     poolGraphUrl: "https://api.thegraph.com/subgraphs/name/pooltogether/ethereum-v3_4_3",
     liquidityPoolReserveDecimals: {
@@ -443,6 +458,8 @@ export const networks: INetworks = {
     epochInterval: 687,
     blockCountdownUrl: (block) => `https://bscscan.io/block/countdown/${block}`,
     getEtherscanUrl: (txnHash) => "https://bscscan.io/tx/" + txnHash,
+    getEtherscanAddress: (contractAddress) =>
+      "https://bscscan.io/address/" + contractAddress,
     getPoolTogetherUrls: () => [],
     poolGraphUrl: "https://api.thegraph.com/subgraphs/name/pooltogether/bsc-v3_4_3",
     liquidityPoolReserveDecimals: {
