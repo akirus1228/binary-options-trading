@@ -10,13 +10,31 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { IFrameEthereumProvider } from "@ledgerhq/iframe-provider";
+import * as UAuthWeb3Modal from "@uauth/web3modal";
+import { IUAuthOptions } from "@uauth/web3modal";
+import UAuthSPA from "@uauth/js";
+import { utils } from "ethers";
 import { Web3ContextData } from "./types/types";
 import { enabledNetworkIds, NetworkId, NetworkIds } from "./networks";
 import { chains } from "./providers";
 import { isIframe, sign } from "@fantohm/shared-helpers";
+import {
+  TEST_UD_REDIRECT_URI,
+  PROD_UD_REDIRECT_URI,
+  PROD_UAUTH_CLIENT_ID,
+  TEST_UAUTH_CLIENT_ID,
+} from "./constants";
+import { isDev } from "./helpers";
 
 export const getURI = (networkId: NetworkId): string => {
-  return chains[networkId].rpcUrls[0];
+  return chains[networkId]?.rpcUrls[0];
+};
+
+export const uauthOptions: IUAuthOptions = {
+  clientID: isDev ? TEST_UAUTH_CLIENT_ID : PROD_UAUTH_CLIENT_ID,
+  redirectUri: isDev ? TEST_UD_REDIRECT_URI : PROD_UD_REDIRECT_URI,
+  // Must include both the openid and wallet scopes.
+  scope: "openid wallet",
 };
 
 const Web3Context = React.createContext<Web3ContextData>(null);
@@ -35,7 +53,17 @@ export const useWeb3Context = () => {
   }, [web3Context]);
 };
 
-const saveNetworkId = (NetworkId: NetworkId) => {
+export const useImpersonateAccount = () => {
+  const params = new URLSearchParams(window.location.search);
+  const address = params.get("impersonate-account") || "";
+
+  return {
+    impersonateAddress: address,
+    isImpersonating: utils.isAddress(address),
+  };
+};
+
+export const saveNetworkId = (NetworkId: NetworkId) => {
   if (window.localStorage) {
     window.localStorage.setItem("defaultNetworkId", NetworkId.toString());
   }
@@ -75,6 +103,19 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
     new Web3Modal({
       cacheProvider: true, // optional
       providerOptions: {
+        "custom-uauth": {
+          // The UI Assets
+          display: UAuthWeb3Modal.display,
+
+          // The Connector
+          connector: UAuthWeb3Modal.connector,
+
+          // The SPA libary
+          package: UAuthSPA,
+
+          // The SPA libary options
+          options: uauthOptions,
+        },
         walletconnect: {
           package: WalletConnectProvider,
           options: {
@@ -86,7 +127,10 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({
   );
 
   const hasCachedProvider = useCallback((): boolean => {
-    if (!web3Modal) return false;
+    if (!web3Modal) {
+      return false;
+    }
+    UAuthWeb3Modal.registerWeb3Modal(web3Modal);
     if (!web3Modal.cachedProvider) return false;
     return true;
   }, [web3Modal]);

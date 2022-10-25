@@ -1,6 +1,8 @@
 import { Box, Container, Toolbar, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { FooterBar } from "@fantohm/shared-ui-themes";
+import style from "./footer.module.scss";
+import { discordIcon, instagramIcon, twitterIcon } from "@fantohm/shared/images";
 
 type Page = {
   title: string;
@@ -14,14 +16,6 @@ export const Footer = (): JSX.Element => {
       href: "/help",
     },
     {
-      title: "Cookies",
-      href: "/cookies",
-    },
-    {
-      title: "Disclaimer",
-      href: "/disclaimer",
-    },
-    {
       title: "Terms",
       href: "/term",
     },
@@ -32,7 +26,12 @@ export const Footer = (): JSX.Element => {
   ];
 
   return (
-    <FooterBar elevation={0} position="sticky" style={{ marginTop: "auto", zIndex: "0" }}>
+    <FooterBar
+      elevation={0}
+      position="sticky"
+      style={{ marginTop: "auto", zIndex: "0" }}
+      className={style["footerBar"]}
+    >
       <Container maxWidth="xl" sx={{ my: "2em" }}>
         <Toolbar
           sx={{
@@ -56,10 +55,23 @@ export const Footer = (): JSX.Element => {
               );
             })}
           </Box>
-          <Box sx={{ mt: { xs: "20px", md: "0" } }}>
+          <Box sx={{ mt: { xs: "20px", md: "0", display: "flex" } }}>
             <Typography textAlign="center" variant="body2" color="white">
               Copyright &copy; 2022. All rights reserved.
             </Typography>
+            <a href="https://discord.gg/balanceco" target="_blank" rel="noreferrer">
+              <img src={discordIcon} alt="discordIcon" className={style["socialDiv"]} />
+            </a>
+            <a href="https://twitter.com/liqdnft" target="_blank" rel="noreferrer">
+              <img src={twitterIcon} alt="twitterIcon" className={style["socialDiv"]} />
+            </a>
+            <a href=" https://instagram.com/liqdnft" target="_blank" rel="noreferrer">
+              <img
+                src={instagramIcon}
+                alt="instagramIcon"
+                className={style["socialDiv"]}
+              />
+            </a>
           </Box>
         </Toolbar>
       </Container>

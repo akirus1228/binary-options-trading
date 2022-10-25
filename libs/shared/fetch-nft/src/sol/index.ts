@@ -249,7 +249,9 @@ export class SolanaClient {
     if (suffixIndex === -1) return null;
 
     let endIndex = suffixIndex + suffix.length;
-    while (/[a-zA-Z0-9]/.test(text.charAt(endIndex++))) {}
+    while (/[a-zA-Z0-9]/.test(text.charAt(endIndex++))) {
+      // do something
+    }
 
     const url = text.substring(startIndex, endIndex);
     return {

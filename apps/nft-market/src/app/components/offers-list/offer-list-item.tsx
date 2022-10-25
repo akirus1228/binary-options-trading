@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Box, Button, Chip, CircularProgress, Tooltip } from "@mui/material";
 import { PaperTableCell, PaperTableRow } from "@fantohm/shared-ui-themes";
 import { addressEllipsis, formatCurrency } from "@fantohm/shared-helpers";
 import { useTermDetails } from "../../hooks/use-term-details";
@@ -12,23 +12,36 @@ import {
   Offer,
   OfferStatus,
 } from "../../types/backend-types";
-import { useCreateLoanMutation, useUpdateOfferMutation } from "../../api/backend-api";
+import {
+  useCreateLoanMutation,
+  useUpdateLoanMutation,
+  useUpdateOfferMutation,
+  useDeleteOfferMutation,
+  useResetPartialLoanMutation,
+} from "../../api/backend-api";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../store";
 import { selectNftPermFromAsset } from "../../store/selectors/wallet-selectors";
 import { contractCreateLoan } from "../../store/reducers/loan-slice";
 import {
-  isDev,
-  NetworkIds,
   requestNftPermission,
   useWeb3Context,
   checkNftPermission,
   prettifySeconds,
+  getLendingAddressConfig,
 } from "@fantohm/shared-web3";
 import style from "./offers-list.module.scss";
 import SimpleProfile from "../simple-profile/simple-profile";
 import { OffersListFields } from "./offers-list";
 import ArrowUpRight from "../../../assets/icons/arrow-right-up.svg";
+import { desiredNetworkId } from "../../constants/network";
+import { selectCurrencyByAddress } from "../../store/selectors/currency-selectors";
+import { loadCurrencyFromAddress } from "../../store/reducers/currency-slice";
+import { addAlert } from "../../store/reducers/app-slice";
+import MakeOffer from "../make-offer/make-offer";
+import RemoveOfferConfirmDialog from "../remove-offer-confirm-modal/remove-offer-confirm-dialog";
+import previewNotAvailableDark from "../../../assets/images/preview-not-available-dark.png";
+import previewNotAvailableLight from "../../../assets/images/preview-not-available-light.png";
 
 export type OfferListItemProps = {
   offer: Offer;
@@ -39,29 +52,39 @@ type AppDispatch = typeof store.dispatch;
 
 export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
+  const themeType = useSelector((state: RootState) => state.theme.mode);
   const [isPending, setIsPending] = useState(false);
   const [isRequestingPerms, setIsRequestingPerms] = useState(false);
   const { user } = useSelector((state: RootState) => state.backend);
   const { loanCreationStatus } = useSelector((state: RootState) => state.loans);
   const { address: walletAddress, provider } = useWeb3Context();
   const { repaymentTotal, repaymentAmount } = useTermDetails(offer.term);
+  const currency = useSelector((state: RootState) =>
+    selectCurrencyByAddress(state, offer.term.currencyAddress)
+  );
 
-  // createloan backend api call
-  const [
-    createLoan,
-    { isLoading: isCreating, error: createLoanError, data: createLoanData },
-  ] = useCreateLoanMutation();
+  useEffect(() => {
+    dispatch(loadCurrencyFromAddress(offer.term.currencyAddress));
+  }, [offer]);
+
+  // create loan backend api call
+  const [createLoan, { isLoading: isCreating, reset: resetCreateLoan }] =
+    useCreateLoanMutation();
+  const [updateLoan, { isLoading: isUpdating, reset: resetUpdateLoan }] =
+    useUpdateLoanMutation();
+  const [resetPartialLoan] = useResetPartialLoanMutation();
 
   const [updateOffer, { isLoading: isUpdatingOffer }] = useUpdateOfferMutation();
+  const [deleteOffer, { isLoading: isDeletingOffer }] = useDeleteOfferMutation();
 
   // nft permission status updates from state
   const { requestPermStatus } = useSelector((state: RootState) => state.wallet);
 
-  const asset = useMemo(() => offer.assetListing.asset, [offer]);
+  const asset = useMemo(() => offer?.assetListing?.asset, [offer]);
 
   // select perm status for this asset from state
   const hasPermission = useSelector((state: RootState) =>
-    selectNftPermFromAsset(state, offer.assetListing.asset)
+    selectNftPermFromAsset(state, offer?.assetListing?.asset)
   );
 
   // is the user the owner of the asset?
@@ -70,26 +93,51 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     return user.address.toLowerCase() === asset?.owner?.address.toLowerCase();
   }, [asset, user]);
 
+  const isMyOffer = useMemo(() => {
+    if (!user.address) return false;
+    return user.address.toLowerCase() === offer?.lender?.address.toLowerCase();
+  }, [user]);
+
+  // update offer dialog
+  const [makeOfferDialogOpen, setMakeOfferDialogOpen] = useState(false);
+  const [removeOfferConfirmDialogOpen, setRemoveOfferConfirmDialogOpen] = useState(false);
+
+  const handleUpdateOffer = () => {
+    setMakeOfferDialogOpen(true);
+  };
+
+  const onDialogClose = () => {
+    setMakeOfferDialogOpen(false);
+  };
+
   useEffect(() => {
     if (
-      (isUpdatingOffer ||
-        isCreating ||
-        requestPermStatus === "loading" ||
-        loanCreationStatus === "loading") &&
-      isPending
+      isUpdatingOffer ||
+      isDeletingOffer ||
+      isCreating ||
+      isUpdating ||
+      requestPermStatus === "loading" ||
+      loanCreationStatus === "loading"
     ) {
       setIsPending(true);
     } else {
       setIsPending(false);
     }
-  }, [isUpdatingOffer, isCreating, requestPermStatus, loanCreationStatus, isPending]);
+  }, [
+    isUpdatingOffer,
+    isDeletingOffer,
+    isCreating,
+    requestPermStatus,
+    loanCreationStatus,
+    isUpdating,
+  ]);
 
   // check the contract to see if we have perms already
   useEffect(() => {
     if (offer.assetListing.asset.assetContractAddress && provider) {
       dispatch(
         checkNftPermission({
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           provider,
           walletAddress: user.address,
           assetAddress: offer.assetListing.asset.assetContractAddress,
@@ -104,22 +152,23 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
     if (!hasPermission && provider) {
       setIsRequestingPerms(true);
       setIsPending(true);
-      const response = await dispatch(
+      await dispatch(
         requestNftPermission({
-          networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+          networkId: desiredNetworkId,
           provider,
           assetAddress: offer.assetListing.asset.assetContractAddress,
           walletAddress,
           tokenId: offer.assetListing.asset.tokenId,
         })
       );
+      setIsPending(false);
     }
   }, [offer.id, provider, hasPermission]);
 
   // automatically trigger accept offer after setting up perms
   useEffect(() => {
     if (isRequestingPerms && requestPermStatus !== "loading") {
-      handleAcceptOffer();
+      handleAcceptOffer().then();
     }
   }, [requestPermStatus, isRequestingPerms]);
 
@@ -139,29 +188,126 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
         status: ListingStatus.Completed,
         asset: { ...asset, status: AssetStatus.Locked },
       },
+      lendingContractAddress: getLendingAddressConfig(desiredNetworkId).currentVersion,
       term: offer.term,
       status: LoanStatus.Active,
+      offerId: offer.id,
     };
 
     const createLoanParams = {
       loan: createLoanRequest,
       provider,
-      networkId: isDev() ? NetworkIds.Rinkeby : NetworkIds.Ethereum,
+      networkId: desiredNetworkId,
+      currencyAddress: offer.term.currencyAddress,
     };
+    let createLoanResult: any;
+    try {
+      createLoanResult = await createLoan(createLoanRequest);
+      if (!createLoanResult || (createLoanResult && createLoanResult?.error)) {
+        if (createLoanResult?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to create a loan because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(
+            addAlert({
+              message: createLoanResult?.error?.data.message,
+              severity: "error",
+            })
+          );
+        }
+        return;
+      }
+      const createLoanContractResult = await dispatch(
+        contractCreateLoan(createLoanParams)
+      ).unwrap();
 
-    const createLoanResult = await dispatch(
-      contractCreateLoan(createLoanParams)
-    ).unwrap();
+      if (!createLoanContractResult) {
+        setIsPending(false);
+        resetCreateLoan();
+        resetPartialLoan(createLoanResult?.data?.id || "");
+        return; //todo: throw nice error
+      }
 
-    if (createLoanResult) {
-      createLoanRequest.contractLoanId = createLoanResult;
-      createLoan(createLoanRequest);
+      createLoanRequest.contractLoanId = createLoanContractResult as number;
+      createLoanRequest.id = createLoanResult?.data?.id;
+      await updateLoan(createLoanRequest).unwrap();
+
+      resetUpdateLoan();
+      dispatch(
+        addAlert({
+          message:
+            "Loan Created. NFT Has been transferred to escrow, and funds transferred to borrower.",
+        })
+      );
+    } catch (e: any) {
+      if (e?.data?.message) {
+        dispatch(
+          addAlert({
+            message: e?.data?.message,
+            severity: "error",
+          })
+        );
+      }
+      if (createLoanResult?.data) {
+        resetPartialLoan(createLoanResult?.data?.id);
+      }
+    } finally {
+      setIsPending(false);
     }
-
-    // update offer as accepted
-    const updateOfferRequest = { ...offer, status: OfferStatus.Accepted };
-    updateOffer(updateOfferRequest);
   }, [offer.id, offer.term, offer.assetListing, provider, hasPermission]);
+
+  const handleRejectOffer = useCallback(async () => {
+    try {
+      const result: any = await updateOffer({
+        ...offer,
+        status: OfferStatus.Rejected,
+      });
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message: "Failed to reject an offer.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer rejected" }));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [offer.id]);
+
+  const handleDeleteOffer = useCallback(async () => {
+    try {
+      const result: any = await deleteOffer(offer);
+      if (result?.error) {
+        if (result?.error?.status === 403) {
+          dispatch(
+            addAlert({
+              message:
+                "Failed to remove an offer because your signature is expired or invalid.",
+              severity: "error",
+            })
+          );
+        } else {
+          dispatch(addAlert({ message: result?.error?.data.message, severity: "error" }));
+        }
+      } else {
+        dispatch(addAlert({ message: "Offer removed" }));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [offer.id]);
 
   const offerExpires = useMemo(() => {
     const offerDateTime = new Date(offer.term.expirationAt);
@@ -171,8 +317,8 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   }, [offer.term]);
 
   const offerCreatedSecondsAgo = useMemo(() => {
-    if (!offer.term.createdAt) return 0;
-    const offerDateTime = new Date(offer.term.createdAt);
+    if (!offer.createdAt) return 0;
+    const offerDateTime = new Date(offer.createdAt);
     const createdAgo = Date.now() - offerDateTime.getTime();
     return prettifySeconds(createdAgo / 1000);
   }, [offer.term]);
@@ -180,21 +326,21 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
   const getFieldData = (field: OffersListFields): JSX.Element | string => {
     switch (field) {
       case OffersListFields.LENDER_PROFILE:
-        return <SimpleProfile user={offer.lender} />;
+        return <SimpleProfile address={offer.lender.address} />;
       case OffersListFields.LENDER_ADDRESS:
         return (
           <a href={`https://etherscan.io/address/${offer.lender.address}`}>
             {offer.lender.address.toLowerCase() === user.address.toLowerCase() ? (
               "You"
             ) : (
-              <>
-                {addressEllipsis(offer.lender.address, 3)}{" "}
+              <Box>
+                {addressEllipsis(offer.lender.address)}{" "}
                 <img
                   src={ArrowUpRight}
                   alt="arrow pointing up and to the right"
                   style={{ height: "16px", width: "16px" }}
                 />
-              </>
+              </Box>
             )}
           </a>
         );
@@ -207,31 +353,105 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             user.address.toLowerCase() ? (
               "You"
             ) : (
-              <>
-                {addressEllipsis(offer.assetListing.asset?.owner.address, 3)}{" "}
+              <Box>
+                {addressEllipsis(offer.assetListing.asset?.owner.address)}{" "}
                 <img
                   src={ArrowUpRight}
                   alt="arrow pointing up and to the right"
                   style={{ height: "16px", width: "16px" }}
                 />
-              </>
+              </Box>
             )}
           </a>
         );
       case OffersListFields.OWNER_PROFILE:
-        return <SimpleProfile user={offer.lender} />;
+        return <SimpleProfile address={offer.lender.address} />;
       case OffersListFields.REPAYMENT_TOTAL:
-        return formatCurrency(repaymentTotal, 2);
-      case OffersListFields.REPAYMENT_AMOUNT:
-        return formatCurrency(repaymentAmount, 2);
+        return (
+          <Box sx={{ display: "flex" }}>
+            <Tooltip title={currency?.name || ""}>
+              <img
+                src={currency?.icon || ""}
+                alt={currency?.symbol || ""}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  marginRight: "5px",
+                  marginBottom: "4px",
+                }}
+              />
+            </Tooltip>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentTotal * currency?.lastPrice || 0, 2)}`}
+            >
+              <span>{repaymentTotal.toFixed(4)} </span>
+            </Tooltip>
+          </Box>
+        );
+      case OffersListFields.PRINCIPAL:
+        return (
+          <Box sx={{ display: "flex" }}>
+            <Tooltip title={currency?.name || ""}>
+              <img
+                src={currency?.icon || ""}
+                alt={currency?.symbol || ""}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  marginRight: "5px",
+                  marginBottom: "4px",
+                }}
+              />
+            </Tooltip>
+            <Tooltip
+              title={`~ ${formatCurrency(
+                offer.term.amount * currency?.lastPrice || 0,
+                2
+              )}`}
+            >
+              <span>{offer.term.amount.toFixed(4)} </span>
+            </Tooltip>
+          </Box>
+        );
+      case OffersListFields.TOTAL_INTEREST:
+        return (
+          <Box sx={{ display: "flex" }}>
+            <Tooltip title={currency?.name || ""}>
+              <img
+                src={currency?.icon || ""}
+                alt={currency?.symbol || ""}
+                style={{
+                  height: "20px",
+                  width: "20px",
+                  marginRight: "5px",
+                  marginBottom: "4px",
+                }}
+              />
+            </Tooltip>
+            <Tooltip
+              title={`~ ${formatCurrency(repaymentAmount * currency?.lastPrice || 0, 2)}`}
+            >
+              <span>{repaymentAmount?.toFixed(4)}</span>
+            </Tooltip>
+          </Box>
+        );
       case OffersListFields.APR:
         return `${offer.term.apr}%`;
       case OffersListFields.DURATION:
-        return `${offer.term.duration} days`;
+        return prettifySeconds(offer.term.duration * 86400, "day");
       case OffersListFields.EXPIRATION:
         return offerExpires;
       case OffersListFields.ASSET:
-        return <Avatar src={offer.assetListing.asset.imageUrl || ""} />;
+        return (
+          <Avatar
+            src={
+              offer.assetListing.asset?.imageUrl ||
+              offer.assetListing.asset?.gifUrl ||
+              offer.assetListing.asset?.threeDUrl ||
+              (themeType === "dark" ? previewNotAvailableDark : previewNotAvailableLight)
+            }
+          />
+        );
       case OffersListFields.NAME:
         return (
           <Link
@@ -240,58 +460,144 @@ export const OfferListItem = ({ offer, fields }: OfferListItemProps): JSX.Elemen
             {offer.assetListing.asset.name || ""}
           </Link>
         );
+      case OffersListFields.CREATED_AGO:
+        return <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>;
+      case OffersListFields.STATUS:
+        return offer.status !== OfferStatus.Ready ? (
+          <Chip
+            label={offer.status}
+            sx={{
+              fontSize: "0.875em",
+              marginRight: "2em",
+              backgroundColor: "#374FFF",
+              color: "#fff",
+            }}
+          ></Chip>
+        ) : (
+          ""
+        );
       default:
         return "?";
     }
   };
 
   return (
-    <PaperTableRow className={style["row"]}>
-      {fields?.map((field: OffersListFields, index: number) => (
-        <PaperTableCell key={`offer-list-row-${index}`}>
-          {getFieldData(field)}
+    <>
+      <MakeOffer
+        onClose={onDialogClose}
+        open={makeOfferDialogOpen}
+        listing={offer?.assetListing}
+        isEdit={true}
+        offerTerm={offer?.term}
+      />
+      <RemoveOfferConfirmDialog
+        open={removeOfferConfirmDialogOpen}
+        setOpen={setRemoveOfferConfirmDialogOpen}
+        onRemove={handleDeleteOffer}
+      />
+      <PaperTableRow className={style["row"]}>
+        {fields?.map((field: OffersListFields, index: number) => (
+          <PaperTableCell key={`offer-list-row-${index}`} className={style["offerElem"]}>
+            <Box className="flex fr ai-c">{getFieldData(field)}</Box>
+          </PaperTableCell>
+        ))}
+        <PaperTableCell
+          sx={{
+            display: "flex",
+            fontSize: "1rem",
+            alignItems: "middle",
+            marginRight: "20px",
+          }}
+        >
+          <Box className="flex fr ai-c">
+            {offer.status !== OfferStatus.Ready && (
+              <Chip
+                label={offer.status}
+                sx={{
+                  fontSize: "0.875em",
+                  backgroundColor: "#374FFF",
+                  color: "#fff",
+                }}
+              ></Chip>
+            )}
+            {isOwner &&
+              !hasPermission &&
+              offer.status === OfferStatus.Ready &&
+              Date.parse(offer.term.expirationAt) > Date.now() &&
+              (isPending ? (
+                <Button variant="outlined" className="offer slim">
+                  <CircularProgress />
+                </Button>
+              ) : (
+                <Box sx={{ display: "flex" }}>
+                  <Button
+                    variant="contained"
+                    sx={{ my: "10px", mr: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRequestPermission}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ my: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRejectOffer}
+                  >
+                    Reject
+                  </Button>
+                </Box>
+              ))}
+            {isOwner &&
+              hasPermission &&
+              offer.status === OfferStatus.Ready &&
+              (isPending ? (
+                <Button variant="outlined" className="offer slim">
+                  <CircularProgress />
+                </Button>
+              ) : (
+                <Box sx={{ display: "flex" }}>
+                  <Button
+                    variant="contained"
+                    sx={{ my: "10px", mr: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleAcceptOffer}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{ my: "10px", width: "100px" }}
+                    className="offer slim"
+                    onClick={handleRejectOffer}
+                  >
+                    Reject
+                  </Button>
+                </Box>
+              ))}
+            {!isOwner && isMyOffer && offer.status === OfferStatus.Ready && (
+              <Box sx={{ display: "flex" }}>
+                <Button
+                  variant="contained"
+                  className="offer slim"
+                  sx={{ my: "10px", mr: "10px", width: "100px" }}
+                  onClick={handleUpdateOffer}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
+                  className="offer slim"
+                  sx={{ my: "10px", width: "100px" }}
+                  onClick={() => setRemoveOfferConfirmDialogOpen(true)}
+                >
+                  Remove
+                </Button>
+              </Box>
+            )}
+          </Box>
         </PaperTableCell>
-      ))}
-      <PaperTableCell>
-        {isOwner &&
-          !hasPermission &&
-          !isPending &&
-          offer.status === OfferStatus.Ready &&
-          Date.parse(offer.term.expirationAt) > Date.now() && (
-            <Button
-              variant="contained"
-              className="offer slim"
-              onClick={handleRequestPermission}
-            >
-              Accept
-            </Button>
-          )}
-        {isOwner && hasPermission && !isPending && offer.status === OfferStatus.Ready && (
-          <Button variant="contained" className="offer slim" onClick={handleAcceptOffer}>
-            Accept
-          </Button>
-        )}
-        {isPending && (
-          <Button variant="contained" className="offer slim">
-            Pending...
-          </Button>
-        )}
-        {!isOwner && (
-          <span style={{ marginRight: "2em" }}>{offerCreatedSecondsAgo} ago</span>
-        )}
-        {offer.status !== OfferStatus.Ready ||
-          (!isOwner && (
-            <Button
-              variant="contained"
-              className="offer slim"
-              disabled={[OfferStatus.Expired, OfferStatus.Cancelled].includes(
-                offer.status
-              )}
-            >
-              {offer.status}
-            </Button>
-          ))}
-      </PaperTableCell>
-    </PaperTableRow>
+      </PaperTableRow>
+    </>
   );
 };

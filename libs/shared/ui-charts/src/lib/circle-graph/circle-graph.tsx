@@ -28,7 +28,6 @@ export const CircleGraph = (props: CircleGraphProps): JSX.Element => {
 
     const offset = circumference - (props.progress / 100) * circumference;
     pCircle.current.style.strokeDashoffset = offset.toString();
-    console.log(`offset ${offset}`);
   }, [props.progress, pCircle.current]);
 
   return (
@@ -54,7 +53,7 @@ export const CircleGraph = (props: CircleGraphProps): JSX.Element => {
           alignmentBaseline="middle"
           fontSize="2em"
         >
-          {props.progress}%
+          {Math.round(props.progress)}%
         </text>
       </svg>
     </Box>

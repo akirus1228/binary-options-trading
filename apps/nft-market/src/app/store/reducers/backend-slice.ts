@@ -30,8 +30,8 @@ export interface BackendData {
   readonly user: User;
 }
 
-/* 
-authorizeAccount: generates user account if non existant 
+/*
+authorizeAccount: generates user account if non existant
   requests signature to create bearer token
 params:
 - networkId: number
@@ -41,13 +41,20 @@ returns: void
 */
 export const authorizeAccount = createAsyncThunk(
   "backend/authorizeAccount",
-  async ({ address, networkId, provider }: SignerAsyncThunk, { rejectWithValue }) => {
+  async (
+    { address, networkId, provider, onFailed }: SignerAsyncThunk,
+    { rejectWithValue }
+  ) => {
     const loginResponse: LoginResponse = await BackendApi.doLogin(address);
     if (loginResponse.id) {
       const signature = await BackendApi.handleSignMessage(address, provider);
       if (!signature) {
-        rejectWithValue("Login Failed");
+        if (onFailed) onFailed();
+        return rejectWithValue("Login Failed");
       }
+      let addr: string = localStorage.getItem("sign") || "";
+      addr += address + "|" + signature + " ";
+      localStorage.setItem("sign", addr);
       return { signature, address, user: loginResponse };
     } else {
       return rejectWithValue("Login Failed");

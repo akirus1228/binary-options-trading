@@ -21,16 +21,16 @@ export const MyAccountDetailsTable = ({
 }): JSX.Element => {
   const themeType = useSelector((state: any) => state.app.theme);
   const backgroundColor = themeType === "light" ? "#f7f7ff" : "#0E0F10";
-  const [pendingClaim, setPendingClaim] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const onRedeemAllInternal = async () => {
     try {
-      setPendingClaim(true);
+      setIsPending(true);
       await onRedeemAll();
     } catch (e) {
       console.log(e);
     } finally {
-      setPendingClaim(false);
+      setIsPending(false);
     }
   };
 
@@ -77,12 +77,12 @@ export const MyAccountDetailsTable = ({
             <Button
               variant="contained"
               disableElevation
-              disabled={pendingClaim}
+              disabled={isPending}
               onClick={() => {
                 onRedeemAllInternal().then();
               }}
             >
-              {pendingClaim ? "Pending" : "Claim all"}
+              {isPending ? "Pending" : "Claim all"}
             </Button>
           </Grid>
         )}

@@ -134,7 +134,7 @@ const globalTheme: ThemeOptions = {
     },
   },
   typography: {
-    fontFamily: ["Sora", "Roboto", "sans-serif"].join(","),
+    fontFamily: ["Inter", "Roboto", "sans-serif"].join(","),
   },
   components: {
     MuiAppBar: {
@@ -237,6 +237,9 @@ const globalTheme: ThemeOptions = {
           padding: "1em 3em",
           fontSize: "1em",
           borderWidth: "1px",
+          "&.slim": {
+            padding: "0.25em 2em",
+          },
         },
         contained: {
           borderRadius: "36px",

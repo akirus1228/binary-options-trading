@@ -1,3 +1,9 @@
+import { NftPortAsset } from "../api/nftport";
+import { OpenseaAsset, OpenseaCollection } from "./opensea-types";
+import { ReservoirToken } from "../api/reservoir";
+import { erc20Currency } from "../helpers/erc20Currency";
+import { BigNumber } from "ethers";
+
 // request types
 export type CreateListingRequest = {
   asset: Asset | string;
@@ -26,12 +32,49 @@ export type CreateListingResponse = {
   status: ListingStatus;
 } & IncludesTerms;
 
+export type AffiliateFee = {
+  id: string;
+  affilate: string;
+  currency: string;
+  fee: string;
+  updatedAt: string;
+  price: number;
+  icon: string;
+  tokenName: string;
+  tokenSymbol: string;
+  decimals: number;
+};
+
+export type AffiliateData = {
+  referralCode?: string;
+  referredAddresses?: {
+    user: string;
+    affiliate: string;
+  }[];
+  affiliateFees?: AffiliateFee[];
+  proofs?: string[][];
+  isBonus?: boolean;
+  totalAmounts?: {
+    token: erc20Currency;
+    amount: BigNumber;
+  }[];
+};
+
+export type SaveAffiliateResponse = {
+  data: {
+    user: string;
+    affiliate: string;
+  };
+  success: boolean;
+};
+
 // data models
 export enum AssetStatus {
-  New = "NEW",
-  Ready = "READY",
+  New = "NEW", // Not on backend yet
+  Ready = "READY", // on backend, unlisted, unlocked
   Listed = "LISTED",
   Locked = "LOCKED",
+  TRANSFERRED = "TRANSFERRED",
 }
 
 export enum CollectibleMediaType {
@@ -39,6 +82,8 @@ export enum CollectibleMediaType {
   Video = "VIDEO",
   Gif = "GIF",
   ThreeD = "THREE_D",
+  Html = "HTML",
+  Audio = "AUDIO",
 }
 
 export enum AssetChain {
@@ -68,11 +113,13 @@ export type User = Person;
 
 export type Terms = {
   id?: string;
+  usdPrice?: number;
   amount: number;
   apr: number;
   duration: number;
   expirationAt: string;
   signature: string;
+  currencyAddress: string;
 } & StandardBackendObject;
 
 export enum ListingStatus {
@@ -96,6 +143,12 @@ export type Listing = {
 
 export type Chain = "eth" | "sol";
 
+export enum NftPriceProvider {
+  Nabu = "NABU",
+  Upshot = "UPSHOT",
+  NftBank = "NFT_BANK",
+}
+
 export type BackendAsset = {
   status: AssetStatus;
   cacheExpire?: number;
@@ -112,6 +165,11 @@ export type BackendAsset = {
   gifUrl: Nullable<string>;
   videoUrl: Nullable<string>;
   threeDUrl: Nullable<string>;
+  fileUrl?: Nullable<string>;
+  magicUrl?: Nullable<string>;
+  contentType?: Nullable<string>;
+  contentLength?: number;
+  thumbUrl: string;
   isOwned: boolean;
   owner: Owner;
   dateCreated: Nullable<string>;
@@ -121,44 +179,14 @@ export type BackendAsset = {
   assetContractAddress: string;
   chain: Chain;
   wallet: string;
+  usable: boolean;
 } & StandardBackendObject;
 
 export type Asset = BackendAsset & {
-  collection: Collection;
-};
-
-export type Collection = {
-  banner_image_url?: string;
-  chat_url?: string;
-  created_date: string;
-  default_to_fiat: boolean;
-  description?: string;
-  dev_buyer_fee_basis_points: number;
-  dev_seller_fee_basis_points: number;
-  discord_url?: string;
-  display_data: { card_display_style: string; images: string[] };
-  external_url?: string;
-  featured: boolean;
-  featured_image_url?: string;
-  hidden: boolean;
-  image_url?: string;
-  instagram_username?: string;
-  is_nsfw: boolean;
-  is_subject_to_whitelist: boolean;
-  large_image_url?: string;
-  medium_username?: string;
-  name: string;
-  only_proxied_transfers: boolean;
-  opensea_buyer_fee_basis_points: number;
-  opensea_seller_fee_basis_points: number;
-  payout_address?: string;
-  require_email: boolean;
-  safelist_request_status?: string;
-  short_description?: string;
-  slug: string;
-  telegram_url?: string;
-  twitter_username?: string;
-  wiki_url?: string;
+  collection: OpenseaCollection;
+  osData?: OpenseaAsset;
+  npData?: NftPortAsset;
+  reservoirData?: ReservoirToken;
 };
 
 export type Nullable<T> = T | null;
@@ -179,6 +207,10 @@ export enum NotificationContext {
   Liquidation = "LIQUIDATION",
   NewOffer = "NEW_OFFER",
   OfferAccepted = "OFFER_ACCEPTED",
+  OfferUpdated = "OFFER_UPDATED",
+  OfferRemoved = "OFFER_REMOVED",
+  OfferRejected = "OFFER_REJECTED",
+  ListingCancelled = "LISTING_CANCELLED",
 }
 
 export enum Importance {
@@ -240,6 +272,10 @@ export type Loan = {
   term: Terms;
   status: LoanStatus;
   contractLoanId?: number;
+  currencyPrice?: number;
+  amountDue?: number;
+  offerId?: string;
+  lendingContractAddress?: string;
 } & StandardBackendObject;
 
 export type Updatable = {
@@ -262,6 +298,7 @@ export enum OfferStatus {
   Complete = "COMPLETE",
   Expired = "EXPIRED",
   Ready = "READY",
+  Rejected = "REJECTED",
 }
 
 export type Offer = {
@@ -272,23 +309,50 @@ export type Offer = {
 } & StandardBackendObject &
   IncludesTerms;
 
+export type Collection = {
+  id: string;
+  name: string;
+  slug: string;
+  imageUrl: string;
+  contractAddress: string;
+  openListingCount: number;
+  closeListingCount: number;
+  openLoanCount: number;
+  closeLoanCount: number;
+} & StandardBackendObject;
+
+export type BackendCollectionQuery = {
+  contractAddress?: string;
+  slug: string;
+  keyword: string;
+  sortQuery: string;
+} & BackendStandardQuery;
+
 export type BackendStandardQuery = {
   skip: number;
   take: number;
+  sortQuery?: string;
 };
 
-export type BackendAssetQueryParams = {
-  status?: string;
+export type FrontendAssetFilterQuery = Omit<Partial<Asset>, "status"> & {
   openseaIds?: string[];
-  contractAddress?: string;
-  mediaType?: string;
+  status: AssetStatus | "All";
+};
+export type BackendAssetQueryParams = {
+  status?: AssetStatus;
+  contractAddresses?: string;
+  tokenIds?: string;
+  mediaType?: CollectibleMediaType;
 } & BackendStandardQuery;
 
 export type BackendLoanQueryParams = {
   assetId?: string;
+  contractAddress?: string;
+  tokenId?: string;
   assetListingId?: string;
   lenderAddress?: string;
   borrowerAddress?: string;
+  walletAddress?: string;
   status?: LoanStatus;
 } & BackendStandardQuery;
 
@@ -314,7 +378,6 @@ export type PlatformWalletInfo = {
   loansBorrowed: number;
   loansGiven: number;
 };
-
 export type BlogPostDTO = {
   id?: string;
   date: string;
@@ -328,4 +391,34 @@ export type BlogPostDTO = {
   seoDescription?: string;
   seoKeywords?: string;
   getInTouch?: string;
+};
+
+export type NftPrice = {
+  id: string;
+  chain: Chain;
+  collection: string;
+  tokenId: string;
+  priceProvider: NftPriceProvider;
+  priceInEth: string;
+  priceInUsd: string;
+  originalProviderResponse: string;
+};
+
+export type BackendNftAssetsQueryParams = {
+  walletAddress: string;
+  limit: number;
+  contractAddress?: string;
+  continuation?: string;
+};
+
+export type BackendNftAssetsQueryResponse = {
+  continuation: string;
+  count: number;
+  assets: Asset[];
+};
+
+export type SendReport = {
+  subject: string;
+  text: string;
+  to: string;
 };

@@ -40,20 +40,17 @@ export const createListing = createAsyncThunk(
   async ({ asset, term }: ListingAsyncThunk, { getState, rejectWithValue, dispatch }) => {
     const thisState: any = getState();
     if (thisState.backend.authSignature) {
-      const listing = await BackendApi.createListing(
+      const result: any = await BackendApi.createListing(
         thisState.backend.authSignature,
         asset,
         term
       );
-      if (!listing) {
-        rejectWithValue("Failed to create listing");
+      if (result?.id) {
+        dispatch(updateListing(result));
+        dispatch(updateAsset({ ...result.asset, owner: thisState.backend.user }));
       }
-      if (typeof listing !== "boolean") {
-        dispatch(updateAsset({ ...listing.asset, owner: thisState.backend.user }));
-      }
-      return listing;
+      return result;
     } else {
-      console.warn("no auth");
       return rejectWithValue("No authorization found.");
     }
   }
@@ -64,7 +61,7 @@ const previousState = loadState("listings");
 const initialState: ListingState = {
   listings: [],
   ...previousState, // overwrite assets and currencies from cache if recent
-  isDev: isDev(),
+  isDev: isDev,
   loadListingStatus: [],
   listingsLoadStatus: BackendLoadingStatus.idle,
   createListingStatus: BackendLoadingStatus.idle,
@@ -78,11 +75,26 @@ const listingsSlice = createSlice({
     updateListing: (state, action: PayloadAction<Listing>) => {
       state.listings = {
         ...state.listings,
-        ...{ [action.payload.id || ""]: action.payload },
+        ...{
+          [action.payload.id || ""]: {
+            ...state.listings[action.payload.id || ""],
+            ...action.payload,
+          },
+        },
       };
     },
     updateListings: (state, action: PayloadAction<Listings>) => {
-      state.listings = { ...state.listings, ...action.payload };
+      const mergedListings: Listings = {};
+      Object.entries(action.payload).forEach(([listingId, listing]) => {
+        mergedListings[listingId] = {
+          ...state.listings[listingId || ""],
+          ...listing,
+        };
+      });
+      state.listings = { ...state.listings, ...mergedListings };
+    },
+    deleteListing: (state, action: PayloadAction<Listing>) => {
+      delete state.listings[action.payload.id || ""];
     },
   },
   extraReducers: (builder) => {
@@ -113,7 +125,7 @@ const listingsSlice = createSlice({
 
 export const listingsReducer = listingsSlice.reducer;
 // actions are automagically generated and exported by the builder/thunk
-export const { updateListing, updateListings } = listingsSlice.actions;
+export const { updateListing, updateListings, deleteListing } = listingsSlice.actions;
 
 const baseInfo = (state: RootState) => state.listings;
 export const getListingState = createSelector(baseInfo, (listings) => listings);

@@ -9,5 +9,6 @@ const selectNftPerm: (state: RootState) => NftPermStatus = (state: RootState) =>
 const selectNftPermAsset = (state: RootState, asset: Asset) => asset;
 export const selectNftPermFromAsset = createSelector(
   [selectNftPerm, selectNftPermAsset],
-  (nftPerms, asset) => nftPerms[`${asset.tokenId}:::${asset.assetContractAddress}`]
+  (nftPerms, asset) =>
+    nftPerms[`${asset.tokenId}:::${asset.assetContractAddress.toLowerCase()}`]
 );

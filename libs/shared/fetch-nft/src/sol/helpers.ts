@@ -257,7 +257,7 @@ const metaplexNFTToCollectible = async (
     (await nftVideo(nft)) ||
     (await nftImage(nft)) ||
     (await nftComputedMedia(nft))) as SolanaNFTMedia;
-  collectible.frameUrl = frameUrl;
+  collectible.frameUrl = frameUrl || "";
   collectible.mediaType = collectibleMediaType;
   if (collectibleMediaType === "GIF") {
     collectible.gifUrl = url;

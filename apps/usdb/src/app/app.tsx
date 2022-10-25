@@ -1,24 +1,27 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Backdrop, Box, Button, CssBaseline, Fade, Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import { USDBLight, USDBDark } from "@fantohm/shared-ui-themes";
+import { USDBDark, USDBLight } from "@fantohm/shared-ui-themes";
 import Mint from "./pages/mint/mint";
 import {
-  useWeb3Context,
   calcBondDetails,
-  useBonds,
   calcGlobalBondDetails,
   calcInvestmentDetails,
-  useInvestments,
-  fetchTokenPrice,
-  loadAccountDetails,
-  defaultNetworkId,
   calculateAllUserBondDetails,
+  defaultNetworkId,
+  fetchTokenPrice,
+  isDev,
+  loadAccountDetails,
+  NetworkIds,
+  saveNetworkId,
+  useBonds,
+  useInvestments,
+  useWeb3Context,
 } from "@fantohm/shared-web3";
 import { StakingChoicePage } from "./pages/staking-choice/staking-choice";
-import { Header, Footer } from "./components/template";
+import { Footer, Header } from "./components/template";
 import { ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
 import { Messages } from "./components/messages/messages";
 import { XfhmLqdrPage } from "./pages/xfhm-lqdr/xfhm-lqdr";
@@ -58,13 +61,11 @@ export const App = (): JSX.Element => {
     // if we aren't connected or don't yet have a chainId, we shouldn't try and load details
     if (!connected || !chainId) return;
     dispatch(loadAppDetails({ networkId: chainId || defaultNetworkId }));
-    bonds
-      .filter((bond) => bond.name !== "stakeNft" && bond.name !== "usdbNft")
-      .forEach((bond) => {
-        dispatch(
-          calcBondDetails({ bond, value: "", networkId: chainId || defaultNetworkId })
-        );
-      });
+    bonds.map((bond) => {
+      dispatch(
+        calcBondDetails({ bond, value: "", networkId: chainId || defaultNetworkId })
+      );
+    });
     dispatch(calcGlobalBondDetails({ allBonds }));
     investments.forEach((investment) => {
       dispatch(calcInvestmentDetails({ investment }));
@@ -107,6 +108,8 @@ export const App = (): JSX.Element => {
     setPromptTerms(false);
     localStorage.setItem("termsAgreed", "true");
   };
+
+  saveNetworkId(isDev() ? NetworkIds.FantomTestnet : NetworkIds.FantomOpera);
 
   return (
     <ThemeProvider theme={theme}>

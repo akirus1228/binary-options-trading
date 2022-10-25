@@ -1,16 +1,18 @@
 import { addressEllipsis } from "@fantohm/shared-helpers";
 import { Avatar, Box, CircularProgress, SxProps, Theme } from "@mui/material";
-import { User } from "../../types/backend-types";
 import tmpAvatar from "../../../assets/images/temp-avatar.png";
 import style from "./simple-profile.module.scss";
+import { useGetUserQuery } from "../../api/backend-api";
 
 export interface SimpleProfileProps {
-  user: User;
+  address: string;
   sx?: SxProps<Theme>;
 }
 
-export const SimpleProfile = ({ user, sx }: SimpleProfileProps): JSX.Element => {
-  if (!user) {
+export const SimpleProfile = ({ address, sx }: SimpleProfileProps): JSX.Element => {
+  const { data: userProfile, isLoading } = useGetUserQuery(address, { skip: !address });
+
+  if (isLoading) {
     return (
       <Box className="flex fr fj-c">
         <CircularProgress />
@@ -19,12 +21,12 @@ export const SimpleProfile = ({ user, sx }: SimpleProfileProps): JSX.Element => 
   }
   return (
     <Box className="flex fr ai-c" sx={sx}>
-      <Avatar src={user.profileImageUrl || tmpAvatar} />
+      <Avatar src={userProfile?.profileImageUrl || tmpAvatar} />
       <Box className="flex fc" sx={{ ml: "1em" }}>
         <span className={style["ownerName"]}>
-          {user.name || addressEllipsis(user.address, 3)}
+          {userProfile?.name || addressEllipsis(address)}
         </span>
-        <span className={style["ownerAddress"]}>{addressEllipsis(user.address, 3)}</span>
+        <span className={style["ownerAddress"]}>{addressEllipsis(address)}</span>
       </Box>
     </Box>
   );

@@ -1,9 +1,9 @@
 import { capitalizeFirstLetter } from "@fantohm/shared-helpers";
-import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Box, ToggleButton } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { ListingQueryParam } from "../../store/reducers/interfaces";
 import { CollectibleMediaType } from "../../types/backend-types";
-import "./asset-type-filter.module.scss";
+import styles from "./asset-type-filter.module.scss";
 
 export interface AssetTypeFilterProps {
   query: ListingQueryParam;
@@ -59,7 +59,6 @@ export const AssetTypeFilter = ({
     }
     const mediaType: CollectibleMediaType = getMediaType(queryConditions[0]);
     setQuery({ ...query, mediaType });
-    console.log(queryConditions);
   }, [buttonState]);
 
   const handleStateChange = useCallback(
@@ -73,12 +72,11 @@ export const AssetTypeFilter = ({
     [buttonState]
   );
 
-  console.log(Object.entries(buttonState));
   return (
-    <Box className="flex fr">
+    <Box sx={{ margin: "10px 0 50px 10px" }} className={styles["filterElems"]}>
       {Object.entries(buttonState).map(([key, value]) => (
         <ToggleButton
-          sx={{ mr: "2em" }}
+          sx={{ m: "5px" }}
           value="check"
           selected={value}
           onChange={() => {
@@ -87,7 +85,7 @@ export const AssetTypeFilter = ({
           key={`filter-btn-${key}`}
           className="highContrast"
         >
-          {capitalizeFirstLetter(key)}
+          {key === "three_d" ? "3D" : capitalizeFirstLetter(key)}
         </ToggleButton>
       ))}
     </Box>

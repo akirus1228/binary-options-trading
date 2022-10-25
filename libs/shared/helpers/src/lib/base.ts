@@ -74,11 +74,15 @@ export const formatAmount = (
   }
 };
 
-export function formatCurrency(c: number, precision = 0) {
-  return new Intl.NumberFormat("en-US", {
+export function formatCurrency(c: number, precision = 0): string {
+  const currencyStr = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: precision,
     minimumFractionDigits: precision,
   }).format(c);
+  if (parseFloat(currencyStr) === parseInt(currencyStr) && precision < 6)
+    // show decimals by 6 digits at most
+    return formatCurrency(c, precision + 1);
+  return currencyStr;
 }

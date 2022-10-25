@@ -4,6 +4,8 @@ import ConnectWalletImage from "../../../assets/images/connect-wallet.png";
 import ChooseNftCollateraliseImage from "../../../assets/images/choose-nft-collateralise.png";
 import AcceptOfferImage from "../../../assets/images/accept-offer.png";
 
+import style from "./borrowers.module.scss";
+
 export const Borrowers = (): JSX.Element => {
   const steps = [
     {
@@ -33,7 +35,7 @@ export const Borrowers = (): JSX.Element => {
           alignItems: { xs: "end", md: "center" },
         }}
       >
-        <Box>
+        <Box id="about-section">
           <Typography variant="subtitle2" style={{ color: "#384BFF" }}>
             For borrowers
           </Typography>
@@ -42,7 +44,7 @@ export const Borrowers = (): JSX.Element => {
           </Box>
         </Box>
       </Box>
-      <Grid container spacing={4} sx={{ mt: "50px" }}>
+      <Grid container spacing={4} sx={{ mt: "50px" }} className={style["borrowRow"]}>
         {steps.map((step: any, index: number) => {
           return (
             <Grid item xs={12} md={4} key={`borrower_steps_${index}`}>
@@ -53,9 +55,9 @@ export const Borrowers = (): JSX.Element => {
                   justifyContent: "end",
                   height: "300px",
                   borderRadius: "30px",
-                  boxShadow: "0px 3px 30px #70707086",
                   p: "40px",
                 }}
+                className={style["borrowBoxElem"]}
               >
                 <Box sx={{ display: "flex", justifyContent: "center", mb: "20px" }}>
                   <img src={step?.backgroundImage} alt={step?.title} />

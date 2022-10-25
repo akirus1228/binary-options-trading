@@ -4,6 +4,8 @@ import React from "react";
 import BlueCheckImage from "../../../assets/images/blue-check.png";
 import { Link } from "react-router-dom";
 
+import style from "./borrowers.module.scss";
+
 export const BackedLoan = (): JSX.Element => {
   const reasons = [
     {
@@ -31,9 +33,9 @@ export const BackedLoan = (): JSX.Element => {
           </Link>
         </Box>
       </Box>
-      <Grid container spacing={2} sx={{ mt: "50px" }}>
+      <Grid container spacing={2} sx={{ mt: "50px" }} className={style["borrowRow"]}>
         <Grid item xs={12} md={12}>
-          <Grid container spacing={1}>
+          <Grid container spacing={4}>
             {reasons.map((reason: any, index: number) => {
               return (
                 <Grid item xs={12} md={4} key={`backed_loan_${index}`}>
@@ -41,6 +43,7 @@ export const BackedLoan = (): JSX.Element => {
                     sx={{
                       borderRadius: "25px",
                     }}
+                    className={style["borrowBoxElem"]}
                   >
                     <Box
                       sx={{

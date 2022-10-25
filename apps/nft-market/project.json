@@ -16,15 +16,15 @@
         "polyfills": "apps/nft-market/src/polyfills.ts",
         "tsConfig": "apps/nft-market/tsconfig.app.json",
         "assets": [
-          "apps/nft-market/src/favicon.ico",
           "apps/nft-market/src/assets",
           "apps/nft-market/src/android-chrome-192x192.png",
-          "apps/nft-market/src/android-chrome-256x256.png",
+          "apps/nft-market/src/android-chrome-512x512.png",
           "apps/nft-market/src/apple-touch-icon.png",
-          "apps/nft-market/src/browserconfig.xml",
+          "apps/nft-market/src/favicon.ico",
           "apps/nft-market/src/favicon-16x16.png",
           "apps/nft-market/src/favicon-32x32.png",
           "apps/nft-market/src/mstile-150x150.png",
+          "apps/nft-market/src/robots.txt",
           "apps/nft-market/src/safari-pinned-tab.svg",
           "apps/nft-market/src/site.webmanifest"
         ],

@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, IconButton, Typography } from "@mui/material";
+import { Box, Button, Dialog, IconButton } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import style from "./list-as-collateral.module.scss";
 import { useState } from "react";
@@ -32,24 +32,29 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
   const DisclaimerComponent = (): JSX.Element => {
     return (
       <>
-        <Typography>
-          Here are a few things you must acknowledge before you continue.
-        </Typography>
-        <Typography>
-          Posting an NFT as collateral means you are granting [name] access to manage your
-          NFT.
-        </Typography>
-        <Typography>
-          You can repay a loan at any time within the agreed term, but you must still pay
-          the full interest amount.
-        </Typography>
-        <Typography>
-          You can only repay the loan with the wallet you started it with.
-        </Typography>
-        <Typography>
-          Once a loan has been defaulted on, it cannot be repaid any longer and the lender
-          becomes the sole owner.
-        </Typography>
+        <ul>
+          By continuing, you agree and accept the below terms and conditions.
+          <li>
+            To grant Liqd the full management and control access to your NFT posted as
+            collateral.
+          </li>
+          <li>
+            To pay the full interest amount on the acquired loan even when its repayment
+            is completed within the agreed upon terms.
+          </li>
+          <li>
+            To repay the loan with interest only with the wallet address used to sign the
+            loan contract.
+          </li>
+          <li>
+            That the lender becomes the sole owner of your NFT should your loan has been
+            defaulted on.
+          </li>
+          <li>
+            You cannot repay any loans and negotiate new loan terms after the loans have
+            been defaulted on.
+          </li>
+        </ul>
         <Button onClick={onAcceptTerms} variant="contained">
           Accept & continue
         </Button>
@@ -62,9 +67,15 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} sx={{ padding: "1.5em" }}>
+    <Dialog
+      onClose={handleClose}
+      open={open}
+      sx={{ padding: "1.5em" }}
+      fullWidth
+      className={style["dialogContainer"]}
+    >
       <Box className="flex fr fj-c">
-        <h1 style={{ margin: "0 0 0.5em 0" }}>List as collateral</h1>
+        <h1 style={{ margin: "0 0 0.5em 0" }}>Get liquidity</h1>
       </Box>
       <Box
         className={`flex fr fj-fe ${style["header"]}`}
@@ -83,7 +94,8 @@ export const ListAsCollateral = (props: ListAsCollateralProps): JSX.Element => {
           <TermsForm
             asset={props.asset}
             onClose={onClose}
-            key={`list-terms-${props.asset.openseaId}`}
+            key={`list-terms-${props.asset.tokenId}`}
+            type="borrow"
           />
         )}
       </Box>

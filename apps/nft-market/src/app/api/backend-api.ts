@@ -1,6 +1,11 @@
 // external libs
 import axios, { AxiosResponse } from "axios";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+  retry,
+} from "@reduxjs/toolkit/query/react";
 import { JsonRpcProvider } from "@ethersproject/providers";
 
 // internal libs
@@ -8,16 +13,11 @@ import {
   AllAssetsResponse,
   AllListingsResponse,
   Asset,
-  CreateAssetResponse,
   CreateListingRequest,
-  AllNotificationsResponse,
-  ApiResponse,
-  EditNotificationRequest,
   Listing,
   LoginResponse,
   Terms,
   Notification,
-  NotificationStatus,
   CreateListingResponse,
   Loan,
   Offer,
@@ -27,6 +27,15 @@ import {
   BackendStandardQuery,
   PlatformWalletInfo,
   BackendNotificationQueryParams,
+  Collection,
+  BackendCollectionQuery,
+  User,
+  NftPrice,
+  BackendNftAssetsQueryParams,
+  BackendNftAssetsQueryResponse,
+  SendReport,
+  AffiliateData,
+  SaveAffiliateResponse,
 } from "../types/backend-types";
 import { ListingQueryParam } from "../store/reducers/interfaces";
 import { RootState } from "../store";
@@ -36,14 +45,21 @@ import {
   listingAryToListings,
   listingToCreateListingRequest,
 } from "../helpers/data-translations";
-import { updateAsset, updateAssets } from "../store/reducers/asset-slice";
+import {
+  updateAsset,
+  updateAssets,
+  updateAssetsFromBackend,
+  updateAssetsFromListings,
+} from "../store/reducers/asset-slice";
 import { updateListing, updateListings } from "../store/reducers/listing-slice";
+import { isDev } from "@fantohm/shared-web3";
 
 export const WEB3_SIGN_MESSAGE =
-  "This application uses this cryptographic signature, verifying that you are the owner of this address.";
-// TODO: use production env to determine correct endpoint
-export const NFT_MARKETPLACE_API_URL =
-  "https://usdb-nft-lending-backend.herokuapp.com/api";
+  "Welcome to Liqdnft!\n\nTo get started, click Sign In and accept our Terms of Service: <https://liqdnft.com/term> \n\nThis request will not trigger a blockchain transaction or cost any gas fees.";
+
+export const NFT_MARKETPLACE_API_URL = isDev
+  ? "https://apitest.liqdnft.com/api"
+  : "https://api.liqdnft.com/api";
 
 export const doLogin = (address: string): Promise<LoginResponse> => {
   const url = `${NFT_MARKETPLACE_API_URL}/auth/login`;
@@ -52,76 +68,109 @@ export const doLogin = (address: string): Promise<LoginResponse> => {
   });
 };
 
-export const postAsset = (asset: Asset, signature: string): Promise<Asset> => {
-  const url = `${NFT_MARKETPLACE_API_URL}/asset`;
-  return axios
-    .post(url, asset, {
-      headers: {
-        Authorization: `Bearer ${signature}`,
-      },
-    })
-    .then((resp: AxiosResponse<CreateAssetResponse>) => {
-      return resp.data.asset;
-    })
-    .catch((err) => {
-      // most likely a 400 (not in our database)
-
-      return {} as Asset;
-    });
-};
-
-export const getListingByOpenseaIds = (
-  openseaIds: string[],
-  signature: string
-): Promise<Listing> => {
-  const url = `${NFT_MARKETPLACE_API_URL}/asset-listing/all?openseaId=${openseaIds.join(
-    ","
-  )}`;
-
-  return axios
-    .get(url, {
-      headers: {
-        Authorization: `Bearer ${signature}`,
-      },
-    })
-    .then((resp: AxiosResponse<AllListingsResponse>) => {
-      const { term, ...listing } = resp.data.data[0];
-      return { ...listing, term: term };
-    });
-};
-
-export const createListing = (
+export const createListing = async (
   signature: string,
   asset: Asset,
   term: Terms
-): Promise<Listing | boolean> => {
+): Promise<Listing | string> => {
   const url = `${NFT_MARKETPLACE_API_URL}/asset-listing`;
   const listingParams = listingToCreateListingRequest(asset, term);
-  // post
   return axios
     .post(url, listingParams, {
       headers: {
         Authorization: `Bearer ${signature}`,
       },
     })
-    .then((resp: AxiosResponse<CreateListingResponse>) => {
+    .then(async (resp: AxiosResponse<CreateListingResponse>) => {
       return createListingResponseToListing(resp.data);
     })
-    .catch((err: AxiosResponse) => {
-      return false;
+    .catch((error) => {
+      return error;
     });
 };
 
-export const handleSignMessage = (
+export const getAffiliateAddresses = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/all?affiliate=${address}`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<any>) => {
+      return {
+        referredAddresses: resp.data.data,
+      };
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const getAffiliateFees = async (
+  signature: string,
+  address: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate/fee/${address}?proof=true`;
+  return axios
+    .get(url, {
+      headers: {
+        Authorization: `Bearer ${signature}`,
+      },
+    })
+    .then((resp: AxiosResponse<any>) => {
+      return {
+        affiliateFees: resp.data.affiliateFees,
+        proofs: resp.data.proofs,
+      };
+      // return resp.data;
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const saveAffiliate = async (
+  signature: string,
+  address: string,
+  referralCode: string
+): Promise<AffiliateData> => {
+  const url = `${NFT_MARKETPLACE_API_URL}/affiliate`;
+  return axios
+    .post(
+      url,
+      {
+        user: address,
+        affiliate: referralCode,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${signature}`,
+        },
+      }
+    )
+    .then((resp: AxiosResponse<SaveAffiliateResponse>): AffiliateData => {
+      return {
+        referralCode: resp.data.data.affiliate,
+      };
+    })
+    .catch((error) => {
+      return error.response.data.message;
+    });
+};
+
+export const handleSignMessage = async (
   address: string,
   provider: JsonRpcProvider
-): Promise<string> | string => {
+): Promise<string> => {
+  const signer = provider.getSigner(address);
   try {
-    const signer = provider.getSigner(address);
-    return signer.signMessage(WEB3_SIGN_MESSAGE);
-  } catch (err) {
+    return (await signer.signMessage(WEB3_SIGN_MESSAGE)) as string;
+  } catch (e) {
     return "";
-    console.warn(err);
   }
 };
 
@@ -142,10 +191,34 @@ const standardQueryParams: BackendStandardQuery = {
   take: 50,
 };
 
+const staggeredBaseQuery = retry(
+  async (args: string | FetchArgs, api, extraOptions) => {
+    const result = await fetchBaseQuery({
+      baseUrl: NFT_MARKETPLACE_API_URL,
+      prepareHeaders: (headers, { getState }) => {
+        const signature = (getState() as RootState).backend.authSignature;
+        headers.set("authorization", `Bearer ${signature}`);
+        return headers;
+      },
+    })(args, api, extraOptions);
+    if (result.error) {
+      // fail immediately if it's a 500 error
+      if (result.error?.status === 500) {
+        retry.fail(result.error);
+      }
+    }
+    return result;
+  },
+  {
+    maxRetries: 5,
+  }
+);
+
 export const backendApi = createApi({
   reducerPath: "backendApi",
   tagTypes: [
     "Asset",
+    "Collection",
     "Listing",
     "Loan",
     "Notification",
@@ -154,15 +227,9 @@ export const backendApi = createApi({
     "PlatformWalletInfo",
     "Terms",
     "User",
+    "Mail",
   ],
-  baseQuery: fetchBaseQuery({
-    baseUrl: NFT_MARKETPLACE_API_URL,
-    prepareHeaders: (headers, { getState }) => {
-      const signature = (getState() as RootState).backend.authSignature;
-      headers.set("authorization", `Bearer ${signature}`);
-      return headers;
-    },
-  }),
+  baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
     // Assets
     getAssets: builder.query<Asset[], Partial<BackendAssetQueryParams>>({
@@ -202,6 +269,31 @@ export const backendApi = createApi({
       },
       invalidatesTags: (result, error, arg) => [{ type: "Asset", id: arg.id }],
     }),
+    validateNFT: builder.query<boolean, string | undefined>({
+      query: (id) => ({
+        url: `nft/validate-nft/${id}`,
+      }),
+      providesTags: ["Asset"],
+    }),
+    // Collections
+    getCollections: builder.query<Collection[], Partial<BackendCollectionQuery>>({
+      query: (queryParams) => ({
+        url: `collection/all`,
+        params: {
+          ...standardQueryParams,
+          ...queryParams,
+        },
+      }),
+      transformResponse: (response: { count: number; data: Collection[] }, meta, arg) =>
+        response.data,
+      providesTags: (result, error, queryParams) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Collection" as const, id })),
+              "Collection",
+            ]
+          : ["Collection"],
+    }),
     // Listings
     getListings: builder.query<Listing[], Partial<ListingQueryParam>>({
       query: (queryParams) => ({
@@ -220,7 +312,7 @@ export const backendApi = createApi({
         const { data }: { data: Listing[] } = await queryFulfilled;
         const assets = data.map((listing: Listing) => listing.asset);
         dispatch(updateListings(listingAryToListings(data)));
-        dispatch(updateAssets(assetAryToAssets(assets)));
+        dispatch(updateAssetsFromListings(assetAryToAssets(assets))); // could this potentially update with old listing data?
       },
       providesTags: (result, error, queryParams) =>
         result
@@ -233,7 +325,9 @@ export const backendApi = createApi({
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         const { data }: { data: Listing } = await queryFulfilled;
-        dispatch(updateListing(data));
+        if (data && data.id) {
+          dispatch(updateListing(data));
+        }
       },
       providesTags: (result, error, queryParams) => [
         { type: "Listing" as const, id: result?.id || "" },
@@ -250,13 +344,28 @@ export const backendApi = createApi({
       invalidatesTags: ["Listing", "Asset", "Terms"],
     }),
     deleteListing: builder.mutation<Listing, Partial<Listing> & Pick<Listing, "id">>({
-      query: ({ id, ...listing }) => {
+      query: ({ id }) => {
         return {
           url: `asset-listing/${id}`,
           method: "DELETE",
         };
       },
       invalidatesTags: ["Listing", "Asset", "Terms"],
+    }),
+    updateListing: builder.mutation<Listing, Partial<Listing> & Pick<Listing, "id">>({
+      query: ({ id, ...patch }) => ({
+        url: `asset-listing/${id}`,
+        method: "PUT",
+        body: { ...patch, id },
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data }: { data: Listing } = await queryFulfilled;
+        if (data && data.id) {
+          dispatch(updateListing(data));
+        }
+      },
+      transformResponse: (response: Listing, meta, arg) => response,
+      invalidatesTags: ["Terms", "Listing", "Offer"],
     }),
     // Terms
     getTerms: builder.query<Terms[], Partial<BackendStandardQuery>>({
@@ -303,6 +412,19 @@ export const backendApi = createApi({
       }),
       transformResponse: (response: { count: number; data: Loan[] }, meta, arg) =>
         response.data,
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data }: { data: Loan[] } = await queryFulfilled;
+        const assetListings: any[] = [];
+        const assets: any[] = [];
+        data.forEach((item) => {
+          if (item?.assetListing?.asset) {
+            assetListings.push(item.assetListing);
+            assets.push(item.assetListing.asset);
+          }
+        });
+        dispatch(updateListings(listingAryToListings(assetListings)));
+        dispatch(updateAssetsFromListings(assetAryToAssets(assets))); // could this potentially update with old listing data?
+      },
       providesTags: (result, error, queryParams) =>
         result
           ? [...result.map(({ id }) => ({ type: "Loan" as const, id })), "Loan"]
@@ -336,7 +458,7 @@ export const backendApi = createApi({
           body: loanRequest,
         };
       },
-      invalidatesTags: ["Loan", "Asset", "Listing", "Terms"],
+      invalidatesTags: ["Terms"],
     }),
     updateLoan: builder.mutation<Loan, Partial<Loan> & Pick<Loan, "id">>({
       query: ({ id, ...patch }) => ({
@@ -355,6 +477,21 @@ export const backendApi = createApi({
         };
       },
       invalidatesTags: ["Loan", "Asset", "Listing", "Terms"],
+    }),
+    resetPartialLoan: builder.mutation<Listing, string | undefined>({
+      query: (id) => ({
+        url: `loan/reset-status/${id}`,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const { data }: { data: Listing } = await queryFulfilled;
+        if (data && data.id) {
+          dispatch(updateListing(data));
+          dispatch(updateAsset({ ...data.asset }));
+        }
+      },
+      invalidatesTags: (result, error, queryParams) => [
+        { type: "Loan" as const, id: result?.id || "" },
+      ],
     }),
     // Offers
     getOffers: builder.query<Offer[], Partial<BackendOfferQueryParams>>({
@@ -442,6 +579,14 @@ export const backendApi = createApi({
       transformResponse: (response: Notification, meta, arg) => response,
       invalidatesTags: ["Notification"],
     }),
+    // User
+    getUser: builder.query<User, string | undefined>({
+      query: (walletAddress) => ({
+        url: `user/all`,
+        params: { walletAddress },
+      }),
+      providesTags: ["User"],
+    }),
     // Wallet
     getWallet: builder.query<PlatformWalletInfo, string | undefined>({
       query: (walletAddress) => ({
@@ -449,22 +594,141 @@ export const backendApi = createApi({
       }),
       providesTags: ["PlatformWalletInfo"],
     }),
+    // User
+    getNftPrice: builder.query<NftPrice[], { collection: string; tokenId: string }>({
+      query: ({ collection, tokenId }) => ({
+        url: `nft/price/${collection}/${tokenId}`,
+      }),
+      providesTags: ["Asset"],
+    }),
+    // Nft Proxy
+    getNftAssets: builder.query<
+      BackendNftAssetsQueryResponse,
+      BackendNftAssetsQueryParams
+    >({
+      query: (queryParams) => ({
+        url: `nft/fetchAll`,
+        params: queryParams,
+      }),
+      transformResponse: (
+        response: {
+          continuation: string;
+          count: number;
+          data: Asset[];
+        },
+        meta,
+        arg
+      ) => {
+        const assets = response.data.map((asset: Asset) => {
+          let wallet;
+          if (asset.owner && asset.owner.address) {
+            wallet = asset.owner.address;
+          } else {
+            wallet = "";
+          }
+          return {
+            ...asset,
+            wallet,
+          };
+        });
+        return {
+          assets,
+          count: response.count,
+          continuation: response.continuation,
+        };
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateAssetsFromBackend(data.assets));
+        } catch (e) {
+          console.info("GetNftAssets failing. Reverting to backup");
+        }
+      },
+    }),
+    getNftAsset: builder.query<
+      Asset,
+      {
+        contractAddress: string;
+        tokenId: string;
+      }
+    >({
+      query: (queryParams) => ({
+        url: `nft/detail/${queryParams.contractAddress}/${queryParams.tokenId}`,
+      }),
+      transformResponse: (asset: Asset, meta, arg) => {
+        let wallet;
+        if (asset.owner && asset.owner.address) {
+          wallet = asset.owner.address;
+        } else {
+          wallet = "";
+        }
+        return {
+          ...asset,
+          wallet,
+        };
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateAssetsFromBackend([data]));
+        } catch (e) {
+          console.info("GetNftAsset failing. Reverting to backup");
+        }
+      },
+    }),
+    getNftCollections: builder.query<
+      {
+        data: {
+          name: string;
+          slug: string;
+          imageUrl: string;
+          contractAddress: string;
+          numNftsOwned: 105;
+        }[];
+      },
+      {
+        wallet: string;
+        limit?: number;
+      }
+    >({
+      query: (queryParams) => ({
+        url: `collection/fetchAllByWallet?walletAddress=${queryParams.wallet}&limit=${
+          queryParams.limit || 50
+        }`,
+      }),
+    }),
+    sendReport: builder.mutation<SendReport, Partial<SendReport>>({
+      query: (body) => {
+        return {
+          url: `mail`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Mail"],
+    }),
   }),
 });
 
 export const {
   useGetAssetQuery,
   useGetAssetsQuery,
+  useGetCollectionsQuery,
+  useLazyGetCollectionsQuery,
   useDeleteAssetMutation,
+  useValidateNFTQuery,
   useGetListingsQuery,
+  useLazyGetListingsQuery,
   useGetListingQuery,
   useDeleteListingMutation,
+  useUpdateListingMutation,
   useGetLoansQuery,
   useGetLoanQuery,
   useCreateLoanMutation,
   useUpdateLoanMutation,
   useDeleteLoanMutation,
-  useCreateListingMutation,
+  useResetPartialLoanMutation,
   useGetTermsQuery,
   useUpdateTermsMutation,
   useDeleteTermsMutation,
@@ -475,5 +739,13 @@ export const {
   useDeleteOfferMutation,
   useGetWalletQuery,
   useGetUserNotificationsQuery,
+  useGetUserQuery,
   useUpdateUserNotificationMutation,
+  useGetNftPriceQuery,
+  useGetNftAssetsQuery,
+  useLazyGetNftAssetsQuery,
+  useGetNftAssetQuery,
+  useLazyGetNftCollectionsQuery,
+  useGetNftCollectionsQuery,
+  useSendReportMutation,
 } = backendApi;
