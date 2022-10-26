@@ -1,10 +1,49 @@
-import { useState } from "react";
+import {
+  currencyInfo,
+  loadErc20Balance,
+  networks,
+  useWeb3Context,
+} from "@fantohm/shared-web3";
+import Skeleton from "@mui/material/Skeleton";
+import { ethers } from "ethers";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { desiredNetworkId } from "../../core/constants/network";
+
+import { RootState } from "../../store";
 
 const WalletBalance = () => {
-  const [ETHAmount, setETHAmount] = useState(0.0);
+  const dispatch = useDispatch();
+  const { address } = useWeb3Context();
+  const { erc20Balance } = useSelector((state: RootState) => state.wallet);
+  const DAIAddress = networks[desiredNetworkId].addresses["DAI_ADDRESS"];
+
+  useEffect(() => {
+    if (!address) return;
+    dispatch(
+      loadErc20Balance({
+        networkId: desiredNetworkId,
+        address,
+        currencyAddress: DAIAddress,
+      })
+    );
+  }, [address]);
+
+  console.log("balance: ", erc20Balance[DAIAddress]);
+
   return (
     <div className="xs:hidden xl:block mr-15">
-      <code className="xs:text-10 sm:text-16">{ETHAmount.toFixed(6)}&nbsp;ETH</code>
+      {erc20Balance[DAIAddress] ? (
+        <p className="xs:text-10 sm:text-16">
+          {ethers.utils.formatUnits(
+            erc20Balance[DAIAddress],
+            currencyInfo["DAI_ADDRESS"].decimals || 18
+          )}{" "}
+          &nbsp;{currencyInfo["DAI_ADDRESS"].symbol}
+        </p>
+      ) : (
+        <Skeleton width={100} height={50} sx={{ backgroundColor: "#48565d" }} />
+      )}
     </div>
   );
 };
