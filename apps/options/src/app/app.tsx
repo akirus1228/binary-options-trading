@@ -1,4 +1,3 @@
-import { Web3ContextProvider } from "@fantohm/shared-web3";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/home/home-page";
 import Markets from "./pages/markets/markets";
@@ -8,7 +7,7 @@ import Navbar from "./components/navbar/navbar";
 
 export function App() {
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -16,7 +15,7 @@ export function App() {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/pools" element={<Pools />} />
       </Routes>
-    </>
+    </div>
   );
 }
 
