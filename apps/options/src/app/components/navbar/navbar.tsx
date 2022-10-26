@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 import Logo from "../logo/logo";
 import SearchBar from "./search";
-import ConnectWallet from "./connect-wallet";
 import { NavItemProp } from "../../core/types/types";
 import { NavItems } from "../../core/constants";
 import UserMenu from "./user-menu";
@@ -22,8 +21,8 @@ const Navbar = (): JSX.Element => {
   };
 
   return (
-    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-bunker xs:p-5 sm:py-20 sm:px-20 lg:px-40 text-primary">
-      <div className="flex items-center">
+    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-bunker xs:p-5 sm:py-10 md:py-20 sm:px-20 lg:px-40 text-primary">
+      <div className="flex items-center mr-5">
         <Logo />
       </div>
       <SearchBar />
