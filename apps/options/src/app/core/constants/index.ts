@@ -49,8 +49,6 @@ export const BettingCryptoCurrencies: CryptoCurrency[] = [
   { name: "Shiba", symbol: "SHIB" },
   { name: "Bitcoin", symbol: "WBTC" },
   { name: "Solana", symbol: "SOL" },
-  { name: "Cosmos", symbol: "ATOM" },
-  { name: "Polygon", symbol: "MATIC" },
 ];
 
 export const CommunityTools: NavItemProp[] = [
