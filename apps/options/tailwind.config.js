@@ -49,6 +49,7 @@ module.exports = {
       lightgray: "#65717E",
       lightblue: "#4B616C",
       heavybunker: "#090b0e",
+      regentgray: "#7B8F9A",
       ...colors,
     },
     spacing: {
