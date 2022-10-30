@@ -1,19 +1,6 @@
 import { TimeframeEnum } from "../core/constants";
 import { TransactionProps } from "../core/types/types";
-import { convertTime } from "../helpers/data-translations";
-
-export interface HistoryProps {
-  type: "Up" | "Down";
-  Asset: string;
-  quantity: number;
-  payout: number | undefined;
-  status: boolean;
-  open: number;
-  close: number | undefined;
-  timestamp: Date;
-  expiration: Date;
-  timer: TimeframeEnum | undefined;
-}
+import { HistoryProps } from "../core/types/types";
 
 export const transactions: TransactionProps[] = [
   {
