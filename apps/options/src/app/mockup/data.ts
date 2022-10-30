@@ -1,4 +1,19 @@
+import { TimeframeEnum } from "../core/constants";
 import { TransactionProps } from "../core/types/types";
+import { convertTime } from "../helpers/data-translations";
+
+export interface HistoryProps {
+  type: "Up" | "Down";
+  Asset: string;
+  quantity: number;
+  payout: number | undefined;
+  status: boolean;
+  open: number;
+  close: number | undefined;
+  timestamp: Date;
+  expiration: Date;
+  timer: TimeframeEnum | undefined;
+}
 
 export const transactions: TransactionProps[] = [
   {
@@ -55,5 +70,44 @@ export const transactions: TransactionProps[] = [
       icon: "eth-dai",
     },
     data: "$384,872.31",
+  },
+];
+
+export const mockupHistoryData: HistoryProps[] = [
+  {
+    type: "Up",
+    Asset: "ETH/DAI",
+    quantity: 650,
+    payout: 1300,
+    open: 1343,
+    close: undefined,
+    timestamp: new Date(),
+    expiration: new Date(),
+    timer: undefined,
+    status: true,
+  },
+  {
+    type: "Up",
+    Asset: "ETH/DAI",
+    quantity: 650,
+    payout: undefined,
+    open: 1343,
+    close: 1339.64,
+    timestamp: new Date(),
+    expiration: new Date(),
+    timer: undefined,
+    status: false,
+  },
+  {
+    type: "Up",
+    Asset: "ETH/DAI",
+    quantity: 650,
+    payout: undefined,
+    open: 1343,
+    close: 1339.64,
+    timestamp: new Date(),
+    expiration: new Date(),
+    timer: undefined,
+    status: false,
   },
 ];

@@ -1,3 +1,4 @@
+import { currencyInfo, CurrencyInfo } from "@fantohm/shared-web3";
 import { CryptoCurrency } from "../types/types";
 import { NavItemProp } from "../types/types";
 
@@ -51,8 +52,24 @@ export const BettingCryptoCurrencies: CryptoCurrency[] = [
   { name: "Solana", symbol: "SOL" },
 ];
 
+export const UnderlyingAssets: CurrencyInfo = {
+  DAI: currencyInfo["DAI_ADDRESS"],
+  ETH: currencyInfo["USDB_ADDRESS"],
+};
+
 export const CommunityTools: NavItemProp[] = [
   { title: "Discord", href: "" },
   { title: "Twitter", href: "" },
   { title: "Report & problem", href: "" },
 ];
+
+export const fee = 1;
+export const double = 2;
+
+export enum TimeframeEnum {
+  ONE = 1,
+  FIVE = 5,
+  FIFTEEN = 15,
+}
+
+export const tabs = ["All", "Open", "Win", "Loss", "Draw"];
