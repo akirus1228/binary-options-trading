@@ -8,7 +8,6 @@ import {
   convertTime,
   fixedFloatString,
 } from "../../../helpers/data-translations";
-import { BrandingWatermark } from "@mui/icons-material";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -51,52 +50,64 @@ export const TabPanel = (props: TabPanelProps) => {
         return (
           <div className="w-full grid xs:grid-cols-3 sm:grid-cols-5 xs:py-10 md:py-20 border-b-2 border-second gap-20">
             <div className="type ">
-              <p className="text-second text-17">Type</p>
-              <p className="text-primary text-18">{item.type}</p>
+              <p className="text-second xs:text-14 sm:text-17">Type</p>
+              <p className="text-primary xs:text-15 sm:text-18">{item.type}</p>
             </div>
             <div className="asset ">
-              <p className="text-second text-17">Asset</p>
-              <p className="text-primary text-18">{item.asset}</p>
+              <p className="text-second xs:text-14 sm:text-17">Asset</p>
+              <p className="text-primary xs:text-15 sm:text-18">{item.asset}</p>
             </div>
             <div className="quantity">
-              <p className="text-second text-17">Quantity</p>
-              <p className="text-primary text-18">{item.quantity}&nbsp;DAI</p>
+              <p className="text-second xs:text-14 sm:text-17">Quantity</p>
+              <p className="text-primary xs:text-15 sm:text-18">
+                {item.quantity}&nbsp;DAI
+              </p>
             </div>
             <div className="payout">
-              <p className="text-second text-17">Payout</p>
-              <p className="text-primary text-18">
-                {item.payout ? fixedFloatString(item.payout) : "-"}&nbsp;DAI
+              <p className="text-second xs:text-14 sm:text-17">Payout</p>
+              <p className="text-primary xs:text-15 sm:text-18">
+                {item.payout ? fixedFloatString(item.payout) + " DAI" : "-"}
               </p>
             </div>
             <div className="status">
-              <p className="text-second text-17">Status</p>
-              <p className={`${item.status ? "text-success" : "text-danger"} text-18`}>
+              <p className="text-second xs:text-14 sm:text-17">Status</p>
+              <p
+                className={`${
+                  item.status ? "text-success" : "text-danger"
+                } xs:text-15 sm:text-18`}
+              >
                 {item.status ? "Win" : "Loss"}
               </p>
             </div>
             <div className="open">
-              <p className="text-second text-17">Open</p>
-              <p className="text-primary text-18">
+              <p className="text-second xs:text-14 sm:text-17">Open</p>
+              <p className="text-primary xs:text-15 sm:text-18">
                 {item.open ? financialFormatter.format(item.open) : "-"}
               </p>
             </div>
             <div className="close">
-              <p className="text-second text-17">Close</p>
-              <p className="text-primary text-18">
+              <p className="text-second xs:text-14 sm:text-17">Close</p>
+              <p className="text-primary xs:text-15 sm:text-18">
                 {item.close ? financialFormatter.format(item.close) : "-"}
               </p>
             </div>
             <div className="time">
-              <p className="text-second text-17">Time</p>
-              <p className="text-primary text-18">{convertTime(item.time)}</p>
+              <p className="text-second xs:text-14 sm:text-17">Time</p>
+              <p className="text-primary xs:text-15 sm:text-18">
+                {convertTime(item.time)}
+              </p>
             </div>
             <div className="expiration">
-              <p className="text-second text-17">Expiration</p>
-              <p className="text-primary text-18">{convertTime(item.expiration)}</p>
+              <p className="text-second xs:text-14 sm:text-17">Expiration</p>
+              <p className="text-primary xs:text-15 sm:text-18">
+                {convertTime(item.expiration)}
+              </p>
             </div>
             <div className="Timer">
-              <p className="text-second text-17">Timer</p>
-              <p className="text-primary text-18">{item.timer ? item.timer : "-"}</p>
+              <p className="text-second xs:text-14 sm:text-17">Timer</p>
+              <p className="text-primary xs:text-15 sm:text-18">
+                {item.timer ? item.timer : "-"}
+              </p>
             </div>
           </div>
         );

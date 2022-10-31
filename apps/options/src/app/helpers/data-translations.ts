@@ -1,7 +1,7 @@
-export const convertTime = (date: Date): string => {
-  const result = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} 
-  ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-  return result;
+export const convertTime = (props: Date): { time: string; date: string } => {
+  const time = `${props.getHours()}:${props.getMinutes()}:${props.getSeconds()}`;
+  const date = `${props.getDate()}-${props.getMonth() + 1}-${props.getFullYear() - 2000}`;
+  return { time, date };
 };
 
 export const fixedFloatString = (x: string | number): string => {
