@@ -93,14 +93,16 @@ export const TabPanel = (props: TabPanelProps) => {
             </div>
             <div className="time">
               <p className="text-second xs:text-14 sm:text-17">Time</p>
-              <p className="text-primary xs:text-15 sm:text-18">
-                {convertTime(item.time)}
+              <p className="text-primary xs:text-15 sm:text-18 break-all">
+                {convertTime(item.time).time}&nbsp;
+                <span className="inline-block">{convertTime(item.time).date}</span>
               </p>
             </div>
             <div className="expiration">
               <p className="text-second xs:text-14 sm:text-17">Expiration</p>
-              <p className="text-primary xs:text-15 sm:text-18">
-                {convertTime(item.expiration)}
+              <p className="text-primary xs:text-15 sm:text-18 break-all">
+                {convertTime(item.expiration).time}&nbsp;
+                <span className="inline-block">{convertTime(item.expiration).date}</span>
               </p>
             </div>
             <div className="Timer">
