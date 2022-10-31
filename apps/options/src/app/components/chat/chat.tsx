@@ -13,7 +13,7 @@ const Chat = () => {
   const [onlineUsers, setOnlineUsers] = useState(420);
 
   return (
-    <div className="chat">
+    <div className="chat w-full max-w-500">
       <div
         className={`chat-header xs:px-10 sm:px-25 xs:py-10 sm:py-15 ${
           available ? "rounded-3xl" : "rounded-t-3xl"
