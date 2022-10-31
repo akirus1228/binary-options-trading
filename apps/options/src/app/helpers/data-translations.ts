@@ -4,12 +4,12 @@ export const convertTime = (date: Date): string => {
   return result;
 };
 
-export const financialString = (x: string | number): string => {
+export const fixedFloatString = (x: string | number): string => {
   if (typeof x === "string") return Number.parseFloat(x).toFixed(2);
   else return x.toFixed(2);
 };
 
-export const formatFinancialString = new Intl.NumberFormat("en-US", {
+export const financialFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });

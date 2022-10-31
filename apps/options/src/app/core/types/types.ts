@@ -24,13 +24,13 @@ export interface TransactionProps {
 }
 export interface HistoryProps {
   type: "Up" | "Down";
-  Asset: string;
+  asset: string;
   quantity: number;
   payout: number | undefined;
   status: boolean;
   open: number;
   close: number | undefined;
-  timestamp: Date;
+  time: Date;
   expiration: Date;
   timer: TimeframeEnum | undefined;
 }

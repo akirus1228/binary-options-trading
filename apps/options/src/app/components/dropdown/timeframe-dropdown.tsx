@@ -62,6 +62,7 @@ export const TimeframeDropdown = (props: TimeframeDropdownProps) => {
           icon={WatchLaterOutlined}
           reverse
           backgroundColor="woodsmoke"
+          iconColor="success"
         />
         <SvgIcon
           component={!open ? KeyboardArrowDownOutlined : KeyboardArrowUpOutlined}

@@ -39,7 +39,7 @@ export const CurrencyDropdown = (props: CurrencyDropDownProps) => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleDropDownOpen}
-        className="flex items-center rounded-2xl bg-woodsmoke p-10 w-150 justify-between"
+        className="flex items-center rounded-2xl bg-woodsmoke px-10 py-5 w-125 justify-between"
       >
         <LabelIcon
           label={selectedCurrency.symbol}
@@ -47,7 +47,7 @@ export const CurrencyDropdown = (props: CurrencyDropDownProps) => {
             <img
               src={selectedCurrency.icon}
               alt={`${selectedCurrency.symbol} logo`}
-              width={35}
+              width={25}
             />
           )}
           reverse
@@ -70,7 +70,7 @@ export const CurrencyDropdown = (props: CurrencyDropDownProps) => {
           "& .MuiList-root": {
             padding: "0px",
             backgroundColor: "#0B0F10",
-            width: "150px",
+            width: "125px",
           },
           "& .MuiPaper-elevation1": {
             backgroundColor: "#0B0F10",
@@ -83,7 +83,7 @@ export const CurrencyDropdown = (props: CurrencyDropDownProps) => {
             <LabelIcon
               label={currency.symbol}
               icon={() => (
-                <img src={currency.icon} alt={`${currency.symbol} logo`} width={35} />
+                <img src={currency.icon} alt={`${currency.symbol} logo`} width={25} />
               )}
               reverse
               backgroundColor="woodsmoke"
