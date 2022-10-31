@@ -15,7 +15,7 @@ const Chat = () => {
   return (
     <div className="chat">
       <div
-        className={`chat-header px-25 py-10 ${
+        className={`chat-header xs:px-10 sm:px-25 xs:py-10 sm:py-15 ${
           available ? "rounded-3xl" : "rounded-t-3xl"
         } bg-woodsmoke text-primary flex justify-between items-center`}
         onClick={() => setAvailable(!available)}
@@ -25,12 +25,12 @@ const Chat = () => {
             component={MarkUnreadChatAltOutlined}
             className="p-10 rounded-full text-primary bg-light-woodsmoke text-36"
           />
-          <p className="ml-15 text-24 text-primary">Chat</p>
+          <p className="xs:ml-5 sm:ml-15 xs:text-20 sm:text-24 text-primary">Chat</p>
         </div>
         <div className="online-users flex items-center rounded-3xl bg-lightgreen px-10">
           <SvgIcon
             component={FiberManualRecordRounded}
-            className="rounded-full text-20 text-success"
+            className="rounded-full xs:text-16 sm:text-20 text-success"
           />
           <p className="ml-5 text-18 text-success">
             {onlineUsers}&nbsp;users&nbsp;online
@@ -42,7 +42,7 @@ const Chat = () => {
           available ? "hidden" : "block"
         } w-full max-h-96 bg-woodsmoke rounded-b-3xl`}
       >
-        <div className="h-85 flex items-center px-25 py-10">
+        <div className="min-h-85 flex items-start xs:px-10 sm:px-25 py-10">
           <Box sx={{ display: "block", marginRight: "5px" }} className={""}>
             <Avatar
               sx={{
@@ -54,11 +54,11 @@ const Chat = () => {
                 padding: "8px",
               }}
               src={AvatarPlaceholder}
-              className="xs:hidden sm:block "
+              className="xs:block "
             />
           </Box>
           <div className="grid grid-rows-2">
-            <div className="flex items-center py-5 text-15">
+            <div className="flex items-center pb-5 text-15">
               <p className="text-success mr-10">Name</p>
               <p className="text-second">06:45&nbsp;PM</p>
             </div>
@@ -67,7 +67,7 @@ const Chat = () => {
             </div>
           </div>
         </div>
-        <div className="h-60 px-25 border-t border-t-second flex items-center">
+        <div className="min-h-60 xs:px-10 sm:px-25 border-t border-t-second flex items-center">
           <Box sx={{ display: "block" }} className={""}>
             <Avatar
               sx={{
@@ -79,7 +79,7 @@ const Chat = () => {
                 padding: "8px",
               }}
               src={AvatarPlaceholder}
-              className="xs:hidden sm:block "
+              className="xs:block "
             />
           </Box>
           <input
