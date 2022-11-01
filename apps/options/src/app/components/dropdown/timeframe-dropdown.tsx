@@ -89,8 +89,8 @@ export const TimeframeDropdown = (props: TimeframeDropdownProps) => {
           },
         }}
       >
-        {Timeframes.map((timeframe: TimeframeEnum) => (
-          <MenuItem onClick={() => handleMenuItemClick(timeframe)}>
+        {Timeframes.map((timeframe: TimeframeEnum, index) => (
+          <MenuItem onClick={() => handleMenuItemClick(timeframe)} key={index}>
             <p className="text-primary">{timeframe}&nbsp;m</p>
           </MenuItem>
         ))}

@@ -78,8 +78,8 @@ export const CurrencyDropdown = (props: CurrencyDropDownProps) => {
           },
         }}
       >
-        {Object.values(currencies).map((currency: CurrencyDetails) => (
-          <MenuItem onClick={() => handleMenuItemClick(currency)}>
+        {Object.values(currencies).map((currency: CurrencyDetails, index) => (
+          <MenuItem onClick={() => handleMenuItemClick(currency)} key={index}>
             <LabelIcon
               label={currency.symbol}
               icon={() => (

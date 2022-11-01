@@ -17,7 +17,6 @@ interface TabPanelProps {
 export const TabPanel = (props: TabPanelProps) => {
   let data;
   const { value, index, ...other } = props;
-  const condition = console.log("value: ", value); //all, open, win, loss, draw
   switch (value) {
     case 0:
       data = mockupHistoryData;
@@ -46,9 +45,12 @@ export const TabPanel = (props: TabPanelProps) => {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {data.map((item: HistoryProps) => {
+      {data.map((item: HistoryProps, index) => {
         return (
-          <div className="w-full grid xs:grid-cols-3 sm:grid-cols-5 xs:py-10 md:py-20 border-b-2 border-second gap-20">
+          <div
+            className="w-full grid xs:grid-cols-3 sm:grid-cols-5 xs:py-10 md:py-20 border-b-2 border-second gap-20"
+            key={index}
+          >
             <div className="type ">
               <p className="text-second xs:text-14 sm:text-17">Type</p>
               <p className="text-primary xs:text-15 sm:text-18">{item.type}</p>
@@ -133,7 +135,7 @@ const TradingHistory = () => {
 
   return (
     <Box sx={{ width: "100%", color: "#c1d6eb" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "#48565d" }}>
         <Tabs
           value={value}
           onChange={handleChange}
