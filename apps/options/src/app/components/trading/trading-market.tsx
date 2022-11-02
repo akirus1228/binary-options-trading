@@ -1,6 +1,7 @@
 import { SvgIcon } from "@mui/material";
 import HighArrowIcon from "@mui/icons-material/CallMade";
 
+import { TokenPair } from "../token-pair/token-pair";
 import { TradingPadProps } from "./trading-pad";
 
 const TradingMarket = (props: TradingPadProps) => {
@@ -8,22 +9,10 @@ const TradingMarket = (props: TradingPadProps) => {
     <div className="trending-markets-pad text-lightgray">
       <div className="pads-body grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 px-20 bg-woodsmoke py-15 rounded-2xl xs:my-10 md:my-20">
         <div className="pair col-span-2">
-          <div className="flex">
-            <div className="token-logo flex justify-center items-center xs:w-30 sm:w-50">
-              <img
-                src={`./assets/images/${props.underlyingToken.symbol}.png`}
-                alt={`${props.underlyingToken.symbol} logo`}
-              />
-            </div>
-            <div className="px-10">
-              <p className="betting-token xs:text-15 sm:text-20 text-primary">
-                {props.underlyingToken.name}
-              </p>
-              <p className="token-pair xs:text-10 sm:text-16 text-second">
-                {props.sourceToken}/{props.underlyingToken.symbol}
-              </p>
-            </div>
-          </div>
+          <TokenPair
+            underlyingToken={props.underlyingToken}
+            basicToken={props.sourceToken}
+          />
         </div>
         <div className="price xs:text-15 sm:text-20 text-primary flex items-center">
           $1,270.97

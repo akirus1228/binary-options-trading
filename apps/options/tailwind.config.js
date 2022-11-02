@@ -50,6 +50,8 @@ module.exports = {
       lightblue: "#4B616C",
       heavybunker: "#090b0e",
       regentgray: "#7B8F9A",
+      lightgreen: "#0F2A2A",
+      "light-woodsmoke": "#171C1E",
       ...colors,
     },
     spacing: {

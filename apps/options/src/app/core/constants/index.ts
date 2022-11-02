@@ -1,3 +1,5 @@
+import { currencyInfo, CurrencyInfo } from "@fantohm/shared-web3";
+import { weeksToDays, hoursToMinutes } from "date-fns";
 import { CryptoCurrency } from "../types/types";
 import { NavItemProp } from "../types/types";
 
@@ -51,8 +53,43 @@ export const BettingCryptoCurrencies: CryptoCurrency[] = [
   { name: "Solana", symbol: "SOL" },
 ];
 
+export const UnderlyingAssets: CurrencyInfo = {
+  DAI: currencyInfo["DAI_ADDRESS"],
+  USDB: currencyInfo["USDB_ADDRESS"],
+};
+
 export const CommunityTools: NavItemProp[] = [
   { title: "Discord", href: "" },
   { title: "Twitter", href: "" },
   { title: "Report & problem", href: "" },
 ];
+
+export const fee = 1;
+export const double = 2;
+
+export enum TimeframeEnum {
+  ONE = 1,
+  FIVE = 5,
+  FIFTEEN = 15,
+}
+
+export const tabs = ["All", "Open", "Win", "Loss", "Draw"];
+
+export const tradingInternalDate = {
+  "5m": 5,
+  "30m": 30,
+  "1H": hoursToMinutes(1),
+  "4H": hoursToMinutes(4),
+};
+
+export const tradingRageDate = {
+  "1D": hoursToMinutes(24),
+  "1W": weeksToDays(1) * hoursToMinutes(24),
+  "1M": 1,
+  "3M": 3,
+  "6M": 6,
+  YTD: "YTD",
+  "12M": 12,
+  "60M": 60,
+  ALL: "ALL",
+};
