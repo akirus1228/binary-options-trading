@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import CountTimer from "../../../components/count-timer/count-timer";
 import { BettingCurrencyDropdown } from "../../../components/dropdown/betting-currency";
+import { SymbolDescription } from "../../../components/symbol-description/symbol-description";
 import { DateRage } from "../../../components/date-rage/date-rage";
 import { BettingCryptoCurrencies } from "../../../core/constants";
 import { CryptoCurrency } from "../../../core/types/types";
@@ -50,7 +51,14 @@ const TradingViewChart = () => {
         </div>
         <DateRage />
       </div>
-      <div className="min-h-300 grow">
+      <div className="min-h-300 grow relative">
+        <div className="absolute top-0 left-80 z-10">
+          <SymbolDescription
+            underlyingToken={selectedBettingCurrency.name}
+            basicToken="dai"
+            dateRage="4H"
+          />
+        </div>
         <AdvancedRealTimeChart
           symbol="BINANCE:ETHUSD"
           locale="en"
