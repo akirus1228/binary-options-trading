@@ -13,10 +13,11 @@ interface LabelIconProps {
   py?: number;
   rounded?: string;
   gap?: number;
+  className?: string;
 }
 
 export const LabelIcon = (props: LabelIconProps) => {
-  const { label, icon, reverse, gap } = props;
+  const { label, icon, reverse, gap, className } = props;
   const spacing = reverse
     ? gap
       ? "order-last ml-" + gap
@@ -26,7 +27,7 @@ export const LabelIcon = (props: LabelIconProps) => {
     : "mr-5";
   return (
     <div
-      className={`flex items-center bg-${
+      className={`${className} flex items-center bg-${
         props.backgroundColor ? props.backgroundColor : "heavybunker"
       } 
       px-${props.px ? props.px : "0"} py-${props.py ? props.py : "0"} 

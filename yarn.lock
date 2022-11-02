@@ -1232,6 +1232,13 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@danny-jin/fetch-nft@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@danny-jin/fetch-nft/-/fetch-nft-0.0.2.tgz#d608664a52f65d5e8a04202b5fd18dc86184b1cd"
+  integrity sha512-PWz3NZt0Gbo95OeIOsOnij1Hns99jAoSWlJnCykdYlj/Qpzl7Y0VEBYsW7sjeM449nzz+f1FqKCnUC83TyqTgQ==
+  dependencies:
+    cross-fetch "^3.1.4"
+
 "@date-io/core@^2.14.0":
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/@date-io/core/-/core-2.14.0.tgz#03e9b9b9fc8e4d561c32dd324df0f3ccd967ef14"
@@ -1264,13 +1271,6 @@
   integrity sha512-VsoLXs94GsZ49ecWuvFbsa081zEv2xxG7d+izJsqGa2L8RPZLlwk27ANh87+SNnOUpp+qy2AoCAf0mx4XXhioA==
   dependencies:
     "@date-io/core" "^2.14.0"
-
-"@danny-jin/fetch-nft@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@danny-jin/fetch-nft/-/fetch-nft-0.0.2.tgz#d608664a52f65d5e8a04202b5fd18dc86184b1cd"
-  integrity sha512-PWz3NZt0Gbo95OeIOsOnij1Hns99jAoSWlJnCykdYlj/Qpzl7Y0VEBYsW7sjeM449nzz+f1FqKCnUC83TyqTgQ==
-  dependencies:
-    cross-fetch "^3.1.4"
 
 "@discoveryjs/json-ext@^0.5.3":
   version "0.5.7"
@@ -8461,7 +8461,7 @@ clsx@^1.1.1:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
 
-clsx@^1.2.1:
+clsx@^1.2.0, clsx@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
   integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
@@ -11141,6 +11141,11 @@ fake-merkle-patricia-tree@^1.0.1:
   dependencies:
     checkpoint-store "^1.1.0"
 
+fancy-canvas@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/fancy-canvas/-/fancy-canvas-0.2.2.tgz#33fd4976724169a1eda5015f515a2a1302d1ec91"
+  integrity sha512-50qi8xA0QkHbjmb8h7XQ6k2fvD7y/yMfiUw9YTarJ7rWrq6o5/3CCXPouYk+XSLASvvxtjyiQLRBFt3qkE3oyA==
+
 fast-copy@^2.1.0, fast-copy@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/fast-copy/-/fast-copy-2.1.3.tgz#bf6e05ac3cb7a9d66fbf12c51dd4440e9ddd4afb"
@@ -11457,6 +11462,11 @@ follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.8:
   version "1.14.9"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.9.tgz#dd4ea157de7bfaf9ea9b3fbd85aa16951f78d8d7"
   integrity sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==
+
+follow-redirects@^1.14.9:
+  version "1.15.2"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
+  integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -14340,6 +14350,14 @@ just-diff@^5.0.1:
   resolved "https://registry.yarnpkg.com/just-diff/-/just-diff-5.0.1.tgz#db8fe1cfeea1156f2374bfb289826dca28e7e390"
   integrity sha512-X00TokkRIDotUIf3EV4xUm6ELc/IkqhS/vPSHdWnsM5y0HoNMfEqrazizI7g78lpHvnRSRt/PFfKtRqJCOGIuQ==
 
+kaktana-react-lightweight-charts@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/kaktana-react-lightweight-charts/-/kaktana-react-lightweight-charts-2.0.0.tgz#a724552622dd5d55b9711d0a12abfc38f2172837"
+  integrity sha512-j2hJLtz18XplhkJHW6K3tqd9f2LStamypttZbfyAgHEFYI6uRCoKzWuKNiTYTM8Eqsr18eynGcYrACIU1C10nw==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    lightweight-charts "^3.3.0"
+
 keccak@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/keccak/-/keccak-3.0.2.tgz#4c2c6e8c54e04f2670ee49fa734eb9da152206e0"
@@ -14648,6 +14666,13 @@ license-webpack-plugin@^4.0.2:
   integrity sha512-771TFWFD70G1wLTC4oU2Cw4qvtmNrIw+wRvBtn+okgHl7slJVi7zfNcdmqDL72BojM30VNJ2UHylr1o77U37Jw==
   dependencies:
     webpack-sources "^3.0.0"
+
+lightweight-charts@^3.3.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/lightweight-charts/-/lightweight-charts-3.8.0.tgz#8c41ad7c1c083f18621f11ece7fc1096e131a0d3"
+  integrity sha512-7yFGnYuE1RjRJG9RwUTBz5wvF1QtjBOSW4FFlikr8Dh+/TDNt4ci+HsWSYmStgQUpawpvkCJ3j5/W25GppGj9Q==
+  dependencies:
+    fancy-canvas "0.2.2"
 
 lilconfig@^2.0.3, lilconfig@^2.0.5:
   version "2.0.5"
@@ -17384,7 +17409,7 @@ promzard@^0.3.0:
   dependencies:
     read "1"
 
-prop-types@^15.0.0, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.0.0, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -17510,7 +17535,7 @@ qrcode@1.4.4:
     pngjs "^3.3.0"
     yargs "^13.2.4"
 
-qs@6.10.3, qs@^6.10.0, qs@^6.4.0, qs@^6.9.4:
+qs@6.10.3, qs@^6.10.0, qs@^6.4.0:
   version "6.10.3"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.10.3.tgz#d6cde1b2ffca87b5aa57889816c5f81535e22e8e"
   integrity sha512-wr7M2E0OFRfIfJZjKGieI8lBKb7fRCH4Fv5KNPEs7gJ8jadvotdsS08PzOKR7opXhZ/Xkjtt3WF9g38drmyRqQ==
@@ -17780,7 +17805,7 @@ react-is@^16.13.1, react-is@^16.7.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-material-ui-carousel@^3.4.2:
+react-material-ui-carousel@^3.3.3:
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/react-material-ui-carousel/-/react-material-ui-carousel-3.4.2.tgz#3db3b4719859960284f262470b304fecad89fa18"
   integrity sha512-jUbC5aBWqbbbUOOdUe3zTVf4kMiZFwKJqwhxzHgBfklaXQbSopis4iWAHvEOLcZtSIJk4JAGxKE0CmxDoxvUuw==
@@ -17792,26 +17817,18 @@ react-material-ui-carousel@^3.4.2:
     "@mui/system" "^5.4.1"
     framer-motion "^4.1.17"
 
+react-model-viewer@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/react-model-viewer/-/react-model-viewer-0.6.1.tgz#0b0f8ceaf9a85904f7d8df1784dc94f57fdf8082"
+  integrity sha512-7zDBMMrMUr1dPhJCnBq7FQEdyxDld4zSaD1VOPeADGufo6K/Lhcdz/KC7Os6YkkSPyKnPYPMnDyyIdD4Acnr6g==
+  dependencies:
+    react-feather "^2.0.3"
+    react-three-fiber "3.0.6"
+
 react-multi-carousel@^2.8.2:
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/react-multi-carousel/-/react-multi-carousel-2.8.2.tgz#4bbd7a9656d8e49e081745331593e5500eefdbe4"
   integrity sha512-M9Y7DfAp8bA/r6yexttU6RLA7uyppje4c0ELRuCHZWswH+u7nr0uVP6qHNPjc4XGOEY1MYFOb5nBg7JvoKutuQ==
-
-react-model-viewer@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/react-model-viewer/-/react-model-viewer-0.6.1.tgz#0b0f8ceaf9a85904f7d8df1784dc94f57fdf8082"
-  integrity sha512-7zDBMMrMUr1dPhJCnBq7FQEdyxDld4zSaD1VOPeADGufo6K/Lhcdz/KC7Os6YkkSPyKnPYPMnDyyIdD4Acnr6g==
-  dependencies:
-    react-feather "^2.0.3"
-    react-three-fiber "3.0.6"
-
-react-model-viewer@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/react-model-viewer/-/react-model-viewer-0.6.1.tgz#0b0f8ceaf9a85904f7d8df1784dc94f57fdf8082"
-  integrity sha512-7zDBMMrMUr1dPhJCnBq7FQEdyxDld4zSaD1VOPeADGufo6K/Lhcdz/KC7Os6YkkSPyKnPYPMnDyyIdD4Acnr6g==
-  dependencies:
-    react-feather "^2.0.3"
-    react-three-fiber "3.0.6"
 
 react-popper-tooltip@^3.1.1:
   version "3.1.1"
@@ -17965,6 +17982,11 @@ react-three-fiber@3.0.6:
     scheduler "0.17.0"
     tiny-emitter "^2.1.0"
 
+react-tradingview-wrapper@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/react-tradingview-wrapper/-/react-tradingview-wrapper-1.0.15.tgz#badd1845ac27f8d6f7ecdf191c53a80a478cf4dc"
+  integrity sha512-goGp4/iiKonCWHuQI3QLkYpz82uIVQp/up9HwNbjvAdKOoiNv4svOQgB9wnhkJfqSaaBTkOi5Ca7qcANMNh8ww==
+
 react-transition-group@^4.4.0, react-transition-group@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.2.tgz#8b59a56f09ced7b55cbd53c36768b922890d5470"
@@ -17974,6 +17996,11 @@ react-transition-group@^4.4.0, react-transition-group@^4.4.2:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-ts-tradingview-widgets@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/react-ts-tradingview-widgets/-/react-ts-tradingview-widgets-1.0.12.tgz#287c670cfa76816fb56f4c41eb8e9cec354addfd"
+  integrity sha512-VBE7i68Z1UI02z+clK99KXlcIysfKVaMerqkcvmHhI/K8OW3YH5OSOhQ43MvCZLQ1s6nzYji2rnPqauDX44D0g==
 
 react@17.0.2:
   version "17.0.2"
