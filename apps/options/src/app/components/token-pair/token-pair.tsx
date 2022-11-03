@@ -1,11 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import { CryptoCurrency } from "../../core/types/types";
 
 export const TokenPair = (tokenPair: {
   underlyingToken: CryptoCurrency;
   basicToken: string;
 }) => {
+  const navigate = useNavigate();
+  const handleClick = (underlyingToken: string) => {
+    navigate(`/trade?underlyingToken=${underlyingToken}`);
+  };
   return (
-    <div className="flex">
+    <div
+      className="flex"
+      onClick={() => handleClick(tokenPair.underlyingToken.symbol.toLowerCase())}
+    >
       <div className="token-logo flex justify-center items-center xs:w-30 sm:w-50">
         <img
           src={`./assets/images/${tokenPair.underlyingToken.symbol}.png`}

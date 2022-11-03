@@ -1,6 +1,6 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Logo from "../../components/logo/logo";
 import TradingPad from "../../components/trading/trading-pad";
@@ -17,6 +17,10 @@ import {
 } from "../../core/constants";
 
 export const HomePage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleTradeClick = () => {
+    navigate("/trade?underlyingToken=eth");
+  };
   return (
     <div className="bg-heavybunker">
       <div className="landing-page xs:bg-contain lg:bg-cover xs:bg-[url('./assets/images/bg-img-xs.png')] sm:bg-[url('./assets/images/bg-img-lg.png')] xl:bg-[url('./assets/images/bg-img-xl.png')] bg-no-repeat">
@@ -27,7 +31,10 @@ export const HomePage = (): JSX.Element => {
               Trade crypto binary options on-chain
             </p>
             <div className="flex justify-start items-center">
-              <button className="xs:py-10 xs:px-30 sm:py-15 sm:px-60 text-18 text-woodsmoke bg-success rounded-xl mr-20">
+              <button
+                className="xs:py-10 xs:px-30 sm:py-15 sm:px-60 text-18 text-woodsmoke bg-success rounded-xl mr-20"
+                onClick={handleTradeClick}
+              >
                 Trade
               </button>
               <button className="xs:py-10 xs:px-30 sm:py-15 sm:px-60 text-18 text-white bg-black border border-success rounded-xl">
@@ -37,7 +44,7 @@ export const HomePage = (): JSX.Element => {
           </div>
           <Carousel
             className="pt-120 "
-            partialVisbile={true}
+            partialVisible={true}
             responsive={responsive}
             arrows={false}
           >
