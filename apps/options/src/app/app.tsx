@@ -1,13 +1,7 @@
-import {
-  useWeb3Context,
-  defaultNetworkId,
-  isDev,
-  saveNetworkId,
-  NetworkIds,
-} from "@fantohm/shared-web3";
-import { Route, Routes, useNavigate, useLocation, Navigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useWeb3Context, isDev, NetworkIds } from "@fantohm/shared-web3";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
 
 import HomePage from "./pages/home/home-page";
 import Markets from "./pages/markets/markets";
@@ -21,9 +15,10 @@ import { desiredNetworkId } from "./core/constants/network";
 
 export function App() {
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
   const location = useLocation();
+  const [tabFocused, setTabFocused] = useState(false);
+
   const {
     address,
     chainId,
@@ -63,7 +58,7 @@ export function App() {
 
   useEffect(() => {
     if (provider && connected && address) {
-      const focused = localStorage.getItem("tabFocused") === "true";
+      const focused = tabFocused === true;
       if (focused && switchEthereumChain && chainId !== desiredNetworkId) {
         switchEthereumChain(desiredNetworkId).then((result) => {
           if (!result) {
@@ -76,12 +71,12 @@ export function App() {
 
   // User has switched back to the tab
   const onFocus = () => {
-    localStorage.setItem("tabFocused", "true");
+    setTabFocused(true);
   };
 
   // User has switched away from the tab (AKA tab is hidden)
   const onBlur = () => {
-    localStorage.setItem("tabFocused", "false");
+    setTabFocused(false);
   };
 
   useEffect(() => {
