@@ -1,13 +1,15 @@
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
-import { HistoryProps } from "../../../core/types/types";
-import { tabs } from "../../../core/constants";
-import { mockupHistoryData } from "../../../mockup/data";
+
+import { HistoryProps, CryptoCurrency } from "../../../core/types/types";
 import {
   financialFormatter,
   convertTime,
   fixedFloatString,
 } from "../../../helpers/data-translations";
+import { tabs } from "../../../core/constants";
+import { mockupHistoryData } from "../../../mockup/data";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -120,7 +122,7 @@ export const TabPanel = (props: TabPanelProps) => {
   );
 };
 
-const TradingHistory = () => {
+const TradingHistory = (props: { underlyingToken: CryptoCurrency }) => {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

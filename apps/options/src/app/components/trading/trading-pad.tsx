@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { CryptoCurrency } from "../../core/types/types";
 
 export interface TradingPadProps {
@@ -6,6 +7,10 @@ export interface TradingPadProps {
 }
 
 const TradingPad = (props: TradingPadProps) => {
+  const navigate = useNavigate();
+  const handleTradeClick = (underlyingToken: string) => {
+    navigate(`/trade?underlyingToken=${underlyingToken}`);
+  };
   return (
     <div className="flex flex-col justify-between items-center p-15 bg-woodsmoke opacity-100 xs:w-250 sm:w-350 rounded-2xl">
       <div className="w-full flex justify-between items-center xs:pb-15 sm:pb-30">
@@ -29,7 +34,10 @@ const TradingPad = (props: TradingPadProps) => {
           <img src="./assets/images/trading0.png" alt="ETH logo" />
         </div>
       </div>
-      <button className="px-50 py-5 text-16 text-woodsmoke bg-success rounded-xl">
+      <button
+        className="px-50 py-5 text-16 text-woodsmoke bg-success rounded-xl"
+        onClick={() => handleTradeClick(props.underlyingToken.symbol.toLowerCase())}
+      >
         Trade
       </button>
     </div>
