@@ -1,10 +1,15 @@
 import { SvgIcon } from "@mui/material";
 import HighArrowIcon from "@mui/icons-material/CallMade";
+import { useNavigate } from "react-router-dom";
 
 import { TokenPair } from "../token-pair/token-pair";
 import { TradingPadProps } from "./trading-pad";
 
 const TradingMarket = (props: TradingPadProps) => {
+  const navigate = useNavigate();
+  const handleTradeClick = (underlyingToken: string) => {
+    navigate(`/trade?underlyingToken=${underlyingToken}`);
+  };
   return (
     <div className="trending-markets-pad text-lightgray">
       <div className="pads-body grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 px-20 bg-woodsmoke py-15 rounded-2xl xs:my-10 md:my-20">
@@ -31,7 +36,10 @@ const TradingMarket = (props: TradingPadProps) => {
         </div>
         <div className="action xs:hidden sm:block">
           <div className="btn-trade h-full flex items-center ">
-            <button className="px-35 py-10 text-16 text-woodsmoke bg-success rounded-xl">
+            <button
+              className="px-35 py-10 text-16 text-woodsmoke bg-success rounded-xl"
+              onClick={() => handleTradeClick(props.underlyingToken.symbol.toLowerCase())}
+            >
               Trade
             </button>
           </div>

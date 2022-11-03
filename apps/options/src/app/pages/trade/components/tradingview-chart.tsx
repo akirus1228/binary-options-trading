@@ -7,9 +7,9 @@ import CountTimer from "../../../components/count-timer/count-timer";
 import { BettingCurrencyDropdown } from "../../../components/dropdown/betting-currency";
 import { SymbolDescription } from "../../../components/symbol-description/symbol-description";
 import { DateRage } from "../../../components/date-rage/date-rage";
-import { BettingCryptoCurrencies } from "../../../core/constants";
 import { CryptoCurrency } from "../../../core/types/types";
 import { financialFormatter } from "../../../helpers/data-translations";
+import { BettingCryptoCurrencies } from "../../../core/constants";
 
 const mockupData = {
   price: 1343,
@@ -17,9 +17,9 @@ const mockupData = {
   date: "today",
 };
 
-const TradingViewChart = () => {
+const TradingViewChart = (props: { underlyingToken: CryptoCurrency }) => {
   const [selectedBettingCurrency, setCurrency] = useState<CryptoCurrency>(
-    BettingCryptoCurrencies[0]
+    props.underlyingToken
   );
 
   const copyright = document.querySelector(
