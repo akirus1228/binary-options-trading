@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 import { TokenPair } from "../token-pair/token-pair";
 import { TradingPadProps } from "./trading-pad";
+import { CryptoCurrency } from "../../core/types/types";
 
 const TradingMarket = (props: TradingPadProps) => {
   const navigate = useNavigate();
-  const handleTradeClick = (underlyingToken: string) => {
-    navigate(`/trade?underlyingToken=${underlyingToken}`);
+
+  const handleTradeClick = (underlyingToken: CryptoCurrency) => {
+    navigate(`/trade?underlyingToken=${underlyingToken.symbol.toLowerCase()}`);
   };
   return (
     <div className="trending-markets-pad text-lightgray">
@@ -38,7 +40,7 @@ const TradingMarket = (props: TradingPadProps) => {
           <div className="btn-trade h-full flex items-center ">
             <button
               className="px-35 py-10 text-16 text-woodsmoke bg-success rounded-xl"
-              onClick={() => handleTradeClick(props.underlyingToken.symbol.toLowerCase())}
+              onClick={() => handleTradeClick(props.underlyingToken)}
             >
               Trade
             </button>

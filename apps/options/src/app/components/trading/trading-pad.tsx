@@ -8,8 +8,9 @@ export interface TradingPadProps {
 
 const TradingPad = (props: TradingPadProps) => {
   const navigate = useNavigate();
-  const handleTradeClick = (underlyingToken: string) => {
-    navigate(`/trade?underlyingToken=${underlyingToken}`);
+
+  const handleTradeClick = (underlyingToken: CryptoCurrency) => {
+    navigate(`/trade?underlyingToken=${underlyingToken.symbol.toLowerCase()}`);
   };
   return (
     <div className="flex flex-col justify-between items-center p-15 bg-woodsmoke opacity-100 xs:w-250 sm:w-350 rounded-2xl">
@@ -36,7 +37,7 @@ const TradingPad = (props: TradingPadProps) => {
       </div>
       <button
         className="px-50 py-5 text-16 text-woodsmoke bg-success rounded-xl"
-        onClick={() => handleTradeClick(props.underlyingToken.symbol.toLowerCase())}
+        onClick={() => handleTradeClick(props.underlyingToken)}
       >
         Trade
       </button>
