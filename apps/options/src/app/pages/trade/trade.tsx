@@ -1,35 +1,33 @@
 import { Button, Modal } from "@mui/material";
+import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import TradingViewChart from "./components/tradingview-chart";
 import TradingHistory from "./components/trading-history";
 import TradingPad from "./components/trading-pad";
 import Chat from "../../components/chat/chat";
-import { CryptoCurrency } from "../../core/types/types";
+import { setUnderlyingToken } from "../../store/reducers/app-slice";
 import { useCurrencyDetail } from "../../hooks/useCurrencyDetail";
-import { BettingCryptoCurrencies } from "../../core/constants";
 
 const Trade = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const [underlyingToken, setUnderlyingToken] = useState<CryptoCurrency>(
-    BettingCryptoCurrencies[0]
-  );
-
-  const paramCurrency = useCurrencyDetail(params.get("underlyingToken"));
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const underlyingToken = useCurrencyDetail(params.get("underlyingToken"));
+
   useEffect(() => {
-    setUnderlyingToken(paramCurrency);
-  }, []);
+    dispatch(setUnderlyingToken(underlyingToken));
+  }, [params]);
 
   return (
     <div className="grow w-full bg-heavybunker xs:px-10 sm:px-20 md:px-40 lg:px-70 xs:py-20 md:py-55 grid xs:grid-cols-1 md:grid-cols-5 xs:gap-10 md:gap-30">
       <div className="md:col-span-3">
-        <TradingViewChart underlyingToken={underlyingToken} />
+        <TradingViewChart />
       </div>
       <div className="trade-pad md:col-span-2">
         <div className="xs:hidden sm:flex justify-center">
@@ -65,7 +63,7 @@ const Trade = () => {
         </div>
       </div>
       <div className="trading-history md:col-span-3">
-        <TradingHistory underlyingToken={underlyingToken} />
+        <TradingHistory />
       </div>
       <div className="chat md:col-span-2">
         <div className="flex justify-center">

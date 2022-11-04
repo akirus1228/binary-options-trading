@@ -1,13 +1,11 @@
 import { SvgIcon } from "@mui/material";
 import { CallMade } from "@mui/icons-material";
 import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
-import { useState } from "react";
 
 import CountTimer from "../../../components/count-timer/count-timer";
 import { BettingCurrencyDropdown } from "../../../components/dropdown/betting-currency";
 import { SymbolDescription } from "../../../components/symbol-description/symbol-description";
 import { DateRage } from "../../../components/date-rage/date-rage";
-import { CryptoCurrency } from "../../../core/types/types";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { BettingCryptoCurrencies } from "../../../core/constants";
 
@@ -17,11 +15,7 @@ const mockupData = {
   date: "today",
 };
 
-const TradingViewChart = (props: { underlyingToken: CryptoCurrency }) => {
-  const [selectedBettingCurrency, setCurrency] = useState<CryptoCurrency>(
-    props.underlyingToken
-  );
-
+const TradingViewChart = () => {
   const copyright = document.querySelector(
     "#tradingview_widget_wrapper"
   )?.lastElementChild;
@@ -30,11 +24,7 @@ const TradingViewChart = (props: { underlyingToken: CryptoCurrency }) => {
 
   return (
     <div className="w-full h-full flex flex-col relative">
-      <BettingCurrencyDropdown
-        bettingCurrencies={BettingCryptoCurrencies}
-        selectedBettingCurrency={selectedBettingCurrency}
-        setCurrency={setCurrency}
-      />
+      <BettingCurrencyDropdown bettingCurrencies={BettingCryptoCurrencies} />
       <div className="absolute bottom-30 right-1/2 z-10 translate-x-1/2">
         <CountTimer countdown={5 * 60 * 1000} />
       </div>
@@ -53,11 +43,7 @@ const TradingViewChart = (props: { underlyingToken: CryptoCurrency }) => {
       </div>
       <div className="min-h-300 grow relative">
         <div className="absolute top-0 left-80 z-10">
-          <SymbolDescription
-            underlyingToken={selectedBettingCurrency.name}
-            basicToken="dai"
-            dateRage="4H"
-          />
+          <SymbolDescription basicToken="dai" dateRage="4H" />
         </div>
         <AdvancedRealTimeChart
           symbol="BINANCE:ETHUSD"

@@ -4,21 +4,23 @@ import {
   KeyboardArrowUpOutlined,
   Search,
 } from "@mui/icons-material";
-import { useState, MouseEvent, Dispatch, SetStateAction } from "react";
+import { useState, MouseEvent } from "react";
 
 import { LabelIcon } from "../label-icon/label-icon";
 import { TokenPair } from "../token-pair/token-pair";
 import { CryptoCurrency } from "../../core/types/types";
-import { BettingCryptoCurrencies } from "../../core/constants";
+import { useSelector } from "react-redux";
+
+import { RootState } from "../../store";
 
 interface CurrencyDropDownProps {
   bettingCurrencies: CryptoCurrency[];
-  selectedBettingCurrency: CryptoCurrency;
-  setCurrency: Dispatch<SetStateAction<CryptoCurrency>>;
 }
 
 export const BettingCurrencyDropdown = (props: CurrencyDropDownProps) => {
-  const { selectedBettingCurrency, setCurrency, bettingCurrencies } = props;
+  const underlyingToken = useSelector((state: RootState) => state.app.underlyingToken);
+
+  const { bettingCurrencies } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -34,7 +36,6 @@ export const BettingCurrencyDropdown = (props: CurrencyDropDownProps) => {
   const handleMenuItemClick = (currency: CryptoCurrency) => {
     setAnchorEl(null);
     setOpen(!open);
-    setCurrency(currency);
   };
 
   return (
@@ -48,11 +49,11 @@ export const BettingCurrencyDropdown = (props: CurrencyDropDownProps) => {
         className="flex items-center px-10 py-5 w-200 justify-between"
       >
         <LabelIcon
-          label={selectedBettingCurrency.name}
+          label={underlyingToken.name}
           icon={() => (
             <img
-              src={`./assets/images/${selectedBettingCurrency.symbol}.png`}
-              alt={`${selectedBettingCurrency.symbol} logo`}
+              src={`./assets/images/${underlyingToken.symbol}.png`}
+              alt={`${underlyingToken.symbol} logo`}
               width={30}
             />
           )}

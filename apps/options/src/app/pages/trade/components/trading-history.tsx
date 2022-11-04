@@ -1,7 +1,7 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 
-import { HistoryProps, CryptoCurrency } from "../../../core/types/types";
+import { HistoryProps } from "../../../core/types/types";
 import {
   financialFormatter,
   convertTime,
@@ -122,7 +122,7 @@ export const TabPanel = (props: TabPanelProps) => {
   );
 };
 
-const TradingHistory = (props: { underlyingToken: CryptoCurrency }) => {
+const TradingHistory = () => {
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
