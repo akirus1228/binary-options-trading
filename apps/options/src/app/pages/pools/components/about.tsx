@@ -1,7 +1,8 @@
 import { IconButton } from "@mui/material";
-import { ErrorOutlineRounded, ContentCopy, Launch, CallMade } from "@mui/icons-material";
+import { ContentCopy, Launch, CallMade } from "@mui/icons-material";
 import { useWeb3Context, networks } from "@fantohm/shared-web3";
 import { addressEllipsis } from "@fantohm/shared-helpers";
+
 import { LabelIcon } from "../../../components/label-icon/label-icon";
 
 export const About = (): JSX.Element => {
@@ -31,20 +32,26 @@ export const About = (): JSX.Element => {
       </div>
       <div className="xs:px-10 xl:px-40 py-30">
         <div className="description">
-          <LabelIcon label="Description" labelFontSize={20} icon={ErrorOutlineRounded} />
+          <p className="text-20">Description</p>
           <p className="text-16 mt-30">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a sapien
-            magna. Phasellus finibus diam turpis, eu efficitur mi pretium quis. Nunc
-            viverra massa ut felis fermentum aliquam. Integer sed ligula vel sapien
-            tincidunt feugiat sit amet sed felis.
+            Depositing funds into this pool carries some risk. Rewards may increase
+            consistently, although your deposit on the other hand may decrease or
+            increase. You can lose a significant portion of your investment if traders are
+            making large profits, understand that there are no reimbursements when this
+            happens. <br />
+            <br />
+            You are essentially acting as a market maker by staking in the pool.
+            Specifically the LP will increase in value when traders unsuccessfully predict
+            the market’s direction, and it will decrease in value when traders
+            successfully predict the direction.
+            <br />
+            <br />
+            The LP will also increase in value from trading fees and funds are locked
+            within the pool for 24 hours.
           </p>
         </div>
         <div className="contract-address mt-50">
-          <LabelIcon
-            label="Contract address"
-            labelFontSize={20}
-            icon={ErrorOutlineRounded}
-          />
+          <p className="text-20">Contract address</p>
           <div className="bg-woodsmoke py-5 px-15 flex justify-between items-center rounded-xl mt-30">
             <p className="xs:hidden sm:block text-regentgray">{contractAddress}</p>
             <p className="xs:block sm:hidden text-regentgray">
@@ -81,11 +88,7 @@ export const About = (): JSX.Element => {
           </div>
         </div>
         <div className="external-links mt-50">
-          <LabelIcon
-            label="External links"
-            labelFontSize={20}
-            icon={ErrorOutlineRounded}
-          />
+          <p className="text-20">External links</p>
           <div className="bg-woodsmoke py-10 px-15 flex justify-between items-center rounded-xl mt-30 w-175">
             <LabelIcon
               label="Documentation"

@@ -1,10 +1,5 @@
 import { SvgIcon, Box, Typography } from "@mui/material";
-import {
-  NorthEastRounded,
-  AddRounded,
-  RemoveRounded,
-  ErrorOutlineRounded,
-} from "@mui/icons-material";
+import { NorthEastRounded, AddRounded, RemoveRounded } from "@mui/icons-material";
 import LinearProgress, {
   linearProgressClasses,
   LinearProgressProps,
@@ -18,11 +13,11 @@ import DAIImage from "../../../../assets/images/DAI.png";
 export const EarnPool = (): JSX.Element => {
   const [active, setActive] = useState(true);
   const handleDeposit = () => {
-    setActive(!active);
+    setActive(true);
   };
 
   const handleWithdraw = () => {
-    setActive(!active);
+    setActive(false);
   };
 
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -117,16 +112,16 @@ export const EarnPool = (): JSX.Element => {
             <p className="text-primary text-18">$54,521.00</p>
           </div>
         </div>
-        <div className="grid xs:grid-cols-1 lg:grid-cols-2 xs:gap-30 lg:gap-40 text-14">
+        <div className="grid xs:grid-cols-1 lg:grid-cols-2 xs:gap-30 lg:gap-100 text-14 mt-50">
           <div className="grid grid-row-2 gap-30">
             <div className="overview">
-              <LabelIcon label="Overview" labelFontSize={20} icon={ErrorOutlineRounded} />
+              <p className="text-22">Overview</p>
               <p className="mt-15 text-regentgray">
                 Deposit DAI to earn from this vault. Funds are locked for 24 hours.
               </p>
             </div>
             <div className="duration">
-              <LabelIcon label="Duration" labelFontSize={20} icon={ErrorOutlineRounded} />
+              <p className="text-22">Duration</p>
               <div className="mt-20">
                 <LinearProgressWithLabel value={70} />
               </div>
@@ -134,12 +129,7 @@ export const EarnPool = (): JSX.Element => {
           </div>
           <div className="position">
             <div className="w-full flex justify-between items-center">
-              <LabelIcon
-                label="Position"
-                icon={ErrorOutlineRounded}
-                labelColor="primary"
-                labelFontSize={20}
-              />
+              <p className="text-22">Position</p>
               <p className="text-success">$0.00</p>
             </div>
             <div className="w-full flex justify-between items-center">
