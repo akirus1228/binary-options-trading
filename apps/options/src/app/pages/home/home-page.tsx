@@ -1,5 +1,7 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { SvgIcon } from "@mui/material";
+import { Report, Twitter } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 
 import Logo from "../../components/logo/logo";
@@ -8,13 +10,10 @@ import TradingMarket from "../../components/trading/trading-market";
 import TradingExperience from "../../components/trading-experience/trading-experience";
 import DemoAccount from "../../components/demo-account/demo-account";
 import TradingCommunity from "../../components/trading-community/trading-community";
+import Discord from "../../../assets/icons/discord.svg";
 import { CryptoCurrency, NavItemProp } from "../../core/types/types";
-import {
-  BettingCryptoCurrencies,
-  NavItems,
-  responsive,
-  CommunityTools,
-} from "../../core/constants";
+import { BettingCryptoCurrencies, NavItems, responsive } from "../../core/constants";
+import { DiscordURL, ReportURL, TwitterURL } from "../../core/constants/social_url";
 
 export const HomePage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -99,8 +98,8 @@ export const HomePage = (): JSX.Element => {
           does not provide financial advice.
         </p>
       </div>
-      <footer className="bg-bunker h-90 flex justify-between items-center md:px-40 lg:px-60 text-second text-18 xs:mt-90 md:mt-0">
-        <div className="xs:hidden md:flex menu md:w-1/3 justify-between items-center">
+      <footer className="bg-bunker h-90 flex justify-between items-center md:px-40 lg:px-60 text-second text-18 xs:mt-90 md:mt-0 cursor-default">
+        <div className="xs:hidden lg:flex menu md:w-1/3 justify-between items-center">
           {NavItems.map((item: NavItemProp) => {
             return (
               <Link key={item.title} to={item.href}>
@@ -109,13 +108,52 @@ export const HomePage = (): JSX.Element => {
             );
           })}
         </div>
-        <div className="h-full flex justify-center items-center xs:w-full md:w-1/3">
+        <div className="h-full flex justify-center items-center xs:w-full lg:w-1/3">
           <Logo dark />
         </div>
-        <div className="xs:hidden md:flex community-tool md:w-1/3 justify-between items-center">
-          {CommunityTools.map((item: NavItemProp) => {
-            return <div key={item.title}>{item.title}</div>;
-          })}
+        <div className="xs:hidden lg:flex community-tool lg:w-1/3 justify-around items-center">
+          <div className="flex items-center">
+            <SvgIcon
+              component={() => (
+                <img
+                  src={Discord}
+                  width={25}
+                  alt="Discord logo"
+                  className="text-second mr-10"
+                />
+              )}
+            />
+            <a
+              href={DiscordURL}
+              target="_blank"
+              className="cursor-default"
+              rel="noreferrer"
+            >
+              Discord
+            </a>
+          </div>
+          <div className="flex items-center">
+            <SvgIcon component={Twitter} sx={{ width: "30px", marginRight: "5px" }} />
+            <a
+              href={TwitterURL}
+              target="_blank"
+              className="cursor-default"
+              rel="noreferrer"
+            >
+              Twitter
+            </a>
+          </div>
+          <div className="flex items-center">
+            <SvgIcon component={Report} sx={{ width: "30px", marginRight: "5px" }} />
+            <a
+              href={ReportURL}
+              target="_blank"
+              className="cursor-default"
+              rel="noreferrer"
+            >
+              Report
+            </a>
+          </div>
         </div>
       </footer>
     </div>
