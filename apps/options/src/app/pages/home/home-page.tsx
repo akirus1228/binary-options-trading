@@ -13,6 +13,7 @@ import TradingCommunity from "../../components/trading-community/trading-communi
 import Discord from "../../../assets/icons/discord.svg";
 import { CryptoCurrency, NavItemProp } from "../../core/types/types";
 import { BettingCryptoCurrencies, NavItems, responsive } from "../../core/constants";
+import { DiscordURL, ReportURL, TwitterURL } from "../../core/constants/social_url";
 
 export const HomePage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -123,7 +124,7 @@ export const HomePage = (): JSX.Element => {
               )}
             />
             <a
-              href="https://google.com"
+              href={DiscordURL}
               target="_blank"
               className="cursor-default"
               rel="noreferrer"
@@ -134,7 +135,7 @@ export const HomePage = (): JSX.Element => {
           <div className="flex items-center">
             <SvgIcon component={Twitter} sx={{ width: "30px", marginRight: "5px" }} />
             <a
-              href="https://google.com"
+              href={TwitterURL}
               target="_blank"
               className="cursor-default"
               rel="noreferrer"
@@ -145,7 +146,7 @@ export const HomePage = (): JSX.Element => {
           <div className="flex items-center">
             <SvgIcon component={Report} sx={{ width: "30px", marginRight: "5px" }} />
             <a
-              href="https://google.com"
+              href={ReportURL}
               target="_blank"
               className="cursor-default"
               rel="noreferrer"
