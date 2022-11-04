@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import ArrowIcon from "../arrow-icon/arrow-icon";
 
 const DemoAccount = () => {
@@ -11,7 +12,9 @@ const DemoAccount = () => {
           New to binary options? No problem. Get started with a demo account to learn the
           basics.
         </p>
-        <ArrowIcon text="ENTER APP" revert={true} status={"up"} />
+        <Link to="/trade">
+          <ArrowIcon text="ENTER APP" revert={true} status={"up"} />
+        </Link>
       </div>
       <div className="sm:absolute token-logo items-center xs:w-280 lg:w-180 bottom-0 sm:right-0">
         <img src={`./assets/images/demo-account.png`} alt={`experience logo`} />
