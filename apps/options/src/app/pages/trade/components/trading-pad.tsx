@@ -4,22 +4,45 @@ import {
   SettingsOutlined,
   LocalGasStationOutlined,
 } from "@mui/icons-material";
-import { currencyInfo, CurrencyDetails } from "@fantohm/shared-web3";
-import { useState } from "react";
+import {
+  isDev,
+  NetworkIds,
+  useWeb3Context,
+  networks,
+  currencyInfo,
+  CurrencyDetails,
+} from "@fantohm/shared-web3";
+import { useState, useMemo, MouseEvent } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
 import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown";
 import { fee, double, UnderlyingAssets, TimeframeEnum } from "../../../core/constants";
 import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
 import { financialFormatter } from "../../../helpers/data-translations";
+import { desiredNetworkId } from "../../../core/constants/network";
 
 const TradingPad = () => {
+  const { connect, disconnect, address, connected, chainId } = useWeb3Context();
+
   const [timeframe, setTimeFrame] = useState<TimeframeEnum>(TimeframeEnum.ONE);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
   const [userBalance, setUserBalance] = useState<number>(0.0);
   const [selectedCurrency, setCurrency] = useState<CurrencyDetails>(
     currencyInfo["DAI_ADDRESS"]
   );
+
+  const isWalletConnected = useMemo(() => {
+    return address && connected && chainId === desiredNetworkId;
+  }, [address, connected, chainId]);
+
+  const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
+    console.log("connect: ", address, isWalletConnected);
+    try {
+      connect(true, isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
+    } catch (e: unknown) {
+      console.warn(e);
+    }
+  };
 
   const handleSetting = () => {
     console.log("click handleSetting");
@@ -35,7 +58,11 @@ const TradingPad = () => {
     <div className="w-full bg-woodsmoke rounded-3xl xs:px-10 xs:py-10 sm:py-20 md:py-30 sm:px-35 md:px-15 lg:px-35 text-second max-w-500">
       <div className="trade-header flex justify-between items-center text-22 text-primary mb-25">
         <p>Trade</p>
-        <SvgIcon component={SettingsOutlined} onClick={handleSetting} />
+        <SvgIcon
+          component={SettingsOutlined}
+          onClick={handleSetting}
+          className="hidden"
+        />
       </div>
       <div className="timeframe rounded-2xl bg-heavybunker px-20 py-10 mb-5">
         <p className="text-16 mb-10">Timeframe</p>
@@ -124,20 +151,29 @@ const TradingPad = () => {
           <p>&nbsp;${(parseFloat(tokenAmount) * fee) / 100}</p>
         </div>
       </div>
-      <div className="action text-white text-center xs:text-20 sm:text-26">
-        <div
-          className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
-          onClick={handleUp}
-        >
-          UP
+      {isWalletConnected ? (
+        <div className="action text-white text-center xs:text-20 sm:text-26">
+          <div
+            className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
+            onClick={handleUp}
+          >
+            UP
+          </div>
+          <div
+            className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
+            onClick={handleDown}
+          >
+            DOWN
+          </div>
         </div>
-        <div
-          className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
-          onClick={handleDown}
+      ) : (
+        <button
+          className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 text-white text-center xs:text-20 sm:text-26"
+          onClick={onClickConnect}
         >
-          DOWN
-        </div>
-      </div>
+          Connect
+        </button>
+      )}
     </div>
   );
 };
