@@ -1,4 +1,4 @@
-import { SvgIcon } from "@mui/material";
+import { SvgIcon, TextField } from "@mui/material";
 import {
   ErrorOutlineRounded,
   SettingsOutlined,
@@ -11,10 +11,11 @@ import { LabelIcon } from "../../../components/label-icon/label-icon";
 import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown";
 import { fee, double, UnderlyingAssets, TimeframeEnum } from "../../../core/constants";
 import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
+import { financialFormatter } from "../../../helpers/data-translations";
 
 const TradingPad = () => {
   const [timeframe, setTimeFrame] = useState<TimeframeEnum>(TimeframeEnum.ONE);
-  const [tokenAmount, setTokenAmount] = useState<number>(0.0);
+  const [tokenAmount, setTokenAmount] = useState<string>("0");
   const [userBalance, setUserBalance] = useState<number>(0.0);
   const [selectedCurrency, setCurrency] = useState<CurrencyDetails>(
     currencyInfo["DAI_ADDRESS"]
@@ -44,11 +45,31 @@ const TradingPad = () => {
       </div>
       <div className="input rounded-2xl bg-heavybunker px-20 py-10 mb-5">
         <div className="token-enter flex justify-between items-center xs:mb-10 sm:mb-15">
-          <input
-            type="text"
+          <TextField
+            variant="standard"
+            type="number"
+            InputProps={{
+              disableUnderline: true,
+              style: {
+                flexGrow: 1,
+                fontSize: "26px",
+                margin: "0px",
+              },
+            }}
+            inputProps={{ style: { color: "#c1d6eb" } }}
+            sx={{
+              "& ::-webkit-inner-spin-button": {
+                margin: "0px",
+                appearance: "none",
+              },
+              "& ::-webkit-outer-spin-button": {
+                margin: "0px",
+                appearance: "none",
+              },
+            }}
             value={tokenAmount}
-            onChange={(e: any) => setTokenAmount(e.target.value)}
-            className="w-full outline-none bg-heavybunker text-26"
+            focused
+            onChange={(e) => setTokenAmount(e.target.value || "0")}
           />
           <div>
             <CurrencyDropdown
@@ -59,7 +80,7 @@ const TradingPad = () => {
           </div>
         </div>
         <div className="token-status text-16 flex justify-between items-center">
-          <p>${tokenAmount}</p>
+          <p>{financialFormatter.format(parseFloat(tokenAmount))}</p>
           <p>Balance: {userBalance}</p>
         </div>
       </div>
@@ -76,7 +97,7 @@ const TradingPad = () => {
         </div>
         <div className="flex justify-between items-center">
           <p>1:1</p>
-          <p>Payout:&nbsp;{tokenAmount * double}</p>
+          <p>Payout:&nbsp;{parseFloat(tokenAmount) * double}</p>
         </div>
       </div>
       <div className="gas flex justify-between items-center xs:px-10 sm:px-20 mb-5">
@@ -100,7 +121,7 @@ const TradingPad = () => {
             labelColor="second"
             iconColor="second"
           />
-          <p>&nbsp;${(tokenAmount * fee) / 100}</p>
+          <p>&nbsp;${(parseFloat(tokenAmount) * fee) / 100}</p>
         </div>
       </div>
       <div className="action text-white text-center xs:text-20 sm:text-26">
