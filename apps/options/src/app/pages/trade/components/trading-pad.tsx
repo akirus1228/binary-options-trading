@@ -28,10 +28,7 @@ const TradingPad = () => {
 
   const [timeframe, setTimeFrame] = useState<TimeframeEnum>(TimeframeEnum.ONE);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
-  const [userBalance, setUserBalance] = useState<number>(0.0);
-  const [selectedCurrency, setCurrency] = useState<CurrencyDetails>(
-    currencyInfo["DAI_ADDRESS"]
-  );
+  const [currency, setCurrency] = useState<CurrencyDetails>(currencyInfo["DAI_ADDRESS"]);
 
   const { balance: currencyBalance } = useErc20Balance(
     networks[desiredNetworkId].addresses["DAI_ADDRESS"],
@@ -59,11 +56,12 @@ const TradingPad = () => {
   const handleSetting = () => {
     console.log("click handleSetting");
   };
+
   const handleUp = () => {
-    console.log("click handleSetting");
+    console.log("click handleUp");
   };
   const handleDown = () => {
-    console.log("click handleSetting");
+    console.log("click handleDown");
   };
 
   return (
@@ -113,14 +111,18 @@ const TradingPad = () => {
           <div>
             <CurrencyDropdown
               setCurrency={setCurrency}
-              selectedCurrency={selectedCurrency}
+              selectedCurrency={currency}
               currencies={UnderlyingAssets}
             />
           </div>
         </div>
         <div className="token-status text-16 flex justify-between items-center">
           <p>{financialFormatter.format(parseFloat(tokenAmount))}</p>
-          <p>Balance: {userBalance}</p>
+          <p>
+            Balance:{" "}
+            {currencyBalance &&
+              ethers.utils.formatUnits(currencyBalance, currency?.decimals ?? 18)}
+          </p>
         </div>
       </div>
       <div className="odds rounded-2xl bg-heavybunker px-20 py-10 mb-5">
@@ -129,7 +131,7 @@ const TradingPad = () => {
           <div>
             <CurrencyDropdown
               setCurrency={setCurrency}
-              selectedCurrency={selectedCurrency}
+              selectedCurrency={currency}
               currencies={UnderlyingAssets}
             />
           </div>
@@ -165,7 +167,7 @@ const TradingPad = () => {
       </div>
       {isWalletConnected ? (
         hasBalance ? (
-          <div className="action text-white text-center xs:text-20 sm:text-26">
+          <div className="action text-white text-center xs:text-20 sm:text-26 cursor-default">
             <div
               className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
               onClick={handleUp}
@@ -180,7 +182,7 @@ const TradingPad = () => {
             </div>
           </div>
         ) : (
-          <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24">
+          <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24 cursor-default">
             Insufficient balance
           </div>
         )
