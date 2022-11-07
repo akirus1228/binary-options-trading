@@ -55,7 +55,6 @@ export const BettingCryptoCurrencies: CryptoCurrency[] = [
 
 export const UnderlyingAssets: CurrencyInfo = {
   DAI: currencyInfo["DAI_ADDRESS"],
-  USDB: currencyInfo["USDB_ADDRESS"],
 };
 
 export const CommunityTools: NavItemProp[] = [

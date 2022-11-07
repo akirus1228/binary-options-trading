@@ -11,7 +11,9 @@ import {
   networks,
   currencyInfo,
   CurrencyDetails,
+  useErc20Balance,
 } from "@fantohm/shared-web3";
+import { ethers } from "ethers";
 import { useState, useMemo, MouseEvent } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
@@ -22,7 +24,7 @@ import { financialFormatter } from "../../../helpers/data-translations";
 import { desiredNetworkId } from "../../../core/constants/network";
 
 const TradingPad = () => {
-  const { connect, disconnect, address, connected, chainId } = useWeb3Context();
+  const { connect, address, connected, chainId } = useWeb3Context();
 
   const [timeframe, setTimeFrame] = useState<TimeframeEnum>(TimeframeEnum.ONE);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
@@ -31,9 +33,19 @@ const TradingPad = () => {
     currencyInfo["DAI_ADDRESS"]
   );
 
+  const { balance: currencyBalance } = useErc20Balance(
+    networks[desiredNetworkId].addresses["DAI_ADDRESS"],
+    address
+  );
+
   const isWalletConnected = useMemo(() => {
     return address && connected && chainId === desiredNetworkId;
   }, [address, connected, chainId]);
+
+  const hasBalance = useMemo(() => {
+    if (!currencyBalance) return false;
+    return ethers.utils.parseUnits(tokenAmount || "0", 18).lte(currencyBalance);
+  }, [address, chainId, currencyBalance, tokenAmount]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     console.log("connect: ", address, isWalletConnected);
@@ -152,20 +164,26 @@ const TradingPad = () => {
         </div>
       </div>
       {isWalletConnected ? (
-        <div className="action text-white text-center xs:text-20 sm:text-26">
-          <div
-            className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
-            onClick={handleUp}
-          >
-            UP
+        hasBalance ? (
+          <div className="action text-white text-center xs:text-20 sm:text-26">
+            <div
+              className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
+              onClick={handleUp}
+            >
+              UP
+            </div>
+            <div
+              className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
+              onClick={handleDown}
+            >
+              DOWN
+            </div>
           </div>
-          <div
-            className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
-            onClick={handleDown}
-          >
-            DOWN
+        ) : (
+          <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24">
+            Insufficient balance
           </div>
-        </div>
+        )
       ) : (
         <button
           className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 text-white text-center xs:text-20 sm:text-26"
