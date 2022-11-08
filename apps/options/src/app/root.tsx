@@ -3,6 +3,7 @@ import { useLayoutEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import App from "./app";
 import store from "./store";
@@ -29,13 +30,16 @@ const ScrollToTop = (props: any) => {
 };
 
 const Root = (): JSX.Element => {
+  const queryClient = new QueryClient();
   return (
     <Web3ContextProvider>
       <Provider store={store}>
-        <BrowserRouter>
-          <ScrollToTop />
-          <App />
-        </BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ScrollToTop />
+            <App />
+          </BrowserRouter>
+        </QueryClientProvider>
       </Provider>
     </Web3ContextProvider>
   );

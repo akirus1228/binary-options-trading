@@ -20,7 +20,6 @@ const ConnectWallet = () => {
   }, [address, connected, chainId]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
-    console.log("connect: ", address, isWalletConnected);
     try {
       connect(true, isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
     } catch (e: unknown) {
