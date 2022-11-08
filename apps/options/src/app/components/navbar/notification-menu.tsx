@@ -55,7 +55,12 @@ const NotificationMenu = () => {
         onClick={accountDrop}
         sx={{ p: "10px", minWidth: "30px" }}
       >
-        <Badge color="success" badgeContent="" variant="dot" invisible={isInvisible}>
+        <Badge
+          badgeContent=""
+          variant="dot"
+          invisible={isInvisible}
+          sx={{ "& .MuiBadge-dot": { backgroundColor: "#12b3a8" } }}
+        >
           <NotificationsNone className="text-primary" />
         </Badge>
       </Button>
