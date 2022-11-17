@@ -1,4 +1,4 @@
-import { BettingCryptoCurrencies } from "../core/constants";
+import { BettingCryptoCurrencies } from "../core/constants/basic";
 import { CryptoCurrency } from "../core/types/types";
 
 export const useCurrencyDetail = (underlyingCurrency: string | null): CryptoCurrency => {

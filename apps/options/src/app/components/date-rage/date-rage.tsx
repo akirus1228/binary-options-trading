@@ -2,7 +2,7 @@ import { IconButton, Menu, MenuItem } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
 import { useState, MouseEvent } from "react";
 
-import { tradingInternalDate, tradingRageDate } from "../../core/constants";
+import { tradingInternalDate, tradingRageDate } from "../../core/constants/basic";
 
 export const DateRage = () => {
   const ITEM_HEIGHT = 48;

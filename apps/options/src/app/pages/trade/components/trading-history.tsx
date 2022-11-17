@@ -7,7 +7,7 @@ import {
   convertTime,
   fixedFloatString,
 } from "../../../helpers/data-translations";
-import { tabs } from "../../../core/constants";
+import { tabs } from "../../../core/constants/basic";
 import { mockupHistoryData } from "../../../mockup/data";
 
 interface TabPanelProps {

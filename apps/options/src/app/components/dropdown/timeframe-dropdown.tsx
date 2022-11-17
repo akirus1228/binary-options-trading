@@ -7,7 +7,7 @@ import {
 import { useState, MouseEvent, Dispatch, SetStateAction } from "react";
 
 import { LabelIcon } from "../label-icon/label-icon";
-import { TimeframeEnum } from "../../core/constants";
+import { TimeframeEnum } from "../../core/constants/basic";
 
 interface TimeframeDropdownProps {
   timeframe: TimeframeEnum;

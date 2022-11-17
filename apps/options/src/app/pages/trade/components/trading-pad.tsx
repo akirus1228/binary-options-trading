@@ -18,7 +18,7 @@ import { useState, useMemo, MouseEvent } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
 import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown";
-import { fee, double, UnderlyingAssets, TimeframeEnum } from "../../../core/constants";
+import { fee, double, UnderlyingAssets, TimeframeEnum } from "../../../core/constants/basic";
 import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { desiredNetworkId } from "../../../core/constants/network";

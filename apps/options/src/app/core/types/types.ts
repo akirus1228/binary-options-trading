@@ -1,4 +1,4 @@
-import { TimeframeEnum } from "../constants";
+import { TimeframeEnum } from "../constants/basic";
 
 export type NavItemProp = {
   title: string;
