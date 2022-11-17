@@ -1,10 +1,12 @@
 import { currencyInfo, CurrencyInfo } from "@fantohm/shared-web3";
 import { weeksToDays, hoursToMinutes } from "date-fns";
+import io from "socket.io-client";
 import { CryptoCurrency } from "../types/types";
 import { NavItemProp } from "../types/types";
 
 export const baseServerUrl = "http://localhost:3000/api";
 export const socketURL = "http://localhost:3000";
+export const socket = io(socketURL);
 
 export const responsive = {
   superLargeDesktop: {

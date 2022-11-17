@@ -1,21 +1,18 @@
-import { Avatar, Box, SvgIcon } from "@mui/material";
+import { Avatar, Box, SvgIcon, TextareaAutosize } from "@mui/material";
 import {
   MarkUnreadChatAltOutlined,
   FiberManualRecordRounded,
   ArrowForwardRounded,
 } from "@mui/icons-material";
 import { useWeb3Context } from "@fantohm/shared-web3";
-import io from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 
 import { ChatInbox } from "./chat-inbox";
-import { socketURL } from "../../core/constants/basic";
+import { socket } from "../../core/constants/basic";
 import AvatarPlaceholder from "../../../assets/images/temp-avatar.png";
 import { RootState } from "../../store";
 import { addMessage } from "../../store/reducers/chat-slice";
-
-const socket = io(socketURL);
 
 const Chat = () => {
   const dispatch = useDispatch();
@@ -58,8 +55,9 @@ const Chat = () => {
       socket.off("connect");
       socket.off("disconnect");
       socket.off("newChat");
+      socket.off("users");
     };
-  }, [isConnected]);
+  }, []);
 
   return (
     <div className="chat w-full max-w-500">
@@ -92,7 +90,7 @@ const Chat = () => {
         } w-full bg-woodsmoke rounded-b-3xl`}
       >
         <ChatInbox messages={messages} />
-        <div className="min-h-60 xs:px-10 sm:px-25 border-t border-t-second flex items-center">
+        <div className="min-h-60 xs:px-10 sm:px-25 pt-10 border-t border-t-second flex items-top">
           <Box sx={{ display: "block" }} className={""}>
             <Avatar
               sx={{
@@ -107,11 +105,15 @@ const Chat = () => {
               className="xs:block "
             />
           </Box>
-          <input
-            type="text"
+          <TextareaAutosize
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Write something…"
+            onKeyUp={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                handleSendMessage();
+              }
+            }}
             className="text-primary p-0 mx-5 outline-none border-0 grow bg-woodsmoke"
           />
           <button onClick={handleSendMessage}>

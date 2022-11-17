@@ -25,7 +25,7 @@ export const ChatInbox = (props: { messages: ChatInterface[] }) => {
         },
       });
     }
-  }, []);
+  }, [messages]);
   return (
     <div className="message-box max-h-200 overflow-y-scroll scrollbar-hide">
       {messages.map((message: ChatInterface, index: number) => (
@@ -49,7 +49,7 @@ export const ChatInbox = (props: { messages: ChatInterface[] }) => {
               className="xs:block "
             />
           </Box>
-          <div className="grid grid-rows-2">
+          <div className="overflow-hidden">
             <div className="flex items-center pb-5 text-15">
               <p className="text-success mr-10">
                 {message.user.startsWith("0x")
@@ -61,7 +61,7 @@ export const ChatInbox = (props: { messages: ChatInterface[] }) => {
               </p>
             </div>
             <div className="text-primary">
-              <p className="text-17">{message.text}</p>
+              <p className="text-17 break-words">{message.text}</p>
             </div>
           </div>
         </div>
