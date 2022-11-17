@@ -75,6 +75,7 @@
     "react-ts-tradingview-widgets": "^1.0.12",
     "referral-codes": "^2.0.3",
     "regenerator-runtime": "0.13.7",
+    "socket.io-client": "^4.5.3",
     "stream-http": "^3.2.0",
     "tailwind-scrollbar-hide": "^1.1.7",
     "three": "^0.145.0",

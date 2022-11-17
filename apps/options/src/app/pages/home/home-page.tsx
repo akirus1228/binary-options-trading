@@ -12,7 +12,11 @@ import DemoAccount from "../../components/demo-account/demo-account";
 import TradingCommunity from "../../components/trading-community/trading-community";
 import Discord from "../../../assets/icons/discord.svg";
 import { CryptoCurrency, NavItemProp } from "../../core/types/types";
-import { BettingCryptoCurrencies, NavItems, responsive } from "../../core/constants";
+import {
+  BettingCryptoCurrencies,
+  NavItems,
+  responsive,
+} from "../../core/constants/basic";
 import { DiscordURL, ReportURL, TwitterURL } from "../../core/constants/social_url";
 
 export const HomePage = (): JSX.Element => {

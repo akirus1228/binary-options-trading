@@ -3,7 +3,7 @@ import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
 
 import { RootState } from "../index";
 import { CryptoCurrency } from "../../core/types/types";
-import { BettingCryptoCurrencies } from "../../core/constants";
+import { BettingCryptoCurrencies } from "../../core/constants/basic";
 
 interface AppData {
   readonly loading: boolean;

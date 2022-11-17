@@ -3,6 +3,8 @@ import { weeksToDays, hoursToMinutes } from "date-fns";
 import { CryptoCurrency } from "../types/types";
 import { NavItemProp } from "../types/types";
 
+export const baseServerUrl = "http://localhost:3000/api";
+
 export const responsive = {
   superLargeDesktop: {
     breakpoint: { max: 1560, min: 1280 },

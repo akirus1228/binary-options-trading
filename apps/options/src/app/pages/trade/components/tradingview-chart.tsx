@@ -7,7 +7,7 @@ import { BettingCurrencyDropdown } from "../../../components/dropdown/betting-cu
 import { SymbolDescription } from "../../../components/symbol-description/symbol-description";
 import { DateRage } from "../../../components/date-rage/date-rage";
 import { financialFormatter } from "../../../helpers/data-translations";
-import { BettingCryptoCurrencies } from "../../../core/constants";
+import { BettingCryptoCurrencies } from "../../../core/constants/basic";
 
 const mockupData = {
   price: 1343,
