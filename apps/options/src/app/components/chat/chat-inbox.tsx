@@ -1,4 +1,4 @@
-import { Avatar, Box, SvgIcon } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
 import { addressEllipsis } from "@fantohm/shared-helpers";
 import { useEffect } from "react";
 
@@ -25,7 +25,7 @@ export const ChatInbox = (props: { messages: ChatInterface[] }) => {
         },
       });
     }
-  }, );
+  }, []);
   return (
     <div className="message-box max-h-200 overflow-y-scroll scrollbar-hide">
       {messages.map((message: ChatInterface, index: number) => (
@@ -51,7 +51,11 @@ export const ChatInbox = (props: { messages: ChatInterface[] }) => {
           </Box>
           <div className="grid grid-rows-2">
             <div className="flex items-center pb-5 text-15">
-              <p className="text-success mr-10">{addressEllipsis(message.user)}</p>
+              <p className="text-success mr-10">
+                {message.user.startsWith("0x")
+                  ? addressEllipsis(message.user)
+                  : message.user}
+              </p>
               <p className="text-second">
                 {convertTime(new Date(message.createdAt)).time}
               </p>

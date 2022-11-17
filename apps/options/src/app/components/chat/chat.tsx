@@ -21,7 +21,6 @@ const Chat = () => {
   const dispatch = useDispatch();
   const messages = useSelector((state: RootState) => state.chat.messages);
   const { address } = useWeb3Context();
-  console.log("address:", address);
   const [message, setMessage] = useState<string>();
   const [available, setAvailable] = useState<boolean>(false);
   const [onlineUsers, setOnlineUsers] = useState(0);
@@ -30,7 +29,7 @@ const Chat = () => {
   const handleSendMessage = () => {
     if (message && message !== "") {
       const chat = {
-        user: address,
+        user: address ? address : "Anonymous",
         text: message,
       };
       socket.emit("chat", chat);
