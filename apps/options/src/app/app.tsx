@@ -11,6 +11,7 @@ import Trade from "./pages/trade/trade";
 import Navbar from "./components/navbar/navbar";
 import { DebugHelper } from "@fantohm/shared-helpers";
 import { setCheckedConnection } from "./store/reducers/app-slice";
+import { loadMessages } from "./store/reducers/chat-slice";
 import { desiredNetworkId } from "./core/constants/network";
 
 export function App() {
@@ -68,6 +69,10 @@ export function App() {
       }
     }
   }, [provider, address, connected]);
+
+  useEffect(() => {
+    dispatch(loadMessages());
+  }, []);
 
   // User has switched back to the tab
   const onFocus = () => {

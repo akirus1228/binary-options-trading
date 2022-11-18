@@ -1,6 +1,6 @@
 import Logo from "../../components/logo/logo";
 import TradingMarket from "../../components/trading/trading-market";
-import { BettingCryptoCurrencies } from "../../core/constants";
+import { BettingCryptoCurrencies } from "../../core/constants/basic";
 import { CryptoCurrency } from "../../core/types/types";
 
 export const Markets = (): JSX.Element => {

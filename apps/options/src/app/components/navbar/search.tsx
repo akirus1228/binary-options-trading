@@ -5,7 +5,7 @@ import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-import { BettingCryptoCurrencies } from "../../core/constants";
+import { BettingCryptoCurrencies } from "../../core/constants/basic";
 
 const Input = styled("input")(({ theme }) => ({
   width: 130,

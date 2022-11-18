@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Logo from "../logo/logo";
 import SearchBar from "./search";
 import { NavItemProp } from "../../core/types/types";
-import { NavItems } from "../../core/constants";
+import { NavItems } from "../../core/constants/basic";
 import UserMenu from "./user-menu";
 
 const Navbar = (): JSX.Element => {
