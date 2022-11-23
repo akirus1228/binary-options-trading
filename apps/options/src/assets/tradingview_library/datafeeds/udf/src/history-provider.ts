@@ -64,15 +64,15 @@ export class HistoryProvider {
 			to: periodParams.to,
 		};
 		if (periodParams.countBack !== undefined) {
-			requestParams.countback = periodParams.countBack;
+			requestParams["countback"] = periodParams.countBack;
 		}
 
 		if (symbolInfo.currency_code !== undefined) {
-			requestParams.currencyCode = symbolInfo.currency_code;
+			requestParams["currencyCode"] = symbolInfo.currency_code;
 		}
 
 		if (symbolInfo.unit_id !== undefined) {
-			requestParams.unitId = symbolInfo.unit_id;
+			requestParams["unitId"] = symbolInfo.unit_id;
 		}
 
 		return new Promise((resolve: (result: GetBarsResult) => void, reject: (reason: string) => void) => {

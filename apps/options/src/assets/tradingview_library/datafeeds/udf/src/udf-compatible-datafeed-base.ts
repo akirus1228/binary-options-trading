@@ -275,10 +275,10 @@ export class UDFCompatibleDatafeedBase implements IExternalDatafeed, IDatafeedQu
 				symbol: symbolName,
 			};
 			if (currencyCode !== undefined) {
-				params.currencyCode = currencyCode;
+				params["currencyCode"] = currencyCode;
 			}
 			if (unitId !== undefined) {
-				params.unitId = unitId;
+				params["unitId"] = unitId;
 			}
 
 			this._send<ResolveSymbolResponse | UdfErrorResponse>('symbols', params)

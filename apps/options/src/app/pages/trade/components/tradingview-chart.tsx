@@ -8,6 +8,7 @@ import { SymbolDescription } from "../../../components/symbol-description/symbol
 import { DateRage } from "../../../components/date-rage/date-rage";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { BettingCryptoCurrencies } from "../../../core/constants/basic";
+import { TVChartContainer } from "../../../components/tvchart/tvchart";
 
 const mockupData = {
   price: 1343,
@@ -45,16 +46,7 @@ const TradingViewChart = () => {
         <div className="absolute top-0 left-80 z-10">
           <SymbolDescription basicToken="dai" dateRage="4H" />
         </div>
-        <AdvancedRealTimeChart
-          symbol="BINANCE:ETHUSD"
-          locale="en"
-          autosize
-          hide_legend
-          hide_top_toolbar
-          enable_publishing={false}
-          withdateranges={false}
-          theme="dark"
-        />
+        <TVChartContainer />
       </div>
     </div>
   );

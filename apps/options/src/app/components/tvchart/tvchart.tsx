@@ -1,19 +1,42 @@
-import { useEffect } from "react";
+import * as React from "react";
+import {
+  ChartingLibraryWidgetOptions,
+  LanguageCode,
+  IChartingLibraryWidget,
+  ResolutionString,
+} from "../../../assets/tradingview_library/charting_library";
 
-import Datafeed from "./api";
+import Datafeeds from "./datafeeds";
 
-function getLanguageFromURL() {
-  const regex = new RegExp("[\\?&]lang=([^&#]*)");
-  const results = regex.exec(window.location.search);
-  return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+export interface ChartContainerProps {
+  symbol: ChartingLibraryWidgetOptions["symbol"];
+  interval: ChartingLibraryWidgetOptions["interval"];
+  datafeedUrl: string;
+  libraryPath: ChartingLibraryWidgetOptions["library_path"];
+  chartsStorageUrl: ChartingLibraryWidgetOptions["charts_storage_url"];
+  chartsStorageApiVersion: ChartingLibraryWidgetOptions["charts_storage_api_version"];
+  clientId: ChartingLibraryWidgetOptions["client_id"];
+  userId: ChartingLibraryWidgetOptions["user_id"];
+  fullscreen: ChartingLibraryWidgetOptions["fullscreen"];
+  autosize: ChartingLibraryWidgetOptions["autosize"];
+  studiesOverrides: ChartingLibraryWidgetOptions["studies_overrides"];
+  container: ChartingLibraryWidgetOptions["container"];
 }
 
-export const TVChartContainer = () => {
-  const configOptions = {
-    symbol: "Coinbase:BTC/USD",
-    interval: "15",
-    containerId: "tv_chart_container",
-    libraryPath: "tradingview_library/charting_library/",
+function getLanguageFromURL(): LanguageCode | null {
+  const regex = new RegExp("[\\?&]lang=([^&#]*)");
+  const results = regex.exec(window.location.search);
+  return results === null
+    ? null
+    : (decodeURIComponent(results[1].replace(/\+/g, " ")) as LanguageCode);
+}
+
+export class TVChartContainer extends React.PureComponent<Partial<ChartContainerProps>> {
+  public static defaultProps: Omit<ChartContainerProps, "container"> = {
+    symbol: "AAPL",
+    interval: "D" as ResolutionString,
+    datafeedUrl: "https://demo_feed.tradingview.com",
+    libraryPath: "/assets/tradingview_library/charting_library/",
     chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",
     clientId: "tradingview.com",
@@ -23,42 +46,65 @@ export const TVChartContainer = () => {
     studiesOverrides: {},
   };
 
-  useEffect(() => {
-    const widgetOptions = {
-      debug: false,
-      symbol: configOptions.symbol,
-      datafeed: Datafeed,
-      interval: configOptions.interval,
-      container_id: configOptions.containerId,
-      library_path: configOptions.libraryPath,
+  private tvWidget: IChartingLibraryWidget | null = null;
+  private ref: React.RefObject<HTMLDivElement> = React.createRef();
+
+  public override componentDidMount(): void {
+    if (!this.ref.current) {
+      return;
+    }
+
+    const widgetOptions: ChartingLibraryWidgetOptions = {
+      symbol: this.props.symbol as string,
+      // BEWARE: no trailing slash is expected in feed URL
+      // tslint:disable-next-line:no-any
+      datafeed: Datafeeds,
+      interval: this.props.interval as ChartingLibraryWidgetOptions["interval"],
+      container: this.ref.current,
+      library_path: this.props.libraryPath as string,
+
       locale: getLanguageFromURL() || "en",
       disabled_features: ["use_localstorage_for_settings"],
       enabled_features: ["study_templates"],
-      charts_storage_url: configOptions.chartsStorageUrl,
-      charts_storage_api_version: configOptions.chartsStorageApiVersion,
-      client_id: configOptions.clientId,
-      user_id: configOptions.userId,
-      fullscreen: configOptions.fullscreen,
-      autosize: configOptions.autosize,
-      studies_overrides: configOptions.studiesOverrides,
-      overrides: {
-        "mainSeriesProperties.showCountdown": true,
-        "paneProperties.background": "#131722",
-        "paneProperties.vertGridProperties.color": "#363c4e",
-        "paneProperties.horzGridProperties.color": "#363c4e",
-        "symbolWatermarkProperties.transparency": 90,
-        "scalesProperties.textColor": "#AAA",
-        "mainSeriesProperties.candleStyle.wickUpColor": "#336854",
-        "mainSeriesProperties.candleStyle.wickDownColor": "#7f323f",
-      },
+      charts_storage_url: this.props.chartsStorageUrl,
+      charts_storage_api_version: this.props.chartsStorageApiVersion,
+      client_id: this.props.clientId,
+      user_id: this.props.userId,
+      fullscreen: this.props.fullscreen,
+      autosize: this.props.autosize,
+      studies_overrides: this.props.studiesOverrides,
     };
-    window.TradingView.onready(() => {
-      const widget = (window.tvWidget = new window.TradingView.widget(widgetOptions));
 
-      widget.onChartReady(() => {
-        console.log("Chart has loaded!");
+    const tvWidget = new window.TradingView.widget(widgetOptions);
+    this.tvWidget = tvWidget;
+
+    tvWidget.onChartReady(() => {
+      tvWidget.headerReady().then(() => {
+        const button = tvWidget.createButton();
+        button.setAttribute("title", "Click to show a notification popup");
+        button.classList.add("apply-common-tooltip");
+        button.addEventListener("click", () =>
+          tvWidget.showNoticeDialog({
+            title: "Notification",
+            body: "TradingView Charting Library API works correctly",
+            callback: () => {
+              console.log("Noticed!");
+            },
+          })
+        );
+        button.innerHTML = "Check API";
       });
     });
-  }, []);
-  return <div id={configOptions.containerId} className={"TVChartContainer"} />;
-};
+  }
+
+  public override componentWillUnmount(): void {
+    if (this.tvWidget !== null) {
+      this.tvWidget.remove();
+      this.tvWidget = null;
+    }
+  }
+
+  public override render(): JSX.Element {
+    return <div ref={this.ref} className={"TVChartContainer h-full"} />;
+  }
+}
