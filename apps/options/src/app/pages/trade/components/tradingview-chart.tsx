@@ -17,12 +17,6 @@ const mockupData = {
 };
 
 const TradingViewChart = () => {
-  const copyright = document.querySelector(
-    "#tradingview_widget_wrapper"
-  )?.lastElementChild;
-  console.log("copyright:", copyright);
-  if (copyright != null) copyright.remove();
-
   return (
     <div className="w-full h-full flex flex-col relative">
       <BettingCurrencyDropdown bettingCurrencies={BettingCryptoCurrencies} />
@@ -43,9 +37,9 @@ const TradingViewChart = () => {
         <DateRage />
       </div>
       <div className="min-h-300 grow relative">
-        <div className="absolute top-0 left-80 z-10">
+        {/* <div className="absolute top-0 left-80 z-10">
           <SymbolDescription basicToken="dai" dateRage="4H" />
-        </div>
+        </div> */}
         <TVChartContainer />
       </div>
     </div>

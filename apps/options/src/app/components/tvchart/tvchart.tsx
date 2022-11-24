@@ -6,8 +6,6 @@ import {
   ResolutionString,
 } from "../../../assets/tradingview_library/charting_library";
 
-import Datafeeds from "./datafeeds";
-
 export interface ChartContainerProps {
   symbol: ChartingLibraryWidgetOptions["symbol"];
   interval: ChartingLibraryWidgetOptions["interval"];
@@ -56,16 +54,25 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: this.props.symbol as string,
-      // BEWARE: no trailing slash is expected in feed URL
-      // tslint:disable-next-line:no-any
-      datafeed: Datafeeds,
+      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
+        this.props.datafeedUrl
+      ),
       interval: this.props.interval as ChartingLibraryWidgetOptions["interval"],
       container: this.ref.current,
       library_path: this.props.libraryPath as string,
 
       locale: getLanguageFromURL() || "en",
-      disabled_features: ["use_localstorage_for_settings"],
-      enabled_features: ["study_templates"],
+      disabled_features: [
+        "use_localstorage_for_settings",
+        "show_spread_operators",
+        "snapshot_trading_drawings",
+        "timeframes_toolbar",
+        "trading_floating_toolbar",
+        "header_widget",
+        "adaptive_logo",
+        "widget_logo",
+      ],
+      enabled_features: ["study_templates", "logo_without_link"],
       charts_storage_url: this.props.chartsStorageUrl,
       charts_storage_api_version: this.props.chartsStorageApiVersion,
       client_id: this.props.clientId,
@@ -73,6 +80,15 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       fullscreen: this.props.fullscreen,
       autosize: this.props.autosize,
       studies_overrides: this.props.studiesOverrides,
+      toolbar_bg: "#0B0F10",
+      overrides: {
+        "paneProperties.background": "#090B0D",
+        "paneProperties.vertGridProperties.color": "#0D1112",
+        "paneProperties.horzGridProperties.color": "#444D55",
+        "symbolWatermarkProperties.transparency": 90,
+        "scalesProperties.textColor": "#AAA",
+        "toolsPanProperties.textColor": "#ffffff",
+      },
     };
 
     const tvWidget = new window.TradingView.widget(widgetOptions);
