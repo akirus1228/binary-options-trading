@@ -19,6 +19,7 @@ export interface ChartContainerProps {
   autosize: ChartingLibraryWidgetOptions["autosize"];
   studiesOverrides: ChartingLibraryWidgetOptions["studies_overrides"];
   container: ChartingLibraryWidgetOptions["container"];
+  timeFrames: ChartingLibraryWidgetOptions["time_frames"];
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -42,6 +43,11 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
     fullscreen: false,
     autosize: true,
     studiesOverrides: {},
+    timeFrames: [
+      { text: "1d", resolution: "1" as ResolutionString },
+      { text: "2d", resolution: "5" as ResolutionString },
+      { text: "3d", resolution: "15" as ResolutionString },
+    ],
   };
 
   private tvWidget: IChartingLibraryWidget | null = null;
@@ -88,7 +94,9 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
         "symbolWatermarkProperties.transparency": 90,
         "scalesProperties.textColor": "#AAA",
         "toolsPanProperties.textColor": "#ffffff",
+        "drawingToolsProperties.textColor": "#ffffff",
       },
+      custom_css_url: "../themed.css",
     };
 
     const tvWidget = new window.TradingView.widget(widgetOptions);
