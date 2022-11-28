@@ -14,7 +14,7 @@ import {
   useErc20Balance,
 } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
-import { useState, useMemo, MouseEvent } from "react";
+import { useState, useMemo, MouseEvent, useEffect } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
 import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown";
@@ -37,6 +37,7 @@ const TradingPad = () => {
   const [direction, setDirection] = useState<"Up" | "Down">("Up");
   const [currency, setCurrency] = useState<CurrencyDetails>(currencyInfo["DAI_ADDRESS"]);
   const [isOpen, setOpen] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(true);
 
   const { balance: currencyBalance } = useErc20Balance(
     networks[desiredNetworkId].addresses["DAI_ADDRESS"],
@@ -78,6 +79,14 @@ const TradingPad = () => {
   const handleClose = (isOpen: boolean) => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    const modalStorage = localStorage.getItem("hide");
+    if (modalStorage && JSON.parse(modalStorage) === true) {
+      console.log("this is disable");
+      setShowConfirmDialog(false);
+    } else setShowConfirmDialog(true);
+  }, [isOpen]);
 
   return (
     <>
@@ -216,7 +225,7 @@ const TradingPad = () => {
         currencyValue={Number(tokenAmount)}
         selectedCurrency={currency}
         direction={direction}
-        open={isOpen}
+        open={isOpen && showConfirmDialog}
         onClose={(value: boolean) => handleClose(value)}
       />
     </>

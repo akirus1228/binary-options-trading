@@ -5,6 +5,8 @@ import {
   DialogActions,
   DialogContent,
   SvgIcon,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import {
   Close as CloseIcon,
@@ -12,7 +14,10 @@ import {
   WatchLaterOutlined as WatchLaterOutlinedIcon,
   CallMade as HighArrowIcon,
   SouthEast as LowArrowIcon,
+  CheckBoxOutlineBlank,
+  Check,
 } from "@mui/icons-material";
+import { useState, useEffect } from "react";
 
 import { LabelIcon } from "../label-icon/label-icon";
 import { convertTimeString, fixedFloatString } from "../../helpers/data-translations";
@@ -26,6 +31,7 @@ export function ConfirmTradePopup(props: {
   onClose: (isOpen: boolean) => void;
 }) {
   const { interval, selectedCurrency, currencyValue, direction, open, onClose } = props;
+  const [isChecked, setChecked] = useState(false);
 
   const handleConfirm = () => {
     //TODO: integration with smart contract using web3.js for user's trade
@@ -34,6 +40,11 @@ export function ConfirmTradePopup(props: {
 
   const handleClose = () => {
     onClose(false);
+  };
+
+  const handleChangeCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+    localStorage.setItem("hide", JSON.stringify(event.target.checked));
   };
 
   return (
@@ -112,6 +123,20 @@ export function ConfirmTradePopup(props: {
           I understand that binary options trading carries significant risk and I am aware
           that I cannot cancel a trade once it has been place.
         </p>
+        <div className="w-full flex justify-center mt-10">
+          <FormControlLabel
+            label="Don't show this message again"
+            control={
+              <Checkbox
+                checked={isChecked}
+                icon={<CheckBoxOutlineBlank className="bg-second text-second rounded" />}
+                checkedIcon={<Check className="bg-second text-success rounded" />}
+                onChange={handleChangeCheckBox}
+              />
+            }
+            className="text-primary"
+          />
+        </div>
       </DialogContent>
       <DialogActions className="p-20">
         <button
