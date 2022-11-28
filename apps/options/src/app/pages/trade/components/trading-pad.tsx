@@ -54,7 +54,6 @@ const TradingPad = () => {
   }, [address, chainId, currencyBalance, tokenAmount]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
-    console.log("connect: ", address, isWalletConnected);
     try {
       connect(true, isDev ? NetworkIds.Goerli : NetworkIds.Ethereum);
     } catch (e: unknown) {
@@ -83,7 +82,6 @@ const TradingPad = () => {
   useEffect(() => {
     const modalStorage = localStorage.getItem("hide");
     if (modalStorage && JSON.parse(modalStorage) === true) {
-      console.log("this is disable");
       setShowConfirmDialog(false);
     } else setShowConfirmDialog(true);
   }, [isOpen]);
