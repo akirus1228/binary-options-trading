@@ -7,6 +7,10 @@ import { NavItemProp } from "../types/types";
 export const baseServerUrl = "http://localhost:3000/api";
 export const socketURL = "http://localhost:3000";
 export const socket = io(socketURL);
+export const GRAPH_URL = "https://";
+
+export const fee = 1;
+export const double = 2;
 
 export const responsive = {
   superLargeDesktop: {
@@ -67,9 +71,6 @@ export const CommunityTools: NavItemProp[] = [
   { title: "Twitter", href: "" },
   { title: "Report & problem", href: "" },
 ];
-
-export const fee = 1;
-export const double = 2;
 
 export enum TimeframeEnum {
   ONE = 1,
