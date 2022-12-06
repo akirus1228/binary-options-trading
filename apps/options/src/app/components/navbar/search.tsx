@@ -66,13 +66,20 @@ const Search = () => {
         <Input
           {...getInputProps()}
           placeholder="Search for a token"
-          className="outline-none border-0 bg-bunker text-primary ml-10"
+          className="outline-none border-0 bg-bunker text-primary ml-10 hover:"
         />
       </div>
       {groupedOptions.length > 0 ? (
-        <Listbox {...getListboxProps()} className="bg-bunker">
+        <Listbox
+          {...getListboxProps()}
+          className="bg-heavybunker"
+          sx={{ "& li.Mui-focused": { backgroundColor: "#0E1415" } }}
+        >
           {(groupedOptions as typeof BettingCryptoCurrencies).map((option, index) => (
-            <li {...getOptionProps({ option, index })}>
+            <li
+              {...getOptionProps({ option, index })}
+              className="hover:bg-bunker focus:bg-bunker active:bg-bunker"
+            >
               <div className="flex px-15 py-5">
                 <div className="token-logo flex justify-center items-center sm:w-30">
                   <img
