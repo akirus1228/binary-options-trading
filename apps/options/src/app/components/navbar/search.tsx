@@ -60,26 +60,23 @@ const Search = () => {
     <div className="xs:hidden lg:block relative">
       <div
         {...getRootProps()}
-        className="w-200 flex items-center rounded-3xl focus:rounded-t-xl text-primary border-solid border-2 focus:border-b-0 border-second px-10 py-5 ml-20"
+        className="w-200 flex items-center rounded-3xl focus:rounded-t-xl text-primary border-solid border-2 focus:border-b-0 border-second px-10 py-5 ml-20 bg-lightbunker"
       >
         <SvgIcon component={SearchIcon} />
         <Input
           {...getInputProps()}
           placeholder="Search for a token"
-          className="outline-none border-0 bg-bunker text-primary ml-10 hover:"
+          className="outline-none border-0 bg-lightbunker text-primary ml-10 hover:"
         />
       </div>
       {groupedOptions.length > 0 ? (
         <Listbox
           {...getListboxProps()}
-          className="bg-heavybunker"
+          className="bg-lightbunker"
           sx={{ "& li.Mui-focused": { backgroundColor: "#0E1415" } }}
         >
           {(groupedOptions as typeof BettingCryptoCurrencies).map((option, index) => (
-            <li
-              {...getOptionProps({ option, index })}
-              className="hover:bg-bunker focus:bg-bunker active:bg-bunker"
-            >
+            <li {...getOptionProps({ option, index })} className="hover:bg-bunker">
               <div className="flex px-15 py-5">
                 <div className="token-logo flex justify-center items-center sm:w-30">
                   <img
@@ -88,11 +85,9 @@ const Search = () => {
                   />
                 </div>
                 <div className="px-10">
-                  <p className="betting-token xs:text-15 sm:text-20 text-primary">
-                    {option.name}
-                  </p>
-                  <p className="token-pair xs:text-10 sm:text-16 text-second">
-                    {"DAI"}/{option.symbol}
+                  <p className="betting-token text-15 text-primary">{option.name}</p>
+                  <p className="token-pair text-14 text-second">
+                    {option.symbol}/{"DAI"}
                   </p>
                 </div>
               </div>
