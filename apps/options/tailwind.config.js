@@ -267,6 +267,17 @@ module.exports = {
         "Courier New",
         "monospace",
       ],
+      OcrExtendedRegular: ["OcrExtendedRegular", "sans-serif"],
+      InterBlack: ["InterBlack", "sans-serif"],
+      InterBold: ["InterBold", "sans-serif"],
+      InterExtraBold: ["InterExtraBold", "sans-serif"],
+      InterExtraLight: ["InterExtraLight", "sans-serif"],
+      InterLight: ["InterLight", "sans-serif"],
+      InterMedium: ["InterMedium", "sans-serif"],
+      InterRegular: ["InterRegular", "sans-serif"],
+      InterSemiBold: ["InterSemiBold", "sans-serif"],
+      InterThin: ["InterThin", "sans-serif"],
+      InterVariableFont: ["InterVariableFont", "sans-serif"],
     },
     fontSize: {
       ...range(minFontSize, maxFontSize).reduce(
