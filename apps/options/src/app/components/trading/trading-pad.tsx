@@ -23,7 +23,7 @@ const TradingPad = (props: TradingPadProps) => {
             />
           </div>
           <div className="px-10">
-            <p className="token-pair text-15 text-second">
+            <p className="token-pair text-15 text-second font-OcrExtendedRegular">
               {props.sourceToken}/{props.underlyingToken.symbol}
             </p>
             <p className="betting-token xs:text-20 sm:text-25 text-primary">
@@ -36,7 +36,7 @@ const TradingPad = (props: TradingPadProps) => {
         </div>
       </div>
       <button
-        className="px-50 py-5 text-16 text-woodsmoke bg-success rounded-xl"
+        className="px-50 py-5 text-16 text-woodsmoke bg-success rounded-xl font-OcrExtendedRegular uppercase"
         onClick={() => handleTradeClick(props.underlyingToken)}
       >
         Trade

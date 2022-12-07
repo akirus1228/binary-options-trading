@@ -92,6 +92,8 @@ module.exports = {
     },
     backgroundOpacity: (theme) => theme("opacity"),
     backgroundPosition: {
+      "bottom-90": "bottom 90px",
+      "bottom-70": "bottom 70px",
       bottom: "bottom",
       center: "center",
       left: "left",

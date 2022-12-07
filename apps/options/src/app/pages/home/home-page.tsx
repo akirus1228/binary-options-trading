@@ -25,28 +25,31 @@ export const HomePage = (): JSX.Element => {
     navigate("/trade?underlyingToken=eth");
   };
   return (
-    <div className="bg-heavybunker">
-      <div className="landing-page xs:bg-contain lg:bg-cover xs:bg-[url('./assets/images/bg-img-xs.png')] sm:bg-[url('./assets/images/bg-img-lg.png')] xl:bg-[url('./assets/images/bg-img-xl.png')] bg-no-repeat">
-        <div className="h-screen w-full xs:px-30 sm:px-60 md:px-90 pt-150">
-          <div className="xs:w-270 sm:w-500 flex flex-col with-520">
-            <p className="text-success text-15 xs:mb-5 sm:mb-10">CRYPTO BINARY OPTIONS</p>
-            <p className="text-primary xs:text-30 sm:text-55 xs:mb-10 sm:mb-30">
-              Trade crypto binary options on-chain
+    <div className="bg-heavybunker xs:pt-70 md:pt-90 xs:bg-contain xs:bg-[url('./assets/images/xs-bg-img.jpg')] sm:bg-[url('./assets/images/bg-img-lg.png')] bg-no-repeat">
+      <div className="landing-page">
+        <div className="w-full xs:px-10 sm:px-30 md:px-70 pt-150">
+          <div className="xs:w-270 sm:w-530 flex flex-col">
+            <p className="text-success xs:text-14 md:text-16 font-OcrExtendedRegular xs:mb-5 sm:mb-10">
+              CRYPTO BINARY OPTIONS
             </p>
-            <div className="flex justify-start items-center">
+            <div className="text-primary text-26 sm:text-32 md:text-43 lg:text-52 xl:text-55 xs:mb-10 sm:mb-30 leading-tight">
+              <p>Trade crypto binary</p>
+              <p>options on-chain</p>
+            </div>
+            <div className="flex justify-start items-center font-OcrExtendedRegular">
               <button
-                className="xs:py-10 xs:px-30 sm:py-15 sm:px-60 text-18 text-woodsmoke bg-success rounded-xl mr-20"
+                className="xs:py-10 xs:px-30 sm:py-15 sm:px-60 text-18 text-woodsmoke bg-success rounded-xl mr-20  uppercase"
                 onClick={handleTradeClick}
               >
                 Trade
               </button>
-              <button className="xs:py-10 xs:px-30 sm:py-15 sm:px-60 text-18 text-white bg-black border border-success rounded-xl">
+              <button className="xs:py-10 xs:px-30 sm:py-15 sm:px-60 text-18 text-white border border-success bg-aztec rounded-xl  uppercase">
                 Demo
               </button>
             </div>
           </div>
           <Carousel
-            className="pt-120 "
+            className="xs:pt-50 md:pt-80 xl:pt-120"
             partialVisible={true}
             responsive={responsive}
             arrows={false}
@@ -59,7 +62,7 @@ export const HomePage = (): JSX.Element => {
           </Carousel>
         </div>
       </div>
-      <div className="trending-markets xs:px-10 sm:px-30 md:px-70">
+      <div className="trending-markets xs:px-10 sm:px-30 md:px-70 xs:pt-50 md:pt-80 xl:pt-120">
         <p className="trending-markets-title xs:text-30 sm:text-40 text-primary mb-30">
           Trending markets
         </p>
