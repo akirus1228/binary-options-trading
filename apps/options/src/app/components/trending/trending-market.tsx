@@ -3,10 +3,10 @@ import HighArrowIcon from "@mui/icons-material/CallMade";
 import { useNavigate } from "react-router-dom";
 
 import { TokenPair } from "../token-pair/token-pair";
-import { TradingPadProps } from "./trading-pad";
+import { TrendingPadProps } from "./trending-pad";
 import { CryptoCurrency } from "../../core/types/types";
 
-const TradingMarket = (props: TradingPadProps) => {
+const TrendingMarket = (props: TrendingPadProps) => {
   const navigate = useNavigate();
 
   const handleTradeClick = (underlyingToken: CryptoCurrency) => {
@@ -51,4 +51,4 @@ const TradingMarket = (props: TradingPadProps) => {
   );
 };
 
-export default TradingMarket;
+export default TrendingMarket;

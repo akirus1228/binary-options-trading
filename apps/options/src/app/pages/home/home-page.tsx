@@ -5,8 +5,8 @@ import { Report, Twitter } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 
 import Logo from "../../components/logo/logo";
-import TradingPad from "../../components/trading/trading-pad";
-import TradingMarket from "../../components/trading/trading-market";
+import TrendingPad from "../../components/trending/trending-pad";
+import TrendingMarket from "../../components/trending/trending-market";
 import TradingExperience from "../../components/trading-experience/trading-experience";
 import DemoAccount from "../../components/demo-account/demo-account";
 import TradingCommunity from "../../components/trading-community/trading-community";
@@ -56,7 +56,7 @@ export const HomePage = (): JSX.Element => {
           >
             {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
               return (
-                <TradingPad sourceToken="DAI" underlyingToken={item} key={item.symbol} />
+                <TrendingPad sourceToken="DAI" underlyingToken={item} key={item.symbol} />
               );
             })}
           </Carousel>
@@ -76,7 +76,7 @@ export const HomePage = (): JSX.Element => {
         </div>
         {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
           return (
-            <TradingMarket sourceToken="DAI" underlyingToken={item} key={item.symbol} />
+            <TrendingMarket sourceToken="DAI" underlyingToken={item} key={item.symbol} />
           );
         })}
       </div>

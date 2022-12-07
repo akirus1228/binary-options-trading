@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
+import React from "react";
+
 import { CryptoCurrency } from "../../core/types/types";
 
-export interface TradingPadProps {
+export interface TrendingPadProps {
   sourceToken: string;
   underlyingToken: CryptoCurrency;
 }
 
-const TradingPad = (props: TradingPadProps) => {
+const TrendingPad = (props: TrendingPadProps) => {
   const navigate = useNavigate();
 
   const handleTradeClick = (underlyingToken: CryptoCurrency) => {
@@ -45,4 +47,4 @@ const TradingPad = (props: TradingPadProps) => {
   );
 };
 
-export default TradingPad;
+export default TrendingPad;
