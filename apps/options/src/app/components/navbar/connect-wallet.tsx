@@ -108,7 +108,7 @@ const ConnectWallet = () => {
           "& .MuiPopover-paper": { backgroundColor: "#0B0F10", borderRadius: "25px" },
         }}
       >
-        <div className="pt-20 bg-woodsmoke text-primary xs:w-250 sm:w-420 cursor-default">
+        <div className="pt-20 bg-woodsmoke text-primary xs:w-250 sm:w-420 cursor-default shadow-3xl">
           <div className="flex justify-between items-center px-20">
             <h3 className="text-primary ">Account</h3>
             <button

@@ -77,7 +77,7 @@ const Search = () => {
       {isOpenList ? (
         <Listbox
           {...getListboxProps()}
-          className="bg-lightbunker rounded-b-3xl"
+          className="bg-lightbunker rounded-b-3xl shadow-3xl"
           sx={{ "& li.Mui-focused": { backgroundColor: "#0E1415" } }}
         >
           {(groupedOptions as typeof BettingCryptoCurrencies).map((option, index) => (

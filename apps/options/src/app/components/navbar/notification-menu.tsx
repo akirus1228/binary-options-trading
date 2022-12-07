@@ -88,7 +88,7 @@ const NotificationMenu = () => {
           "& .MuiPopover-paper": { backgroundColor: "#0B0F10", borderRadius: "25px" },
         }}
       >
-        <div className="py-20 bg-woodsmoke text-primary sm:w-450 cursor-default">
+        <div className="py-20 bg-woodsmoke text-primary sm:w-450 cursor-default shadow-3xl">
           <div className="flex justify-between items-center px-20 pb-10">
             <h3 className="text-primary text-19">Notifications</h3>
           </div>
