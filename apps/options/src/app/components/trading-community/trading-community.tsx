@@ -12,7 +12,12 @@ const TradingCommunity = () => {
           Trade and chat with traders from all around the globe.
         </p>
         <Link to="/trade">
-          <ArrowIcon text="ENTER APP" revert={true} status={"up"} />
+          <ArrowIcon
+            text="ENTER APP"
+            revert={true}
+            status={"up"}
+            className="font-OcrExtendedRegular"
+          />
         </Link>
       </div>
       <div className="sm:absolute token-logo items-center xs:w-300 sm:350 lg:w-250 bottom-0 sm:right-0">

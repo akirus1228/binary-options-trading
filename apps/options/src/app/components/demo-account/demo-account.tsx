@@ -13,7 +13,12 @@ const DemoAccount = () => {
           basics.
         </p>
         <Link to="/trade">
-          <ArrowIcon text="ENTER APP" revert={true} status={"up"} />
+          <ArrowIcon
+            text="TRY NOW"
+            revert={true}
+            status={"up"}
+            className="font-OcrExtendedRegular"
+          />
         </Link>
       </div>
       <div className="sm:absolute token-logo items-center xs:w-280 lg:w-180 bottom-0 sm:right-0">
