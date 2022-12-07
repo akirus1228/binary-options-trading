@@ -6,13 +6,14 @@ interface ArrowIconProps {
   text: string;
   revert?: boolean;
   status?: "up" | "down" | undefined;
+  className?: string;
 }
 
 const ArrowIcon = (props: ArrowIconProps) => {
   const { text, revert, status } = props;
   return (
     <div
-      className={`flex items-center ${
+      className={`${props?.className} flex items-center ${
         status ? (status === "up" ? "text-success" : "text-danger") : "text-primary"
       }`}
     >
