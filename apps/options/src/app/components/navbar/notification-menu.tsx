@@ -44,10 +44,6 @@ const NotificationMenu = () => {
     setFlagAccountDropDown(event.currentTarget);
   };
 
-  const handleSetting = () => {
-    console.log("Click setting;");
-  };
-
   return (
     <div className="rounded-2xl">
       <Button
@@ -92,7 +88,7 @@ const NotificationMenu = () => {
           "& .MuiPopover-paper": { backgroundColor: "#0B0F10", borderRadius: "25px" },
         }}
       >
-        <div className="py-20 bg-woodsmoke text-primary xs:w-250 sm:w-420 cursor-default">
+        <div className="py-20 bg-woodsmoke text-primary sm:w-450 cursor-default">
           <div className="flex justify-between items-center px-20 pb-10">
             <h3 className="text-primary text-19">Notifications</h3>
           </div>
@@ -104,11 +100,11 @@ const NotificationMenu = () => {
                   className="text-35 text-primary rounded-full p-5 bg-[#0f1617] mr-10 w-40 h-40"
                 />
                 <div className="grow text-primary">
-                  <p className="xs:text-16">
+                  <p className="text-16 font-InterMedium">
                     {item.type[0].toUpperCase() + item.type.slice(1).toLowerCase()}
                     &nbsp;Alert
                   </p>
-                  <p className="xs:text-18">{item.description}</p>
+                  <p className="text-18">{item.description}</p>
                 </div>
               </div>
             ))}

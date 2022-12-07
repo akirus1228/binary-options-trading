@@ -3,7 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import useAutocomplete from "@mui/material/useAutocomplete";
 import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { BettingCryptoCurrencies } from "../../core/constants/basic";
 
@@ -50,6 +50,8 @@ const Search = () => {
     getOptionLabel: (option) => option.name,
   });
 
+  const isOpenList = useMemo(() => groupedOptions.length > 0, [groupedOptions]);
+
   useEffect(() => {
     if (value) {
       navigate(`/trade?underlyingToken=${value.symbol.toLowerCase()}`);
@@ -60,19 +62,22 @@ const Search = () => {
     <div className="xs:hidden lg:block relative">
       <div
         {...getRootProps()}
-        className="w-200 flex items-center rounded-3xl focus:rounded-t-xl text-primary border-solid border-2 focus:border-b-0 border-second px-10 py-5 ml-20 bg-lightbunker"
+        className={
+          "w-200 flex items-center rounded-3xl text-primary border-solid border-2 focus:border-b-0 border-bunker px-10 py-5 ml-20 bg-lightbunker" +
+          (isOpenList ? " rounded-b-none" : "")
+        }
       >
         <SvgIcon component={SearchIcon} />
         <Input
           {...getInputProps()}
           placeholder="Search for a token"
-          className="outline-none border-0 bg-lightbunker text-primary ml-10 hover:"
+          className="outline-none border-0 bg-lightbunker text-primary ml-10"
         />
       </div>
-      {groupedOptions.length > 0 ? (
+      {isOpenList ? (
         <Listbox
           {...getListboxProps()}
-          className="bg-lightbunker"
+          className="bg-lightbunker rounded-b-3xl"
           sx={{ "& li.Mui-focused": { backgroundColor: "#0E1415" } }}
         >
           {(groupedOptions as typeof BettingCryptoCurrencies).map((option, index) => (

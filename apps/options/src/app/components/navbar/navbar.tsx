@@ -20,7 +20,7 @@ const Navbar = (): JSX.Element => {
     setAnchorElNav(null);
   };
   return (
-    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-aztec xs:p-5 sm:py-10 md:py-20 sm:px-20 lg:px-40 fixed top-0 left-0 z-40 bg-opacity-0 backdrop-blur-lg border-b border-second font-Inter">
+    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-aztec xs:p-5 sm:py-10 md:py-20 sm:px-20 lg:px-40 fixed top-0 left-0 z-40 bg-opacity-0 backdrop-blur-lg border-b border-bunker font-Inter">
       <div className="h-90 flex items-center mr-5 border-b-2 border-b-aztec border-opacity-0 hover:border-success">
         <Logo />
       </div>

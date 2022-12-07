@@ -112,7 +112,7 @@ const ConnectWallet = () => {
           <div className="flex justify-between items-center px-20">
             <h3 className="text-primary ">Account</h3>
             <button
-              className="text-primary bg-[#0f1617] px-10 py-5 rounded-2xl"
+              className="text-primary bg-[#0f1617] px-10 py-5 rounded-lg"
               onClick={onClickDisconnect}
             >
               Disconnect
@@ -129,7 +129,7 @@ const ConnectWallet = () => {
               }}
               src={AvatarAccount}
             />
-            <code className="text-18 pl-10">{addressEllipsis(address)}</code>
+            <p className="text-18 pl-10">{addressEllipsis(address)}</p>
           </div>
           <div className="bg-[#0E1214] flex justify-between items-center xs:px-40 xs:py-20 sm:p-20">
             <div className="copy-address flex items-center">
@@ -145,7 +145,7 @@ const ConnectWallet = () => {
               >
                 <ContentCopyIcon fontSize="small" />
               </IconButton>
-              <h3 className="xs:hidden sm:block text-18 pl-10">Copy Address</h3>
+              <h3 className="xs:hidden sm:block text-18">Copy Address</h3>
             </div>
             <div className="view-explorer flex items-center">
               <IconButton
@@ -162,7 +162,7 @@ const ConnectWallet = () => {
               >
                 <LaunchIcon fontSize="small" />
               </IconButton>
-              <h3 className="xs:hidden sm:block text-18 pl-10">View Explorer</h3>
+              <h3 className="xs:hidden sm:block text-18">View Explorer</h3>
             </div>
           </div>
         </div>
