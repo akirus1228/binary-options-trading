@@ -21,8 +21,8 @@ const Navbar = (): JSX.Element => {
   };
 
   return (
-    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-bunker xs:p-5 sm:py-10 md:py-20 sm:px-20 lg:px-40 text-primary">
-      <div className="h-90 flex items-center mr-5 hover:border-b-2 hover:border-success">
+    <div className="w-full xs:h-70 md:h-90 flex justify-between items-center bg-aztec xs:p-5 sm:py-10 md:py-20 sm:px-20 lg:px-40 fixed top-0 left-0 z-40 bg-opacity-0 backdrop-blur-lg border-b border-second">
+      <div className="h-90 flex items-center mr-5 border-b-2 border-b-aztec border-opacity-0 hover:border-success">
         <Logo />
       </div>
       <SearchBar />
@@ -32,7 +32,7 @@ const Navbar = (): JSX.Element => {
             <Link
               to={items.href}
               key={index}
-              className="h-90 flex items-center text-18 text-primary xs:px-10 xl:px-20 cursor-default border-b-2 border-b-bunker hover:border-b-success"
+              className="h-90 flex items-center text-18 text-primary xs:px-10 xl:px-20 cursor-default border-b-2 border-b-aztec border-opacity-0 hover:border-b-success"
             >
               {items.title}
             </Link>

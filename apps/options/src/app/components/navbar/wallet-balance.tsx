@@ -29,12 +29,10 @@ const WalletBalance = () => {
     );
   }, [address]);
 
-  console.log("balance: ", erc20Balance[DAIAddress]);
-
   return (
-    <div className="xs:hidden xl:block mr-15">
+    <div className="xs:hidden xl:block mx-15">
       {erc20Balance[DAIAddress] ? (
-        <p className="xs:text-10 sm:text-16">
+        <p className="xs:text-10 sm:text-16 text-primary">
           {ethers.utils.formatUnits(
             erc20Balance[DAIAddress],
             currencyInfo["DAI_ADDRESS"].decimals || 18

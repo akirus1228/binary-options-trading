@@ -64,10 +64,11 @@ const ConnectWallet = () => {
           py: "0.5em",
           fontSize: "14px",
           borderRadius: "20px",
+          "& .css-8je8zh-MuiTouchRipple-root": { display: "none" },
         }}
-        className={""}
+        className="bg-woodsmoke hover:bg-bunker"
       >
-        <Box sx={{ display: "block" }} className={""}>
+        <Box sx={{ display: "block" }}>
           <Avatar
             sx={{
               mr: { sm: "0", md: "1em" },

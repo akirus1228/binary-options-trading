@@ -49,11 +49,20 @@ const NotificationMenu = () => {
   };
 
   return (
-    <div>
+    <div className="rounded-2xl">
       <Button
-        className="bg-woodsmoke rounded-2xl xs:hidden sm:block mr-10"
+        id="notification-menu-button"
+        aria-controls={flagAccountDropDown ? "notification-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={flagAccountDropDown ? "true" : undefined}
+        className="bg-woodsmoke hover:bg-bunker rounded-2xl xs:hidden sm:block mr-10"
         onClick={accountDrop}
-        sx={{ p: "10px", minWidth: "30px" }}
+        sx={{
+          p: "10px",
+          minWidth: "30px",
+          "& .Mui-focused": { backgroundColor: "#0E1415" },
+          "& .css-8je8zh-MuiTouchRipple-root": { display: "none" },
+        }}
       >
         <Badge
           badgeContent=""
@@ -65,19 +74,20 @@ const NotificationMenu = () => {
         </Badge>
       </Button>
       <Popover
-        id={"Account"}
+        id={"notification-menu"}
         open={Boolean(flagAccountDropDown)}
         anchorEl={flagAccountDropDown}
         onClose={() => setFlagAccountDropDown(null)}
         anchorOrigin={{
-          horizontal: "right",
+          horizontal: "center",
           vertical: "bottom",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "right",
+          horizontal: "center",
         }}
         className="accountDropdown mt-20"
+        disableScrollLock={true}
         sx={{
           "& .MuiPopover-paper": { backgroundColor: "#0B0F10", borderRadius: "25px" },
         }}

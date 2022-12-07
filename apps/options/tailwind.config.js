@@ -43,6 +43,7 @@ module.exports = {
       second: "#48565d",
       success: "#12b3a8",
       danger: "#ff586c",
+      aztec: "#05090B",
       woodsmoke: "#0B0F10",
       lightsmoke: "#0D1012",
       lightgray: "#65717E",
