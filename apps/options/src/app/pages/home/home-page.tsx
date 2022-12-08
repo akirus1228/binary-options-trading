@@ -58,17 +58,22 @@ export const HomePage = (): JSX.Element => {
         <p className="trending-markets-title xs:text-30 sm:text-40 text-primary mb-30">
           Trending markets
         </p>
-        <div className="pads-title grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 px-20 xs:text-15 sm:text-20 text-lightgray">
+        <div className="pads-title grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 px-20 xs:text-15 sm:text-17 text-lightgray">
           <div className="col-span-2">Pair</div>
           <div className="">Price</div>
-          <div className="xs:hidden sm:block">24h Change</div>
-          <div className="xs:hidden md:block">24h Vol.</div>
-          <div className="col-span-2 xs:hidden lg:block">24h Chart</div>
+          <div className="xs:hidden sm:block">24h change</div>
+          <div className="xs:hidden md:block">24h vol</div>
+          <div className="col-span-2 xs:hidden lg:block">24h chart</div>
           <div className="xs:hidden sm:block"></div>
         </div>
         {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
           return (
-            <TrendingMarket sourceToken="DAI" underlyingToken={item} key={item.symbol} />
+            <TrendingMarket
+              sourceToken="DAI"
+              underlyingToken={item}
+              isJackpot={false}
+              key={item.symbol}
+            />
           );
         })}
       </div>

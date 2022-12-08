@@ -12,12 +12,13 @@ export const Markets = (): JSX.Element => {
           <p className="xs:text-16 sm:text-22 text-second">Top payouts of all time</p>
         </div>
         <div className="grow trending-markets flex flex-col">
-          <div className="pads-title grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 px-20 xs:text-15 sm:text-20 text-lightgray">
+          <div className="pads-title grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-9 px-20 xs:text-15 sm:text-17 text-lightgray">
             <div className="col-span-2">Pair</div>
             <div className="">Price</div>
-            <div className="xs:hidden sm:block">24h Change</div>
-            <div className="xs:hidden md:block">24h Vol.</div>
-            <div className="col-span-2 xs:hidden lg:block">24h Chart</div>
+            <div className="xs:hidden sm:block">24h change</div>
+            <div className="xs:hidden md:block">24h vol</div>
+            <div className="xs:hidden xl:block">Jackpot</div>
+            <div className="col-span-2 xs:hidden lg:block">24h chart</div>
             <div className="xs:hidden sm:block"></div>
           </div>
           <div className="">
@@ -26,6 +27,7 @@ export const Markets = (): JSX.Element => {
                 <TrendingMarket
                   sourceToken="DAI"
                   underlyingToken={item}
+                  isJackpot={true}
                   key={item.symbol}
                 />
               );
