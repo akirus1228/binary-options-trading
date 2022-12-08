@@ -1,12 +1,12 @@
-import Logo from "../../components/logo/logo";
+import Footer from "../../components/footer/footer";
 import TrendingMarket from "../../components/trending/trending-market";
-import { BettingCryptoCurrencies } from "../../core/constants/basic";
 import { CryptoCurrency } from "../../core/types/types";
+import { BettingCryptoCurrencies } from "../../core/constants/basic";
 
 export const Markets = (): JSX.Element => {
   return (
     <>
-      <div className="xs:px-5 sm:px-40 md:px-90 xs:pt-50 sm:py-50 bg-heavybunker grow cursor-default flex flex-col">
+      <div className="xs:px-5 sm:px-40 md:px-90 bg-heavybunker grow cursor-default flex flex-col xs:pt-120">
         <div className="title xs:flex flex-col items-center sm:block xs:px-20 sm:px-40 py-20 xs:mt-10 xs:mb-40 sm:my-10 sm:mb-50 bg-cover sm:bg-[url('./assets/images/bg-market-sm.png')] lg:bg-[url('./assets/images/bg-market-lg.png')] bg-no-repeat  rounded-2xl">
           <p className="xs:text-35 sm:text-40 text-primary">Markets</p>
           <p className="xs:text-16 sm:text-22 text-second">Top payouts of all time</p>
@@ -33,11 +33,7 @@ export const Markets = (): JSX.Element => {
           </div>
         </div>
       </div>
-      <footer className="xs:block sm:hidden bg-bunker xs:h-60 sm:h-90 w-full fixed bottom-0 right-0">
-        <div className="h-full flex justify-center items-center xs:w-full md:w-1/3">
-          <Logo dark />
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 };
