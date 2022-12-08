@@ -7,12 +7,12 @@ const Transaction = (props: { tx: TransactionProps; ranking: number }) => {
   const { tx, ranking } = props;
   return (
     <div className="transaction text-lightgray">
-      <div className="body grid grid-rows-1 grid-cols-12 xs:px-10 sm:px-20 md:px-35 xl:px-50 bg-woodsmoke py-15 rounded-2xl xs:my-10 md:my-20">
+      <div className="body grid grid-rows-1 grid-cols-12 xs:px-10 sm:px-20 md:px-35 xl:px-45 bg-woodsmoke xs:py-15 md:py-30 rounded-3xl my-10 xs:text-16 lg:text-20">
         <div className="ranking flex justify-start items-center text-primary">
           <p>{ranking}</p>
         </div>
-        <div className="user pl-35 xs:col-span-7 sm:col-span-4 md:col-span-4 lg:col-span-3 text-primary flex items-center">
-          <div className="rounded-2xl bg-[#161B1D] w-25 h-25 flex justify-center items-center mr-10">
+        <div className="user pl-20 xs:col-span-7 sm:col-span-4 md:col-span-4 lg:col-span-3 text-primary flex items-center">
+          <div className="rounded-full bg-[#161B1D] xs:w-15 xs:h-15 sm:w-25 sm:h-25 flex justify-center items-center mr-10">
             <img src={`./assets/images/avatar-account.png`} alt={`account logo`} />
           </div>
           <p>{addressEllipsis(tx.to)}</p>
