@@ -45,6 +45,7 @@ export const responsive = {
   mobile: {
     breakpoint: { max: 320, min: 0 },
     items: 1,
+    paritialVisibilityGutter: 30,
   },
 };
 

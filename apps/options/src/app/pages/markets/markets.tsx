@@ -1,5 +1,5 @@
 import Logo from "../../components/logo/logo";
-import TradingMarket from "../../components/trading/trading-market";
+import TrendingMarket from "../../components/trending/trending-market";
 import { BettingCryptoCurrencies } from "../../core/constants/basic";
 import { CryptoCurrency } from "../../core/types/types";
 
@@ -23,7 +23,7 @@ export const Markets = (): JSX.Element => {
           <div className="">
             {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
               return (
-                <TradingMarket
+                <TrendingMarket
                   sourceToken="DAI"
                   underlyingToken={item}
                   key={item.symbol}

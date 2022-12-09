@@ -3,10 +3,10 @@ import HighArrowIcon from "@mui/icons-material/CallMade";
 import { useNavigate } from "react-router-dom";
 
 import { TokenPair } from "../token-pair/token-pair";
-import { TradingPadProps } from "./trading-pad";
+import { TrendingPadProps } from "./trending-pad";
 import { CryptoCurrency } from "../../core/types/types";
 
-const TradingMarket = (props: TradingPadProps) => {
+const TrendingMarket = (props: TrendingPadProps) => {
   const navigate = useNavigate();
 
   const handleTradeClick = (underlyingToken: CryptoCurrency) => {
@@ -15,10 +15,13 @@ const TradingMarket = (props: TradingPadProps) => {
   return (
     <div className="trending-markets-pad text-lightgray">
       <div className="pads-body grid grid-rows-1 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 px-20 bg-woodsmoke py-15 rounded-2xl xs:my-10 md:my-20">
-        <div className="pair col-span-2">
+        <div className="pair col-span-2 cursor-default">
           <TokenPair
             underlyingToken={props.underlyingToken}
             basicToken={props.sourceToken}
+            onClick={() => {
+              handleTradeClick(props.underlyingToken);
+            }}
           />
         </div>
         <div className="price xs:text-15 sm:text-20 text-primary flex items-center">
@@ -39,7 +42,7 @@ const TradingMarket = (props: TradingPadProps) => {
         <div className="action xs:hidden sm:block">
           <div className="btn-trade h-full flex items-center ">
             <button
-              className="px-35 py-10 text-16 text-woodsmoke bg-success rounded-xl"
+              className="px-35 py-10 text-16 text-woodsmoke bg-success rounded-xl font-OcrExtendedRegular uppercase"
               onClick={() => handleTradeClick(props.underlyingToken)}
             >
               Trade
@@ -51,4 +54,4 @@ const TradingMarket = (props: TradingPadProps) => {
   );
 };
 
-export default TradingMarket;
+export default TrendingMarket;

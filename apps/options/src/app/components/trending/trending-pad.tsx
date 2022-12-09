@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
+import React from "react";
+
 import { CryptoCurrency } from "../../core/types/types";
 
-export interface TradingPadProps {
+export interface TrendingPadProps {
   sourceToken: string;
   underlyingToken: CryptoCurrency;
 }
 
-const TradingPad = (props: TradingPadProps) => {
+const TrendingPad = (props: TrendingPadProps) => {
   const navigate = useNavigate();
 
   const handleTradeClick = (underlyingToken: CryptoCurrency) => {
@@ -23,7 +25,7 @@ const TradingPad = (props: TradingPadProps) => {
             />
           </div>
           <div className="px-10">
-            <p className="token-pair text-15 text-second">
+            <p className="token-pair text-15 text-second font-OcrExtendedRegular">
               {props.sourceToken}/{props.underlyingToken.symbol}
             </p>
             <p className="betting-token xs:text-20 sm:text-25 text-primary">
@@ -36,7 +38,7 @@ const TradingPad = (props: TradingPadProps) => {
         </div>
       </div>
       <button
-        className="px-50 py-5 text-16 text-woodsmoke bg-success rounded-xl"
+        className="px-50 py-5 text-16 text-woodsmoke bg-success rounded-xl font-OcrExtendedRegular uppercase"
         onClick={() => handleTradeClick(props.underlyingToken)}
       >
         Trade
@@ -45,4 +47,4 @@ const TradingPad = (props: TradingPadProps) => {
   );
 };
 
-export default TradingPad;
+export default TrendingPad;

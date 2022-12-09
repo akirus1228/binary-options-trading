@@ -4,6 +4,7 @@ import { CryptoCurrency } from "../../core/types/types";
 export const TokenPair = (tokenPair: {
   underlyingToken: CryptoCurrency;
   basicToken: string;
+  onClick?: () => void;
 }) => {
   const navigate = useNavigate();
   const handleClick = (underlyingToken: string) => {
@@ -25,7 +26,7 @@ export const TokenPair = (tokenPair: {
           {tokenPair.underlyingToken.name}
         </p>
         <p className="token-pair xs:text-10 sm:text-16 text-second">
-          {tokenPair.basicToken}/{tokenPair.underlyingToken.symbol}
+          {tokenPair.underlyingToken.symbol}-{tokenPair.basicToken}
         </p>
       </div>
     </div>
