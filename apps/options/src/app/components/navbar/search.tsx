@@ -5,7 +5,7 @@ import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 
-import { BettingCryptoCurrencies } from "../../core/constants/basic";
+import { Betting_CryptoCurrencies } from "../../core/constants/basic";
 
 const Input = styled("input")(({ theme }) => ({
   width: 130,
@@ -46,7 +46,7 @@ const Search = () => {
     value,
   } = useAutocomplete({
     id: "use-autocomplete-demo",
-    options: BettingCryptoCurrencies,
+    options: Betting_CryptoCurrencies,
     getOptionLabel: (option) => option.name,
   });
 
@@ -80,7 +80,7 @@ const Search = () => {
           className="bg-lightbunker rounded-b-3xl shadow-3xl"
           sx={{ "& li.Mui-focused": { backgroundColor: "#0E1415" } }}
         >
-          {(groupedOptions as typeof BettingCryptoCurrencies).map((option, index) => (
+          {(groupedOptions as typeof Betting_CryptoCurrencies).map((option, index) => (
             <li {...getOptionProps({ option, index })} className="hover:bg-bunker">
               <div className="flex px-15 py-5">
                 <div className="token-logo flex justify-center items-center sm:w-30">

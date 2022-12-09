@@ -1,18 +1,15 @@
-import { currencyInfo, CurrencyInfo } from "@fantohm/shared-web3";
-import { weeksToDays, hoursToMinutes } from "date-fns";
 import io from "socket.io-client";
+import { currencyInfo, CurrencyInfo } from "@fantohm/shared-web3";
+
 import { CryptoCurrency } from "../types/types";
 import { NavItemProp } from "../types/types";
 
-export const baseServerUrl = "http://localhost:3000/api";
-export const socketURL = "http://localhost:3000";
-export const socket = io(socketURL);
+export const Backend_API = "http://localhost:3000/api";
+export const Socket_URL = "http://localhost:3000";
+export const socket = io(Socket_URL);
 export const GRAPH_URL = "https://";
 
-export const fee = 1;
-export const double = 2;
-
-export const responsive = {
+export const Carousal_Responsive_Form = {
   superLargeDesktop: {
     breakpoint: { max: 1560, min: 1280 },
     items: 3,
@@ -56,7 +53,7 @@ export const NavItems: NavItemProp[] = [
   { title: "Pools", href: "/pools" },
 ];
 
-export const BettingCryptoCurrencies: CryptoCurrency[] = [
+export const Betting_CryptoCurrencies: CryptoCurrency[] = [
   { name: "Ether", symbol: "ETH" },
   { name: "Shiba", symbol: "SHIB" },
   { name: "Bitcoin", symbol: "WBTC" },
@@ -73,29 +70,4 @@ export const CommunityTools: NavItemProp[] = [
   { title: "Report & problem", href: "" },
 ];
 
-export enum TimeframeEnum {
-  ONE = 1,
-  FIVE = 5,
-  FIFTEEN = 15,
-}
-
-export const tabs = ["All", "Open", "Win", "Loss", "Draw"];
-
-export const tradingInternalDate = {
-  "5m": 5,
-  "30m": 30,
-  "1H": hoursToMinutes(1),
-  "4H": hoursToMinutes(4),
-};
-
-export const tradingRageDate = {
-  "1D": hoursToMinutes(24),
-  "1W": weeksToDays(1) * hoursToMinutes(24),
-  "1M": 1,
-  "3M": 3,
-  "6M": 6,
-  YTD: "YTD",
-  "12M": 12,
-  "60M": 60,
-  ALL: "ALL",
-};
+export const Betting_History_Tabs = ["All", "Open", "Win", "Loss", "Draw"];

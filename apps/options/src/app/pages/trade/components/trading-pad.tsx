@@ -18,12 +18,9 @@ import { useState, useMemo, MouseEvent, useEffect } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
 import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown";
-import {
-  fee,
-  double,
-  UnderlyingAssets,
-  TimeframeEnum,
-} from "../../../core/constants/basic";
+import { UnderlyingAssets } from "../../../core/constants/basic";
+import { Timeframes } from "../../../core/constants/tradingview";
+import { Platform_Fee, RewardAmount_Percent } from "../../../core/constants/marketing";
 import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { desiredNetworkId } from "../../../core/constants/network";
@@ -32,7 +29,7 @@ import ConfirmTradePopup from "../../../components/pop-up/confirm-trade";
 const TradingPad = () => {
   const { connect, address, connected, chainId } = useWeb3Context();
 
-  const [timeframe, setTimeFrame] = useState(TimeframeEnum.ONE);
+  const [timeframe, setTimeFrame] = useState(Timeframes.ONE);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
   const [direction, setDirection] = useState<"Up" | "Down">("Up");
   const [currency, setCurrency] = useState<CurrencyDetails>(currencyInfo["DAI_ADDRESS"]);
@@ -161,7 +158,7 @@ const TradingPad = () => {
           </div>
           <div className="flex justify-between items-center">
             <p>1:1</p>
-            <p>Payout:&nbsp;{parseFloat(tokenAmount) * double}</p>
+            <p>Payout:&nbsp;{parseFloat(tokenAmount) * RewardAmount_Percent}</p>
           </div>
         </div>
         <div className="gas flex justify-between items-center xs:px-10 sm:px-20 mb-5">
@@ -174,7 +171,7 @@ const TradingPad = () => {
               labelColor="second"
               iconColor="second"
             />
-            <p>&nbsp;{fee}%</p>
+            <p>&nbsp;{Platform_Fee}%</p>
           </div>
           <div className="rounded-2xl p-10 bg-wooksmoke flex items-center">
             <LabelIcon
@@ -185,7 +182,7 @@ const TradingPad = () => {
               labelColor="second"
               iconColor="second"
             />
-            <p>&nbsp;${(parseFloat(tokenAmount) * fee) / 100}</p>
+            <p>&nbsp;${(parseFloat(tokenAmount) * Platform_Fee) / 100}</p>
           </div>
         </div>
         {isWalletConnected ? (

@@ -2,10 +2,12 @@ import { IconButton, Menu, MenuItem } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
 import { useState, MouseEvent } from "react";
 
-import { tradingInternalDate, tradingRageDate } from "../../core/constants/basic";
+import {
+  TradingView_Internal_Date,
+  TradingView_Rage_Date,
+} from "../../core/constants/tradingview";
 
 export const DateRage = () => {
-  const ITEM_HEIGHT = 48;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -18,7 +20,7 @@ export const DateRage = () => {
   return (
     <div className="flex items-center justify-between">
       <div className="xs:hidden sm:flex items-center">
-        {Object.keys(tradingInternalDate).map((option) => (
+        {Object.keys(TradingView_Internal_Date).map((option) => (
           <p key={option} className="text-second px-10">
             {option}
           </p>
@@ -61,7 +63,7 @@ export const DateRage = () => {
           },
         }}
       >
-        {Object.keys(tradingInternalDate).map((option) => (
+        {Object.keys(TradingView_Internal_Date).map((option) => (
           <MenuItem
             key={option}
             selected={option === "Pyxis"}
@@ -71,7 +73,7 @@ export const DateRage = () => {
             {option}
           </MenuItem>
         ))}
-        {Object.keys(tradingRageDate).map((option) => (
+        {Object.keys(TradingView_Rage_Date).map((option) => (
           <MenuItem
             key={option}
             selected={option === "Pyxis"}

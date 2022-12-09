@@ -7,7 +7,7 @@ import {
   convertTime,
   fixedFloatString,
 } from "../../../helpers/data-translations";
-import { tabs } from "../../../core/constants/basic";
+import { Betting_History_Tabs } from "../../../core/constants/basic";
 import { mockupHistoryData } from "../../../mockup/data";
 
 interface TabPanelProps {
@@ -144,7 +144,7 @@ const TradingHistory = () => {
           aria-label="basic tabs example"
           sx={{ minHeight: "unset" }}
         >
-          {tabs.map((tab: string, index) => (
+          {Betting_History_Tabs.map((tab: string, index) => (
             <Tab
               label={tab}
               {...a11yProps(index)}
@@ -158,7 +158,7 @@ const TradingHistory = () => {
           ))}
         </Tabs>
       </Box>
-      {tabs.map((tab: string, index) => (
+      {Betting_History_Tabs.map((tab: string, index) => (
         <TabPanel value={value} index={index} key={index} />
       ))}
     </Box>

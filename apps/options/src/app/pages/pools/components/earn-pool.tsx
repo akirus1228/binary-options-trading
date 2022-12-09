@@ -180,8 +180,8 @@ export const EarnPool = (): JSX.Element => {
         disableScrollLock={true}
         className="outline-none border-0"
       >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 xs:w-full xs:h-screen xs:border-0 sm:border-2 rounded-3xl border-[#131719] max-w-700 max-h-650 bg-black">
-          <div className="w-40 h-40 p-10 rounded-full bg-heavybunker text-primary flex justify-center items-center absolute top-20 right-15">
+        <div className="absolute sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 xs:w-full xs:h-screen xs:border-0 sm:border-2 sm:rounded-3xl border-[#131719] max-w-700 max-h-650 bg-black xs:pt-40 sm:pt-10">
+          <div className="w-40 h-40 p-10 rounded-full bg-heavybunker text-primary flex justify-center items-center absolute xs:top-20 xs:right-10 sm:top-20 sm:right-25">
             <SvgIcon component={Close} onClick={handleModalClose} className="w-25 h-25" />
           </div>
           <div className="cursor-default">

@@ -1,7 +1,7 @@
 import Footer from "../../components/footer/footer";
 import TrendingMarket from "../../components/trending/trending-market";
 import { CryptoCurrency } from "../../core/types/types";
-import { BettingCryptoCurrencies } from "../../core/constants/basic";
+import { Betting_CryptoCurrencies } from "../../core/constants/basic";
 
 export const Markets = (): JSX.Element => {
   return (
@@ -22,7 +22,7 @@ export const Markets = (): JSX.Element => {
             <div className="xs:hidden sm:block"></div>
           </div>
           <div className="">
-            {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
+            {Betting_CryptoCurrencies.map((item: CryptoCurrency) => {
               return (
                 <TrendingMarket
                   sourceToken="DAI"
