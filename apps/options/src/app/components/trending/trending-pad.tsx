@@ -6,6 +6,7 @@ import { CryptoCurrency } from "../../core/types/types";
 export interface TrendingPadProps {
   sourceToken: string;
   underlyingToken: CryptoCurrency;
+  isJackpot?: boolean;
 }
 
 const TrendingPad = (props: TrendingPadProps) => {
