@@ -44,16 +44,21 @@ const NotificationMenu = () => {
     setFlagAccountDropDown(event.currentTarget);
   };
 
-  const handleSetting = () => {
-    console.log("Click setting;");
-  };
-
   return (
-    <div>
+    <div className="rounded-2xl">
       <Button
-        className="bg-woodsmoke rounded-2xl xs:hidden sm:block mr-10"
+        id="notification-menu-button"
+        aria-controls={flagAccountDropDown ? "notification-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={flagAccountDropDown ? "true" : undefined}
+        className="bg-woodsmoke hover:bg-bunker rounded-2xl xs:hidden sm:block mr-10"
         onClick={accountDrop}
-        sx={{ p: "10px", minWidth: "30px" }}
+        sx={{
+          p: "10px",
+          minWidth: "30px",
+          "& .Mui-focused": { backgroundColor: "#0E1415" },
+          "& .css-8je8zh-MuiTouchRipple-root": { display: "none" },
+        }}
       >
         <Badge
           badgeContent=""
@@ -65,46 +70,41 @@ const NotificationMenu = () => {
         </Badge>
       </Button>
       <Popover
-        id={"Account"}
+        id={"notification-menu"}
         open={Boolean(flagAccountDropDown)}
         anchorEl={flagAccountDropDown}
         onClose={() => setFlagAccountDropDown(null)}
         anchorOrigin={{
-          horizontal: "right",
+          horizontal: "center",
           vertical: "bottom",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "right",
+          horizontal: "center",
         }}
         className="accountDropdown mt-20"
+        disableScrollLock={true}
         sx={{
           "& .MuiPopover-paper": { backgroundColor: "#0B0F10", borderRadius: "25px" },
         }}
       >
-        <div className="pt-20 bg-woodsmoke text-primary xs:w-250 sm:w-420 cursor-default">
-          <div className="flex justify-between items-center px-20">
-            <h3 className="text-primary ">Notifications</h3>
-            <button
-              className="text-primary bg-[#0f1617] px-10 py-5 rounded-2xl"
-              onClick={handleSetting}
-            >
-              Settings
-            </button>
+        <div className="py-20 bg-woodsmoke text-primary sm:w-450 cursor-default shadow-3xl">
+          <div className="flex justify-between items-center px-20 pb-10">
+            <h3 className="text-primary text-19">Notifications</h3>
           </div>
-          <div className="notifications p-20 max-h-180 overflow-y-auto scrollbar-hide">
+          <div className="notifications px-20 max-h-180 overflow-y-auto scrollbar-hide">
             {notifications.map((item, index) => (
               <div className="notification flex items-center mb-10" key={index}>
                 <SvgIcon
                   component={NotificationsNone}
-                  className="text-35 text-primary rounded-full p-5 bg-[#0f1617] mr-10"
+                  className="text-35 text-primary rounded-full p-5 bg-[#0f1617] mr-10 w-40 h-40"
                 />
                 <div className="grow text-primary">
-                  <p className="xs:text-14">
+                  <p className="text-16 font-InterMedium">
                     {item.type[0].toUpperCase() + item.type.slice(1).toLowerCase()}
                     &nbsp;Alert
                   </p>
-                  <p className="xs:text-16">{item.description}</p>
+                  <p className="text-18">{item.description}</p>
                 </div>
               </div>
             ))}

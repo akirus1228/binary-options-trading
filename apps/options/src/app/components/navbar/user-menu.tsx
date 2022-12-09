@@ -14,7 +14,7 @@ export const UserMenu = (): JSX.Element => {
   return (
     <div
       className={`flex justify-end items-center p-5 
-        ${isWalletConnected && "border border-second rounded-2xl"} 
+        ${isWalletConnected && "border border-lightbunker rounded-2xl"} 
       `}
     >
       {isWalletConnected && (

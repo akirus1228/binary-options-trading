@@ -95,7 +95,7 @@ export function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen font-InterRegular">
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
