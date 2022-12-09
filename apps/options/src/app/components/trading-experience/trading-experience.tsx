@@ -5,10 +5,10 @@ const TradingExperience = () => {
   return (
     <div className="trading-experience bg-woodsmoke px-60 flex xs:flex-col sm:flex-row  sm:justify-between xs:items-center mt-90 rounded-2xl relative cursor-default">
       <div className="flex flex-col justify-between py-40">
-        <p className="experience-title xs:text-30 lg:text-40 text-primary w-300 leading-8">
+        <p className="experience-title text-40 text-primary w-300 leading-8">
           24 hour trading experience
         </p>
-        <p className="xs:text-19 lg:text-15 text-second mt-20 mb-40 w-230">
+        <p className="xs:text-19 lg:text-15 text-second xs:mt-30 sm:mt-20 mb-40 w-230">
           Trade anywhere, anytime
         </p>
         <Link to="/trade">
