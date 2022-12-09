@@ -171,7 +171,7 @@ const ConnectWallet = () => {
   ) : (
     <button
       onClick={onClickConnect}
-      className="px-30 py-10 bg-success rounded-2xl text-18 sm:font-bold"
+      className="px-30 py-10 bg-success rounded-2xl text-18 sm:font-bold text-primary"
     >
       Connect
     </button>
