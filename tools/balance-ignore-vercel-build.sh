@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## Name of the app to check. Change this to your application name!
-APP=nft-market
+APP=balance
 
 echo ">> Testing if should proceed with vercel build..."
 
