@@ -71,7 +71,7 @@ const Search = () => {
         <Input
           {...getInputProps()}
           placeholder="Search for a token"
-          className="outline-none border-0 bg-lightbunker text-primary ml-10"
+          className="outline-none border-0 bg-lightbunker text-primary ml-10 text-14"
         />
       </div>
       {isOpenList ? (
