@@ -79,22 +79,18 @@ export const EarnPool = (): JSX.Element => {
   }
 
   const PoolAction = () => (
-    <div
-      className={`w-full grid grid-cols-2 grid-rows-1 xs:text-20 md:text-16 cursor-default`}
-    >
+    <div className={`w-full grid grid-cols-2 grid-rows-1 cursor-default`}>
       <div
-        className={`flex justify-center rounded-lg py-10 px-20 bg-bunker text-second hover:text-primary  mr-10`}
+        className={`xs:py-15 sm:py-0 sm:w-125 sm:h-45 xl:w-140 flex justify-center items-center rounded-lg bg-bunker hover:bg-[#1C1E21]  text-16 hover:text-17 text-second hover:text-primary active:text-primary  mr-10`}
         onClick={handleDeposit}
       >
-        <SvgIcon component={AddRounded} />
-        <p className="ml-5">&nbsp;&nbsp;Deposit</p>
+        <p className="ml-5">+ Deposit</p>
       </div>
       <div
-        className={`flex justify-center  rounded-lg py-10 px-15 bg-bunker text-second hover:text-primary`}
+        className={`xs:py-15 sm:py-0 sm:w-125 sm:h-45 flex justify-center items-center rounded-lg bg-bunker hover:bg-[#1C1E21]  text-16 hover:text-17 text-second hover:text-primary active:text-primary`}
         onClick={handleWithdraw}
       >
-        <SvgIcon component={RemoveRounded} />
-        <p className="ml-5">&nbsp;Withdraw</p>
+        <p className="ml-5">- Withdraw</p>
       </div>
     </div>
   );
@@ -123,16 +119,21 @@ export const EarnPool = (): JSX.Element => {
           </div>
           <div className="w-full grid grid-cols-3 grid-rows-1 sm:gap-20 my-15">
             <div className="xs:rounded-l-2xl sm:rounded-2xl bg-bunker flex flex-col justify-center items-center py-15">
-              <p className="text-second text-16">Pool APR</p>
+              <p className="text-second xs:text-14 sm:text-16">Pool APR</p>
               <p className="text-primary text-18">30.00%</p>
             </div>
             <div className="sm:rounded-2xl bg-bunker flex flex-col justify-center items-center">
-              <p className="text-second text-16">Lock duration</p>
+              <p className="text-second xs:text-14 sm:text-16">Lock duration</p>
               <p className="text-primary text-18">24 hours</p>
             </div>
             <div className="xs:rounded-r-2xl sm:rounded-2xl bg-bunker flex flex-col justify-center items-center">
-              <p className="text-second text-16">Currencies</p>
-              <p className="text-primary text-18">$54,521.00</p>
+              <p className="text-second xs:text-14 sm:text-16">Currencies</p>
+              <LabelIcon
+                label="DAI"
+                icon={() => <img src={DAIImage} alt="DAI LOGO" />}
+                reverse
+                backgroundColor="bunker"
+              />
             </div>
           </div>
           <div className="grid xs:grid-cols-1 lg:grid-cols-2 xs:gap-30 lg:gap-100 text-14 mt-50">
