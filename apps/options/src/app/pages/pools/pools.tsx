@@ -1,3 +1,4 @@
+import Footer from "../../components/footer/footer";
 import { EarnPool } from "./components/earn-pool";
 import { About } from "./components/about";
 
@@ -8,6 +9,7 @@ const Pools = (): JSX.Element => {
         <EarnPool />
         <About />
       </div>
+      <Footer />
     </div>
   );
 };

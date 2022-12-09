@@ -174,16 +174,21 @@ export const EarnPool = (): JSX.Element => {
           </div>
         </div>
       </div>
-      <Modal open={isModalOpen} onClose={handleModalClose}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-heavybunker xs:w-full xs:h-screen xs:border-0 sm:border-2 rounded-3xl border-bunker max-w-700 max-h-650">
-          <div className="xs:flex sm:hidden justify-end p-10 text-primary">
-            <SvgIcon component={Close} onClick={handleModalClose} />
+      <Modal
+        open={isModalOpen}
+        onClose={handleModalClose}
+        disableScrollLock={true}
+        className="outline-none border-0"
+      >
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 xs:w-full xs:h-screen xs:border-0 sm:border-2 rounded-3xl border-[#131719] max-w-700 max-h-650 bg-black">
+          <div className="w-40 h-40 p-10 rounded-full bg-heavybunker text-primary flex justify-center items-center absolute top-20 right-15">
+            <SvgIcon component={Close} onClick={handleModalClose} className="w-25 h-25" />
           </div>
           <div className="cursor-default">
             <div className="w-full border-b-2 border-bunker xs:px-0 sm:px-50 pt-20 grid grid-cols-2 grid-rows-1 text-primary">
               <div
                 className={`xs:p-5 sm:p-20 text-center border-b-success ${
-                  isDeposit ? "border-b-2" : "border-b-0"
+                  isDeposit ? "border-b-2 text-primary" : "border-b-0 text-second"
                 } xs:text-20 sm:text-30`}
                 onClick={() => setDeposit(true)}
               >
@@ -191,7 +196,7 @@ export const EarnPool = (): JSX.Element => {
               </div>
               <div
                 className={`xs:p-5 sm:p-20 text-center border-b-success ${
-                  !isDeposit ? "border-b-2" : "border-b-0"
+                  !isDeposit ? "border-b-2 text-primary" : "border-b-0 text-second"
                 } xs:text-20 sm:text-30`}
                 onClick={() => setDeposit(false)}
               >
@@ -205,9 +210,9 @@ export const EarnPool = (): JSX.Element => {
               >
                 <label
                   htmlFor="wallet"
-                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-heavybunker px-15"
+                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-black px-15"
                 >
-                  My wallet
+                  {isDeposit ? "My wallet" : "My position"}
                 </label>
                 <div className="px-35 py-20">
                   <div className="pb-20 flex items-center justify-between border-b-2 border-bunker">
@@ -260,9 +265,9 @@ export const EarnPool = (): JSX.Element => {
               >
                 <label
                   htmlFor="estimated-yield"
-                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-heavybunker px-15"
+                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-black px-15"
                 >
-                  Estimated Yield
+                  {isDeposit ? "Estimated Yield" : "Claimable rewards"}
                 </label>
                 <div className="px-35 py-20">
                   <div className="pb-20 flex items-center justify-between border-b-2 border-bunker">
