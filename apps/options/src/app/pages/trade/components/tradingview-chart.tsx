@@ -7,7 +7,7 @@ import { BettingCurrencyDropdown } from "../../../components/dropdown/betting-cu
 import { SymbolDescription } from "../../../components/symbol-description/symbol-description";
 import { DateRage } from "../../../components/date-rage/date-rage";
 import { financialFormatter } from "../../../helpers/data-translations";
-import { BettingCryptoCurrencies } from "../../../core/constants/basic";
+import { Betting_CryptoCurrencies } from "../../../core/constants/basic";
 import { TVChartContainer } from "../../../components/tvchart/tvchart";
 import { ResolutionString } from "../../../../assets/tradingview_library/charting_library";
 
@@ -19,7 +19,7 @@ const mockupData = {
 
 const TradingViewChart = () => (
   <div className="w-full h-full flex flex-col relative">
-    <BettingCurrencyDropdown bettingCurrencies={BettingCryptoCurrencies} />
+    <BettingCurrencyDropdown bettingCurrencies={Betting_CryptoCurrencies} />
     <div className="absolute bottom-30 right-1/2 z-10 translate-x-1/2">
       <CountTimer countdown={5 * 60 * 1000} />
     </div>

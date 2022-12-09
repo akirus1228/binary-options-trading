@@ -1,4 +1,4 @@
-import { TimeframeEnum } from "../constants/basic";
+import { Timeframes } from "../constants/tradingview";
 
 export type NavItemProp = {
   title: string;
@@ -32,5 +32,5 @@ export interface HistoryProps {
   close: number | undefined;
   time: Date;
   expiration: Date;
-  timer: TimeframeEnum | undefined;
+  timer: Timeframes | undefined;
 }

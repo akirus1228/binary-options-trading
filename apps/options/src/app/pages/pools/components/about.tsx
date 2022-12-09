@@ -26,7 +26,7 @@ export const About = (): JSX.Element => {
   };
 
   return (
-    <div className="text-primary md:rounded-3xl border-bunker border-2">
+    <div className="text-primary md:rounded-3xl border-bunker border-2 xs:hidden sm:block">
       <div className="flex justify-between items-center border-b-2 border-bunker  xs:px-10 xl:px-40 py-30">
         <p className="text-30">About</p>
       </div>

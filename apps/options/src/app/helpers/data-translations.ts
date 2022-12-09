@@ -1,4 +1,4 @@
-import { TimeframeEnum } from "../core/constants/basic";
+import { Timeframes } from "../core/constants/tradingview";
 
 export const convertTime = (props: Date): { time: string; date: string } => {
   const time = `${props.getHours()}:${props.getMinutes()}:${props.getSeconds()}`;
@@ -20,7 +20,7 @@ export const numberWithCommas = (x: number) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-export const convertTimeString = (e: TimeframeEnum) => {
+export const convertTimeString = (e: Timeframes) => {
   let timeType: any;
   if (e < 10) timeType = "00:0" + e.toString() + ":00";
   else timeType = "00:" + e.toString() + ":00";

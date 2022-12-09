@@ -1,5 +1,5 @@
 import { SvgIcon, Box, Modal, Typography, TextField } from "@mui/material";
-import { NorthEastRounded, AddRounded, RemoveRounded, Close } from "@mui/icons-material";
+import { NorthEastRounded, Close } from "@mui/icons-material";
 import LinearProgress, {
   linearProgressClasses,
   LinearProgressProps,
@@ -79,22 +79,18 @@ export const EarnPool = (): JSX.Element => {
   }
 
   const PoolAction = () => (
-    <div
-      className={`w-full grid grid-cols-2 grid-rows-1 xs:text-20 md:text-16 cursor-default`}
-    >
+    <div className={`w-full grid grid-cols-2 grid-rows-1 cursor-default`}>
       <div
-        className={`flex justify-center rounded-lg py-10 px-20 bg-bunker text-second hover:text-primary  mr-10`}
+        className={`xs:py-15 sm:py-0 sm:w-125 sm:h-45 xl:w-140 flex justify-center items-center rounded-lg bg-bunker hover:bg-[#1C1E21]  text-16 hover:text-17 text-second hover:text-primary active:text-primary  mr-10`}
         onClick={handleDeposit}
       >
-        <SvgIcon component={AddRounded} />
-        <p className="ml-5">&nbsp;&nbsp;Deposit</p>
+        <p className="ml-5">+ Deposit</p>
       </div>
       <div
-        className={`flex justify-center  rounded-lg py-10 px-15 bg-bunker text-second hover:text-primary`}
+        className={`xs:py-15 sm:py-0 sm:w-125 sm:h-45 flex justify-center items-center rounded-lg bg-bunker hover:bg-[#1C1E21]  text-16 hover:text-17 text-second hover:text-primary active:text-primary`}
         onClick={handleWithdraw}
       >
-        <SvgIcon component={RemoveRounded} />
-        <p className="ml-5">&nbsp;Withdraw</p>
+        <p className="ml-5">- Withdraw</p>
       </div>
     </div>
   );
@@ -123,16 +119,21 @@ export const EarnPool = (): JSX.Element => {
           </div>
           <div className="w-full grid grid-cols-3 grid-rows-1 sm:gap-20 my-15">
             <div className="xs:rounded-l-2xl sm:rounded-2xl bg-bunker flex flex-col justify-center items-center py-15">
-              <p className="text-second text-16">Pool APR</p>
+              <p className="text-second xs:text-14 sm:text-16">Pool APR</p>
               <p className="text-primary text-18">30.00%</p>
             </div>
             <div className="sm:rounded-2xl bg-bunker flex flex-col justify-center items-center">
-              <p className="text-second text-16">Lock duration</p>
+              <p className="text-second xs:text-14 sm:text-16">Lock duration</p>
               <p className="text-primary text-18">24 hours</p>
             </div>
             <div className="xs:rounded-r-2xl sm:rounded-2xl bg-bunker flex flex-col justify-center items-center">
-              <p className="text-second text-16">Currencies</p>
-              <p className="text-primary text-18">$54,521.00</p>
+              <p className="text-second xs:text-14 sm:text-16">Currencies</p>
+              <LabelIcon
+                label="DAI"
+                icon={() => <img src={DAIImage} alt="DAI LOGO" />}
+                reverse
+                backgroundColor="bunker"
+              />
             </div>
           </div>
           <div className="grid xs:grid-cols-1 lg:grid-cols-2 xs:gap-30 lg:gap-100 text-14 mt-50">
@@ -173,16 +174,21 @@ export const EarnPool = (): JSX.Element => {
           </div>
         </div>
       </div>
-      <Modal open={isModalOpen} onClose={handleModalClose}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-heavybunker xs:w-full xs:h-screen xs:border-0 sm:border-2 rounded-3xl border-bunker max-w-700 max-h-650">
-          <div className="xs:flex sm:hidden justify-end p-10 text-primary">
-            <SvgIcon component={Close} onClick={handleModalClose} />
+      <Modal
+        open={isModalOpen}
+        onClose={handleModalClose}
+        disableScrollLock={true}
+        className="outline-none border-0"
+      >
+        <div className="absolute sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 xs:w-full xs:h-screen xs:border-0 sm:border-2 sm:rounded-3xl border-[#131719] max-w-700 max-h-650 bg-black xs:pt-40 sm:pt-10">
+          <div className="w-40 h-40 p-10 rounded-full bg-heavybunker text-primary flex justify-center items-center absolute xs:top-20 xs:right-10 sm:top-20 sm:right-25">
+            <SvgIcon component={Close} onClick={handleModalClose} className="w-25 h-25" />
           </div>
           <div className="cursor-default">
             <div className="w-full border-b-2 border-bunker xs:px-0 sm:px-50 pt-20 grid grid-cols-2 grid-rows-1 text-primary">
               <div
                 className={`xs:p-5 sm:p-20 text-center border-b-success ${
-                  isDeposit ? "border-b-2" : "border-b-0"
+                  isDeposit ? "border-b-2 text-primary" : "border-b-0 text-second"
                 } xs:text-20 sm:text-30`}
                 onClick={() => setDeposit(true)}
               >
@@ -190,7 +196,7 @@ export const EarnPool = (): JSX.Element => {
               </div>
               <div
                 className={`xs:p-5 sm:p-20 text-center border-b-success ${
-                  !isDeposit ? "border-b-2" : "border-b-0"
+                  !isDeposit ? "border-b-2 text-primary" : "border-b-0 text-second"
                 } xs:text-20 sm:text-30`}
                 onClick={() => setDeposit(false)}
               >
@@ -204,9 +210,9 @@ export const EarnPool = (): JSX.Element => {
               >
                 <label
                   htmlFor="wallet"
-                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-heavybunker px-15"
+                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-black px-15"
                 >
-                  My wallet
+                  {isDeposit ? "My wallet" : "My position"}
                 </label>
                 <div className="px-35 py-20">
                   <div className="pb-20 flex items-center justify-between border-b-2 border-bunker">
@@ -259,9 +265,9 @@ export const EarnPool = (): JSX.Element => {
               >
                 <label
                   htmlFor="estimated-yield"
-                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-heavybunker px-15"
+                  className="absolute translate-x-20 -translate-y-1/2 text-16 text-second bg-black px-15"
                 >
-                  Estimated Yield
+                  {isDeposit ? "Estimated Yield" : "Claimable rewards"}
                 </label>
                 <div className="px-35 py-20">
                   <div className="pb-20 flex items-center justify-between border-b-2 border-bunker">

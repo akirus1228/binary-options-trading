@@ -3,7 +3,7 @@ import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
 
 import { RootState } from "../index";
 import { CryptoCurrency } from "../../core/types/types";
-import { BettingCryptoCurrencies } from "../../core/constants/basic";
+import { Betting_CryptoCurrencies } from "../../core/constants/basic";
 
 interface AppData {
   readonly loading: boolean;
@@ -16,7 +16,7 @@ const initialState: AppData = {
   ...previousState,
   loading: true,
   checkedConnection: false,
-  underlyingToken: BettingCryptoCurrencies[0],
+  underlyingToken: Betting_CryptoCurrencies[0],
 };
 
 const appSlice = createSlice({

@@ -9,7 +9,10 @@ import DemoAccount from "../../components/demo-account/demo-account";
 import TradingCommunity from "../../components/trading-community/trading-community";
 import Footer from "../../components/footer/footer";
 import { CryptoCurrency } from "../../core/types/types";
-import { BettingCryptoCurrencies, responsive } from "../../core/constants/basic";
+import {
+  Betting_CryptoCurrencies,
+  Carousal_Responsive_Form,
+} from "../../core/constants/basic";
 
 export const HomePage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -43,10 +46,10 @@ export const HomePage = (): JSX.Element => {
           <Carousel
             className="xs:pt-50 md:pt-80 xl:pt-120"
             partialVisible={true}
-            responsive={responsive}
+            responsive={Carousal_Responsive_Form}
             arrows={false}
           >
-            {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
+            {Betting_CryptoCurrencies.map((item: CryptoCurrency) => {
               return (
                 <TrendingPad sourceToken="DAI" underlyingToken={item} key={item.symbol} />
               );
@@ -66,7 +69,7 @@ export const HomePage = (): JSX.Element => {
           <div className="col-span-2 xs:hidden lg:block">24h chart</div>
           <div className="xs:hidden sm:block"></div>
         </div>
-        {BettingCryptoCurrencies.map((item: CryptoCurrency) => {
+        {Betting_CryptoCurrencies.map((item: CryptoCurrency) => {
           return (
             <TrendingMarket
               sourceToken="DAI"
