@@ -3,7 +3,7 @@
 ## Name of the app to check. Change this to your application name!
 APP=nft-market
 ## All applications which are searching in affected files
-ALL_APPS=(balance nft-market usdb)
+ALL_APPS=(balance nft-market options usdb)
 
 echo ">> Testing if should proceed with vercel build for app: $APP..."
 
