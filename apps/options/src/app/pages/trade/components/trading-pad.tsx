@@ -14,32 +14,50 @@ import {
   useErc20Balance,
 } from "@fantohm/shared-web3";
 import { ethers } from "ethers";
+import { useSelector } from "react-redux";
 import { useState, useMemo, MouseEvent, useEffect } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
 import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown";
+import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
+import ConfirmTradePopup from "../../../components/pop-up/confirm-trade";
+import { financialFormatter } from "../../../helpers/data-translations";
 import { UnderlyingAssets } from "../../../core/constants/basic";
 import { Timeframes } from "../../../core/constants/tradingview";
 import { Platform_Fee, RewardAmount_Percent } from "../../../core/constants/marketing";
-import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
-import { financialFormatter } from "../../../helpers/data-translations";
-import { desiredNetworkId } from "../../../core/constants/network";
-import ConfirmTradePopup from "../../../components/pop-up/confirm-trade";
+import { BINARY_ADDRESSES, desiredNetworkId } from "../../../core/constants/network";
+import { RootState } from "../../../store";
+import { MarketManagerData } from "../../../store/reducers/markets-slice";
+import BinaryMarketABI from "../../../core/abi/BinaryMarketABI.json";
 
 const TradingPad = () => {
-  const { connect, address, connected, chainId } = useWeb3Context();
+  const { connect, address, connected, chainId, provider } = useWeb3Context();
 
+  const markets: MarketManagerData = useSelector((state: RootState) => state.markets);
   const [timeframe, setTimeFrame] = useState(Timeframes.ONE);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
   const [direction, setDirection] = useState<"Up" | "Down">("Up");
   const [currency, setCurrency] = useState<CurrencyDetails>(currencyInfo["DAI_ADDRESS"]);
   const [isOpen, setOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(true);
+  const [marketContract, setMarketContract] = useState<any>();
 
   const { balance: currencyBalance } = useErc20Balance(
-    networks[desiredNetworkId].addresses["DAI_ADDRESS"],
+    BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS,
     address
   );
+
+  useEffect(() => {
+    if (markets.isLoading === "ready" && provider) {
+      const targetMarket = markets.markets[0];
+      const targetMarketContract = new ethers.Contract(
+        targetMarket.market,
+        BinaryMarketABI,
+        provider.getSigner()
+      );
+      setMarketContract(targetMarketContract);
+    }
+  }, [provider, chainId, address]);
 
   const isWalletConnected = useMemo(() => {
     return address && connected && chainId === desiredNetworkId;
@@ -64,7 +82,17 @@ const TradingPad = () => {
 
   const handleUp = async () => {
     setDirection("Up");
-    setOpen(true);
+    if (localStorage.getItem("hide") === "true") setOpen(true);
+    else {
+      console.log("timeframe", timeframe, typeof timeframe);
+      if (marketContract) {
+        await marketContract["openPosition"](
+          ethers.utils.parseEther(tokenAmount),
+          0,
+          direction === "Up" ? "0" : "1"
+        );
+      }
+    }
   };
 
   const handleDown = () => {

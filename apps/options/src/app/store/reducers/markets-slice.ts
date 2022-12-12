@@ -12,7 +12,7 @@ import { MarketData } from "../../core/types/market.types";
 import { desiredNetworkId, BINARY_ADDRESSES } from "../../core/constants/network";
 import BinaryMarketManagerABI from "../../core/abi/BinaryMarketManagerABI.json";
 
-interface MarketManagerData {
+export interface MarketManagerData {
   readonly isLoading: "unknown" | "pending" | "ready" | "failed";
   markets: MarketData[];
 }
