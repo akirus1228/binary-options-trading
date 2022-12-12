@@ -62,7 +62,7 @@ const TradingPad = () => {
     //TODO: handleSetting
   };
 
-  const handleUp = () => {
+  const handleUp = async () => {
     setDirection("Up");
     setOpen(true);
   };
@@ -85,7 +85,7 @@ const TradingPad = () => {
 
   return (
     <>
-      <div className="w-full bg-woodsmoke rounded-3xl xs:px-10 xs:py-10 sm:py-20 md:py-30 sm:px-35 md:px-15 lg:px-35 text-second max-w-500">
+      <div className="w-full bg-woodsmoke rounded-3xl xs:px-10 sm:px-35 md:px-15 lg:px-35 xs:py-10 sm:py-20 md:py-30 text-second max-w-500">
         <div className="trade-header flex justify-between items-center text-22 text-primary mb-25">
           <p>Trade</p>
           <SvgIcon

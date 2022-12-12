@@ -12,6 +12,7 @@ import Navbar from "./components/navbar/navbar";
 import { DebugHelper } from "@fantohm/shared-helpers";
 import { setCheckedConnection } from "./store/reducers/app-slice";
 import { loadMessages } from "./store/reducers/chat-slice";
+import { loadMarkets, MarketsAsyncThunk } from "./store/reducers/markets-slice";
 import { desiredNetworkId } from "./core/constants/network";
 
 export function App() {
@@ -73,6 +74,12 @@ export function App() {
   useEffect(() => {
     dispatch(loadMessages());
   }, []);
+
+  useEffect(() => {
+    if (provider) {
+      dispatch(loadMarkets({ provider }));
+    }
+  }, [provider]);
 
   // User has switched back to the tab
   const onFocus = () => {

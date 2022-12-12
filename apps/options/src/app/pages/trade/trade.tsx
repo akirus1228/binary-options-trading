@@ -25,7 +25,7 @@ const Trade = () => {
   }, [params]);
 
   return (
-    <div className="grow w-full bg-heavybunker xs:px-10 sm:px-20 md:px-40 lg:px-70 xs:py-20 md:py-55 grid xs:grid-cols-1 md:grid-cols-5 xs:gap-10 md:gap-30">
+    <div className="grow w-full bg-heavybunker xs:px-10 sm:px-20 md:px-40 lg:px-70 xs:py-90 md:py-145 grid xs:grid-cols-1 md:grid-cols-5 xs:gap-10 md:gap-30">
       <div className="md:col-span-3">
         <TradingViewChart />
       </div>
