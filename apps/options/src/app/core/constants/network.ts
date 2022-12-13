@@ -3,8 +3,8 @@ import { isDev, NetworkIds } from "@fantohm/shared-web3";
 export const desiredNetworkId = isDev ? NetworkIds.Goerli : NetworkIds.Ethereum;
 export const BINARY_ADDRESSES = {
   [NetworkIds.Goerli]: {
-    MARKET_MANAGER_ADDRESS: "0x2a0f5C3b3F5E8732eeDdB1E2D92dBe8FAEcb00aA",
-    MARKET_VAULT_ADDRESS: "0x837fc1E2aAd3800193b6FcFb8f6231d37d0ACF15",
+    MARKET_MANAGER_ADDRESS: "0xa05bBD029081D74d753b11FE824e6736Fc970E12",
+    MARKET_VAULT_ADDRESS: "0xF89F92c4Ff4344662c34319c0Cdf36F237F02E55",
     DAI_ADDRESS: "0x5Ad048cf68111b81780b0284582C99Cd581ede9e",
   },
   [NetworkIds.Ethereum]: {

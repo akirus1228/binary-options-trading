@@ -32,6 +32,11 @@
             "internalType": "uint256",
             "name": "intervalBlocks",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bufferBlocks",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IBinaryMarket.TimeFrame[]",
@@ -328,25 +333,6 @@
       }
     ],
     "name": "Unpaused",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "oldVault",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newVault",
-        "type": "address"
-      }
-    ],
-    "name": "VaultChanged",
     "type": "event"
   },
   {
@@ -931,6 +917,11 @@
             "internalType": "uint256",
             "name": "intervalBlocks",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bufferBlocks",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IBinaryMarket.TimeFrame[]",
@@ -939,19 +930,6 @@
       }
     ],
     "name": "setTimeframes",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IBinaryVault",
-        "name": "vault_",
-        "type": "address"
-      }
-    ],
-    "name": "setVault",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -979,6 +957,11 @@
       {
         "internalType": "uint256",
         "name": "intervalBlocks",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bufferBlocks",
         "type": "uint256"
       }
     ],

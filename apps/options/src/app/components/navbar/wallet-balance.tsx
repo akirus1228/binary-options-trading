@@ -1,14 +1,9 @@
-import {
-  currencyInfo,
-  loadErc20Balance,
-  networks,
-  useWeb3Context,
-} from "@fantohm/shared-web3";
+import { currencyInfo, loadErc20Balance, useWeb3Context } from "@fantohm/shared-web3";
 import Skeleton from "@mui/material/Skeleton";
 import { ethers } from "ethers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { desiredNetworkId } from "../../core/constants/network";
+import { desiredNetworkId, BINARY_ADDRESSES } from "../../core/constants/network";
 
 import { RootState } from "../../store";
 
@@ -16,7 +11,7 @@ const WalletBalance = () => {
   const dispatch = useDispatch();
   const { address } = useWeb3Context();
   const { erc20Balance } = useSelector((state: RootState) => state.wallet);
-  const DAIAddress = networks[desiredNetworkId].addresses["DAI_ADDRESS"];
+  const DAIAddress = BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS;
 
   useEffect(() => {
     if (!address) return;

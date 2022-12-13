@@ -8,12 +8,11 @@ import {
   isDev,
   NetworkIds,
   useWeb3Context,
-  networks,
   currencyInfo,
   CurrencyDetails,
   useErc20Balance,
 } from "@fantohm/shared-web3";
-import { ethers } from "ethers";
+import { ethers, Contract } from "ethers";
 import { useSelector } from "react-redux";
 import { useState, useMemo, MouseEvent, useEffect } from "react";
 
@@ -23,7 +22,7 @@ import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdo
 import ConfirmTradePopup from "../../../components/pop-up/confirm-trade";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { UnderlyingAssets } from "../../../core/constants/basic";
-import { Timeframes } from "../../../core/constants/tradingview";
+import { timeframes } from "../../../core/constants/tradingview";
 import { Platform_Fee, RewardAmount_Percent } from "../../../core/constants/marketing";
 import { BINARY_ADDRESSES, desiredNetworkId } from "../../../core/constants/network";
 import { RootState } from "../../../store";
@@ -34,13 +33,13 @@ const TradingPad = () => {
   const { connect, address, connected, chainId, provider } = useWeb3Context();
 
   const markets: MarketManagerData = useSelector((state: RootState) => state.markets);
-  const [timeframe, setTimeFrame] = useState(Timeframes.ONE);
+  const [timeframe, setTimeFrame] = useState(timeframes[0]);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
   const [direction, setDirection] = useState<"Up" | "Down">("Up");
   const [currency, setCurrency] = useState<CurrencyDetails>(currencyInfo["DAI_ADDRESS"]);
   const [isOpen, setOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(true);
-  const [marketContract, setMarketContract] = useState<any>();
+  const [marketContract, setMarketContract] = useState<Contract>();
 
   const { balance: currencyBalance } = useErc20Balance(
     BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS,
@@ -48,6 +47,7 @@ const TradingPad = () => {
   );
 
   useEffect(() => {
+    console.log(markets);
     if (markets.isLoading === "ready" && provider) {
       const targetMarket = markets.markets[0];
       const targetMarketContract = new ethers.Contract(
@@ -57,7 +57,7 @@ const TradingPad = () => {
       );
       setMarketContract(targetMarketContract);
     }
-  }, [provider, chainId, address]);
+  }, [provider, chainId, address, markets.isLoading]);
 
   const isWalletConnected = useMemo(() => {
     return address && connected && chainId === desiredNetworkId;
@@ -80,12 +80,14 @@ const TradingPad = () => {
     //TODO: handleSetting
   };
 
-  const handleUp = async () => {
-    setDirection("Up");
+  const handleBetting = async (bettingDirection: "Up" | "Down") => {
+    setDirection(bettingDirection);
+    console.log("direction: ", direction);
     if (localStorage.getItem("hide") === "true") setOpen(true);
     else {
-      console.log("timeframe", timeframe, typeof timeframe);
+      console.log("asdf");
       if (marketContract) {
+        console.log("marketContract: ", marketContract);
         await marketContract["openPosition"](
           ethers.utils.parseEther(tokenAmount),
           0,
@@ -93,11 +95,6 @@ const TradingPad = () => {
         );
       }
     }
-  };
-
-  const handleDown = () => {
-    setDirection("Down");
-    setOpen(true);
   };
 
   const handleClose = (isOpen: boolean) => {
@@ -218,19 +215,19 @@ const TradingPad = () => {
             <div className="action text-white text-center xs:text-20 sm:text-26 cursor-default">
               <div
                 className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
-                onClick={handleUp}
+                onClick={() => handleBetting("Up")}
               >
                 UP
               </div>
               <div
                 className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
-                onClick={handleDown}
+                onClick={() => handleBetting("Down")}
               >
                 DOWN
               </div>
             </div>
           ) : (
-            <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24 cursor-default">
+            <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24">
               Insufficient balance
             </div>
           )

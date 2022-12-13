@@ -7,22 +7,20 @@ import {
 import { useState, MouseEvent, Dispatch, SetStateAction } from "react";
 
 import { LabelIcon } from "../label-icon/label-icon";
-import { Timeframes } from "../../core/constants/tradingview";
+import { timeframes } from "../../core/constants/tradingview";
 
 interface TimeframeDropdownProps {
-  timeframe: Timeframes;
-  setTimeframe: Dispatch<SetStateAction<Timeframes>>;
+  timeframe: number;
+  setTimeframe: Dispatch<SetStateAction<number>>;
 }
-
-const timeframes: Timeframes[] = [Timeframes.ONE, Timeframes.FIVE, Timeframes.FIFTEEN];
 
 export const TimeframeDropdown = (props: TimeframeDropdownProps) => {
   const { timeframe, setTimeframe } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState<boolean>(false);
 
-  const convertTimeString = (e: Timeframes) => {
-    let timeType: any;
+  const convertTimeString = (e: number) => {
+    let timeType: string;
     if (e < 10) timeType = "0:0" + e.toString() + ":00";
     else timeType = "0:" + e.toString() + ":00";
     return timeType;
@@ -37,7 +35,7 @@ export const TimeframeDropdown = (props: TimeframeDropdownProps) => {
     setOpen(!open);
   };
 
-  const handleMenuItemClick = (timeframe: Timeframes) => {
+  const handleMenuItemClick = (timeframe: number) => {
     setAnchorEl(null);
     setOpen(!open);
     setTimeframe(timeframe);
@@ -85,7 +83,7 @@ export const TimeframeDropdown = (props: TimeframeDropdownProps) => {
           },
         }}
       >
-        {timeframes.map((timeframe: Timeframes, index) => (
+        {timeframes.map((timeframe: number, index) => (
           <MenuItem onClick={() => handleMenuItemClick(timeframe)} key={index}>
             <p className="text-primary">{timeframe}&nbsp;m</p>
           </MenuItem>

@@ -39,9 +39,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "bufferBlocks",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "pairName",
+        "type": "string"
       },
       {
         "indexed": false,
@@ -100,6 +100,11 @@
         "type": "address"
       },
       {
+        "internalType": "string",
+        "name": "pairName",
+        "type": "string"
+      },
+      {
         "internalType": "bool",
         "name": "enable",
         "type": "bool"
@@ -126,9 +131,9 @@
         "type": "string"
       },
       {
-        "internalType": "uint256",
-        "name": "bufferBlocks_",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "pairName_",
+        "type": "string"
       },
       {
         "components": [
@@ -143,9 +148,14 @@
             "type": "uint256"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint256",
             "name": "intervalBlocks",
-            "type": "uint16"
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bufferBlocks",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IBinaryMarket.TimeFrame[]",
@@ -171,6 +181,25 @@
     "name": "createMarket",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "pairName",
+        "type": "string"
+      }
+    ],
+    "name": "getMarketByPairName",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

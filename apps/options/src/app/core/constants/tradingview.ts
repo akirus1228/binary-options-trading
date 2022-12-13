@@ -24,3 +24,5 @@ export enum Timeframes {
   FIVE = 5,
   FIFTEEN = 15,
 }
+
+export const timeframes = [1, 5, 15];
