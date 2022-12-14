@@ -31,7 +31,7 @@ export const Linear = ({
     return () => clearInterval(newTimer);
   }, []);
 
-  return <LinearProgress variant="determinate" value={progress} />;
+  return <LinearProgress variant="determinate" value={progress} className="w-full" />;
 };
 
 export const Growl = (): JSX.Element => {
@@ -55,20 +55,9 @@ export const Growl = (): JSX.Element => {
             icon={false}
             severity={growlNotification.severity as GrowlColor}
             onClose={() => handleClose(growlNotification)}
-            style={{
-              wordBreak: "break-word",
-              borderRadius: "10px",
-              backgroundColor: "#000000",
-            }}
+            className="bg-black rounded-[10px] break-words min-w-250"
           >
-            <div
-              style={{
-                height: "30px",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
+            <div className="w-full h-30 flex items-center justify-start">
               <img
                 src={
                   growlNotification.severity === "error" ||
@@ -82,11 +71,11 @@ export const Growl = (): JSX.Element => {
                     ? "Icon showing red X"
                     : "Icon showing green checkbox"
                 }
-                style={{ width: "30px", height: "30px", marginRight: "10px" }}
+                className="w-30 h-30 mr-10"
               />
 
               <AlertTitle
-                style={{
+                sx={{
                   height: "100%",
                   fontWeight: "700",
                   fontSize: "16px",
@@ -96,8 +85,8 @@ export const Growl = (): JSX.Element => {
                 {growlNotification.title}
               </AlertTitle>
             </div>
-            <div style={{ marginTop: "10px" }}>
-              {growlNotification.message}
+            <div className="mt-10 w-full">
+              <p className="w-full">{growlNotification.message}</p>
               <Linear growlNotification={growlNotification} />
             </div>
           </Alert>

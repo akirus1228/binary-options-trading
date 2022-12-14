@@ -4,6 +4,7 @@ import { appReducer } from "./reducers/app-slice";
 import { chatReducer } from "./reducers/chat-slice";
 import { accountReducer, saveState, walletReducer } from "@fantohm/shared-web3";
 import { marketsReducer } from "./reducers/markets-slice";
+import { vaultsReducer } from "./reducers/vaults-slice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     account: accountReducer,
     chat: chatReducer,
     markets: marketsReducer,
+    vaults: vaultsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
@@ -23,6 +25,7 @@ store.subscribe(() => {
   saveState("account", store.getState().account);
   saveState("chat", store.getState().chat);
   saveState("markets", store.getState().markets);
+  saveState("vaults", store.getState().vaults);
 });
 
 const accountInfo = (state: RootState) => state.account;

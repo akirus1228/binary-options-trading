@@ -13,7 +13,7 @@ import {
   useErc20Balance,
 } from "@fantohm/shared-web3";
 import { ethers, Contract } from "ethers";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useMemo, MouseEvent, useEffect } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
@@ -23,16 +23,25 @@ import ConfirmTradePopup from "../../../components/pop-up/confirm-trade";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { UnderlyingAssets } from "../../../core/constants/basic";
 import { timeframes } from "../../../core/constants/tradingview";
-import { Platform_Fee, RewardAmount_Percent } from "../../../core/constants/marketing";
+import {
+  MiniumBettingAmount,
+  Platform_Fee,
+  RewardAmount_Percent,
+} from "../../../core/constants/marketing";
 import { BINARY_ADDRESSES, desiredNetworkId } from "../../../core/constants/network";
 import { RootState } from "../../../store";
+import { addAlert } from "../../../store/reducers/app-slice";
 import { MarketManagerData } from "../../../store/reducers/markets-slice";
+import { VaultManagerData } from "../../../store/reducers/vaults-slice";
 import BinaryMarketABI from "../../../core/abi/BinaryMarketABI.json";
+import MockDAI from "../../../core/abi/MockDAI.json";
 
 const TradingPad = () => {
+  const dispatch = useDispatch();
   const { connect, address, connected, chainId, provider } = useWeb3Context();
 
   const markets: MarketManagerData = useSelector((state: RootState) => state.markets);
+  const vaults: VaultManagerData = useSelector((state: RootState) => state.vaults);
   const [timeframe, setTimeFrame] = useState(timeframes[0]);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
   const [direction, setDirection] = useState<"Up" | "Down">("Up");
@@ -40,6 +49,7 @@ const TradingPad = () => {
   const [isOpen, setOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(true);
   const [marketContract, setMarketContract] = useState<Contract>();
+  const [vaultAddress, setVaultAddress] = useState("");
 
   const { balance: currencyBalance } = useErc20Balance(
     BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS,
@@ -47,7 +57,6 @@ const TradingPad = () => {
   );
 
   useEffect(() => {
-    console.log(markets);
     if (markets.isLoading === "ready" && provider) {
       const targetMarket = markets.markets[0];
       const targetMarketContract = new ethers.Contract(
@@ -58,6 +67,13 @@ const TradingPad = () => {
       setMarketContract(targetMarketContract);
     }
   }, [provider, chainId, address, markets.isLoading]);
+
+  useEffect(() => {
+    if (vaults.isLoading === "ready" && provider) {
+      const targetVault = vaults.vaults[0];
+      setVaultAddress(targetVault.vault);
+    }
+  }, [provider, chainId, address, vaults.isLoading]);
 
   const isWalletConnected = useMemo(() => {
     return address && connected && chainId === desiredNetworkId;
@@ -81,13 +97,20 @@ const TradingPad = () => {
   };
 
   const handleBetting = async (bettingDirection: "Up" | "Down") => {
+    if (Number(tokenAmount) < MiniumBettingAmount) {
+      dispatch(addAlert({ message: "Amount is zero!", severity: "error" }));
+      return;
+    }
     setDirection(bettingDirection);
-    console.log("direction: ", direction);
     if (localStorage.getItem("hide") === "true") setOpen(true);
     else {
-      console.log("asdf");
-      if (marketContract) {
+      if (marketContract && provider) {
         console.log("marketContract: ", marketContract);
+        const daiContract = new ethers.Contract(
+          BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS,
+          MockDAI,
+          provider.getSigner()
+        );
         await marketContract["openPosition"](
           ethers.utils.parseEther(tokenAmount),
           0,

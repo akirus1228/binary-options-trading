@@ -1,4 +1,5 @@
 import { useWeb3Context, isDev, NetworkIds } from "@fantohm/shared-web3";
+import { DebugHelper } from "@fantohm/shared-helpers";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -9,11 +10,12 @@ import Leaderboard from "./pages/leaderboard/leaderboard";
 import Pools from "./pages/pools/pools";
 import Trade from "./pages/trade/trade";
 import Navbar from "./components/navbar/navbar";
-import { DebugHelper } from "@fantohm/shared-helpers";
+import Growl from "./components/growl/growl";
 import { setCheckedConnection } from "./store/reducers/app-slice";
 import { loadMessages } from "./store/reducers/chat-slice";
-import { loadMarkets, MarketsAsyncThunk } from "./store/reducers/markets-slice";
-import { desiredNetworkId } from "./core/constants/network";
+import { loadMarkets } from "./store/reducers/markets-slice";
+import { loadVault } from "./store/reducers/vaults-slice";
+import { BINARY_ADDRESSES, desiredNetworkId } from "./core/constants/network";
 
 export function App() {
   const dispatch = useDispatch();
@@ -76,8 +78,10 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    const underlyingTokenAddress = BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS;
     if (provider) {
       dispatch(loadMarkets({ provider }));
+      dispatch(loadVault({ provider, underlyingTokenAddress }));
     }
   }, [provider]);
 
@@ -104,6 +108,7 @@ export function App() {
   return (
     <div className="flex flex-col h-screen font-InterRegular">
       <Navbar />
+      <Growl />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/markets" element={<Markets />} />
