@@ -34,7 +34,7 @@ import { addAlert } from "../../../store/reducers/app-slice";
 import { MarketManagerData } from "../../../store/reducers/markets-slice";
 import { VaultManagerData } from "../../../store/reducers/vaults-slice";
 import BinaryMarketABI from "../../../core/abi/BinaryMarketABI.json";
-import MockDAI from "../../../core/abi/MockDAI.json";
+import MockDAI from "../../../core/abi/ERC20.json";
 
 const TradingPad = () => {
   const dispatch = useDispatch();
