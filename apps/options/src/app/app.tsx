@@ -1,8 +1,8 @@
 import { useWeb3Context, isDev, NetworkIds } from "@fantohm/shared-web3";
 import { DebugHelper } from "@fantohm/shared-helpers";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect, useMemo } from "react";
 
 import HomePage from "./pages/home/home-page";
 import Markets from "./pages/markets/markets";
@@ -11,10 +11,12 @@ import Pools from "./pages/pools/pools";
 import Trade from "./pages/trade/trade";
 import Navbar from "./components/navbar/navbar";
 import Growl from "./components/growl/growl";
+import { RootState } from "./store";
 import { setCheckedConnection } from "./store/reducers/app-slice";
 import { loadMessages } from "./store/reducers/chat-slice";
 import { loadMarkets } from "./store/reducers/markets-slice";
 import { loadVault } from "./store/reducers/vaults-slice";
+import { getAccountDetails } from "./store/reducers/account-slice";
 import { BINARY_ADDRESSES, desiredNetworkId } from "./core/constants/network";
 
 export function App() {
@@ -22,7 +24,7 @@ export function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [tabFocused, setTabFocused] = useState(false);
-
+  const vaults = useSelector((state: RootState) => state.vaults);
   const {
     address,
     chainId,
@@ -79,11 +81,18 @@ export function App() {
 
   useEffect(() => {
     const underlyingTokenAddress = BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS;
-    if (provider) {
+    if (provider && address && chainId) {
       dispatch(loadMarkets({ provider }));
       dispatch(loadVault({ provider, underlyingTokenAddress }));
+      dispatch(
+        getAccountDetails({
+          address,
+          networkId: desiredNetworkId,
+          provider,
+        })
+      );
     }
-  }, [provider]);
+  }, [provider, address, chainId]);
 
   // User has switched back to the tab
   const onFocus = () => {

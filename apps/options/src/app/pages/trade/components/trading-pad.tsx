@@ -12,14 +12,16 @@ import {
   CurrencyDetails,
   useErc20Balance,
 } from "@fantohm/shared-web3";
-import { ethers, Contract } from "ethers";
-import { useSelector, useDispatch } from "react-redux";
-import { useState, useMemo, MouseEvent, useEffect } from "react";
+import { ethers, BigNumber } from "ethers";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useMemo, MouseEvent, useEffect, useCallback } from "react";
 
 import { LabelIcon } from "../../../components/label-icon/label-icon";
 import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown";
 import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
 import ConfirmTradePopup from "../../../components/pop-up/confirm-trade";
+import { useDAIContract, useMarketContract } from "../../../hooks/useContracts";
+import { useAllowanceDAIAmount } from "../../../hooks/useDAIApprovalStatus";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { UnderlyingAssets } from "../../../core/constants/basic";
 import { timeframes } from "../../../core/constants/tradingview";
@@ -28,52 +30,52 @@ import {
   Platform_Fee,
   RewardAmount_Percent,
 } from "../../../core/constants/marketing";
-import { BINARY_ADDRESSES, desiredNetworkId } from "../../../core/constants/network";
+import {
+  BINARY_ADDRESSES,
+  desiredNetworkId,
+  VAULT_ADDRESS,
+} from "../../../core/constants/network";
 import { RootState } from "../../../store";
 import { addAlert } from "../../../store/reducers/app-slice";
-import { MarketManagerData } from "../../../store/reducers/markets-slice";
-import { VaultManagerData } from "../../../store/reducers/vaults-slice";
-import BinaryMarketABI from "../../../core/abi/BinaryMarketABI.json";
-import MockDAI from "../../../core/abi/ERC20.json";
 
 const TradingPad = () => {
   const dispatch = useDispatch();
   const { connect, address, connected, chainId, provider } = useWeb3Context();
+  const isLoadingMarket = useSelector((state: RootState) => state.markets.isLoading);
+  const isLoadingVault = useSelector((state: RootState) => state.vaults.isLoading);
+  const accountDetail = useSelector((state: RootState) => state.account.accountDetail);
 
-  const markets: MarketManagerData = useSelector((state: RootState) => state.markets);
-  const vaults: VaultManagerData = useSelector((state: RootState) => state.vaults);
   const [timeframe, setTimeFrame] = useState(timeframes[0]);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
   const [direction, setDirection] = useState<"Up" | "Down">("Up");
   const [currency, setCurrency] = useState<CurrencyDetails>(currencyInfo["DAI_ADDRESS"]);
   const [isOpen, setOpen] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(true);
-  const [marketContract, setMarketContract] = useState<Contract>();
-  const [vaultAddress, setVaultAddress] = useState("");
 
+  const daiContract = useDAIContract();
+  const marketContract = useMarketContract();
   const { balance: currencyBalance } = useErc20Balance(
     BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS,
     address
   );
 
-  useEffect(() => {
-    if (markets.isLoading === "ready" && provider) {
-      const targetMarket = markets.markets[0];
-      const targetMarketContract = new ethers.Contract(
-        targetMarket.market,
-        BinaryMarketABI,
-        provider.getSigner()
-      );
-      setMarketContract(targetMarketContract);
-    }
-  }, [provider, chainId, address, markets.isLoading]);
+  const enoughAmount = useCallback(() => {
+    return Number(tokenAmount) > 0 && currencyBalance && currencyBalance.gt(0);
+  }, [tokenAmount, currencyBalance]);
 
-  useEffect(() => {
-    if (vaults.isLoading === "ready" && provider) {
-      const targetVault = vaults.vaults[0];
-      setVaultAddress(targetVault.vault);
-    }
-  }, [provider, chainId, address, vaults.isLoading]);
+  const hasAllowance = useCallback(
+    (token: string) => {
+      if (token === "dai") {
+        const daiAllowance = accountDetail
+          ? accountDetail["dai"]["allowance"]
+          : BigNumber.from(0);
+        console.log("daiAllowance: ", daiAllowance);
+        return daiAllowance.gt(ethers.utils.parseEther("0"));
+      }
+      return 0;
+    },
+    [accountDetail["dai"]["allowance"]]
+  );
 
   const isWalletConnected = useMemo(() => {
     return address && connected && chainId === desiredNetworkId;
@@ -83,6 +85,10 @@ const TradingPad = () => {
     if (!currencyBalance) return false;
     return ethers.utils.parseUnits(tokenAmount || "0", 18).lte(currencyBalance);
   }, [address, chainId, currencyBalance, tokenAmount]);
+
+  const handleRequestApprove = () => {
+    console.log("Approve");
+  };
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     try {
@@ -97,20 +103,22 @@ const TradingPad = () => {
   };
 
   const handleBetting = async (bettingDirection: "Up" | "Down") => {
+    if (enoughAmount() === false) {
+      dispatch(addAlert({ message: "Not enough amount", severity: "error" }));
+      return;
+    }
     if (Number(tokenAmount) < MiniumBettingAmount) {
       dispatch(addAlert({ message: "Amount is zero!", severity: "error" }));
+      return;
+    }
+    if (isLoadingMarket !== "ready") {
+      dispatch(addAlert({ message: "Please wait a few minitues", severity: "error" }));
       return;
     }
     setDirection(bettingDirection);
     if (localStorage.getItem("hide") === "true") setOpen(true);
     else {
       if (marketContract && provider) {
-        console.log("marketContract: ", marketContract);
-        const daiContract = new ethers.Contract(
-          BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS,
-          MockDAI,
-          provider.getSigner()
-        );
         await marketContract["openPosition"](
           ethers.utils.parseEther(tokenAmount),
           0,
@@ -234,24 +242,33 @@ const TradingPad = () => {
           </div>
         </div>
         {isWalletConnected ? (
-          hasBalance ? (
-            <div className="action text-white text-center xs:text-20 sm:text-26 cursor-default">
-              <div
-                className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
-                onClick={() => handleBetting("Up")}
-              >
-                UP
+          hasAllowance("dai") ? (
+            hasBalance ? (
+              <div className="action text-white text-center xs:text-20 sm:text-26 cursor-default">
+                <div
+                  className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
+                  onClick={() => handleBetting("Up")}
+                >
+                  UP
+                </div>
+                <div
+                  className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
+                  onClick={() => handleBetting("Down")}
+                >
+                  DOWN
+                </div>
               </div>
-              <div
-                className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
-                onClick={() => handleBetting("Down")}
-              >
-                DOWN
+            ) : (
+              <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24">
+                Insufficient balance
               </div>
-            </div>
+            )
           ) : (
-            <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24">
-              Insufficient balance
+            <div
+              className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24"
+              onClick={() => handleRequestApprove()}
+            >
+              Approve
             </div>
           )
         ) : (

@@ -2,9 +2,10 @@ import { configureStore, createSelector } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { appReducer } from "./reducers/app-slice";
 import { chatReducer } from "./reducers/chat-slice";
-import { accountReducer, saveState, walletReducer } from "@fantohm/shared-web3";
+import { saveState, walletReducer } from "@fantohm/shared-web3";
 import { marketsReducer } from "./reducers/markets-slice";
 import { vaultsReducer } from "./reducers/vaults-slice";
+import { accountReducer } from "./reducers/account-slice";
 
 const store = configureStore({
   reducer: {

@@ -1,4 +1,5 @@
 import { Contract, ethers } from "ethers";
+import { isDev } from "@fantohm/shared-web3";
 
 import marketABI from "../core/abi/BinaryMarketABI.json";
 import marketManagerABI from "../core/abi/BinaryMarketManagerABI.json";
@@ -55,7 +56,7 @@ export const getDAIContract = (
   address: string,
   signer: ethers.providers.Provider | ethers.Signer | undefined
 ) => {
-  return getContract({ abi: daiABI, address, signer });
+  return getContract({ abi: isDev ? ERC20ABI : daiABI, address, signer });
 };
 
 export const getERC20Contract = (
