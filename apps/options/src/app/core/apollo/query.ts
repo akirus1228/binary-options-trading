@@ -1,25 +1,33 @@
 export const tradeEventQuery = () => `
-  query trades {
-        (
-          skip: 0
-          first: 1000
-          orderBy: id
-          orderDirection: desc
-        ) {
+  query bets {
+    bets {
           id
-          trader
-          type
-          underlyingTokenAddress
-          basicTokenAddress
-          depositAmount
-          payoutAmount
-          tradeStatus
-          openPrice
-          closePrice
-          timeFrames
-          startAt
-          endAt
-          tx
+          market
+          round
+          timeframeId
+          user
+          hash
+          amount
+          position
+          claimed
+          claimedAmount
+          claimedHash
+          createdAt
+          updatedAt
+          block
+          market
+          round
+          timeframeId
+          user
+          hash
+          amount
+          position
+          claimed
+          claimedAmount
+          claimedHash
+          createdAt
+          updatedAt
+          block
         }
   }
 `;

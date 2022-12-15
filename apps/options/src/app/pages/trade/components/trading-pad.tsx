@@ -119,7 +119,6 @@ const TradingPad = () => {
   const handleSetting = () => {
     //TODO: handleSetting
   };
-  console.log("localStorage: ", localStorage.getItem("hide"));
   const handleBetting = async (bettingDirection: "Up" | "Down") => {
     let bettingTx;
     if (enoughAmount() === false) {
