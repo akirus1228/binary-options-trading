@@ -2,7 +2,7 @@ import { useWeb3Context, isDev, NetworkIds } from "@fantohm/shared-web3";
 import { DebugHelper } from "@fantohm/shared-helpers";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 import HomePage from "./pages/home/home-page";
 import Markets from "./pages/markets/markets";

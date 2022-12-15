@@ -37,11 +37,12 @@ import {
 } from "../../../core/constants/network";
 import { RootState } from "../../../store";
 import { addAlert } from "../../../store/reducers/app-slice";
+import { requestERC20Allowance } from "../../../store/reducers/account-slice";
 
 const TradingPad = () => {
   const dispatch = useDispatch();
   const { connect, address, connected, chainId, provider } = useWeb3Context();
-  const isLoadingMarket = useSelector((state: RootState) => state.markets.isLoading);
+  const markets = useSelector((state: RootState) => state.markets);
   const isLoadingVault = useSelector((state: RootState) => state.vaults.isLoading);
   const accountDetail = useSelector((state: RootState) => state.account.accountDetail);
 
@@ -69,7 +70,6 @@ const TradingPad = () => {
         const daiAllowance = accountDetail
           ? accountDetail["dai"]["allowance"]
           : BigNumber.from(0);
-        console.log("daiAllowance: ", daiAllowance);
         return daiAllowance.gt(ethers.utils.parseEther("0"));
       }
       return 0;
@@ -86,9 +86,19 @@ const TradingPad = () => {
     return ethers.utils.parseUnits(tokenAmount || "0", 18).lte(currencyBalance);
   }, [address, chainId, currencyBalance, tokenAmount]);
 
-  const handleRequestApprove = () => {
-    console.log("Approve");
-  };
+  const handleRequestApprove = useCallback(() => {
+    if (!provider)
+      dispatch(addAlert({ message: "Please connect wallet", severity: "waring" }));
+    else
+      dispatch(
+        requestERC20Allowance({
+          networkId: desiredNetworkId,
+          provider,
+          walletAddress: address,
+          assetAddress: BINARY_ADDRESSES[desiredNetworkId].DAI_ADDRESS,
+        })
+      );
+  }, [provider, address, tokenAmount]);
 
   const onClickConnect = (event: MouseEvent<HTMLButtonElement>) => {
     try {
@@ -111,7 +121,7 @@ const TradingPad = () => {
       dispatch(addAlert({ message: "Amount is zero!", severity: "error" }));
       return;
     }
-    if (isLoadingMarket !== "ready") {
+    if (markets.isLoading !== "ready") {
       dispatch(addAlert({ message: "Please wait a few minitues", severity: "error" }));
       return;
     }

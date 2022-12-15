@@ -7,12 +7,13 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import { useSelector } from "react-redux";
 
 import { RootState } from "../index";
 import { desiredNetworkId, BINARY_ADDRESSES } from "../../core/constants/network";
 import erc20ABI from "../../core/abi/ERC20.json";
 import daiABI from "../../core/abi/DAI.json";
-import { useSelector } from "react-redux";
+import BinaryMarketManagerABI from "../../core/abi/BinaryMarketManagerABI.json";
 
 export type Erc20Allowance = {
   [tokenIdentifier: string]: BigNumber;
@@ -36,8 +37,6 @@ export interface Erc20AllowanceAsyncThunk {
   readonly assetAddress: string;
   readonly networkId: NetworkIds;
   readonly provider: JsonRpcProvider;
-  readonly vaultContractAddress: string;
-  readonly amount: BigNumber;
 }
 
 export const getAccountDetails = createAsyncThunk(
@@ -56,11 +55,14 @@ export const getAccountDetails = createAsyncThunk(
       isDev ? erc20ABI : daiABI,
       provider.getSigner()
     );
-    const daiBalance = await daiContract["balanceOf"](address);
-    const daiAllowance = await daiContract["allowance"](
-      address,
-      "0x45e7953E6970A3486F6499A4b9eA85B4fB6B1715"
+    const marketManagerContract = new ethers.Contract(
+      BINARY_ADDRESSES[desiredNetworkId].MARKET_MANAGER_ADDRESS,
+      BinaryMarketManagerABI,
+      provider.getSigner()
     );
+    const marketAccount = await marketManagerContract["allMarkets"](0);
+    const daiBalance = await daiContract["balanceOf"](address);
+    const daiAllowance = await daiContract["allowance"](address, marketAccount.market);
 
     return {
       dai: {
@@ -74,14 +76,7 @@ export const getAccountDetails = createAsyncThunk(
 export const requestERC20Allowance = createAsyncThunk(
   "account/requestErc20Allowance",
   async (
-    {
-      networkId,
-      provider,
-      walletAddress,
-      assetAddress,
-      amount,
-      vaultContractAddress,
-    }: Erc20AllowanceAsyncThunk,
+    { networkId, provider, walletAddress, assetAddress }: Erc20AllowanceAsyncThunk,
     { rejectWithValue }
   ) => {
     if (!walletAddress || !assetAddress) {
@@ -90,10 +85,20 @@ export const requestERC20Allowance = createAsyncThunk(
     try {
       const signer = provider.getSigner();
       const erc20Contract = new ethers.Contract(assetAddress, erc20ABI, signer);
-      const approveTx = await erc20Contract["approve"](vaultContractAddress, amount);
+      const marketManagerContract = new ethers.Contract(
+        BINARY_ADDRESSES[desiredNetworkId].MARKET_MANAGER_ADDRESS,
+        BinaryMarketManagerABI,
+        signer
+      );
+      const marketAccount = await marketManagerContract["allMarkets"](0);
+      const approveTx = await erc20Contract["approve"](
+        marketAccount.market,
+        ethers.constants.MaxUint256
+      );
       await approveTx.wait();
       const payload: Erc20Allowance = {};
-      payload[`${walletAddress}:::${assetAddress.toLowerCase()}`] = amount;
+      payload[`${walletAddress}:::${assetAddress.toLowerCase()}`] =
+        ethers.constants.MaxUint256;
       return payload;
     } catch (err) {
       console.log(err);
