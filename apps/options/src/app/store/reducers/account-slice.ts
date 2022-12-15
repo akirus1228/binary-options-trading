@@ -10,10 +10,13 @@ import {
 import { useSelector } from "react-redux";
 
 import { RootState } from "../index";
+import { clearPendingTx, fetchPendingTxs } from "./pendingTx-slice";
 import { desiredNetworkId, BINARY_ADDRESSES } from "../../core/constants/network";
 import erc20ABI from "../../core/abi/ERC20.json";
 import daiABI from "../../core/abi/DAI.json";
 import BinaryMarketManagerABI from "../../core/abi/BinaryMarketManagerABI.json";
+import { addAlert } from "./app-slice";
+import { IJsonRpcError } from "../../core/interfaces/basic.interface";
 
 export type Erc20Allowance = {
   [tokenIdentifier: string]: BigNumber;
@@ -77,11 +80,12 @@ export const requestERC20Allowance = createAsyncThunk(
   "account/requestErc20Allowance",
   async (
     { networkId, provider, walletAddress, assetAddress }: Erc20AllowanceAsyncThunk,
-    { rejectWithValue }
+    { dispatch, rejectWithValue }
   ) => {
     if (!walletAddress || !assetAddress) {
       return rejectWithValue("Addresses and id required");
     }
+    let approveTx;
     try {
       const signer = provider.getSigner();
       const erc20Contract = new ethers.Contract(assetAddress, erc20ABI, signer);
@@ -91,18 +95,27 @@ export const requestERC20Allowance = createAsyncThunk(
         signer
       );
       const marketAccount = await marketManagerContract["allMarkets"](0);
-      const approveTx = await erc20Contract["approve"](
+      approveTx = await erc20Contract["approve"](
         marketAccount.market,
         ethers.constants.MaxUint256
       );
-      await approveTx.wait();
+      const text = "Approve DAI";
+      const pendingTxnType = "approve";
+      if (approveTx) {
+        dispatch(fetchPendingTxs({ txHash: approveTx.hash, text, type: pendingTxnType }));
+        await approveTx.wait();
+      }
       const payload: Erc20Allowance = {};
       payload[`${walletAddress}:::${assetAddress.toLowerCase()}`] =
         ethers.constants.MaxUint256;
       return payload;
-    } catch (err) {
-      console.log(err);
+    } catch (err: unknown) {
+      dispatch(addAlert({ message: (err as IJsonRpcError).message, severity: "error" }));
       return rejectWithValue("Unable to load create listing.");
+    } finally {
+      if (approveTx) {
+        dispatch(clearPendingTx(approveTx.hash));
+      }
     }
   }
 );

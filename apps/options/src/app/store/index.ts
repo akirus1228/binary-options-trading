@@ -6,6 +6,7 @@ import { saveState, walletReducer } from "@fantohm/shared-web3";
 import { marketsReducer } from "./reducers/markets-slice";
 import { vaultsReducer } from "./reducers/vaults-slice";
 import { accountReducer } from "./reducers/account-slice";
+import pendingTxReducer from "./reducers/pendingTx-slice";
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
     chat: chatReducer,
     markets: marketsReducer,
     vaults: vaultsReducer,
+    pendingTx: pendingTxReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),

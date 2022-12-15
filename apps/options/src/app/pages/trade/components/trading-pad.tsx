@@ -1,4 +1,4 @@
-import { SvgIcon, TextField } from "@mui/material";
+import { Button, SvgIcon, TextField } from "@mui/material";
 import {
   ErrorOutlineRounded,
   SettingsOutlined,
@@ -38,6 +38,13 @@ import {
 import { RootState } from "../../../store";
 import { addAlert } from "../../../store/reducers/app-slice";
 import { requestERC20Allowance } from "../../../store/reducers/account-slice";
+import {
+  fetchPendingTxs,
+  isPendingTxn,
+  getBettingTypeText,
+  clearPendingTx,
+  txnButtonText,
+} from "../../../store/reducers/pendingTx-slice";
 
 const TradingPad = () => {
   const dispatch = useDispatch();
@@ -45,6 +52,7 @@ const TradingPad = () => {
   const markets = useSelector((state: RootState) => state.markets);
   const isLoadingVault = useSelector((state: RootState) => state.vaults.isLoading);
   const accountDetail = useSelector((state: RootState) => state.account.accountDetail);
+  const pendingTx = useSelector((state: RootState) => state.pendingTx);
 
   const [timeframe, setTimeFrame] = useState(timeframes[0]);
   const [tokenAmount, setTokenAmount] = useState<string>("0");
@@ -111,8 +119,9 @@ const TradingPad = () => {
   const handleSetting = () => {
     //TODO: handleSetting
   };
-
+  console.log("localStorage: ", localStorage.getItem("hide"));
   const handleBetting = async (bettingDirection: "Up" | "Down") => {
+    let bettingTx;
     if (enoughAmount() === false) {
       dispatch(addAlert({ message: "Not enough amount", severity: "error" }));
       return;
@@ -126,14 +135,31 @@ const TradingPad = () => {
       return;
     }
     setDirection(bettingDirection);
-    if (localStorage.getItem("hide") === "true") setOpen(true);
+    if (localStorage.getItem("hide") !== "true") setOpen(true);
     else {
       if (marketContract && provider) {
-        await marketContract["openPosition"](
-          ethers.utils.parseEther(tokenAmount),
-          0,
-          direction === "Up" ? "0" : "1"
-        );
+        try {
+          bettingTx = await marketContract["openPosition"](
+            ethers.utils.parseEther(tokenAmount),
+            0,
+            direction === "Up" ? "0" : "1"
+          );
+          const pendingTxnType = bettingDirection.toLowerCase() === "up" ? "up" : "down";
+          dispatch(
+            fetchPendingTxs({
+              txHash: bettingTx.hash,
+              text: getBettingTypeText(bettingDirection),
+              type: pendingTxnType,
+            })
+          );
+          await bettingTx.wait();
+        } catch (error: unknown) {
+          dispatch(addAlert({ message: "Please try again.", severity: "error" }));
+        } finally {
+          if (bettingTx) {
+            dispatch(clearPendingTx(bettingTx.hash));
+          }
+        }
       }
     }
   };
@@ -254,40 +280,43 @@ const TradingPad = () => {
         {isWalletConnected ? (
           hasAllowance("dai") ? (
             hasBalance ? (
-              <div className="action text-white text-center xs:text-20 sm:text-26 cursor-default">
-                <div
-                  className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 mb-5"
+              <div className="action cursor-default">
+                <Button
+                  className="w-full bg-success text-white text-center xs:text-20 sm:text-26 rounded-2xl xs:py-10 sm:py-15 mb-5"
+                  disabled={isPendingTxn(pendingTx, "up")}
                   onClick={() => handleBetting("Up")}
                 >
-                  UP
-                </div>
-                <div
-                  className="w-full bg-danger rounded-2xl xs:py-10 sm:py-15"
+                  {txnButtonText(pendingTx, "up", "Up")}
+                </Button>
+                <Button
+                  className="w-full bg-danger text-white text-center xs:text-20 sm:text-26 rounded-2xl xs:py-10 sm:py-15"
+                  disabled={isPendingTxn(pendingTx, "down")}
                   onClick={() => handleBetting("Down")}
                 >
-                  DOWN
-                </div>
+                  {txnButtonText(pendingTx, "down", "Down")}
+                </Button>
               </div>
             ) : (
-              <div className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24">
+              <Button className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24">
                 Insufficient balance
-              </div>
+              </Button>
             )
           ) : (
-            <div
-              className="w-full bg-second text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24"
+            <Button
+              className="w-full bg-success text-primary text-center rounded-2xl xs:py-10 sm:py-15 cursor-not-allowed xs:text-18 sm:text-24"
+              disabled={isPendingTxn(pendingTx, "approve")}
               onClick={() => handleRequestApprove()}
             >
-              Approve
-            </div>
+              {txnButtonText(pendingTx, "approve", "Approve")}
+            </Button>
           )
         ) : (
-          <button
+          <Button
             className="w-full bg-success rounded-2xl xs:py-10 sm:py-15 text-white text-center xs:text-20 sm:text-26"
             onClick={onClickConnect}
           >
             Connect
-          </button>
+          </Button>
         )}
       </div>
       <ConfirmTradePopup
@@ -295,6 +324,7 @@ const TradingPad = () => {
         currencyValue={Number(tokenAmount)}
         selectedCurrency={currency}
         direction={direction}
+        handleBetting={async (value: "Up" | "Down") => await handleBetting(value)}
         open={isOpen && showConfirmDialog}
         onClose={(value: boolean) => handleClose(value)}
       />

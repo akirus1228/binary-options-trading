@@ -29,13 +29,22 @@ export function ConfirmTradePopup(props: {
   direction: "Up" | "Down";
   open: boolean;
   onClose: (isOpen: boolean) => void;
+  handleBetting: (direction: "Up" | "Down") => void;
 }) {
-  const { interval, selectedCurrency, currencyValue, direction, open, onClose } = props;
+  const {
+    interval,
+    selectedCurrency,
+    currencyValue,
+    direction,
+    open,
+    onClose,
+    handleBetting,
+  } = props;
   const [isChecked, setChecked] = useState(false);
 
-  const handleConfirm = () => {
-    //TODO: integration with smart contract using web3.js for user's trade
+  const handleConfirm = async () => {
     onClose(false);
+    await handleBetting(direction);
   };
 
   const handleClose = () => {

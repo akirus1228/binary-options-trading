@@ -4,3 +4,8 @@ export interface ChatInterface {
   text: string;
   createdAt: Date;
 }
+
+export interface IJsonRpcError {
+  readonly message: string;
+  readonly code: number;
+}
