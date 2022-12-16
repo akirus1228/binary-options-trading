@@ -1,20 +1,15 @@
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import { ApolloClient, InMemoryCache, gql, createHttpLink } from "@apollo/client";
 
 import { GRAPH_URL } from "../constants/basic";
 
-export enum ApolloActionType {
-  QUERY,
-  MUTATE,
-}
-
-export const clientInstance = () => {
+const clientInstance = () => {
   return new ApolloClient({
-    uri: GRAPH_URL,
+    link: createHttpLink({ uri: GRAPH_URL }),
     cache: new InMemoryCache(),
-    queryDeduplication: true,
     defaultOptions: {
       watchQuery: {
         fetchPolicy: "no-cache",
+        errorPolicy: "ignore",
       },
       query: {
         fetchPolicy: "no-cache",
@@ -24,25 +19,13 @@ export const clientInstance = () => {
   });
 };
 
-export const apolloClient = async (
-  apolloActionType: ApolloActionType,
-  queryString: string
-) => {
-  return apolloActionType === ApolloActionType.QUERY
-    ? clientInstance()
-        .query({
-          query: gql(queryString),
-        })
-        .then((response?: any) => {
-          return response.data;
-        })
-        .catch()
-    : clientInstance()
-        .mutate({
-          mutation: gql(queryString),
-        })
-        .then((response?: any) => {
-          return response.data;
-        })
-        .catch();
+export const apolloClient = (queryString: string) => {
+  return clientInstance()
+    .query({
+      query: gql(queryString),
+    })
+    .then((data?: any) => {
+      return data;
+    })
+    .catch((err) => console.error("Graph query error: ", err));
 };

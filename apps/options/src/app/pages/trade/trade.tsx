@@ -9,6 +9,7 @@ import TradingPad from "./components/trading-pad";
 import Chat from "../../components/chat/chat";
 import { setUnderlyingToken } from "../../store/reducers/app-slice";
 import { useCurrencyDetail } from "../../hooks/useCurrencyDetail";
+import { useTradeHistory } from "../../hooks/useTradeQuery";
 
 const Trade = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,8 @@ const Trade = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
+  const tradeHistoryData = useTradeHistory();
+  console.log("tradeHistoryData: ", tradeHistoryData);
   const underlyingToken = useCurrencyDetail(params.get("underlyingToken"));
 
   useEffect(() => {
