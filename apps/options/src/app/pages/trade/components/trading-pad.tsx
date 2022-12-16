@@ -21,7 +21,6 @@ import { CurrencyDropdown } from "../../../components/dropdown/currency-dropdown
 import { TimeframeDropdown } from "../../../components/dropdown/timeframe-dropdown";
 import ConfirmTradePopup from "../../../components/pop-up/confirm-trade";
 import { useDAIContract, useMarketContract } from "../../../hooks/useContracts";
-import { useAllowanceDAIAmount } from "../../../hooks/useDAIApprovalStatus";
 import { financialFormatter } from "../../../helpers/data-translations";
 import { UnderlyingAssets } from "../../../core/constants/basic";
 import { timeframes } from "../../../core/constants/tradingview";
@@ -30,11 +29,7 @@ import {
   Platform_Fee,
   RewardAmount_Percent,
 } from "../../../core/constants/marketing";
-import {
-  BINARY_ADDRESSES,
-  desiredNetworkId,
-  VAULT_ADDRESS,
-} from "../../../core/constants/network";
+import { BINARY_ADDRESSES, desiredNetworkId } from "../../../core/constants/network";
 import { RootState } from "../../../store";
 import { addAlert } from "../../../store/reducers/app-slice";
 import { requestERC20Allowance } from "../../../store/reducers/account-slice";

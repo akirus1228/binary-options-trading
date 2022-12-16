@@ -1,13 +1,14 @@
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { Web3ContextProvider } from "@fantohm/shared-web3";
 import { Provider } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { useLayoutEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import App from "./app";
 import store from "./store";
-import { GRAPH_URL } from "./core/constants/basic";
+
+const queryClient = new QueryClient();
 
 const ScrollToTop = (props: any) => {
   const [prevPath, setPrevPath] = useState("");
@@ -30,22 +31,17 @@ const ScrollToTop = (props: any) => {
   return null;
 };
 
-const client = new ApolloClient({
-  uri: GRAPH_URL,
-  cache: new InMemoryCache(),
-});
-
 const Root = (): JSX.Element => {
   return (
     <Web3ContextProvider>
-      <ApolloProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <BrowserRouter>
             <ScrollToTop />
             <App />
           </BrowserRouter>
         </Provider>
-      </ApolloProvider>
+      </QueryClientProvider>
     </Web3ContextProvider>
   );
 };

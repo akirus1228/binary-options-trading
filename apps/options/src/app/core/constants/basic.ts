@@ -7,7 +7,8 @@ import { NavItemProp } from "../types/types";
 export const Backend_API = "http://localhost:3000/api";
 export const Socket_URL = "http://localhost:3000";
 export const socket = io(Socket_URL);
-export const GRAPH_URL = "https://api.studio.thegraph.com/query/15446/cerberusdao/v9.0.2";
+export const GRAPH_URL =
+  "https://thegraph.com/hosted-service/subgraph/trust0212-fantohm/binary-options-subgraph-goerli";
 
 export const Carousal_Responsive_Form = {
   superLargeDesktop: {
